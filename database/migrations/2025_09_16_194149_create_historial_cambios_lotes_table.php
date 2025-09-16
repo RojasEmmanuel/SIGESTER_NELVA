@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('asesores_info', function (Blueprint $table) {
-            $table->id('id_asesor');
-            $table->enum('zona', ['Costa', 'Istmo'])->default('Costa');
-            $table->string('path_facebook', 400)->nullable();
-            $table->string('path_fotografia', 400)->nullable();
-            
-            
+        Schema::create('historial_cambios_lotes', function (Blueprint $table) {
+            $table->id("id_cambio");
+            $table->string('estatus_anterior');
+            $table->string('estatus_actual');
+            $table->string('observaciones');
+        
+            $table->string('id_lote', 50);
+            $table->foreign('id_lote')->references('id_lote')->on('lotes')->onDelete('cascade');
             $table->unsignedBigInteger('id_usuario');
             $table->foreign('id_usuario')->references('id_usuario')->on('usuarios')->onDelete('cascade');
             
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('asesores_info');
+        Schema::dropIfExists('historial_cambios_lotes');
     }
 };

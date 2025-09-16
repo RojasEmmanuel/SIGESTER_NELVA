@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('asesores_info', function (Blueprint $table) {
-            $table->id('id_asesor');
-            $table->enum('zona', ['Costa', 'Istmo'])->default('Costa');
-            $table->string('path_facebook', 400)->nullable();
-            $table->string('path_fotografia', 400)->nullable();
+        Schema::create('apartados', function (Blueprint $table) {
+            $table->id("id_apartado");
+            $table->enum('tipoApartado',['palabra','deposito'])->default('palabra');
+            $table->string("cliente_nombre",300);
+            $table->string("cliente_apellidos",300);
+            $table->date("fechaApartado");
+            $table->date("fechaVencimiento");
             
-            
-            $table->unsignedBigInteger('id_usuario');
+            $table->unsignedBigInteger("id_usuario");
             $table->foreign('id_usuario')->references('id_usuario')->on('usuarios')->onDelete('cascade');
-            
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('asesores_info');
+        Schema::dropIfExists('apartados');
     }
 };

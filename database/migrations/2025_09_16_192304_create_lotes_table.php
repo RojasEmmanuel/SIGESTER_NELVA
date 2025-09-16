@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('amenidades_fraccionamiento', function (Blueprint $table) {
-            $table->id("id_amenidad");
-            $table->string("nombre",150);
-            $table->string("descripcion",150)->nullable();
-            $table->enum('tipo', ['Característica', 'Servicio'])->default('Característica');
-            
+        Schema::create('lotes', function (Blueprint $table) {
+            $table->string('id_lote', 50)->primary(); // nombrefraccionamiento, numero lote, fecha sistema
+            $table->int('numeroLote');
+            $table->enum('estatus',['disponible','apartadoDeposito','apartadoPalabra','vendido'])->default('disponible');
+
             $table->unsignedBigInteger("id_fraccionamiento");
             $table->foreign('id_fraccionamiento')->references('id_fraccionamiento')->on('fraccionamientos')->onDelete('cascade');
             $table->timestamps();
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('amenidades_fraccionamiento');
+        Schema::dropIfExists('lotes');
     }
 };

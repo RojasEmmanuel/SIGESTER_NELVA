@@ -21,8 +21,9 @@ return new class extends Migration
             $table->double("precioGeneral", 10, 2)->nullable();
 
             $table->unsignedBigInteger("id_fraccionamiento");
-            $table->foreign("id_fraccionamiento")->references("id_fraccionamiento")->onDelete('cascade');
+            $table->foreign('id_fraccionamiento')->references('id_fraccionamiento')->on('fraccionamientos')->onDelete('cascade');
 
+            
             $table->timestamps();
         });
     }
