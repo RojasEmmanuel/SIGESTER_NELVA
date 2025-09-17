@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string("ticket_path");
             $table->enum("ticket_estatus",["solicitud","rechazado","aceptado"])->default("solicitud");
             $table->double("enganche");
+            $table->double("total");
             $table->unsignedBigInteger("id_apartado");
             $table->foreign('id_apartado')->references('id_apartado')->on('apartados')->onDelete('cascade');
             $table->timestamps();
