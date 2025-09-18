@@ -19,10 +19,8 @@ return new class extends Migration
             $table->string('password');
             $table->string('usuario_nombre', 255);
             $table->boolean('estatus')->default(true);
-
             $table->unsignedBigInteger('tipo_usuario');
             $table->foreign('tipo_usuario')->references('id_tipo')->on('tipos_usuarios')->onDelete('cascade');
-
             $table->timestamps();
         });
     }
