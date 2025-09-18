@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('lote_medidas', function (Blueprint $table) {
             $table->id('id_medidas');
-            $table->int('manzana');
+            $table->integer('manzana');
             $table->double('norte');
             $table->double('sur');
             $table->double('poniente');
@@ -22,7 +22,7 @@ return new class extends Migration
 
             $table->string('id_lote', 50);
             $table->foreign('id_lote')->references('id_lote')->on('lotes')->onDelete('cascade');
-
+            
             $table->timestamps();
         });
     }

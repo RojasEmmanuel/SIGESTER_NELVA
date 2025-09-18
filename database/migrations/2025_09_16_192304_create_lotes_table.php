@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('lotes', function (Blueprint $table) {
             $table->string('id_lote', 50)->primary(); // nombrefraccionamiento, numero lote, fecha sistema
-            $table->int('numeroLote');
+            $table->integer('numeroLote');
             $table->enum('estatus',['disponible','apartadoDeposito','apartadoPalabra','vendido'])->default('disponible');
 
             $table->unsignedBigInteger("id_fraccionamiento");

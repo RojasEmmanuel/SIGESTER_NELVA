@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string("descripcion",400)->nullable();
             $table->double("precio_metro_cuadrado", 10, 2);
             $table->enum('tipo_propiedad', ['Comunal', 'Ejidal','Privada'])->default('Comunal');
-            $table->timestamps();
             $table->double("precioGeneral", 10, 2)->nullable();
 
             $table->unsignedBigInteger("id_fraccionamiento");
