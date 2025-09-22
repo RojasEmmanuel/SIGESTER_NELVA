@@ -2,17 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable; // Para que sea usado en login
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class Usuario extends Model
+class Usuario extends Authenticatable 
 {
     use HasFactory, Notifiable;
 
     protected $table = 'usuarios';
     protected $primaryKey = 'id_usuario';
+
+    // Especifica el nombre de la columna de contraseña
+    protected $password = 'password';
+    
+    // Especifica el nombre de la columna de "remember token"
+    protected $rememberTokenName = 'remember_token';
 
     protected $fillable = [
         'nombre',
