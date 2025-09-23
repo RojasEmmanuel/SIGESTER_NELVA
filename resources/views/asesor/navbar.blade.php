@@ -18,13 +18,13 @@
                 <span>Nelva Bienes Raíces</span>
             </div>
             <div class="nav-links">
-                <a href="{{ url('inicio') }}" class="{{ Request::is('inicio') ? 'active' : '' }}">
+                <a href="{{ url('asesor/inicio') }}" class="{{ Request::is('inicio') ? 'active' : '' }}">
                     <i class="fas fa-home"></i> Inicio
                 </a>
-                <a href="{{ url('apartados') }}" class="{{ Request::is('apartados') ? 'active' : '' }}">
+                <a href="{{ url('asesor/apartados') }}" class="{{ Request::is('apartados') ? 'active' : '' }}">
                     <i class="fas fa-calendar-check"></i> Apartados
                 </a>
-                <a href="{{ url('ventas') }}" class="{{ Request::is('ventas') ? 'active' : '' }}">
+                <a href="{{ url('asesor/ventas') }}" class="{{ Request::is('ventas') ? 'active' : '' }}">
                     <i class="fas fa-history"></i> Ventas
                 </a>
                <a href="{{ route('asesor.perfil') }}" class="{{ Request::routeIs('asesor.perfil') ? 'active' : '' }}">
@@ -57,15 +57,15 @@
                 <i class="fas fa-times"></i>
             </button>
             <div class="nav-items">
-                <a href="{{ url('inicio') }}" class="nav-item {{ Request::is('inicio') ? 'active' : '' }}">
+                <a href="{{ url('asesor/inicio') }}" class="nav-item {{ Request::is('inicio') ? 'active' : '' }}">
                     <i class="fas fa-home"></i>
                     <span>Inicio</span>
                 </a>
-                <a href="{{ url('apartados') }}" class="nav-item {{ Request::is('apartados') ? 'active' : '' }}">
+                <a href="{{ url('asesor.apartados') }}" class="nav-item {{ Request::is('apartados') ? 'active' : '' }}">
                     <i class="fas fa-calendar-check"></i>
                     <span>Apartados</span>
                 </a>
-                <a href="{{ url('ventas') }}" class="nav-item {{ Request::is('ventas') ? 'active' : '' }}">
+                <a href="{{ url('asesor.ventas') }}" class="nav-item {{ Request::is('ventas') ? 'active' : '' }}">
                     <i class="fas fa-history"></i>
                     <span>Ventas</span>
                 </a>

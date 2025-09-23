@@ -72,7 +72,7 @@ class LoginController extends Controller
         // Redirigir según el tipo de usuario y enviar el tipo de usuario a la vista
         switch ($user->tipo_usuario) {
             case 1:
-                return redirect()->route('admin.dashboard')->with('tipo_usuario', $user->tipo_usuario);
+                return redirect()->route('admin.index')->with('tipo_usuario', $user->tipo_usuario);
             case 2:
                 return redirect()->route('asesor.dashboard')->with('tipo_usuario', $user->tipo_usuario);
             case 3:
@@ -95,6 +95,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'Has cerrado sesión correctamente.');
+        return redirect('/')->with('success', 'Has cerrado sesión c orrectamente.');
     }
 }
