@@ -10,6 +10,7 @@ use App\Models\PlanoFraccionamiento;
 use App\Models\AmenidadFraccionamiento;
 use App\Models\Lote;
 use App\Models\LoteMedida;
+use Illuminate\Support\Facades\Log;
 
 class FraccionamientoController extends Controller
 {
@@ -94,6 +95,8 @@ class FraccionamientoController extends Controller
     public function getLoteDetails($idFraccionamiento, $numeroLote)
     {
         try {
+            Log::info("🔍 Buscando lote - Fraccionamiento: $idFraccionamiento, Número: $numeroLote");
+
             // Validar que el número de lote no esté vacío
             if (empty($numeroLote)) {
                 return response()->json([
@@ -102,10 +105,12 @@ class FraccionamientoController extends Controller
                 ], 400);
             }
 
-            // Buscar el lote
+            // ✅ CORRECTO: La columna se llama 'numeroLote' en la BD
             $lote = Lote::where('id_fraccionamiento', $idFraccionamiento)
-                        ->where('numeroLote', $numeroLote)
+                        ->where('numeroLote', $numeroLote)  // ← ESTO ESTÁ BIEN
                         ->first();
+
+            Log::info("📊 Resultado de búsqueda de lote:", [$lote ? $lote->toArray() : 'NO ENCONTRADO']);
 
             if (!$lote) {
                 return response()->json([
@@ -114,8 +119,10 @@ class FraccionamientoController extends Controller
                 ], 404);
             }
 
-            // Buscar medidas del lote
-            $medidas = LoteMedida::where('id_lote', $lote->id_lote)->first();
+            // ✅ Usar la relación definida en el modelo
+            $medidas = $lote->loteMedida;
+
+            Log::info("📐 Medidas encontradas:", [$medidas ? $medidas->toArray() : 'NO ENCONTRADAS']);
 
             if (!$medidas) {
                 return response()->json([
@@ -143,7 +150,8 @@ class FraccionamientoController extends Controller
             $response = [
                 'success' => true,
                 'lote' => [
-                    'numero_lote' => $lote->numeroLote,
+                    'id' => $lote->id_lote,
+                    'numero_lote' => $lote->numeroLote,  // ← Propiedad del modelo
                     'manzana' => $medidas->manzana ?? 'N/A',
                     'area_total' => (float) $areaMetros,
                     'precio_m2' => (float) $precioM2,
@@ -159,15 +167,21 @@ class FraccionamientoController extends Controller
                 ]
             ];
 
+            Log::info("✅ Respuesta final:", $response);
+
             return response()->json($response);
 
         } catch (\Exception $e) {
+            Log::error("❌ Error en getLoteDetails: " . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error interno del servidor: ' . $e->getMessage()
             ], 500);
         }
     }
+
+
+
     public function downloadPlano($idFraccionamiento, $idPlano)
     {
         try {

@@ -39,6 +39,10 @@
         <div class="stats-section">
             <div class="stats-grid">
                 <div class="stat-card">
+                    <div class="stat-number">{{ $totalLotes }}</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-card">
                     <div class="stat-number">{{ $lotesDisponibles }}</div>
                     <div class="stat-label">Disponibles</div>
                 </div>
@@ -51,12 +55,7 @@
                 <div class="stat-card">
                     <div class="stat-number">{{ $lotesVendidos }}</div>
                     <div class="stat-label">Vendidos</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-number">{{ $totalLotes }}</div>
-                    <div class="stat-label">Total</div>
-                </div>
+                </div>            
             </div>
         </div>
 
@@ -171,7 +170,16 @@
                 <span>Ubicación en Mapa</span>
             </h3>
             <div class="map-container">
-                <iframe class="map-iframe" src="{{ $datosFraccionamiento['ubicacionMaps'] }}" allowfullscreen="" loading="lazy"></iframe>
+                <iframe 
+                    class="map-iframe" 
+                    src="{{ $datosFraccionamiento['ubicacionMaps'] }}" 
+                    width="600" 
+                    height="450" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
             </div>
         </div>
         @endif
@@ -299,339 +307,436 @@
         </div>
     </div>
 
-    <!-- Modal de Cálculo de Costo -->
-    <!-- Modal de Cálculo de Costo -->
-<div class="modal-fraccionamiento" id="calculationModal">
-    <div class="modal-content-fraccionamiento">
-        <button class="close-modal-fraccionamiento" id="closeCalculationModal">&times;</button>
-        <h2 class="modal-title-fraccionamiento">Calcular Costo del Lote</h2>
-        
-        <form id="calculationForm">
-            <div class="form-group">
-                <label for="lotNumber" class="form-label">Número de Lote</label>
-                <input type="text" id="lotNumber" class="form-control" required placeholder="Ej. 12, 5, etc.">
-                <div id="lotError" class="error-message" style="display: none; color: var(--danger-color); margin-top: 0.5rem;"></div>
-            </div>
+    <!-- Modal de Cálculo de Costo Mejorado -->
+    <div class="modal-fraccionamiento" id="calculationModal">
+        <div class="modal-content-fraccionamiento">
+            <button class="close-modal-fraccionamiento" id="closeCalculationModal">&times;</button>
+            <h2 class="modal-title-fraccionamiento">Calcular Costo del Lote</h2>
             
-            <div class="form-group">
-                <button type="button" class="btn btn-primary" id="calculateBtn" style="width: 100%;">
-                    <i class="fas fa-calculator"></i> Calcular
-                </button>
-            </div>
-            
-            <div id="lotDetails" style="display: none;">
-                <div class="info-section">
-                    <h3 class="info-title">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Detalles del Lote</span>
-                    </h3>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <div class="info-label">Manzana</div>
-                            <div class="info-value" id="lotBlock">-</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Área total</div>
-                            <div class="info-value" id="lotArea">- m²</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Norte</div>
-                            <div class="info-value" id="lotNorth">- m</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Sur</div>
-                            <div class="info-value" id="lotSouth">- m</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Oriente</div>
-                            <div class="info-value" id="lotEast">- m</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Poniente</div>
-                            <div class="info-value" id="lotWest">- m</div>
-                        </div>
-                    </div>
+            <form id="calculationForm">
+                <div class="form-group">
+                    <label for="lotNumber" class="form-label">Número de Lote</label>
+                    <input type="text" id="lotNumber" class="form-control" required placeholder="Ej. 12, 5, etc.">
+                    <div id="lotError" class="error-message" style="display: none; color: var(--danger-color); margin-top: 0.5rem;"></div>
                 </div>
                 
-                <div class="info-section">
-                    <h3 class="info-title">
-                        <i class="fas fa-dollar-sign"></i>
-                        <span>Cálculo de Costo</span>
-                    </h3>
-                    <div class="info-item">
-                        <div class="info-label">Precio por m²</div>
-                        <div class="info-value">${{ number_format($datosFraccionamiento['precio_metro_cuadrado'] ?? 0, 2) }} MXN</div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary" id="calculateBtn" style="width: 100%;">
+                        <i class="fas fa-calculator"></i> Calcular
+                    </button>
+                </div>
+                
+                <div id="lotDetails" style="display: none;">
+                    <div class="info-section">
+                        <h3 class="info-title">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Detalles del Lote</span>
+                        </h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">ID del Lote</div>
+                                <div class="info-value" id="lotId">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Estatus</div>
+                                <div class="info-value" id="lotStatus">
+                                    <span class="status-badge" id="statusBadge">-</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Manzana</div>
+                                <div class="info-value" id="lotBlock">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Área total</div>
+                                <div class="info-value" id="lotArea">- m²</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Norte</div>
+                                <div class="info-value" id="lotNorth">- m</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Sur</div>
+                                <div class="info-value" id="lotSouth">- m</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Oriente</div>
+                                <div class="info-value" id="lotEast">- m</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Poniente</div>
+                                <div class="info-value" id="lotWest">- m</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">Costo total</div>
-                        <div class="info-value highlight" id="totalCost">$0 MXN</div>
+                    
+                    <div class="info-section">
+                        <h3 class="info-title">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>Cálculo de Costo</span>
+                        </h3>
+                        <div class="info-item">
+                            <div class="info-label">Precio por m²</div>
+                            <div class="info-value">${{ number_format($datosFraccionamiento['precio_metro_cuadrado'] ?? 0, 2) }} MXN</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Costo total</div>
+                            <div class="info-value highlight" id="totalCost">$0 MXN</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-    // Modal de apartado
-    const reservationModal = document.getElementById('reservationModal');
-    const closeModal = document.getElementById('closeModal');
-    const openReservationModal = document.getElementById('openReservationModal');
-    const reservationForm = document.getElementById('reservationForm');
-    const depositFields = document.getElementById('depositFields');
-    const verbalReceipt = document.getElementById('verbalReceipt');
-    const depositReceipt = document.getElementById('depositReceipt');
-    const verbalName = document.getElementById('verbalName');
-    const depositName = document.getElementById('depositName');
-    const verbalLots = document.getElementById('verbalLots');
-    const depositLots = document.getElementById('depositLots');
-    const depositAmount = document.getElementById('depositAmount');
-    const deadlineDate = document.getElementById('deadlineDate');
-    const referenceNumber = document.getElementById('referenceNumber');
-    const closeAfterVerbal = document.getElementById('closeAfterVerbal');
-    const whatsappShare = document.getElementById('whatsappShare');
-    const verbalWhatsappShare = document.getElementById('verbalWhatsappShare');
-    const lotList = document.getElementById('lotList');
-    const addLotBtn = document.getElementById('addLotBtn');
-
-    // Modal de cálculo
-    const calculationModal = document.getElementById('calculationModal');
-    const closeCalculationModal = document.getElementById('closeCalculationModal');
-    const openCalculationModal = document.getElementById('openCalculationModal');
-    const calculateBtn = document.getElementById('calculateBtn');
-    const lotDetails = document.getElementById('lotDetails');
-
-    // Función para agregar nuevo campo de lote
-    function addLotField() {
-        const newLotItem = document.createElement('div');
-        newLotItem.className = 'lot-item';
-        newLotItem.innerHTML = `
-            <input type="text" class="form-control lot-number" required placeholder="Ej. 12, 5, etc.">
-            <button type="button" class="remove-lot">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
-        lotList.appendChild(newLotItem);
+    <style>
+        /* Estilos para el badge de estatus */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
         
-        // Agregar evento al botón de eliminar
-        const removeBtn = newLotItem.querySelector('.remove-lot');
-        removeBtn.addEventListener('click', function() {
-            removeLotField(newLotItem);
-        });
-    }
-
-    // Función para eliminar campo de lote
-    function removeLotField(lotItem) {
-        if (lotList.children.length > 1) {
-            lotList.removeChild(lotItem);
-        } else {
-            alert('Debe especificar al menos un lote');
+        .status-disponible {
+            background-color: #e8f5e8;
+            color: #2e7d32;
         }
-    }
-
-    // Agregar evento al botón de agregar lote
-    addLotBtn.addEventListener('click', addLotField);
-
-    // Agregar eventos a los botones de eliminar existentes
-    document.querySelectorAll('.remove-lot').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const lotItem = this.closest('.lot-item');
-            removeLotField(lotItem);
-        });
-    });
-
-    // Abrir modal de apartado
-    openReservationModal.addEventListener('click', function() {
-        reservationModal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    });
-
-    // Abrir modal de cálculo
-    openCalculationModal.addEventListener('click', function() {
-        calculationModal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    });
-
-    // Cerrar modales
-    closeModal.addEventListener('click', function() {
-        reservationModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        resetReservationForm();
-    });
-
-    closeCalculationModal.addEventListener('click', function() {
-        calculationModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        resetCalculationForm();
-    });
-
-    // Cerrar al hacer clic fuera del modal
-    reservationModal.addEventListener('click', function(e) {
-        if (e.target === reservationModal) {
-            reservationModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            resetReservationForm();
-        }
-    });
-
-    calculationModal.addEventListener('click', function(e) {
-        if (e.target === calculationModal) {
-            calculationModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            resetCalculationForm();
-        }
-    });
-
-    // Cerrar con tecla ESC
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            reservationModal.style.display = 'none';
-            calculationModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            resetReservationForm();
-            resetCalculationForm();
-        }
-    });
-
-    // Mostrar/ocultar campos de depósito según selección
-    document.querySelectorAll('input[name="reservationType"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            depositFields.style.display = this.value === 'deposit' ? 'block' : 'none';
-        });
-    });
-
-    // Resetear formulario de apartado
-    function resetReservationForm() {
-        reservationForm.reset();
-        reservationForm.style.display = 'block';
-        verbalReceipt.style.display = 'none';
-        depositReceipt.style.display = 'none';
-        depositFields.style.display = 'none';
         
-        // Mantener solo un campo de lote
-        while (lotList.children.length > 1) {
-            lotList.removeChild(lotList.lastChild);
+        .status-apartado {
+            background-color: #fff3e0;
+            color: #ef6c00;
         }
-        // Limpiar el primer campo de lote
-        document.querySelector('.lot-number').value = '';
-    }
-
-    // Resetear formulario de cálculo
-    function resetCalculationForm() {
-        document.getElementById('calculationForm').reset();
-        lotDetails.style.display = 'none';
-    }
-
-    // Función para calcular el costo del lote
-        // Función para calcular el costo del lote
-    calculateBtn.addEventListener('click', async function() {
-        const lotNumber = document.getElementById('lotNumber').value.trim();
-        const lotError = document.getElementById('lotError');
         
-        // Validación básica
-        if (!lotNumber) {
-            lotError.textContent = 'Por favor ingrese un número de lote';
-            lotError.style.display = 'block';
-            return;
+        .status-vendido {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .status-no-disponible {
+            background-color: #f5f5f5;
+            color: #757575;
         }
 
-        // Validar que sea un número válido
-        if (!/^\d+$/.test(lotNumber)) {
-            lotError.textContent = 'Por favor ingrese un número de lote válido';
-            lotError.style.display = 'block';
-            return;
+        /* Estilos para el mapa */
+        .map-container {
+            width: 100%;
+            height: 400px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 1rem;
         }
 
-        try {
-            // Mostrar loading
-            calculateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculando...';
-            calculateBtn.disabled = true;
-            lotError.style.display = 'none';
+        .map-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
 
-            const fraccionamientoId = {{ $datosFraccionamiento['id'] }};
-            const url = `/asesor/fraccionamiento/${fraccionamientoId}/lote/${encodeURIComponent(lotNumber)}`;
+        .development-map {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+    <script>
+        // Modal de apartado
+        const reservationModal = document.getElementById('reservationModal');
+        const closeModal = document.getElementById('closeModal');
+        const openReservationModal = document.getElementById('openReservationModal');
+        const reservationForm = document.getElementById('reservationForm');
+        const depositFields = document.getElementById('depositFields');
+        const verbalReceipt = document.getElementById('verbalReceipt');
+        const depositReceipt = document.getElementById('depositReceipt');
+        const verbalName = document.getElementById('verbalName');
+        const depositName = document.getElementById('depositName');
+        const verbalLots = document.getElementById('verbalLots');
+        const depositLots = document.getElementById('depositLots');
+        const depositAmount = document.getElementById('depositAmount');
+        const deadlineDate = document.getElementById('deadlineDate');
+        const referenceNumber = document.getElementById('referenceNumber');
+        const closeAfterVerbal = document.getElementById('closeAfterVerbal');
+        const whatsappShare = document.getElementById('whatsappShare');
+        const verbalWhatsappShare = document.getElementById('verbalWhatsappShare');
+        const lotList = document.getElementById('lotList');
+        const addLotBtn = document.getElementById('addLotBtn');
+
+        // Modal de cálculo
+        const calculationModal = document.getElementById('calculationModal');
+        const closeCalculationModal = document.getElementById('closeCalculationModal');
+        const openCalculationModal = document.getElementById('openCalculationModal');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const lotDetails = document.getElementById('lotDetails');
+
+        // Función para agregar nuevo campo de lote
+        function addLotField() {
+            const newLotItem = document.createElement('div');
+            newLotItem.className = 'lot-item';
+            newLotItem.innerHTML = `
+                <input type="text" class="form-control lot-number" required placeholder="Ej. 12, 5, etc.">
+                <button type="button" class="remove-lot">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            lotList.appendChild(newLotItem);
             
-            console.log('Realizando petición a:', url);
-
-            // Hacer la petición al servidor con timeout
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
-
-            const response = await fetch(url, {
-                signal: controller.signal,
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+            // Agregar evento al botón de eliminar
+            const removeBtn = newLotItem.querySelector('.remove-lot');
+            removeBtn.addEventListener('click', function() {
+                removeLotField(newLotItem);
             });
+        }
 
-            clearTimeout(timeoutId);
+        // Función para eliminar campo de lote
+        function removeLotField(lotItem) {
+            if (lotList.children.length > 1) {
+                lotList.removeChild(lotItem);
+            } else {
+                alert('Debe especificar al menos un lote');
+            }
+        }
 
-            // Verificar si la respuesta es JSON
-            const contentType = response.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new Error('Respuesta del servidor no es JSON');
+        // Agregar evento al botón de agregar lote
+        addLotBtn.addEventListener('click', addLotField);
+
+        // Agregar eventos a los botones de eliminar existentes
+        document.querySelectorAll('.remove-lot').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lotItem = this.closest('.lot-item');
+                removeLotField(lotItem);
+            });
+        });
+
+        // Abrir modal de apartado
+        openReservationModal.addEventListener('click', function() {
+            reservationModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Abrir modal de cálculo
+        openCalculationModal.addEventListener('click', function() {
+            calculationModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Cerrar modales
+        closeModal.addEventListener('click', function() {
+            reservationModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetReservationForm();
+        });
+
+        closeCalculationModal.addEventListener('click', function() {
+            calculationModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetCalculationForm();
+        });
+
+        // Cerrar al hacer clic fuera del modal
+        reservationModal.addEventListener('click', function(e) {
+            if (e.target === reservationModal) {
+                reservationModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                resetReservationForm();
+            }
+        });
+
+        calculationModal.addEventListener('click', function(e) {
+            if (e.target === calculationModal) {
+                calculationModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                resetCalculationForm();
+            }
+        });
+
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                reservationModal.style.display = 'none';
+                calculationModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                resetReservationForm();
+                resetCalculationForm();
+            }
+        });
+
+        // Mostrar/ocultar campos de depósito según selección
+        document.querySelectorAll('input[name="reservationType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                depositFields.style.display = this.value === 'deposit' ? 'block' : 'none';
+            });
+        });
+
+        // Resetear formulario de apartado
+        function resetReservationForm() {
+            reservationForm.reset();
+            reservationForm.style.display = 'block';
+            verbalReceipt.style.display = 'none';
+            depositReceipt.style.display = 'none';
+            depositFields.style.display = 'none';
+            
+            // Mantener solo un campo de lote
+            while (lotList.children.length > 1) {
+                lotList.removeChild(lotList.lastChild);
+            }
+            // Limpiar el primer campo de lote
+            document.querySelector('.lot-number').value = '';
+        }
+
+        // Resetear formulario de cálculo
+        function resetCalculationForm() {
+            document.getElementById('calculationForm').reset();
+            lotDetails.style.display = 'none';
+        }
+
+        // Función para obtener la clase CSS según el estatus del lote
+        function getStatusClass(status) {
+            const statusMap = {
+                'disponible': 'status-disponible',
+                'apartadoPalabra': 'status-apartado',
+                'apartadoVendido': 'status-apartado', 
+                'vendido': 'status-vendido',
+                'no disponible': 'status-no-disponible'
+            };
+            
+            return statusMap[status] || 'status-no-disponible';
+        }
+
+        // Función para formatear el estatus del lote
+        function formatStatus(status) {
+            const statusMap = {
+                'disponible': 'Disponible',
+                'apartadoPalabra': 'Apartado (Palabra)',
+                'apartadoVendido': 'Apartado (Vendido)',
+                'vendido': 'Vendido',
+                'no disponible': 'No Disponible'
+            };
+            
+            return statusMap[status] || status;
+        }
+
+        // Función para calcular el costo del lote
+        calculateBtn.addEventListener('click', async function() {
+            const lotNumber = document.getElementById('lotNumber').value.trim();
+            const lotError = document.getElementById('lotError');
+            
+            // Validación básica
+            if (!lotNumber) {
+                lotError.textContent = 'Por favor ingrese un número de lote';
+                lotError.style.display = 'block';
+                return;
             }
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || `Error ${response.status}`);
+            // Validar que sea un número válido
+            if (!/^\d+$/.test(lotNumber)) {
+                lotError.textContent = 'Por favor ingrese un número de lote válido';
+                lotError.style.display = 'block';
+                return;
             }
 
-            if (data.success) {
-                const lote = data.lote;
+            try {
+                // Mostrar loading
+                calculateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculando...';
+                calculateBtn.disabled = true;
+                lotError.style.display = 'none';
+
+                const fraccionamientoId = {{ $datosFraccionamiento['id'] }};
+                const url = `/asesor/fraccionamiento/${fraccionamientoId}/lote/${encodeURIComponent(lotNumber)}`;
                 
-                // Mostrar detalles del lote
-                document.getElementById('lotBlock').textContent = lote.manzana || 'N/A';
-                document.getElementById('lotArea').textContent = `${lote.area_total ? lote.area_total.toLocaleString('es-MX') : '0'} m²`;
-                
-                // Mostrar medidas si existen
-                if (lote.medidas) {
-                    document.getElementById('lotNorth').textContent = `${lote.medidas.norte} m`;
-                    document.getElementById('lotSouth').textContent = `${lote.medidas.sur} m`;
-                    document.getElementById('lotEast').textContent = `${lote.medidas.oriente} m`;
-                    document.getElementById('lotWest').textContent = `${lote.medidas.poniente} m`;
-                } else {
-                    document.getElementById('lotNorth').textContent = 'No disponible';
-                    document.getElementById('lotSouth').textContent = 'No disponible';
-                    document.getElementById('lotEast').textContent = 'No disponible';
-                    document.getElementById('lotWest').textContent = 'No disponible';
+                console.log('Realizando petición a:', url);
+
+                // Hacer la petición al servidor con timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
+
+                const response = await fetch(url, {
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                clearTimeout(timeoutId);
+
+                // Verificar si la respuesta es JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Respuesta del servidor no es JSON');
                 }
 
-                // Calcular costo total
-                const precioM2 = {{ $datosFraccionamiento['precio_metro_cuadrado'] ?? 0 }};
-                const area = lote.area_total || 0;
-                const totalCost = precioM2 * area;
-                
-                document.getElementById('totalCost').textContent = `$${totalCost.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})} MXN`;
-                
-                // Mostrar sección de detalles
-                lotDetails.style.display = 'block';
-            } else {
-                throw new Error(data.message || 'Lote no encontrado');
-            }
+                const data = await response.json();
 
-        } catch (error) {
-            console.error('Error en cálculo:', error);
-            
-            if (error.name === 'AbortError') {
-                lotError.textContent = 'La solicitud tardó demasiado tiempo. Intente nuevamente.';
-            } else if (error.message.includes('JSON')) {
-                lotError.textContent = 'Error en la respuesta del servidor.';
-            } else {
-                lotError.textContent = error.message || 'Error al calcular el costo del lote.';
+                if (!response.ok) {
+                    throw new Error(data.message || `Error ${response.status}`);
+                }
+
+                // En la función calculateBtn.addEventListener('click', ...)
+                if (data.success) {
+                    const lote = data.lote;
+                    console.log('Datos recibidos del backend:', lote); // Para depuración
+                    
+                    // Mostrar detalles del lote - CORREGIDO
+                    document.getElementById('lotId').textContent = lote.id || 'N/A';
+                    
+                    // Mostrar estatus con badge
+                    const status = lote.estatus || 'no disponible';
+                    const statusBadge = document.getElementById('statusBadge');
+                    statusBadge.textContent = formatStatus(status);
+                    statusBadge.className = 'status-badge ' + getStatusClass(status);
+                    
+                    document.getElementById('lotBlock').textContent = lote.manzana || 'N/A';
+                    document.getElementById('lotArea').textContent = `${lote.area_total ? lote.area_total.toLocaleString('es-MX') : '0'} m²`;
+                    
+                    // Mostrar medidas - CORREGIDO (usar lote.medidas)
+                    if (lote.medidas) {
+                        document.getElementById('lotNorth').textContent = `${lote.medidas.norte || '0'} m`;
+                        document.getElementById('lotSouth').textContent = `${lote.medidas.sur || '0'} m`;
+                        document.getElementById('lotEast').textContent = `${lote.medidas.oriente || '0'} m`;
+                        document.getElementById('lotWest').textContent = `${lote.medidas.poniente || '0'} m`;
+                    } else {
+                        document.getElementById('lotNorth').textContent = 'No disponible';
+                        document.getElementById('lotSouth').textContent = 'No disponible';
+                        document.getElementById('lotEast').textContent = 'No disponible';
+                        document.getElementById('lotWest').textContent = 'No disponible';
+                    }
+
+                    // Calcular costo total - USAR EL COSTO QUE YA CALCULÓ EL BACKEND
+                    const totalCost = lote.costo_total || 0;
+                    document.getElementById('totalCost').textContent = `$${totalCost.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})} MXN`;
+                    
+                    // Mostrar sección de detalles
+                    lotDetails.style.display = 'block';
+                } else {
+                    throw new Error(data.message || 'Lote no encontrado');
+                }
+
+            } catch (error) {
+                console.error('Error en cálculo:', error);
+                
+                if (error.name === 'AbortError') {
+                    lotError.textContent = 'La solicitud tardó demasiado tiempo. Intente nuevamente.';
+                } else if (error.message.includes('JSON')) {
+                    lotError.textContent = 'Error en la respuesta del servidor.';
+                } else {
+                    lotError.textContent = error.message || 'Error al calcular el costo del lote.';
+                }
+                
+                lotError.style.display = 'block';
+                lotDetails.style.display = 'none';
+            } finally {
+                // Restaurar botón
+                calculateBtn.innerHTML = '<i class="fas fa-calculator"></i> Calcular';
+                calculateBtn.disabled = false;
             }
-            
-            lotError.style.display = 'block';
-            lotDetails.style.display = 'none';
-        } finally {
-            // Restaurar botón
-            calculateBtn.innerHTML = '<i class="fas fa-calculator"></i> Calcular';
-            calculateBtn.disabled = false;
-        }
-    });
-    // Resto del código JavaScript para el envío de formularios...
-    // (mantener el código existente para el envío de formularios)
-</script>
+        });
+
+        // Resto del código JavaScript para el envío de formularios...
+        // (mantener el código existente para el envío de formularios)
+    </script>
 @endsection

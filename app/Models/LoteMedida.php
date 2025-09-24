@@ -10,6 +10,8 @@ class LoteMedida extends Model
     use HasFactory;
     protected $table = 'lote_medidas';
     protected $primaryKey = 'id_medidas';
+    public $incrementing = true; // este sí parece entero
+    protected $keyType = 'int';
 
     protected $fillable = [
         'manzana',

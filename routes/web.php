@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Asesor\ApartadoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Asesor\InicioController;
@@ -26,12 +27,11 @@ Route::middleware('auth')->group(function () {
     })->name('cobranza.dashboard');
 
     Route::get('/asesor/inicio', [InicioController::class, 'index'])->name('asesor.dashboard');
-
+    Route::get('/asesor/apartados', [ApartadoController::class, 'index'])->name('asesor.apartados');
     // routes/web.php
     Route::get('/asesor/fraccionamiento/{id}', [FraccionamientoController::class, 'show'])->name('asesor.fraccionamiento.show');
     Route::get('/asesor/fraccionamiento/{idFraccionamiento}/descargar-plano/{idPlano}', [FraccionamientoController::class, 'downloadPlano'])->name('asesor.fraccionamiento.download-plano');
     Route::get('/asesor/fraccionamiento/{idFraccionamiento}/lote/{numeroLote}', [FraccionamientoController::class, 'getLoteDetails'])->name('asesor.fraccionamiento.lote.details');
-    Route::get('/asesor/perfil', function () {
-        return view('asesor.perfil');
-    })->name('asesor.perfil');
+    
+    Route::get('/asesor/perfil', function () { return view('asesor.perfil'); })->name('asesor.perfil');
 });

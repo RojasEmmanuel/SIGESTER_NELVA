@@ -11,9 +11,12 @@ class Lote extends Model
     
     protected $table = 'lotes';
     protected $primaryKey = 'id_lote';
+    public $incrementing = false; // si tu id_lote es string (ej. OCEANICA-1-1)
+    protected $keyType = 'string'; // igual si es string
 
+    // ✅ CORREGIDO: Usar el nombre real de la columna en la BD
     protected $fillable = [
-        'numero_lote',
+        'numeroLote',  // ← CAMBIAR de 'numero_lote' a 'numeroLote'
         'estatus',
         'id_fraccionamiento',
     ];
@@ -29,8 +32,10 @@ class Lote extends Model
     }
 
     // Relación con LoteMedida (uno a uno)
+    
     public function loteMedida()
     {
         return $this->hasOne(LoteMedida::class, 'id_lote', 'id_lote');
     }
+
 }
