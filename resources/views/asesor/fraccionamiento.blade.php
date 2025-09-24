@@ -3,7 +3,7 @@
 @section('title', 'Detalles del Fraccionamiento')
 
 @push('styles')
-<link href="{{ asset('css/fraccionamiento.css') }}" rel="stylesheet">
+<link href="{{ asset('css/fraccionamientoAsesor.css') }}" rel="stylesheet">
 @endpush
 
 @section('content')
@@ -65,11 +65,11 @@
                 <i class="fas fa-handshake"></i> Apartar Lote
             </button>
             <button class="btn btn-outline btn-lg" id="openCalculationModal">
-                <i class="fas fa-calculator"></i> Calcular Costo
+                <i class="fas fa-calculator"></i> Consultar Lote
             </button>
         </div>
 
-        <!-- Development Plan -->
+         {{-- Development Plan --}}
         @if($planos->count() > 0)
         <div class="development-plan">
             <h3 class="info-title">
@@ -81,18 +81,29 @@
                 <button class="fullscreen-btn" id="fullscreenBtn">
                     <i class="fas fa-expand"></i> Pantalla Completa
                 </button>
-                
-                <!-- Imagen del plano -->
-                <img src="{{ asset('storage/' . $planos->first()['plano_path']) }}" alt="Plano del fraccionamiento {{ $datosFraccionamiento['nombre'] }}" class="plan-image" id="planImage">
+
+                {{-- Contenedor del mapa de Mapbox --}}
+                <div id="mapPlano" style="width: 100%; height: 500px; border-radius: 12px;"></div>
             </div>
-            
-            <div class="plan-actions">
-                <a href="{{ route('asesor.fraccionamiento.download-plano', ['idFraccionamiento' => $datosFraccionamiento['id'], 'idPlano' => $planos->first()['id']]) }}" class="btn btn-outline">
-                    <i class="fas fa-download"></i> Descargar Plano
-                </a>
+
+            <div class="plan-actions mt-3">
+                <h5><i class="fas fa-file-download"></i> Planos disponibles:</h5>
+                @foreach($planos as $plano)
+                    {{-- Si $planos es una colección de arrays (map), usa así: --}}
+                    <a href="{{ route('asesor.fraccionamiento.download-plano', [
+                        'idFraccionamiento' => $datosFraccionamiento['id'],
+                        'idPlano' => $plano['id']
+                    ]) }}"
+                    class="btn btn-outline m-1" target="_blank">
+                    <i class="fas fa-download"></i> {{ $plano['nombre'] }}
+                    </a>
+
+                @endforeach
             </div>
         </div>
         @endif
+
+        
 
         <!-- Development Info -->
         <div class="development-info">
@@ -185,7 +196,7 @@
         @endif
     </div>
 
-    <!-- Image Viewer Modal -->
+     <!-- Image Viewer Modal -->
     <div class="image-viewer-modal" id="imageViewerModal">
         <span class="close-viewer" id="closeViewer">&times;</span>
         <div class="image-viewer-content">
@@ -194,6 +205,7 @@
     </div>
 
     <!-- Modal de Apartado -->
+     <!-- Modal de Apartado -->
     <div class="modal-fraccionamiento" id="reservationModal">
         <div class="modal-content-fraccionamiento">
             <button class="close-modal-fraccionamiento" id="closeModal">&times;</button>
@@ -306,7 +318,7 @@
             </div>
         </div>
     </div>
-
+    <!-- Modal de Cálculo de Costo Mejorado -->
     <!-- Modal de Cálculo de Costo Mejorado -->
     <div class="modal-fraccionamiento" id="calculationModal">
         <div class="modal-content-fraccionamiento">
@@ -326,69 +338,68 @@
                     </button>
                 </div>
                 
-                <div id="lotDetails" style="display: none;">
-                    <div class="info-section">
+                <div id="lotDetails" class="lot-details-container" style="display: none;">
+                    <div class="lot-details-content">
                         <h3 class="info-title">
                             <i class="fas fa-info-circle"></i>
                             <span>Detalles del Lote</span>
                         </h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <div class="info-label">ID del Lote</div>
-                                <div class="info-value" id="lotId">-</div>
+                        <div class="lot-details-grid">
+                            <div class="lot-detail-item">
+                                <div class="lot-detail-label">ID del Lote</div>
+                                <div class="lot-detail-value" id="lotId">-</div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-label">Estatus</div>
-                                <div class="info-value" id="lotStatus">
+                            <div class="lot-detail-item">
+                                <div class="lot-detail-label">Estatus</div>
+                                <div class="lot-detail-value" id="lotStatus">
                                     <span class="status-badge" id="statusBadge">-</span>
                                 </div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-label">Manzana</div>
-                                <div class="info-value" id="lotBlock">-</div>
+                            <div class="lot-detail-item">
+                                <div class="lot-detail-label">Manzana</div>
+                                <div class="lot-detail-value" id="lotBlock">-</div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-label">Área total</div>
-                                <div class="info-value" id="lotArea">- m²</div>
+                            <div class="lot-detail-item">
+                                <div class="lot-detail-label">Área total</div>
+                                <div class="lot-detail-value" id="lotArea">- m²</div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-label">Norte</div>
-                                <div class="info-value" id="lotNorth">- m</div>
+                            <div class="lot-detail-item">
+                                <div class="lot-detail-label">Norte</div>
+                                <div class="lot-detail-value" id="lotNorth">- m</div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-label">Sur</div>
-                                <div class="info-value" id="lotSouth">- m</div>
+                            <div class="lot-detail-item">
+                                <div class="lot-detail-label">Sur</div>
+                                <div class="lot-detail-value" id="lotSouth">- m</div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-label">Oriente</div>
-                                <div class="info-value" id="lotEast">- m</div>
+                            <div class="lot-detail-item">
+                                <div class="lot-detail-label">Oriente</div>
+                                <div class="lot-detail-value" id="lotEast">- m</div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-label">Poniente</div>
-                                <div class="info-value" id="lotWest">- m</div>
+                            <div class="lot-detail-item">
+                                <div class="lot-detail-label">Poniente</div>
+                                <div class="lot-detail-value" id="lotWest">- m</div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="info-section">
+                    <div class="calculation-result">
                         <h3 class="info-title">
                             <i class="fas fa-dollar-sign"></i>
                             <span>Cálculo de Costo</span>
                         </h3>
-                        <div class="info-item">
-                            <div class="info-label">Precio por m²</div>
-                            <div class="info-value">${{ number_format($datosFraccionamiento['precio_metro_cuadrado'] ?? 0, 2) }} MXN</div>
+                        <div class="calculation-item">
+                            <div class="calculation-label">Precio por m²</div>
+                            <div class="calculation-value">${{ number_format($datosFraccionamiento['precio_metro_cuadrado'] ?? 0, 2) }} MXN</div>
                         </div>
-                        <div class="info-item">
-                            <div class="info-label">Costo total</div>
-                            <div class="info-value highlight" id="totalCost">$0 MXN</div>
+                        <div class="calculation-item highlight">
+                            <div class="calculation-label">Costo total</div>
+                            <div class="calculation-value" id="totalCost">$0 MXN</div>
                         </div>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-
     <style>
         /* Estilos para el badge de estatus */
         .status-badge {
@@ -444,8 +455,8 @@
         }
     </style>
 
-    <script>
-        // Modal de apartado
+   <script>
+     // Modal de apartado
         const reservationModal = document.getElementById('reservationModal');
         const closeModal = document.getElementById('closeModal');
         const openReservationModal = document.getElementById('openReservationModal');
@@ -676,12 +687,11 @@
                     throw new Error(data.message || `Error ${response.status}`);
                 }
 
-                // En la función calculateBtn.addEventListener('click', ...)
                 if (data.success) {
                     const lote = data.lote;
-                    console.log('Datos recibidos del backend:', lote); // Para depuración
+                    console.log('Datos recibidos del backend:', lote);
                     
-                    // Mostrar detalles del lote - CORREGIDO
+                    // Mostrar detalles del lote
                     document.getElementById('lotId').textContent = lote.id || 'N/A';
                     
                     // Mostrar estatus con badge
@@ -693,7 +703,7 @@
                     document.getElementById('lotBlock').textContent = lote.manzana || 'N/A';
                     document.getElementById('lotArea').textContent = `${lote.area_total ? lote.area_total.toLocaleString('es-MX') : '0'} m²`;
                     
-                    // Mostrar medidas - CORREGIDO (usar lote.medidas)
+                    // Mostrar medidas
                     if (lote.medidas) {
                         document.getElementById('lotNorth').textContent = `${lote.medidas.norte || '0'} m`;
                         document.getElementById('lotSouth').textContent = `${lote.medidas.sur || '0'} m`;
@@ -706,7 +716,7 @@
                         document.getElementById('lotWest').textContent = 'No disponible';
                     }
 
-                    // Calcular costo total - USAR EL COSTO QUE YA CALCULÓ EL BACKEND
+                    // Calcular costo total
                     const totalCost = lote.costo_total || 0;
                     document.getElementById('totalCost').textContent = `$${totalCost.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})} MXN`;
                     
@@ -736,7 +746,113 @@
             }
         });
 
-        // Resto del código JavaScript para el envío de formularios...
-        // (mantener el código existente para el envío de formularios)
-    </script>
+        // Lógica para el envío del formulario de apartado
+        reservationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const reservationType = document.querySelector('input[name="reservationType"]:checked').value;
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const lotNumbers = Array.from(document.querySelectorAll('.lot-number'))
+                .map(input => input.value.trim())
+                .filter(value => value !== '');
+            
+            // Validaciones básicas
+            if (!firstName || !lastName) {
+                alert('Por favor complete todos los campos requeridos');
+                return;
+            }
+            
+            if (lotNumbers.length === 0) {
+                alert('Por favor ingrese al menos un número de lote');
+                return;
+            }
+            
+            // Generar número de referencia aleatorio
+            const randomRef = Math.floor(1000 + Math.random() * 9000);
+            
+            // Mostrar el recibo correspondiente
+            if (reservationType === 'verbal') {
+                // Apartado de palabra
+                verbalName.textContent = `${firstName} ${lastName}`;
+                verbalLots.textContent = lotNumbers.join(', ');
+                
+                // Calcular fecha límite (2 días desde ahora)
+                const deadline = new Date();
+                deadline.setDate(deadline.getDate() + 2);
+                deadlineDate.textContent = deadline.toLocaleString('es-MX', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                // Configurar WhatsApp para apartado verbal
+                const verbalMessage = `Hola ${firstName}, tu apartado de palabra para el lote(s) ${lotNumbers.join(', ')} en ${$datosFraccionamiento['nombre']} ha sido registrado. Tienes hasta el ${deadline.toLocaleDateString('es-MX')} para confirmar.`;
+                verbalWhatsappShare.href = `https://wa.me/?text=${encodeURIComponent(verbalMessage)}`;
+                
+                // Mostrar recibo verbal
+                reservationForm.style.display = 'none';
+                verbalReceipt.style.display = 'block';
+                
+            } else {
+                // Apartado con depósito
+                const amount = document.getElementById('amount').value;
+                
+                if (!amount || amount < 1000) {
+                    alert('Por favor ingrese un monto válido (mínimo $1,000 MXN)');
+                    return;
+                }
+                
+                depositName.textContent = `${firstName} ${lastName}`;
+                depositLots.textContent = lotNumbers.join(', ');
+                depositAmount.textContent = parseFloat(amount).toLocaleString('es-MX', {minimumFractionDigits: 2});
+                referenceNumber.textContent = randomRef;
+                
+                // Configurar WhatsApp para apartado con depósito
+                const depositMessage = `Hola ${firstName}, para apartar el lote(s) ${lotNumbers.join(', ')} en ${$datosFraccionamiento['nombre']} realiza un depósito de $${amount} MXN a la cuenta BBVA. Referencia: ${substr($datosFraccionamiento['nombre'], 0, 3)}-${randomRef}`;
+                whatsappShare.href = `https://wa.me/?text=${encodeURIComponent(depositMessage)}`;
+                
+                // Mostrar recibo de depósito
+                reservationForm.style.display = 'none';
+                depositReceipt.style.display = 'block';
+            }
+        });
+
+        // Cerrar recibo verbal
+        closeAfterVerbal.addEventListener('click', function() {
+            reservationModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetReservationForm();
+            
+            // Aquí podrías agregar una llamada AJAX para guardar el apartado en la base de datos
+            // saveReservationToDatabase();
+        });
+
+        // Función para guardar el apartado en la base de datos (ejemplo)
+        async function saveReservationToDatabase() {
+            try {
+                const response = await fetch('/asesor/apartado/guardar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        fraccionamiento_id: {{ $datosFraccionamiento['id'] }},
+                        // ... otros datos del formulario
+                    })
+                });
+                
+                if (response.ok) {
+                    console.log('Apartado guardado exitosamente');
+                }
+            } catch (error) {
+                console.error('Error al guardar el apartado:', error);
+            }
+        }
+    
+   </script>
 @endsection

@@ -64,7 +64,7 @@ class FraccionamientoController extends Controller
                     'tipo' => $amenidad->tipo,
                 ];
             });
-
+            
             // Obtener estadísticas de lotes (sin medidas por ahora)
             $totalLotes = $fraccionamiento->lotes->count();
             $lotesDisponibles = $fraccionamiento->lotes->where('estatus', 'disponible')->count();
@@ -180,25 +180,23 @@ class FraccionamientoController extends Controller
         }
     }
 
-
-
-    public function downloadPlano($idFraccionamiento, $idPlano)
+    public function downloadPlano($id, $planoId)
     {
-        try {
-            $plano = PlanoFraccionamiento::where('id_plano', $idPlano)
-                                        ->where('id_fraccionamiento', $idFraccionamiento)
-                                        ->firstOrFail();
+        // Buscar el plano en la base de datos
+        $plano = PlanoFraccionamiento::where('id_fraccionamiento', $id)
+                    ->where('id_plano', $planoId)
+                    ->firstOrFail();
 
-            $filePath = storage_path('app/' . $plano->plano_path);
-            
-            if (!file_exists($filePath)) {
-                abort(404, 'Archivo no encontrado');
-            }
+        // Ruta correcta al archivo dentro de storage/app/public/planos/
+        $ruta = storage_path('app\public\planos\'' . $plano->archivo);
 
-            return response()->download($filePath, $plano->nombre . '.pdf');
-
-        } catch (\Exception $e) {
-            abort(404, 'Plano no encontrado');
+        // Verificar que el archivo exista
+        if (!file_exists($ruta)) {
+            abort(404, 'El archivo no existe.');
         }
+
+        // Descargar el archivo con su nombre original
+        return response()->download($ruta, $plano->archivo);
     }
+
 }
