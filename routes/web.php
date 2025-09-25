@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\Asesor\ApartadoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Asesor\ApartadoController;
 use App\Http\Controllers\Asesor\InicioController;
 use App\Http\Controllers\Asesor\FraccionamientoController;
 
@@ -27,14 +27,25 @@ Route::middleware('auth')->group(function () {
     })->name('cobranza.dashboard');
 
     Route::get('/asesor/inicio', [InicioController::class, 'index'])->name('asesor.dashboard');
-    Route::get('/asesor/apartados', [ApartadoController::class, 'index'])->name('asesor.apartados');
-    // routes/web.php
+
+    // Rutas de fraccionamiento
     Route::get('/asesor/fraccionamiento/{id}', [FraccionamientoController::class, 'show'])->name('asesor.fraccionamiento.show');
     Route::get('/asesor/fraccionamiento/{idFraccionamiento}/descargar-plano/{idPlano}', [FraccionamientoController::class, 'downloadPlano'])->name('asesor.fraccionamiento.download-plano');
     Route::get('/asesor/fraccionamiento/{idFraccionamiento}/lote/{numeroLote}', [FraccionamientoController::class, 'getLoteDetails'])->name('asesor.fraccionamiento.lote.details');
     Route::get('/asesor/fraccionamiento/{id}/descargar-plano/{planoId}', [FraccionamientoController::class, 'descargarPlano'])
     ->name('fraccionamiento.descargarPlano');
 
+
+    // Lista de apartados
+    Route::get('/asesor/apartados', [ApartadoController::class, 'index'])->name('asesor.apartados.index');
+    // Obtener detalles vía AJAX
+    Route::get('/asesor/apartados/{id}', [ApartadoController::class, 'show'])->name('asesor.apartados.show');
+    // (opcional) Estadísticas si las usas
+    Route::get('/asesor/apartados/estadisticas', [ApartadoController::class, 'estadisticas'])->name('asesor.apartados.estadisticas');
+
+
     
-    Route::get('/asesor/perfil', function () { return view('asesor.perfil'); })->name('asesor.perfil');
+    Route::get('/asesor/perfil', function () { 
+        return view('asesor.perfil'); 
+    })->name('asesor.perfil');
 });

@@ -11,9 +11,8 @@
     <div class="container"> 
         <h1 class="page-title">
             <i class="fas fa-map-marked-alt"></i>
-            <span>Bienvenido de nuevo</span>
+            <span>Bienvenido de nuevo, {{ $usuario->nombre }}</span>
         </h1>
-
         <!-- Stats Overview -->
         <div class="stats-container">
             <div class="stat-card total">

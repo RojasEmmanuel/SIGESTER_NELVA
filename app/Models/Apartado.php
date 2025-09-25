@@ -10,7 +10,6 @@ class Apartado extends Model
     use HasFactory;
 
     protected $table = 'apartados';
-
     protected $primaryKey = 'id_apartado';
 
     protected $fillable = [
@@ -30,5 +29,16 @@ class Apartado extends Model
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'id_usuario', 'id_usuario');
+    }
+
+    // AGREGAR ESTAS RELACIONES:
+    public function deposito()
+    {
+        return $this->hasOne(ApartadoDeposito::class, 'id_apartado', 'id_apartado');
+    }
+
+    public function lotesApartados()
+    {
+        return $this->hasMany(LoteApartado::class, 'id_apartado', 'id_apartado');
     }
 }

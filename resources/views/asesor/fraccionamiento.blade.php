@@ -4,6 +4,7 @@
 
 @push('styles')
 <link href="{{ asset('css/fraccionamientoAsesor.css') }}" rel="stylesheet">
+<link href="{{ asset('css/interactivo.css') }}" rel="stylesheet">
 @endpush
 
 @section('content')
@@ -69,12 +70,13 @@
             </button>
         </div>
 
-         {{-- Development Plan --}}
+        
+        {{-- Development Plan --}}
         @if($planos->count() > 0)
         <div class="development-plan">
             <h3 class="info-title">
                 <i class="fas fa-map"></i>
-                <span>Plano del Fraccionamiento</span>
+                <span>Plano Interactivo del Fraccionamiento</span>
             </h3>
             
             <div class="plan-container" id="planContainer">
@@ -83,13 +85,70 @@
                 </button>
 
                 {{-- Contenedor del mapa de Mapbox --}}
-                <div id="mapPlano" style="width: 100%; height: 500px; border-radius: 12px;"></div>
+                <div id="mapPlano" style="width: 100%; height: 600px; border-radius: 12px;"></div>
+            </div>
+
+            <!-- Controles del Mapa -->
+            <div class="map-controls-overlay">
+                <div class="control-panel-map">
+                    <div class="control-section">
+                        <div class="control-title"><i class="fas fa-layer-group"></i> Estilo del Mapa</div>
+                        <div class="style-buttons">
+                            <button class="style-btn active" data-style="satellite-streets">
+                                <i class="fas fa-satellite"></i> Satélite
+                            </button>
+                            <button class="style-btn" data-style="outdoors">
+                                <i class="fas fa-mountain"></i> Relieve
+                            </button>
+                            <button class="style-btn" data-style="streets">
+                                <i class="fas fa-road"></i> Calles
+                            </button>
+                            <button class="style-btn" data-style="light">
+                                <i class="fas fa-map"></i> Light
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <div class="control-title"><i class="fas fa-filter"></i> Filtros</div>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">
+                                <div class="color-indicator" style="background: conic-gradient(#16a34a 0% 33%, #dc2626 33% 66%, #ea580c 66% 100%);"></div>
+                                Todos los lotes
+                            </button>
+                            <button class="filter-btn" data-filter="disponible">
+                                <div class="color-indicator disponible-indicator"></div>
+                                Disponibles
+                            </button>
+                            <button class="filter-btn" data-filter="vendido">
+                                <div class="color-indicator vendido-indicator"></div>
+                                Vendidos
+                            </button>
+                            <button class="filter-btn" data-filter="apartado">
+                                <div class="color-indicator apartado-indicator"></div>
+                                Apartados
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel de información del lote -->
+                <div class="info-panel-map hidden" id="infoPanelMap">
+                    <div class="info-header">
+                        <div class="info-title">Información del Lote</div>
+                        <button class="info-close" id="infoCloseMap">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="lote-info-content" id="loteInfoContent">
+                        <!-- La información del lote se cargará aquí dinámicamente -->
+                    </div>
+                </div>
             </div>
 
             <div class="plan-actions mt-3">
                 <h5><i class="fas fa-file-download"></i> Planos disponibles:</h5>
                 @foreach($planos as $plano)
-                    {{-- Si $planos es una colección de arrays (map), usa así: --}}
                     <a href="{{ route('asesor.fraccionamiento.download-plano', [
                         'idFraccionamiento' => $datosFraccionamiento['id'],
                         'idPlano' => $plano['id']
@@ -97,12 +156,12 @@
                     class="btn btn-outline m-1" target="_blank">
                     <i class="fas fa-download"></i> {{ $plano['nombre'] }}
                     </a>
-
                 @endforeach
             </div>
         </div>
         @endif
-
+         {{-- Development Plan --}}
+        
         
 
         <!-- Development Info -->
@@ -399,62 +458,11 @@
                 </div>
             </form>
         </div>
+
+
+        
     </div>
-    <style>
-        /* Estilos para el badge de estatus */
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .status-disponible {
-            background-color: #e8f5e8;
-            color: #2e7d32;
-        }
-        
-        .status-apartado {
-            background-color: #fff3e0;
-            color: #ef6c00;
-        }
-        
-        .status-vendido {
-            background-color: #ffebee;
-            color: #c62828;
-        }
-        
-        .status-no-disponible {
-            background-color: #f5f5f5;
-            color: #757575;
-        }
-
-        /* Estilos para el mapa */
-        .map-container {
-            width: 100%;
-            height: 400px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-top: 1rem;
-        }
-
-        .map-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .development-map {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-
+    
    <script>
      // Modal de apartado
         const reservationModal = document.getElementById('reservationModal');
@@ -853,6 +861,359 @@
                 console.error('Error al guardar el apartado:', error);
             }
         }
-    
+        // Mapa Interactivo de Lotes
+        // Mapa Interactivo de Lotes
+        document.addEventListener('DOMContentLoaded', function() {
+            const mapContainer = document.getElementById('mapPlano');
+            if (!mapContainer) return;
+
+            // Token de Mapbox (debes configurar esto en tu .env)
+            mapboxgl.accessToken = 'pk.eyJ1Ijoicm9qYXNkZXYiLCJhIjoiY21leDF4N2JtMTI0NTJrcHlsdjBiN2Y3YiJ9.RB87H34djrYH3WrRa-12Pg';
+
+            // Estilos de mapa disponibles
+            const mapStyles = {
+                'satellite-streets': 'mapbox://styles/mapbox/satellite-streets-v12',
+                'outdoors': 'mapbox://styles/mapbox/outdoors-v12',
+                'streets': 'mapbox://styles/mapbox/streets-v12',
+                'light': 'mapbox://styles/mapbox/light-v11'
+            };
+
+            // Inicializar el mapa
+            const map = new mapboxgl.Map({
+                container: 'mapPlano',
+                style: mapStyles['satellite-streets'],
+                center: [-96.5, 15.7], // Coordenadas por defecto (ajustar según tu fraccionamiento)
+                zoom: 14,
+                pitch: 45,
+                bearing: -17,
+                antialias: true
+            });
+
+            // Variables globales
+            let currentFilter = 'all';
+            let lotesSource = null;
+            let markers = [];
+
+            // Cuando el mapa carga
+            map.on('load', () => {
+                initMapControls();
+                loadLotesData();
+                setupMapInteractions();
+            });
+
+            // Inicializar controles del mapa
+            function initMapControls() {
+                // Selector de estilos de mapa
+                document.querySelectorAll('.style-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        const style = this.getAttribute('data-style');
+                        map.setStyle(mapStyles[style]);
+                        
+                        map.once('style.load', () => {
+                            if (lotesSource) {
+                                addLotesToMap(lotesSource);
+                            }
+                        });
+                    });
+                });
+
+                // Filtros de estatus
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        currentFilter = this.getAttribute('data-filter');
+                        filterLotesByStatus(currentFilter);
+                    });
+                });
+
+                // Cerrar panel de información
+                document.getElementById('infoCloseMap').addEventListener('click', () => {
+                    document.getElementById('infoPanelMap').classList.add('hidden');
+                });
+
+                // Pantalla completa
+                document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreenMap);
+            }
+
+            // Cargar datos de lotes
+            function loadLotesData() {
+                // URL del GeoJSON (ajusta según tu estructura de Laravel)
+                // Reemplaza esta línea con la URL correcta, por ejemplo:
+                // const geojsonUrl = '/planos/123/lotes.geojson';
+                // O usa una variable global definida en tu plantilla Blade:
+                const geojsonUrl = window.geojsonUrl || '/planos/123/lotes.geojson';
+                
+                fetch(geojsonUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('No se pudo cargar el archivo GeoJSON');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        processLotesData(data);
+                    })
+                    .catch(error => {
+                        console.error('Error cargando datos:', error);
+                        // Usar datos de ejemplo como fallback
+                        processLotesData(generateSampleData());
+                    });
+            }
+
+            // Procesar datos de lotes
+            function processLotesData(data) {
+                lotesSource = data;
+                addLotesToMap(data);
+                
+                // Ajustar la vista a los límites de los datos
+                const bounds = new mapboxgl.LngLatBounds();
+                data.features.forEach(feature => {
+                    if (feature.geometry && feature.geometry.coordinates && feature.geometry.coordinates[0]) {
+                        feature.geometry.coordinates[0].forEach(coord => bounds.extend(coord));
+                    }
+                });
+                
+                if (!bounds.isEmpty()) {
+                    map.fitBounds(bounds, { padding: 50, duration: 1000 });
+                }
+            }
+
+            // Añadir lotes al mapa
+            function addLotesToMap(data) {
+                // Eliminar capas existentes si las hay
+                if (map.getSource('lotes')) {
+                    map.removeLayer('lotes-fill');
+                    map.removeLayer('lotes-borders');
+                    map.removeSource('lotes');
+                }
+
+                // Eliminar marcadores existentes
+                markers.forEach(marker => marker.remove());
+                markers = [];
+
+                // Añadir fuente de datos
+                map.addSource('lotes', {
+                    type: 'geojson',
+                    data: data
+                });
+
+                // Capa de relleno
+                map.addLayer({
+                    id: 'lotes-fill',
+                    type: 'fill',
+                    source: 'lotes',
+                    paint: {
+                        'fill-color': [
+                            'match',
+                            ['get', 'estatus'],
+                            'disponible', 'rgba(22, 163, 74, 0.5)',
+                            'vendido', 'rgba(220, 38, 38, 0.5)',
+                            'apartado', 'rgba(234, 88, 12, 0.5)',
+                            'rgba(37, 99, 235, 0.5)'
+                        ],
+                        'fill-opacity': 0.6
+                    }
+                });
+
+                // Capa de bordes
+                map.addLayer({
+                    id: 'lotes-borders',
+                    type: 'line',
+                    source: 'lotes',
+                    paint: {
+                        'line-color': [
+                            'match',
+                            ['get', 'estatus'],
+                            'disponible', '#15803d',
+                            'vendido', '#b91c1c',
+                            'apartado', '#c2410c',
+                            '#0ea5e9'
+                        ],
+                        'line-width': 2,
+                        'line-opacity': 0.9
+                    }
+                });
+
+                // Añadir marcadores para cada lote
+                data.features.forEach(function(feature) {
+                    const properties = feature.properties;
+                    const coordinates = getCentroid(feature.geometry.coordinates[0]);
+                    
+                    const el = document.createElement('div');
+                    el.className = 'lote-marker';
+                    
+                    let badgeClass = 'badge-disponible';
+                    switch(properties.estatus) {
+                        case 'vendido':
+                            badgeClass = 'badge-vendido';
+                            break;
+                        case 'apartado':
+                            badgeClass = 'badge-apartado';
+                            break;
+                    }
+                    
+                    el.innerHTML = `<div class="lote-badge ${badgeClass}">${properties.lote}</div>`;
+                    
+                    const marker = new mapboxgl.Marker(el)
+                        .setLngLat(coordinates)
+                        .addTo(map);
+                    
+                    // Evento click en el marcador
+                    marker.getElement().addEventListener('click', () => {
+                        showLoteInfo(properties);
+                    });
+                    
+                    markers.push(marker);
+                });
+            }
+
+            // Filtrar lotes por estatus
+            function filterLotesByStatus(status) {
+                if (!lotesSource) return;
+                
+                if (status === 'all') {
+                    map.setFilter('lotes-fill', null);
+                    map.setFilter('lotes-borders', null);
+                } else {
+                    map.setFilter('lotes-fill', ['==', ['get', 'estatus'], status]);
+                    map.setFilter('lotes-borders', ['==', ['get', 'estatus'], status]);
+                }
+                
+                // Ocultar/mostrar marcadores
+                markers.forEach(marker => {
+                    if (status === 'all') {
+                        marker.getElement().style.display = 'block';
+                    } else {
+                        const loteNum = marker.getElement().querySelector('.lote-badge').textContent;
+                        const feature = lotesSource.features.find(f => f.properties.lote === loteNum);
+                        if (feature && feature.properties.estatus === status) {
+                            marker.getElement().style.display = 'block';
+                        } else {
+                            marker.getElement().style.display = 'none';
+                        }
+                    }
+                });
+            }
+
+            // Configurar interacciones del mapa
+            function setupMapInteractions() {
+                // Popup al hacer clic en el polígono
+                map.on('click', 'lotes-fill', (e) => {
+                    const props = e.features[0].properties;
+                    showLoteInfo(props);
+                });
+
+                // Cambiar cursor al pasar sobre un lote
+                map.on('mouseenter', 'lotes-fill', () => { 
+                    map.getCanvas().style.cursor = 'pointer'; 
+                });
+                
+                map.on('mouseleave', 'lotes-fill', () => { 
+                    map.getCanvas().style.cursor = ''; 
+                });
+            }
+
+            // Mostrar información del lote
+            function showLoteInfo(props) {
+                const infoPanel = document.getElementById('infoPanelMap');
+                const content = document.getElementById('loteInfoContent');
+                
+                let statusClass = 'estatus-disponible';
+                switch(props.estatus) {
+                    case 'vendido':
+                        statusClass = 'estatus-vendido';
+                        break;
+                    case 'apartado':
+                        statusClass = 'estatus-apartado';
+                        break;
+                }
+                
+                content.innerHTML = `
+                    <div class="lote-numero">Lote ${props.lote}</div>
+                    <div class="lote-area">${props.area || props["Area (m²)"]} m²</div>
+                    <span class="estatus-badge ${statusClass}">${props.estatus.toUpperCase()}</span>
+                    
+                    <div class="lote-details">
+                        <div class="lote-detail-row">
+                            <span class="lote-detail-label">Manzana:</span>
+                            <span class="lote-detail-value">${props.manzana}</span>
+                        </div>
+                        <div class="lote-detail-row">
+                            <span class="lote-detail-label">Norte:</span>
+                            <span class="lote-detail-value">${props.norte || props["Norte:"]} m</span>
+                        </div>
+                        <div class="lote-detail-row">
+                            <span class="lote-detail-label">Sur:</span>
+                            <span class="lote-detail-value">${props.sur || props["Sur:"]} m</span>
+                        </div>
+                        <div class="lote-detail-row">
+                            <span class="lote-detail-label">Oriente:</span>
+                            <span class="lote-detail-value">${props.oriente || props["Oriente:"]} m</span>
+                        </div>
+                        <div class="lote-detail-row">
+                            <span class="lote-detail-label">Poniente:</span>
+                            <span class="lote-detail-value">${props.poniente || props["Poniente:"]} m</span>
+                        </div>
+                    </div>
+                `;
+                
+                infoPanel.classList.remove('hidden');
+            }
+
+            // Función para modo pantalla completa del mapa
+            function toggleFullscreenMap() {
+                const container = document.getElementById('planContainer');
+                if (!document.fullscreenElement) {
+                    container.requestFullscreen().catch(err => {
+                        console.error('Error al activar pantalla completa:', err);
+                    });
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+
+            // Calcular el centroide de un polígono
+            function getCentroid(coords) {
+                let x = 0, y = 0;
+                for (let i = 0; i < coords.length - 1; i++) {
+                    x += coords[i][0];
+                    y += coords[i][1];
+                }
+                return [x / (coords.length - 1), y / (coords.length - 1)];
+            }
+
+            // Generar datos de ejemplo (para testing)
+            function generateSampleData() {
+                return {
+                    type: "FeatureCollection",
+                    features: [
+                        {
+                            type: "Feature",
+                            properties: {
+                                lote: "1",
+                                manzana: "A",
+                                estatus: "disponible",
+                                area: "250",
+                                norte: "25",
+                                sur: "25",
+                                oriente: "10",
+                                poniente: "10"
+                            },
+                            geometry: {
+                                type: "Polygon",
+                                coordinates: [[[-96.51, 15.71], [-96.509, 15.71], [-96.509, 15.709], [-96.51, 15.709], [-96.51, 15.71]]]
+                            }
+                        }
+                        // Agregar más lotes según sea necesario...
+                    ]
+                };
+            }
+        });
    </script>
 @endsection
+

@@ -61,7 +61,7 @@
                     <i class="fas fa-home"></i>
                     <span>Inicio</span>
                 </a>
-                <a href="{{ url('asesor.apartados') }}" class="nav-item {{ Request::is('apartados') ? 'active' : '' }}">
+                <a href="{{ url('asesor/apartados') }}" class="nav-item {{ Request::is('apartados') ? 'active' : '' }}">
                     <i class="fas fa-calendar-check"></i>
                     <span>Apartados</span>
                 </a>
@@ -84,6 +84,8 @@
     <!-- Main Content -->
     <div class="container">
         @yield('content')
+        
+        @yield('scripts')
     </div>
 
     <!-- Modal de cierre de sesión -->

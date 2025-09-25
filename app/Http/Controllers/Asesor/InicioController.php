@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Fraccionamiento;
 use App\Models\Lote;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InicioController extends Controller
 {
@@ -41,7 +42,9 @@ class InicioController extends Controller
             'lotesApartados' => $lotesApartados,
             'lotesDisponibles' => $lotesDisponibles,
             'totalLotes' => $totalLotes,
-            'fraccionamientos' => $fraccionamientos
+            'fraccionamientos' => $fraccionamientos,
+
+            'usuario' => Auth::user() // <--- agregamos el usuario autenticado
         ]);
     }
 }
