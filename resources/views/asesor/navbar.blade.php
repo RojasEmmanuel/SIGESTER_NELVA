@@ -27,7 +27,7 @@
                 <a href="{{ url('asesor/ventas') }}" class="{{ Request::is('ventas') ? 'active' : '' }}">
                     <i class="fas fa-history"></i> Ventas
                 </a>
-               <a href="{{ route('asesor.perfil') }}" class="{{ Request::routeIs('asesor.perfil') ? 'active' : '' }}">
+               <a href="{{ route('asesor.perfil.index') }}" class="{{ Request::routeIs('asesor.perfil') ? 'active' : '' }}">
                     <i class="fas fa-user"></i> Perfil
                 </a>
                 <a href="#" id="logout-btn-desktop">
@@ -69,7 +69,7 @@
                     <i class="fas fa-history"></i>
                     <span>Ventas</span>
                 </a>
-                <a href="{{ route('asesor.perfil') }}" class="nav-item {{ Request::routeIs('asesor.perfil') ? 'active' : '' }}">
+                <a href="{{ route('asesor.perfil.index') }}" class="nav-item {{ Request::routeIs('asesor.perfil') ? 'active' : '' }}">
                     <i class="fas fa-user"></i>
                     <span>Perfil</span>
                 </a>

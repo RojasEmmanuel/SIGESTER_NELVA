@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Asesor\ApartadoController;
 use App\Http\Controllers\Asesor\InicioController;
 use App\Http\Controllers\Asesor\FraccionamientoController;
+use App\Http\Controllers\Asesor\PerfilController;
 
 // Rutas de autenticación
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -36,16 +37,15 @@ Route::middleware('auth')->group(function () {
     ->name('fraccionamiento.descargarPlano');
 
 
-    // Lista de apartados
     Route::get('/asesor/apartados', [ApartadoController::class, 'index'])->name('asesor.apartados.index');
-    // Obtener detalles vía AJAX
     Route::get('/asesor/apartados/{id}', [ApartadoController::class, 'show'])->name('asesor.apartados.show');
-    // (opcional) Estadísticas si las usas
     Route::get('/asesor/apartados/estadisticas', [ApartadoController::class, 'estadisticas'])->name('asesor.apartados.estadisticas');
 
 
     
-    Route::get('/asesor/perfil', function () { 
-        return view('asesor.perfil'); 
-    })->name('asesor.perfil');
+   
+    Route::get('/perfil', [PerfilController::class, 'index'])->name('asesor.perfil.index');
+    Route::post('/perfil', [PerfilController::class, 'update'])->name('asesor.perfil.update');
+
+
 });
