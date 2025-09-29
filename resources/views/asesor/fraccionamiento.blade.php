@@ -4,7 +4,7 @@
 
 @push('styles')
 <link href="{{ asset('css/fraccionamientoAsesor.css') }}" rel="stylesheet">
-<link href="{{ asset('css/interactivo.css') }}" rel="stylesheet">
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
 @endpush
 
 @section('content')
@@ -232,7 +232,7 @@
             </div>
         </div>
 
-        <!-- Development Map -->
+         <!-- Development Map -->
         @if(isset($datosFraccionamiento['ubicacionMaps']) && !empty($datosFraccionamiento['ubicacionMaps']))
         <div class="development-map">
             <h3 class="info-title">
@@ -254,6 +254,7 @@
         </div>
         @endif
     </div>
+   
 
      <!-- Image Viewer Modal -->
     <div class="image-viewer-modal" id="imageViewerModal">
@@ -458,220 +459,239 @@
                 </div>
             </form>
         </div>
-
-
-        
     </div>
     
    <script>
-     // Modal de apartado
-        const reservationModal = document.getElementById('reservationModal');
-        const closeModal = document.getElementById('closeModal');
-        const openReservationModal = document.getElementById('openReservationModal');
-        const reservationForm = document.getElementById('reservationForm');
-        const depositFields = document.getElementById('depositFields');
-        const verbalReceipt = document.getElementById('verbalReceipt');
-        const depositReceipt = document.getElementById('depositReceipt');
-        const verbalName = document.getElementById('verbalName');
-        const depositName = document.getElementById('depositName');
-        const verbalLots = document.getElementById('verbalLots');
-        const depositLots = document.getElementById('depositLots');
-        const depositAmount = document.getElementById('depositAmount');
-        const deadlineDate = document.getElementById('deadlineDate');
-        const referenceNumber = document.getElementById('referenceNumber');
-        const closeAfterVerbal = document.getElementById('closeAfterVerbal');
-        const whatsappShare = document.getElementById('whatsappShare');
-        const verbalWhatsappShare = document.getElementById('verbalWhatsappShare');
-        const lotList = document.getElementById('lotList');
-        const addLotBtn = document.getElementById('addLotBtn');
+document.addEventListener('DOMContentLoaded', function () {
+    /* ===========================
+       ELEMENTOS DOM (con guards)
+       =========================== */
+    const reservationModal = document.getElementById('reservationModal');
+    const closeModal = document.getElementById('closeModal');
+    const openReservationModal = document.getElementById('openReservationModal');
+    const reservationForm = document.getElementById('reservationForm');
+    const depositFields = document.getElementById('depositFields');
+    const verbalReceipt = document.getElementById('verbalReceipt');
+    const depositReceipt = document.getElementById('depositReceipt');
+    const verbalName = document.getElementById('verbalName');
+    const depositName = document.getElementById('depositName');
+    const verbalLots = document.getElementById('verbalLots');
+    const depositLots = document.getElementById('depositLots');
+    const depositAmount = document.getElementById('depositAmount');
+    const deadlineDate = document.getElementById('deadlineDate');
+    const referenceNumber = document.getElementById('referenceNumber');
+    const closeAfterVerbal = document.getElementById('closeAfterVerbal');
+    const whatsappShare = document.getElementById('whatsappShare');
+    const verbalWhatsappShare = document.getElementById('verbalWhatsappShare');
+    const lotList = document.getElementById('lotList');
+    const addLotBtn = document.getElementById('addLotBtn');
 
-        // Modal de cálculo
-        const calculationModal = document.getElementById('calculationModal');
-        const closeCalculationModal = document.getElementById('closeCalculationModal');
-        const openCalculationModal = document.getElementById('openCalculationModal');
-        const calculateBtn = document.getElementById('calculateBtn');
-        const lotDetails = document.getElementById('lotDetails');
+    const calculationModal = document.getElementById('calculationModal');
+    const closeCalculationModal = document.getElementById('closeCalculationModal');
+    const openCalculationModal = document.getElementById('openCalculationModal');
+    const calculateBtn = document.getElementById('calculateBtn');
+    const lotDetails = document.getElementById('lotDetails');
 
-        // Función para agregar nuevo campo de lote
-        function addLotField() {
-            const newLotItem = document.createElement('div');
-            newLotItem.className = 'lot-item';
-            newLotItem.innerHTML = `
-                <input type="text" class="form-control lot-number" required placeholder="Ej. 12, 5, etc.">
-                <button type="button" class="remove-lot">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            lotList.appendChild(newLotItem);
-            
-            // Agregar evento al botón de eliminar
-            const removeBtn = newLotItem.querySelector('.remove-lot');
-            removeBtn.addEventListener('click', function() {
+    
+
+    /* ===========================
+       UTIL / MAPA - STATUS MAPS
+       =========================== */
+    const STATUS_CLASS_MAP = {
+        'disponible': 'status-disponible',
+        'apartadoPalabra': 'status-apartado',
+        'apartadoVendido': 'status-apartado',
+        'vendido': 'status-vendido',
+        'no disponible': 'status-no-disponible'
+    };
+
+    const STATUS_LABEL_MAP = {
+        'disponible': 'Disponible',
+        'apartadoPalabra': 'Apartado (Palabra)',
+        'apartadoVendido': 'Apartado (Vendido)',
+        'vendido': 'Vendido',
+        'no disponible': 'No Disponible'
+    };
+
+    function getStatusClass(status) {
+        return STATUS_CLASS_MAP[status] || 'status-no-disponible';
+    }
+
+    function formatStatus(status) {
+        return STATUS_LABEL_MAP[status] || status || 'No Disponible';
+    }
+
+    /* ===========================
+       CAMPOS DINÁMICOS LOTES (add/remove)
+       =========================== */
+    function addLotField() {
+        if (!lotList) return;
+        const newLotItem = document.createElement('div');
+        newLotItem.className = 'lot-item';
+        newLotItem.innerHTML = `
+            <input type="text" class="form-control lot-number" required placeholder="Ej. 12, 5, etc.">
+            <button type="button" class="remove-lot">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        lotList.appendChild(newLotItem);
+
+        const removeBtn = newLotItem.querySelector('.remove-lot');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function () {
                 removeLotField(newLotItem);
             });
         }
+    }
 
-        // Función para eliminar campo de lote
-        function removeLotField(lotItem) {
-            if (lotList.children.length > 1) {
-                lotList.removeChild(lotItem);
-            } else {
-                alert('Debe especificar al menos un lote');
-            }
+    function removeLotField(lotItem) {
+        if (!lotList || !lotItem) return;
+        if (lotList.children.length > 1) {
+            lotList.removeChild(lotItem);
+        } else {
+            alert('Debe especificar al menos un lote');
         }
+    }
 
-        // Agregar evento al botón de agregar lote
-        addLotBtn.addEventListener('click', addLotField);
+    if (addLotBtn) addLotBtn.addEventListener('click', addLotField);
 
-        // Agregar eventos a los botones de eliminar existentes
-        document.querySelectorAll('.remove-lot').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const lotItem = this.closest('.lot-item');
-                removeLotField(lotItem);
-            });
+    // botones eliminar existentes
+    document.querySelectorAll('.remove-lot').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const lotItem = this.closest('.lot-item');
+            removeLotField(lotItem);
         });
+    });
 
-        // Abrir modal de apartado
-        openReservationModal.addEventListener('click', function() {
+    /* ===========================
+       MODALES: abrir/cerrar y reset
+       =========================== */
+    if (openReservationModal) {
+        openReservationModal.addEventListener('click', function () {
+            if (!reservationModal) return;
             reservationModal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         });
+    }
 
-        // Abrir modal de cálculo
-        openCalculationModal.addEventListener('click', function() {
+    if (openCalculationModal) {
+        openCalculationModal.addEventListener('click', function () {
+            if (!calculationModal) return;
             calculationModal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         });
+    }
 
-        // Cerrar modales
-        closeModal.addEventListener('click', function() {
+    if (closeModal) {
+        closeModal.addEventListener('click', function () {
+            if (!reservationModal) return;
             reservationModal.style.display = 'none';
             document.body.style.overflow = 'auto';
             resetReservationForm();
         });
+    }
 
-        closeCalculationModal.addEventListener('click', function() {
+    if (closeCalculationModal) {
+        closeCalculationModal.addEventListener('click', function () {
+            if (!calculationModal) return;
             calculationModal.style.display = 'none';
             document.body.style.overflow = 'auto';
             resetCalculationForm();
         });
+    }
 
-        // Cerrar al hacer clic fuera del modal
-        reservationModal.addEventListener('click', function(e) {
+    if (reservationModal) {
+        reservationModal.addEventListener('click', function (e) {
             if (e.target === reservationModal) {
                 reservationModal.style.display = 'none';
                 document.body.style.overflow = 'auto';
                 resetReservationForm();
             }
         });
+    }
 
-        calculationModal.addEventListener('click', function(e) {
+    if (calculationModal) {
+        calculationModal.addEventListener('click', function (e) {
             if (e.target === calculationModal) {
                 calculationModal.style.display = 'none';
                 document.body.style.overflow = 'auto';
                 resetCalculationForm();
             }
         });
+    }
 
-        // Cerrar con tecla ESC
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                reservationModal.style.display = 'none';
-                calculationModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-                resetReservationForm();
-                resetCalculationForm();
-            }
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            if (reservationModal) reservationModal.style.display = 'none';
+            if (calculationModal) calculationModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetReservationForm();
+            resetCalculationForm();
+        }
+    });
+
+    // Mostrar/ocultar campos de depósito
+    document.querySelectorAll('input[name="reservationType"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            if (depositFields) depositFields.style.display = this.value === 'deposit' ? 'block' : 'none';
         });
+    });
 
-        // Mostrar/ocultar campos de depósito según selección
-        document.querySelectorAll('input[name="reservationType"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                depositFields.style.display = this.value === 'deposit' ? 'block' : 'none';
-            });
-        });
+    function resetReservationForm() {
+        if (!reservationForm) return;
+        reservationForm.reset();
+        reservationForm.style.display = 'block';
+        if (verbalReceipt) verbalReceipt.style.display = 'none';
+        if (depositReceipt) depositReceipt.style.display = 'none';
+        if (depositFields) depositFields.style.display = 'none';
 
-        // Resetear formulario de apartado
-        function resetReservationForm() {
-            reservationForm.reset();
-            reservationForm.style.display = 'block';
-            verbalReceipt.style.display = 'none';
-            depositReceipt.style.display = 'none';
-            depositFields.style.display = 'none';
-            
-            // Mantener solo un campo de lote
+        // Mantener solo un campo de lote
+        if (lotList) {
             while (lotList.children.length > 1) {
                 lotList.removeChild(lotList.lastChild);
             }
-            // Limpiar el primer campo de lote
-            document.querySelector('.lot-number').value = '';
+            const first = document.querySelector('.lot-number');
+            if (first) first.value = '';
         }
+    }
 
-        // Resetear formulario de cálculo
-        function resetCalculationForm() {
-            document.getElementById('calculationForm').reset();
-            lotDetails.style.display = 'none';
-        }
+    function resetCalculationForm() {
+        const calcForm = document.getElementById('calculationForm');
+        if (calcForm) calcForm.reset();
+        if (lotDetails) lotDetails.style.display = 'none';
+    }
 
-        // Función para obtener la clase CSS según el estatus del lote
-        function getStatusClass(status) {
-            const statusMap = {
-                'disponible': 'status-disponible',
-                'apartadoPalabra': 'status-apartado',
-                'apartadoVendido': 'status-apartado', 
-                'vendido': 'status-vendido',
-                'no disponible': 'status-no-disponible'
-            };
-            
-            return statusMap[status] || 'status-no-disponible';
-        }
-
-        // Función para formatear el estatus del lote
-        function formatStatus(status) {
-            const statusMap = {
-                'disponible': 'Disponible',
-                'apartadoPalabra': 'Apartado (Palabra)',
-                'apartadoVendido': 'Apartado (Vendido)',
-                'vendido': 'Vendido',
-                'no disponible': 'No Disponible'
-            };
-            
-            return statusMap[status] || status;
-        }
-
-        // Función para calcular el costo del lote
-        calculateBtn.addEventListener('click', async function() {
-            const lotNumber = document.getElementById('lotNumber').value.trim();
+    /* ===========================
+       CÁLCULO DE COSTO (botón calcular)
+       =========================== */
+    if (calculateBtn) {
+        calculateBtn.addEventListener('click', async function () {
+            const lotNumberInput = document.getElementById('lotNumber');
             const lotError = document.getElementById('lotError');
-            
-            // Validación básica
+            if (!lotNumberInput) return;
+            const lotNumber = lotNumberInput.value.trim();
+
+            // validaciones
             if (!lotNumber) {
-                lotError.textContent = 'Por favor ingrese un número de lote';
-                lotError.style.display = 'block';
+                if (lotError) { lotError.textContent = 'Por favor ingrese un número de lote'; lotError.style.display = 'block'; }
                 return;
             }
-
-            // Validar que sea un número válido
             if (!/^\d+$/.test(lotNumber)) {
-                lotError.textContent = 'Por favor ingrese un número de lote válido';
-                lotError.style.display = 'block';
+                if (lotError) { lotError.textContent = 'Por favor ingrese un número de lote válido'; lotError.style.display = 'block'; }
                 return;
             }
 
             try {
-                // Mostrar loading
                 calculateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculando...';
                 calculateBtn.disabled = true;
-                lotError.style.display = 'none';
+                if (lotError) lotError.style.display = 'none';
 
                 const fraccionamientoId = {{ $datosFraccionamiento['id'] }};
                 const url = `/asesor/fraccionamiento/${fraccionamientoId}/lote/${encodeURIComponent(lotNumber)}`;
-                
                 console.log('Realizando petición a:', url);
 
-                // Hacer la petición al servidor con timeout
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
 
                 const response = await fetch(url, {
                     signal: controller.signal,
@@ -683,537 +703,538 @@
 
                 clearTimeout(timeoutId);
 
-                // Verificar si la respuesta es JSON
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
+                const contentType = response.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
                     throw new Error('Respuesta del servidor no es JSON');
                 }
 
                 const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || `Error ${response.status}`);
-                }
+                if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
 
                 if (data.success) {
-                    const lote = data.lote;
+                    const lote = data.lote || {};
                     console.log('Datos recibidos del backend:', lote);
-                    
-                    // Mostrar detalles del lote
-                    document.getElementById('lotId').textContent = lote.id || 'N/A';
-                    
-                    // Mostrar estatus con badge
+
+                    // Rellenar detalles
                     const status = lote.estatus || 'no disponible';
                     const statusBadge = document.getElementById('statusBadge');
-                    statusBadge.textContent = formatStatus(status);
-                    statusBadge.className = 'status-badge ' + getStatusClass(status);
-                    
-                    document.getElementById('lotBlock').textContent = lote.manzana || 'N/A';
-                    document.getElementById('lotArea').textContent = `${lote.area_total ? lote.area_total.toLocaleString('es-MX') : '0'} m²`;
-                    
-                    // Mostrar medidas
-                    if (lote.medidas) {
-                        document.getElementById('lotNorth').textContent = `${lote.medidas.norte || '0'} m`;
-                        document.getElementById('lotSouth').textContent = `${lote.medidas.sur || '0'} m`;
-                        document.getElementById('lotEast').textContent = `${lote.medidas.oriente || '0'} m`;
-                        document.getElementById('lotWest').textContent = `${lote.medidas.poniente || '0'} m`;
-                    } else {
-                        document.getElementById('lotNorth').textContent = 'No disponible';
-                        document.getElementById('lotSouth').textContent = 'No disponible';
-                        document.getElementById('lotEast').textContent = 'No disponible';
-                        document.getElementById('lotWest').textContent = 'No disponible';
+                    if (statusBadge) {
+                        statusBadge.textContent = formatStatus(status);
+                        statusBadge.className = 'status-badge ' + getStatusClass(status);
                     }
 
-                    // Calcular costo total
+                    const el = id => document.getElementById(id);
+                    if (el('lotId')) el('lotId').textContent = lote.id || 'N/A';
+                    if (el('lotBlock')) el('lotBlock').textContent = lote.manzana || 'N/A';
+                    if (el('lotArea')) el('lotArea').textContent = `${lote.area_total ? lote.area_total.toLocaleString('es-MX') : '0'} m²`;
+
+                    if (lote.medidas) {
+                        if (el('lotNorth')) el('lotNorth').textContent = `${lote.medidas.norte || '0'} m`;
+                        if (el('lotSouth')) el('lotSouth').textContent = `${lote.medidas.sur || '0'} m`;
+                        if (el('lotEast')) el('lotEast').textContent = `${lote.medidas.oriente || '0'} m`;
+                        if (el('lotWest')) el('lotWest').textContent = `${lote.medidas.poniente || '0'} m`;
+                    } else {
+                        if (el('lotNorth')) el('lotNorth').textContent = 'No disponible';
+                        if (el('lotSouth')) el('lotSouth').textContent = 'No disponible';
+                        if (el('lotEast')) el('lotEast').textContent = 'No disponible';
+                        if (el('lotWest')) el('lotWest').textContent = 'No disponible';
+                    }
+
                     const totalCost = lote.costo_total || 0;
-                    document.getElementById('totalCost').textContent = `$${totalCost.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})} MXN`;
-                    
-                    // Mostrar sección de detalles
-                    lotDetails.style.display = 'block';
+                    if (el('totalCost')) el('totalCost').textContent = `$${totalCost.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN`;
+
+                    if (lotDetails) lotDetails.style.display = 'block';
                 } else {
                     throw new Error(data.message || 'Lote no encontrado');
                 }
-
             } catch (error) {
                 console.error('Error en cálculo:', error);
-                
-                if (error.name === 'AbortError') {
-                    lotError.textContent = 'La solicitud tardó demasiado tiempo. Intente nuevamente.';
-                } else if (error.message.includes('JSON')) {
-                    lotError.textContent = 'Error en la respuesta del servidor.';
-                } else {
-                    lotError.textContent = error.message || 'Error al calcular el costo del lote.';
+                const lotError = document.getElementById('lotError');
+                if (lotError) {
+                    if (error.name === 'AbortError') {
+                        lotError.textContent = 'La solicitud tardó demasiado tiempo. Intente nuevamente.';
+                    } else if (error.message.includes('JSON')) {
+                        lotError.textContent = 'Error en la respuesta del servidor.';
+                    } else {
+                        lotError.textContent = error.message || 'Error al calcular el costo del lote.';
+                    }
+                    lotError.style.display = 'block';
                 }
-                
-                lotError.style.display = 'block';
-                lotDetails.style.display = 'none';
+                if (lotDetails) lotDetails.style.display = 'none';
             } finally {
-                // Restaurar botón
                 calculateBtn.innerHTML = '<i class="fas fa-calculator"></i> Calcular';
                 calculateBtn.disabled = false;
             }
         });
+    }
 
-        // Lógica para el envío del formulario de apartado
-        reservationForm.addEventListener('submit', function(e) {
+    /* ===========================
+       ENVÍO FORMULARIO APARTADO (UI only)
+       =========================== */
+    if (reservationForm) {
+        reservationForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
-            const reservationType = document.querySelector('input[name="reservationType"]:checked').value;
-            const firstName = document.getElementById('firstName').value.trim();
-            const lastName = document.getElementById('lastName').value.trim();
+
+            const reservationType = document.querySelector('input[name="reservationType"]:checked')?.value || 'verbal';
+            const firstName = (document.getElementById('firstName')?.value || '').trim();
+            const lastName = (document.getElementById('lastName')?.value || '').trim();
             const lotNumbers = Array.from(document.querySelectorAll('.lot-number'))
                 .map(input => input.value.trim())
-                .filter(value => value !== '');
-            
-            // Validaciones básicas
+                .filter(v => v !== '');
+
             if (!firstName || !lastName) {
                 alert('Por favor complete todos los campos requeridos');
                 return;
             }
-            
             if (lotNumbers.length === 0) {
                 alert('Por favor ingrese al menos un número de lote');
                 return;
             }
-            
-            // Generar número de referencia aleatorio
+
             const randomRef = Math.floor(1000 + Math.random() * 9000);
-            
-            // Mostrar el recibo correspondiente
+
             if (reservationType === 'verbal') {
-                // Apartado de palabra
-                verbalName.textContent = `${firstName} ${lastName}`;
-                verbalLots.textContent = lotNumbers.join(', ');
-                
-                // Calcular fecha límite (2 días desde ahora)
+                if (verbalName) verbalName.textContent = `${firstName} ${lastName}`;
+                if (verbalLots) verbalLots.textContent = lotNumbers.join(', ');
                 const deadline = new Date();
                 deadline.setDate(deadline.getDate() + 2);
-                deadlineDate.textContent = deadline.toLocaleString('es-MX', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
+                if (deadlineDate) deadlineDate.textContent = deadline.toLocaleString('es-MX', {
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
                 });
-                
-                // Configurar WhatsApp para apartado verbal
-                const verbalMessage = `Hola ${firstName}, tu apartado de palabra para el lote(s) ${lotNumbers.join(', ')} en ${$datosFraccionamiento['nombre']} ha sido registrado. Tienes hasta el ${deadline.toLocaleDateString('es-MX')} para confirmar.`;
-                verbalWhatsappShare.href = `https://wa.me/?text=${encodeURIComponent(verbalMessage)}`;
-                
-                // Mostrar recibo verbal
+
+                const verbalMessage = `Hola ${firstName}, tu apartado de palabra para el lote(s) ${lotNumbers.join(', ')} en {{ $datosFraccionamiento['nombre'] }} ha sido registrado. Tienes hasta el ${deadline.toLocaleDateString('es-MX')} para confirmar.`;
+                if (verbalWhatsappShare) verbalWhatsappShare.href = `https://wa.me/?text=${encodeURIComponent(verbalMessage)}`;
+
                 reservationForm.style.display = 'none';
-                verbalReceipt.style.display = 'block';
-                
+                if (verbalReceipt) verbalReceipt.style.display = 'block';
             } else {
-                // Apartado con depósito
-                const amount = document.getElementById('amount').value;
-                
+                const amount = document.getElementById('amount')?.value;
                 if (!amount || amount < 1000) {
                     alert('Por favor ingrese un monto válido (mínimo $1,000 MXN)');
                     return;
                 }
-                
-                depositName.textContent = `${firstName} ${lastName}`;
-                depositLots.textContent = lotNumbers.join(', ');
-                depositAmount.textContent = parseFloat(amount).toLocaleString('es-MX', {minimumFractionDigits: 2});
-                referenceNumber.textContent = randomRef;
-                
-                // Configurar WhatsApp para apartado con depósito
-                const depositMessage = `Hola ${firstName}, para apartar el lote(s) ${lotNumbers.join(', ')} en ${$datosFraccionamiento['nombre']} realiza un depósito de $${amount} MXN a la cuenta BBVA. Referencia: ${substr($datosFraccionamiento['nombre'], 0, 3)}-${randomRef}`;
-                whatsappShare.href = `https://wa.me/?text=${encodeURIComponent(depositMessage)}`;
-                
-                // Mostrar recibo de depósito
+                if (depositName) depositName.textContent = `${firstName} ${lastName}`;
+                if (depositLots) depositLots.textContent = lotNumbers.join(', ');
+                if (depositAmount) depositAmount.textContent = parseFloat(amount).toLocaleString('es-MX', { minimumFractionDigits: 2 });
+
+                if (referenceNumber) referenceNumber.textContent = randomRef;
+
+                const depositMessage = `Hola ${firstName}, para apartar el lote(s) ${lotNumbers.join(', ')} en {{ $datosFraccionamiento['nombre'] }} realiza un depósito de $${amount} MXN a la cuenta BBVA. Referencia: {{ substr($datosFraccionamiento['nombre'], 0, 3) }}-${randomRef}`;
+                if (whatsappShare) whatsappShare.href = `https://wa.me/?text=${encodeURIComponent(depositMessage)}`;
+
                 reservationForm.style.display = 'none';
-                depositReceipt.style.display = 'block';
+                if (depositReceipt) depositReceipt.style.display = 'block';
             }
         });
+    }
 
-        // Cerrar recibo verbal
-        closeAfterVerbal.addEventListener('click', function() {
-            reservationModal.style.display = 'none';
+    if (closeAfterVerbal) {
+        closeAfterVerbal.addEventListener('click', function () {
+            if (reservationModal) reservationModal.style.display = 'none';
             document.body.style.overflow = 'auto';
             resetReservationForm();
-            
-            // Aquí podrías agregar una llamada AJAX para guardar el apartado en la base de datos
-            // saveReservationToDatabase();
+            // Aquí podrías llamar a saveReservationToDatabase();
         });
+    }
 
-        // Función para guardar el apartado en la base de datos (ejemplo)
-        async function saveReservationToDatabase() {
-            try {
-                const response = await fetch('/asesor/apartado/guardar', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        fraccionamiento_id: {{ $datosFraccionamiento['id'] }},
-                        // ... otros datos del formulario
-                    })
-                });
-                
-                if (response.ok) {
-                    console.log('Apartado guardado exitosamente');
-                }
-            } catch (error) {
-                console.error('Error al guardar el apartado:', error);
-            }
+    /* ===========================
+       SAVE APARTADO (ejemplo AJAX con CSRF)
+       =========================== */
+    async function saveReservationToDatabase(payload = {}) {
+        try {
+            const response = await fetch('/asesor/apartado/guardar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(payload)
+            });
+            if (response.ok) console.log('Apartado guardado exitosamente');
+        } catch (error) {
+            console.error('Error al guardar el apartado:', error);
         }
-        // Mapa Interactivo de Lotes
-        // Mapa Interactivo de Lotes
-        document.addEventListener('DOMContentLoaded', function() {
-            const mapContainer = document.getElementById('mapPlano');
-            if (!mapContainer) return;
+    }
 
-            // Token de Mapbox (debes configurar esto en tu .env)
-            mapboxgl.accessToken = 'pk.eyJ1Ijoicm9qYXNkZXYiLCJhIjoiY21leDF4N2JtMTI0NTJrcHlsdjBiN2Y3YiJ9.RB87H34djrYH3WrRa-12Pg';
+    /* ===========================
+       MAPBOX: inicialización y carga de lotes
+       =========================== */
+    // Asegúrate de que las librerías Mapbox GL JS y su CSS estén incluidos en la vista.
+    try {
+        mapboxgl.accessToken = 'pk.eyJ1Ijoicm9qYXNkZXYiLCJhIjoiY21leDF4N2JtMTI0NTJrcHlsdjBiN2Y3YiJ9.RB87H34djrYH3WrRa-12Pg';
+    } catch (err) {
+        console.error('Mapbox no está disponible. Revisa que la librería esté incluida.', err);
+    }
 
-            // Estilos de mapa disponibles
-            const mapStyles = {
-                'satellite-streets': 'mapbox://styles/mapbox/satellite-streets-v12',
-                'outdoors': 'mapbox://styles/mapbox/outdoors-v12',
-                'streets': 'mapbox://styles/mapbox/streets-v12',
-                'light': 'mapbox://styles/mapbox/light-v11'
-            };
+    const mapStyles = {
+        'satellite-streets': 'mapbox://styles/mapbox/satellite-streets-v12',
+        'outdoors': 'mapbox://styles/mapbox/outdoors-v12',
+        'streets': 'mapbox://styles/mapbox/streets-v12',
+        'light': 'mapbox://styles/mapbox/light-v11'
+    };
 
-            // Inicializar el mapa
-            const map = new mapboxgl.Map({
-                container: 'mapPlano',
-                style: mapStyles['satellite-streets'],
-                center: [-96.5, 15.7], // Coordenadas por defecto (ajustar según tu fraccionamiento)
-                zoom: 14,
-                pitch: 45,
-                bearing: -17,
-                antialias: true
-            });
+    // Crear mapa solo si existe el contenedor
+    const mapContainer = document.getElementById('mapPlano');
+    let map = null;
+    if (mapContainer && typeof mapboxgl !== 'undefined') {
+        map = new mapboxgl.Map({
+            container: 'mapPlano',
+            style: mapStyles['satellite-streets'],
+            center: [-96.7779, 15.7345],
+            zoom: 17,
+            pitch: 45,
+            bearing: -17,
+            antialias: true
+        });
+    } else {
+        console.warn('Contenedor de mapa no encontrado (#mapPlano) o mapboxgl no disponible.');
+    }
 
-            // Variables globales
-            let currentFilter = 'all';
-            let lotesSource = null;
-            let markers = [];
+    let currentFilter = 'all';
+    let lotesData = null;
+    let pendingFilter = null; // si el usuario aplica filtro antes de que la capa exista
 
-            // Cuando el mapa carga
-            map.on('load', () => {
-                initMapControls();
-                loadLotesData();
-                setupMapInteractions();
-            });
+    if (map) {
+        map.on('load', () => {
+            console.log('Mapa cargado correctamente');
+            initMapControls();
+            loadLotesFromServer();
+        });
+    }
 
-            // Inicializar controles del mapa
-            function initMapControls() {
-                // Selector de estilos de mapa
-                document.querySelectorAll('.style-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
-                        this.classList.add('active');
-                        
-                        const style = this.getAttribute('data-style');
-                        map.setStyle(mapStyles[style]);
-                        
-                        map.once('style.load', () => {
-                            if (lotesSource) {
-                                addLotesToMap(lotesSource);
-                            }
-                        });
-                    });
-                });
+    async function loadLotesFromServer() {
+        try {
+            const fraccionamientoId = {{ $datosFraccionamiento['id'] }};
+            const response = await fetch(`/asesor/fraccionamiento/${fraccionamientoId}/lotes`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            console.log('Lotes cargados del servidor:', data);
 
-                // Filtros de estatus
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                        this.classList.add('active');
-                        
-                        currentFilter = this.getAttribute('data-filter');
-                        filterLotesByStatus(currentFilter);
-                    });
-                });
-
-                // Cerrar panel de información
-                document.getElementById('infoCloseMap').addEventListener('click', () => {
-                    document.getElementById('infoPanelMap').classList.add('hidden');
-                });
-
-                // Pantalla completa
-                document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreenMap);
+            if (data.success && data.lotes) {
+                processLotesData(data.lotes);
+            } else {
+                throw new Error(data.message || 'Error en los datos recibidos');
             }
+        } catch (error) {
+            console.error('Error cargando lotes:', error);
+            alert('Error al cargar los lotes: ' + (error.message || error));
+        }
+    }
 
-            // Cargar datos de lotes
-            function loadLotesData() {
-                // URL del GeoJSON (ajusta según tu estructura de Laravel)
-                // Reemplaza esta línea con la URL correcta, por ejemplo:
-                // const geojsonUrl = '/planos/123/lotes.geojson';
-                // O usa una variable global definida en tu plantilla Blade:
-                const geojsonUrl = window.geojsonUrl || '/planos/123/lotes.geojson';
-                
-                fetch(geojsonUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('No se pudo cargar el archivo GeoJSON');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        processLotesData(data);
-                    })
-                    .catch(error => {
-                        console.error('Error cargando datos:', error);
-                        // Usar datos de ejemplo como fallback
-                        processLotesData(generateSampleData());
-                    });
-            }
+    function processLotesData(lotes) {
+        const geojson = {
+            type: "FeatureCollection",
+            features: lotes.map(lote => ({
+                type: "Feature",
+                properties: {
+                    id: lote.id_lote,
+                    lote: lote.numeroLote,
+                    estatus: lote.estatus,
+                    manzana: lote.manzana || 'N/A',
+                    area: lote.area_total || 'N/A',
+                    norte: lote.medidas?.norte || 'N/A',
+                    sur: lote.medidas?.sur || 'N/A',
+                    oriente: lote.medidas?.oriente || 'N/A',
+                    poniente: lote.medidas?.poniente || 'N/A',
+                    area_metros: lote.medidas?.area_metros || 'N/A'
+                },
+                geometry: generateLoteGeometry(lote)
+            }))
+        };
 
-            // Procesar datos de lotes
-            function processLotesData(data) {
-                lotesSource = data;
-                addLotesToMap(data);
-                
-                // Ajustar la vista a los límites de los datos
-                const bounds = new mapboxgl.LngLatBounds();
-                data.features.forEach(feature => {
-                    if (feature.geometry && feature.geometry.coordinates && feature.geometry.coordinates[0]) {
-                        feature.geometry.coordinates[0].forEach(coord => bounds.extend(coord));
-                    }
-                });
-                
-                if (!bounds.isEmpty()) {
-                    map.fitBounds(bounds, { padding: 50, duration: 1000 });
-                }
-            }
+        lotesData = geojson;
+        if (map) addLotesToMap(geojson);
+    }
 
-            // Añadir lotes al mapa
-            function addLotesToMap(data) {
-                // Eliminar capas existentes si las hay
-                if (map.getSource('lotes')) {
-                    map.removeLayer('lotes-fill');
-                    map.removeLayer('lotes-borders');
-                    map.removeSource('lotes');
-                }
+    // Genera una geometría simulada si el backend no aporta coordenadas reales
+    function generateLoteGeometry(lote) {
+        const baseLng = -96.7779;
+        const baseLat = 15.7345;
+        const loteNum = parseInt(lote.numeroLote) || 1;
 
-                // Eliminar marcadores existentes
-                markers.forEach(marker => marker.remove());
-                markers = [];
+        const offsetX = (loteNum % 6) * 0.00028;
+        const offsetY = Math.floor(loteNum / 6) * 0.00028;
 
-                // Añadir fuente de datos
-                map.addSource('lotes', {
-                    type: 'geojson',
-                    data: data
-                });
+        return {
+            type: "Polygon",
+            coordinates: [[
+                [baseLng + offsetX, baseLat + offsetY],
+                [baseLng + offsetX + 0.00022, baseLat + offsetY],
+                [baseLng + offsetX + 0.00022, baseLat + offsetY + 0.00022],
+                [baseLng + offsetX, baseLat + offsetY + 0.00022],
+                [baseLng + offsetX, baseLat + offsetY]
+            ]]
+        };
+    }
 
-                // Capa de relleno
-                map.addLayer({
-                    id: 'lotes-fill',
-                    type: 'fill',
-                    source: 'lotes',
-                    paint: {
-                        'fill-color': [
-                            'match',
-                            ['get', 'estatus'],
-                            'disponible', 'rgba(22, 163, 74, 0.5)',
-                            'vendido', 'rgba(220, 38, 38, 0.5)',
-                            'apartado', 'rgba(234, 88, 12, 0.5)',
-                            'rgba(37, 99, 235, 0.5)'
-                        ],
-                        'fill-opacity': 0.6
-                    }
-                });
+    function safeRemoveLayer(id) {
+        try {
+            if (map.getLayer(id)) map.removeLayer(id);
+        } catch (e) { /* ignore */ }
+    }
+    function safeRemoveSource(id) {
+        try {
+            if (map.getSource(id)) map.removeSource(id);
+        } catch (e) { /* ignore */ }
+    }
 
-                // Capa de bordes
-                map.addLayer({
-                    id: 'lotes-borders',
-                    type: 'line',
-                    source: 'lotes',
-                    paint: {
-                        'line-color': [
-                            'match',
-                            ['get', 'estatus'],
-                            'disponible', '#15803d',
-                            'vendido', '#b91c1c',
-                            'apartado', '#c2410c',
-                            '#0ea5e9'
-                        ],
-                        'line-width': 2,
-                        'line-opacity': 0.9
-                    }
-                });
+    function addLotesToMap(data) {
+        if (!map) return;
 
-                // Añadir marcadores para cada lote
-                data.features.forEach(function(feature) {
-                    const properties = feature.properties;
-                    const coordinates = getCentroid(feature.geometry.coordinates[0]);
-                    
-                    const el = document.createElement('div');
-                    el.className = 'lote-marker';
-                    
-                    let badgeClass = 'badge-disponible';
-                    switch(properties.estatus) {
-                        case 'vendido':
-                            badgeClass = 'badge-vendido';
-                            break;
-                        case 'apartado':
-                            badgeClass = 'badge-apartado';
-                            break;
-                    }
-                    
-                    el.innerHTML = `<div class="lote-badge ${badgeClass}">${properties.lote}</div>`;
-                    
-                    const marker = new mapboxgl.Marker(el)
-                        .setLngLat(coordinates)
-                        .addTo(map);
-                    
-                    // Evento click en el marcador
-                    marker.getElement().addEventListener('click', () => {
-                        showLoteInfo(properties);
-                    });
-                    
-                    markers.push(marker);
-                });
-            }
+        // Eliminar capas/fuente previas si existen
+        safeRemoveLayer('lotes-fill');
+        safeRemoveLayer('lotes-borders');
+        safeRemoveSource('lotes');
 
-            // Filtrar lotes por estatus
-            function filterLotesByStatus(status) {
-                if (!lotesSource) return;
-                
-                if (status === 'all') {
-                    map.setFilter('lotes-fill', null);
-                    map.setFilter('lotes-borders', null);
-                } else {
-                    map.setFilter('lotes-fill', ['==', ['get', 'estatus'], status]);
-                    map.setFilter('lotes-borders', ['==', ['get', 'estatus'], status]);
-                }
-                
-                // Ocultar/mostrar marcadores
-                markers.forEach(marker => {
-                    if (status === 'all') {
-                        marker.getElement().style.display = 'block';
-                    } else {
-                        const loteNum = marker.getElement().querySelector('.lote-badge').textContent;
-                        const feature = lotesSource.features.find(f => f.properties.lote === loteNum);
-                        if (feature && feature.properties.estatus === status) {
-                            marker.getElement().style.display = 'block';
-                        } else {
-                            marker.getElement().style.display = 'none';
-                        }
-                    }
-                });
-            }
+        map.addSource('lotes', { type: 'geojson', data });
 
-            // Configurar interacciones del mapa
-            function setupMapInteractions() {
-                // Popup al hacer clic en el polígono
-                map.on('click', 'lotes-fill', (e) => {
-                    const props = e.features[0].properties;
-                    showLoteInfo(props);
-                });
-
-                // Cambiar cursor al pasar sobre un lote
-                map.on('mouseenter', 'lotes-fill', () => { 
-                    map.getCanvas().style.cursor = 'pointer'; 
-                });
-                
-                map.on('mouseleave', 'lotes-fill', () => { 
-                    map.getCanvas().style.cursor = ''; 
-                });
-            }
-
-            // Mostrar información del lote
-            function showLoteInfo(props) {
-                const infoPanel = document.getElementById('infoPanelMap');
-                const content = document.getElementById('loteInfoContent');
-                
-                let statusClass = 'estatus-disponible';
-                switch(props.estatus) {
-                    case 'vendido':
-                        statusClass = 'estatus-vendido';
-                        break;
-                    case 'apartado':
-                        statusClass = 'estatus-apartado';
-                        break;
-                }
-                
-                content.innerHTML = `
-                    <div class="lote-numero">Lote ${props.lote}</div>
-                    <div class="lote-area">${props.area || props["Area (m²)"]} m²</div>
-                    <span class="estatus-badge ${statusClass}">${props.estatus.toUpperCase()}</span>
-                    
-                    <div class="lote-details">
-                        <div class="lote-detail-row">
-                            <span class="lote-detail-label">Manzana:</span>
-                            <span class="lote-detail-value">${props.manzana}</span>
-                        </div>
-                        <div class="lote-detail-row">
-                            <span class="lote-detail-label">Norte:</span>
-                            <span class="lote-detail-value">${props.norte || props["Norte:"]} m</span>
-                        </div>
-                        <div class="lote-detail-row">
-                            <span class="lote-detail-label">Sur:</span>
-                            <span class="lote-detail-value">${props.sur || props["Sur:"]} m</span>
-                        </div>
-                        <div class="lote-detail-row">
-                            <span class="lote-detail-label">Oriente:</span>
-                            <span class="lote-detail-value">${props.oriente || props["Oriente:"]} m</span>
-                        </div>
-                        <div class="lote-detail-row">
-                            <span class="lote-detail-label">Poniente:</span>
-                            <span class="lote-detail-value">${props.poniente || props["Poniente:"]} m</span>
-                        </div>
-                    </div>
-                `;
-                
-                infoPanel.classList.remove('hidden');
-            }
-
-            // Función para modo pantalla completa del mapa
-            function toggleFullscreenMap() {
-                const container = document.getElementById('planContainer');
-                if (!document.fullscreenElement) {
-                    container.requestFullscreen().catch(err => {
-                        console.error('Error al activar pantalla completa:', err);
-                    });
-                } else {
-                    document.exitFullscreen();
-                }
-            }
-
-            // Calcular el centroide de un polígono
-            function getCentroid(coords) {
-                let x = 0, y = 0;
-                for (let i = 0; i < coords.length - 1; i++) {
-                    x += coords[i][0];
-                    y += coords[i][1];
-                }
-                return [x / (coords.length - 1), y / (coords.length - 1)];
-            }
-
-            // Generar datos de ejemplo (para testing)
-            function generateSampleData() {
-                return {
-                    type: "FeatureCollection",
-                    features: [
-                        {
-                            type: "Feature",
-                            properties: {
-                                lote: "1",
-                                manzana: "A",
-                                estatus: "disponible",
-                                area: "250",
-                                norte: "25",
-                                sur: "25",
-                                oriente: "10",
-                                poniente: "10"
-                            },
-                            geometry: {
-                                type: "Polygon",
-                                coordinates: [[[-96.51, 15.71], [-96.509, 15.71], [-96.509, 15.709], [-96.51, 15.709], [-96.51, 15.71]]]
-                            }
-                        }
-                        // Agregar más lotes según sea necesario...
-                    ]
-                };
+        // capa de relleno usando 'match' para colores por estatus
+        map.addLayer({
+            id: 'lotes-fill',
+            type: 'fill',
+            source: 'lotes',
+            paint: {
+                'fill-color': [
+                    'match',
+                    ['get', 'estatus'],
+                    'disponible', '#16a34a',
+                    'vendido', '#dc2626',
+                    'apartadoPalabra', '#ea580c',
+                    'apartadoVendido', '#ea580c',
+                    '#6b7280'
+                ],
+                'fill-opacity': 0.7,
+                'fill-outline-color': '#ffffff'
             }
         });
-   </script>
+
+        map.addLayer({
+            id: 'lotes-borders',
+            type: 'line',
+            source: 'lotes',
+            paint: {
+                'line-color': '#ffffff',
+                'line-width': 2,
+                'line-opacity': 0.9
+            }
+        });
+
+        setupMapInteractions();
+
+        // Aplicar filtro pendiente si existía
+        if (pendingFilter) {
+            filterLotesByStatus(pendingFilter);
+            pendingFilter = null;
+        }
+
+        fitMapToLotes(data);
+    }
+
+    function fitMapToLotes(data) {
+        if (!map || !data || !data.features || data.features.length === 0) return;
+        const bounds = new mapboxgl.LngLatBounds();
+
+        data.features.forEach(feature => {
+            if (!feature.geometry || !feature.geometry.coordinates) return;
+            const coords = feature.geometry.coordinates;
+
+            // polygon: coords is [ [ [lng,lat], ... ] , ...rings ]
+            if (feature.geometry.type === 'Polygon' && Array.isArray(coords[0])) {
+                coords[0].forEach(c => {
+                    if (Array.isArray(c) && c.length >= 2) bounds.extend(c);
+                });
+            } else if (feature.geometry.type === 'MultiPolygon') {
+                coords.forEach(polygon => {
+                    polygon[0].forEach(c => { if (Array.isArray(c) && c.length >= 2) bounds.extend(c); });
+                });
+            }
+        });
+
+        if (!bounds.isEmpty()) {
+            map.fitBounds(bounds, { padding: 50, duration: 1000 });
+        }
+    }
+
+    function setupMapInteractions() {
+        if (!map.getLayer('lotes-fill')) return;
+
+        const popup = new mapboxgl.Popup({ closeButton: true, closeOnClick: false, maxWidth: '300px' });
+
+        map.on('mouseenter', 'lotes-fill', (e) => {
+            map.getCanvas().style.cursor = 'pointer';
+            const properties = e.features[0].properties;
+            popup.setLngLat(e.lngLat).setHTML(createPopupContent(properties)).addTo(map);
+        });
+
+        map.on('mousemove', 'lotes-fill', (e) => {
+            popup.setLngLat(e.lngLat);
+        });
+
+        map.on('mouseleave', 'lotes-fill', () => {
+            map.getCanvas().style.cursor = '';
+            popup.remove();
+        });
+
+        map.on('click', 'lotes-fill', (e) => {
+            const properties = e.features[0].properties;
+            showLoteInfo(properties);
+        });
+    }
+
+    function createPopupContent(properties) {
+        const statusClass = getStatusClass(properties.estatus);
+        const statusText = formatStatus(properties.estatus);
+        return `
+            <div class="popup-content">
+                <h4>Lote ${properties.lote}</h4>
+                <div class="popup-status ${statusClass}">${statusText}</div>
+                <div class="popup-details">
+                    <p><strong>Manzana:</strong> ${properties.manzana}</p>
+                    <p><strong>Área:</strong> ${properties.area_metros} m²</p>
+                </div>
+                <div class="popup-click-hint"><small>Click para más detalles</small></div>
+            </div>
+        `;
+    }
+
+    function showLoteInfo(properties) {
+        const infoPanel = document.getElementById('infoPanelMap');
+        const content = document.getElementById('loteInfoContent');
+        if (!content || !infoPanel) return;
+
+        const statusClass = getStatusClass(properties.estatus);
+        const statusText = formatStatus(properties.estatus);
+
+        content.innerHTML = `
+            <div class="lote-header">
+                <div class="lote-numero">Lote ${properties.lote}</div>
+                <span class="estatus-badge ${statusClass}">${statusText}</span>
+            </div>
+            <div class="lote-details">
+                <div class="detail-section">
+                    <h5>Información General</h5>
+                    <div class="lote-detail-row"><span class="lote-detail-label">Manzana:</span><span class="lote-detail-value">${properties.manzana}</span></div>
+                    <div class="lote-detail-row"><span class="lote-detail-label">Área total:</span><span class="lote-detail-value">${properties.area_metros} m²</span></div>
+                </div>
+                <div class="detail-section">
+                    <h5>Medidas</h5>
+                    <div class="lote-detail-row"><span class="lote-detail-label">Norte:</span><span class="lote-detail-value">${properties.norte} m</span></div>
+                    <div class="lote-detail-row"><span class="lote-detail-label">Sur:</span><span class="lote-detail-value">${properties.sur} m</span></div>
+                    <div class="lote-detail-row"><span class="lote-detail-label">Oriente:</span><span class="lote-detail-value">${properties.oriente} m</span></div>
+                    <div class="lote-detail-row"><span class="lote-detail-label">Poniente:</span><span class="lote-detail-value">${properties.poniente} m</span></div>
+                </div>
+            </div>
+            <div class="lote-actions">
+                <button class="btn btn-primary btn-sm" onclick="openCalculationForLote('${properties.lote}')"><i class="fas fa-calculator"></i> Calcular Costo</button>
+                <button class="btn btn-outline btn-sm" onclick="openReservationForLote('${properties.lote}')"><i class="fas fa-handshake"></i> Apartar</button>
+            </div>
+        `;
+        infoPanel.classList.remove('hidden');
+    }
+
+    /* ===========================
+       CONTROLES DEL MAPA (estilo/filtros/fullscreen)
+       =========================== */
+    function initMapControls() {
+        document.querySelectorAll('.style-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const style = this.getAttribute('data-style');
+                if (!mapStyles[style]) return;
+                map.setStyle(mapStyles[style]);
+
+                // re-add layers after style change
+                map.once('style.load', () => {
+                    if (lotesData) addLotesToMap(lotesData);
+                    if (pendingFilter) { filterLotesByStatus(pendingFilter); pendingFilter = null; }
+                });
+            });
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                currentFilter = this.getAttribute('data-filter');
+                filterLotesByStatus(currentFilter);
+            });
+        });
+
+        const infoClose = document.getElementById('infoCloseMap');
+        if (infoClose) infoClose.addEventListener('click', () => document.getElementById('infoPanelMap')?.classList.add('hidden'));
+
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        if (fullscreenBtn) fullscreenBtn.addEventListener('click', toggleFullscreenMap);
+    }
+
+    function filterLotesByStatus(status) {
+        if (!map) return;
+        // Si aún no existe la capa, guardar filtro para aplicar después
+        if (!map.getLayer('lotes-fill')) {
+            pendingFilter = status;
+            return;
+        }
+
+        if (status === 'all') {
+            map.setFilter('lotes-fill', null);
+            map.setFilter('lotes-borders', null);
+        } else if (status === 'apartado') {
+            map.setFilter('lotes-fill', [
+                'any',
+                ['==', ['get', 'estatus'], 'apartadoPalabra'],
+                ['==', ['get', 'estatus'], 'apartadoVendido']
+            ]);
+            map.setFilter('lotes-borders', [
+                'any',
+                ['==', ['get', 'estatus'], 'apartadoPalabra'],
+                ['==', ['get', 'estatus'], 'apartadoVendido']
+            ]);
+        } else {
+            map.setFilter('lotes-fill', ['==', ['get', 'estatus'], status]);
+            map.setFilter('lotes-borders', ['==', ['get', 'estatus'], status]);
+        }
+    }
+
+    function toggleFullscreenMap() {
+        const container = document.getElementById('planContainer');
+        if (!container) return;
+        if (!document.fullscreenElement) {
+            container.requestFullscreen().catch(err => console.error('Error al activar pantalla completa:', err));
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    /* ===========================
+       FUNCIONES GLOBALES USADAS POR EL HTML
+       =========================== */
+    window.openCalculationForLote = function (loteNumber) {
+        const lotInput = document.getElementById('lotNumber');
+        if (lotInput) lotInput.value = loteNumber;
+        if (calculationModal) calculationModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => document.getElementById('calculateBtn')?.click(), 500);
+    };
+
+    window.openReservationForLote = function (loteNumber) {
+        if (!lotList) return;
+        while (lotList.children.length > 1) lotList.removeChild(lotList.lastChild);
+        const first = document.querySelector('.lot-number');
+        if (first) first.value = loteNumber;
+
+        if (reservationModal) reservationModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    };
+
+    /* ===========================
+       FIN
+       =========================== */
+    // console.log('Script depurado cargado.');
+});
+</script>
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
 @endsection
 

@@ -35,7 +35,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/asesor/fraccionamiento/{idFraccionamiento}/lote/{numeroLote}', [FraccionamientoController::class, 'getLoteDetails'])->name('asesor.fraccionamiento.lote.details');
     Route::get('/asesor/fraccionamiento/{id}/descargar-plano/{planoId}', [FraccionamientoController::class, 'descargarPlano'])
     ->name('fraccionamiento.descargarPlano');
-
+    // Ruta para obtener los lotes del fraccionamiento
+    Route::get('/asesor/fraccionamiento/{id}/lotes', [FraccionamientoController::class, 'getLotes'])
+    ->name('asesor.fraccionamiento.lotes');
+    Route::get('/geojson/lotes/{idFraccionamiento}', [FraccionamientoController::class, 'getGeoJsonConEstatus']);
 
     Route::get('/asesor/apartados', [ApartadoController::class, 'index'])->name('asesor.apartados.index');
     Route::get('/asesor/apartados/{id}', [ApartadoController::class, 'show'])->name('asesor.apartados.show');

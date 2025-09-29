@@ -217,14 +217,6 @@ body {
     background-color: var(--white);
 }
 
-.plan-image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    cursor: zoom-in;
-    transition: transform 0.3s ease;
-}
-
 .fullscreen-btn {
     position: absolute;
     top: 20px;
@@ -250,6 +242,8 @@ body {
 .plan-actions {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 /* Development Info */
@@ -331,58 +325,16 @@ body {
 .map-container {
     width: 100%;
     height: 400px;
-    background-color: #f5f5f5;
     border-radius: var(--rounded-sm);
     overflow: hidden;
-    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 1rem;
 }
 
 .map-iframe {
     width: 100%;
     height: 100%;
     border: none;
-}
-
-/* Image Viewer Modal */
-.image-viewer-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-}
-
-.image-viewer-content {
-    position: relative;
-    max-width: 90%;
-    max-height: 90%;
-}
-
-.image-viewer-img {
-    max-width: 100%;
-    max-height: 90vh;
-    object-fit: contain;
-}
-
-.close-viewer {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    color: white;
-    font-size: 2rem;
-    cursor: pointer;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* Modales Fraccionamiento */
@@ -542,7 +494,7 @@ body {
 }
 
 .remove-lot:hover {
-    background-color: var(--danger-light);
+    background-color: rgba(239, 68, 68, 0.1);
 }
 
 .add-lot-btn {
@@ -643,6 +595,341 @@ body {
     background-color: var(--secondary-color);
 }
 
+/* Controles del Mapa - RESPONSIVOS */
+.map-controls-overlay {
+    position: relative;
+    margin-top: 1rem;
+}
+
+.control-panel-map {
+    background: var(--white);
+    border-radius: var(--rounded-sm);
+    padding: 1rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.control-section {
+    flex: 1;
+    min-width: 250px;
+}
+
+.control-title {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.style-buttons, .filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.style-btn, .filter-btn {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--medium-gray);
+    border-radius: var(--rounded-sm);
+    background: var(--white);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.style-btn:hover, .filter-btn:hover {
+    border-color: var(--primary-color);
+    background: var(--accent-color);
+}
+
+.style-btn.active, .filter-btn.active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.color-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-right: 8px;
+    display: inline-block;
+}
+
+.disponible-indicator {
+    background-color: #16a34a;
+}
+
+.vendido-indicator {
+    background-color: #dc2626;
+}
+
+.apartado-indicator {
+    background-color: #ea580c;
+}
+
+/* Panel de información del mapa */
+.info-panel-map {
+    background: var(--white);
+    border-radius: var(--rounded-sm);
+    box-shadow: var(--shadow-lg);
+    padding: 1rem;
+    margin-top: 1rem;
+    border: 1px solid var(--medium-gray);
+}
+
+.info-panel-map.hidden {
+    display: none;
+}
+
+.info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--medium-gray);
+}
+
+.info-title {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.info-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: var(--rounded-sm);
+}
+
+.info-close:hover {
+    background: var(--light-gray);
+}
+
+/* Estilos para el popup de Mapbox */
+.popup-content {
+    padding: 12px;
+    min-width: 220px;
+    max-width: 300px;
+}
+
+.popup-content h4 {
+    margin: 0 0 8px 0;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.popup-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.popup-details {
+    margin-bottom: 8px;
+}
+
+.popup-details p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+}
+
+.popup-click-hint {
+    font-style: italic;
+    color: var(--text-light);
+    text-align: center;
+    font-size: 0.8rem;
+}
+
+/* Estilos para el panel de información del lote */
+.lote-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--medium-gray);
+}
+
+.lote-numero {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.estatus-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.estatus-disponible {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+.estatus-apartado {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+
+.estatus-vendido {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.estatus-no-disponible {
+    background-color: #f5f5f5;
+    color: #757575;
+}
+
+.detail-section {
+    margin-bottom: 1rem;
+}
+
+.detail-section h5 {
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.lote-detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+    padding: 0.25rem 0;
+}
+
+.lote-detail-label {
+    font-weight: 500;
+    color: var(--text-light);
+}
+
+.lote-detail-value {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.lote-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.lote-actions .btn {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+}
+
+/* Nuevos estilos para el modal de cálculo */
+.lot-details-container {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: var(--light-gray);
+    border-radius: var(--rounded-sm);
+}
+
+.lot-details-content {
+    margin-bottom: 1.5rem;
+}
+
+.lot-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.lot-detail-item {
+    text-align: center;
+    padding: 0.75rem;
+    background: var(--white);
+    border-radius: var(--rounded-sm);
+    box-shadow: var(--shadow);
+}
+
+.lot-detail-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.lot-detail-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.calculation-result {
+    padding: 1rem;
+    background: var(--white);
+    border-radius: var(--rounded-sm);
+    box-shadow: var(--shadow);
+}
+
+.calculation-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0;
+}
+
+.calculation-item.highlight {
+    border-top: 2px solid var(--primary-color);
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+.calculation-label {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.calculation-value {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.calculation-item.highlight .calculation-value {
+    font-size: 1.2rem;
+}
+
+.error-message {
+    font-size: 0.8rem;
+    color: var(--danger-color);
+    margin-top: 0.25rem;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 /* Responsive */
 @media (min-width: 768px) {
     .container {
@@ -660,6 +947,18 @@ body {
     
     .stats-grid {
         grid-template-columns: repeat(4, 1fr);
+    }
+
+    .control-panel-map {
+        flex-wrap: nowrap;
+    }
+
+    .control-section {
+        min-width: auto;
+    }
+
+    .style-btn, .filter-btn {
+        min-width: 100px;
     }
 }
 
@@ -701,6 +1000,35 @@ body {
         padding: 0 1rem;
         font-size: 1.3rem;
     }
+
+    .control-panel-map {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .control-section {
+        min-width: 100%;
+    }
+
+    .style-buttons, .filter-buttons {
+        justify-content: center;
+    }
+
+    .style-btn, .filter-btn {
+        min-width: 140px;
+        flex: none;
+    }
+
+    .lot-details-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .calculation-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.25rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -721,6 +1049,16 @@ body {
     .radio-group {
         flex-direction: column;
     }
+
+    .style-btn, .filter-btn {
+        min-width: 120px;
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+    }
+
+    .lote-actions {
+        flex-direction: column;
+    }
 }
 
 /* Animations */
@@ -737,212 +1075,4 @@ body {
 
 .development-plan, .development-info, .development-map {
     animation: fadeIn 0.3s ease-out forwards;
-}
-
-.error-message {
-    font-size: 0.8rem;
-    color: var(--danger-color);
-    margin-top: 0.25rem;
-}
-
-/* Loading state para el botón */
-.btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* Estilos para el badge de estatus */
-.status-badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.status-disponible {
-    background-color: #e8f5e8;
-    color: #2e7d32;
-}
-
-.status-apartado {
-    background-color: #fff3e0;
-    color: #ef6c00;
-}
-
-.status-vendido {
-    background-color: #ffebee;
-    color: #c62828;
-}
-
-.status-no-disponible {
-    background-color: #f5f5f5;
-    color: #757575;
-}
-
-/* Estilos para el mapa */
-.map-container {
-    width: 100%;
-    height: 400px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-top: 1rem;
-}
-
-.map-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
-.development-map {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Nuevos estilos para el modal de cálculo */
-.lot-details-container {
-    margin-top: 1.5rem;
-    padding: 1.5rem;
-    background: var(--light-gray);
-    border-radius: var(--rounded-sm);
-    text-align: center;
-}
-
-.lot-details-content {
-    margin-bottom: 1.5rem;
-}
-
-.lot-details-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.lot-detail-item {
-    text-align: center;
-    padding: 0.75rem;
-    background: var(--white);
-    border-radius: var(--rounded-sm);
-    box-shadow: var(--shadow);
-}
-
-.lot-detail-label {
-    font-size: 0.8rem;
-    color: var(--text-light);
-    margin-bottom: 0.25rem;
-    font-weight: 500;
-}
-
-.lot-detail-value {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-color);
-}
-
-.calculation-result {
-    text-align: center;
-    padding: 1rem;
-    background: var(--white);
-    border-radius: var(--rounded-sm);
-    box-shadow: var(--shadow);
-}
-
-.calculation-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-    padding: 0.5rem 0;
-}
-
-.calculation-item.highlight {
-    border-top: 2px solid var(--primary-color);
-    padding-top: 1rem;
-    margin-top: 1rem;
-}
-
-.calculation-label {
-    font-weight: 500;
-    color: var(--text-color);
-}
-
-.calculation-value {
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-.calculation-item.highlight .calculation-value {
-    font-size: 1.2rem;
-}
-
-@media (max-width: 768px) {
-    .lot-details-grid {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-    }
-    
-    .calculation-item {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.25rem;
-    }
-}
-
-/* Estilos para el badge de estatus */
-.status-badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.status-disponible {
-    background-color: #e8f5e8;
-    color: #2e7d32;
-}
-
-.status-apartado {
-    background-color: #fff3e0;
-    color: #ef6c00;
-}
-
-.status-vendido {
-    background-color: #ffebee;
-    color: #c62828;
-}
-
-.status-no-disponible {
-    background-color: #f5f5f5;
-    color: #757575;
-}
-
-/* Estilos para el mapa */
-.map-container {
-    width: 100%;
-    height: 400px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-top: 1rem;
-}
-
-.map-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
-.development-map {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

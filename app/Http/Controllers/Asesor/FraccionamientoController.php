@@ -199,4 +199,57 @@ class FraccionamientoController extends Controller
         return response()->download($ruta, $plano->archivo);
     }
 
+    public function getLotes($idFraccionamiento)
+    {
+        try {
+            $lotes = Lote::with('loteMedida')
+                ->where('id_fraccionamiento', $idFraccionamiento)
+                ->get()
+                ->map(function($lote) {
+                    return [
+                        'id_lote' => $lote->id_lote,
+                        'numeroLote' => $lote->numeroLote,
+                        'estatus' => $lote->estatus,
+                        'manzana' => $lote->loteMedida->manzana ?? 'N/A',
+                        'area_total' => $lote->loteMedida->area_metros ?? 0,
+                        'medidas' => $lote->loteMedida ? [
+                            'norte' => $lote->loteMedida->norte,
+                            'sur' => $lote->loteMedida->sur,
+                            'oriente' => $lote->loteMedida->oriente,
+                            'poniente' => $lote->loteMedida->poniente,
+                            'area_metros' => $lote->loteMedida->area_metros
+                        ] : null
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'lotes' => $lotes
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cargar los lotes: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getGeoJsonConEstatus($idFraccionamiento)
+    {
+        $path = storage_path('app/public/geojson/lotes.geojson'); // tu GeoJSON base
+        $geojson = json_decode(file_get_contents($path), true);
+
+        $estatus = Lote::where('id_fraccionamiento', $idFraccionamiento)
+                    ->pluck('estatus', 'numero_lote');
+
+        foreach ($geojson['features'] as &$feature) {
+            $loteNumero = $feature['properties']['lote'];
+            $feature['properties']['estatus'] = $estatus[$loteNumero] ?? 'desconocido';
+        }
+
+        return response()->json($geojson);
+    }
+
+
 }
