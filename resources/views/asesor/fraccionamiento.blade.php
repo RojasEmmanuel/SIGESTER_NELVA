@@ -16,7 +16,7 @@
                 <span>Detalles del Fraccionamiento</span>
             </h1>
             <div class="page-actions">
-                <button class="btn btn-outline" onclick="window.location.href='ventas'">
+                <button class="btn btn-outline" onclick="window.location.href='/asesor/inicio'">
                     <i class="fas fa-arrow-left"></i> Volver
                 </button>
             </div>
@@ -72,7 +72,7 @@
 
         
         {{-- Development Plan --}}
-        @if($planos->count() > 0)
+        
         <div class="development-plan">
             <h3 class="info-title">
                 <i class="fas fa-map"></i>
@@ -159,7 +159,7 @@
                 @endforeach
             </div>
         </div>
-        @endif
+        
          {{-- Development Plan --}}
         
         
@@ -256,14 +256,7 @@
     </div>
    
 
-     <!-- Image Viewer Modal -->
-    <div class="image-viewer-modal" id="imageViewerModal">
-        <span class="close-viewer" id="closeViewer">&times;</span>
-        <div class="image-viewer-content">
-            <img src="" alt="" class="image-viewer-img" id="viewerImage">
-        </div>
-    </div>
-
+ 
     <!-- Modal de Apartado -->
      <!-- Modal de Apartado -->
     <div class="modal-fraccionamiento" id="reservationModal">
@@ -460,11 +453,20 @@
             </form>
         </div>
     </div>
-    
-   <script>
+<script>
 document.addEventListener('DOMContentLoaded', function () {
     /* ===========================
-       ELEMENTOS DOM (con guards)
+       VERIFICACIÓN INICIAL DEL CONTENEDOR
+       =========================== */
+    const mapContainer = document.getElementById('mapPlano');
+    
+    if (!mapContainer) {
+        console.warn('❌ Contenedor de mapa no encontrado (#mapPlano)');
+        return;
+    }
+
+    /* ===========================
+       ELEMENTOS DOM
        =========================== */
     const reservationModal = document.getElementById('reservationModal');
     const closeModal = document.getElementById('closeModal');
@@ -492,7 +494,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const calculateBtn = document.getElementById('calculateBtn');
     const lotDetails = document.getElementById('lotDetails');
 
-    
+    /* ===========================
+       VARIABLES GLOBALES DEL MAPA
+       =========================== */
+    let map = null;
+    let currentFilter = 'all';
+    let lotesData = null;
+    let pendingFilter = null;
 
     /* ===========================
        UTIL / MAPA - STATUS MAPS
@@ -522,7 +530,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* ===========================
-       CAMPOS DINÁMICOS LOTES (add/remove)
+       CAMPOS DINÁMICOS LOTES
        =========================== */
     function addLotField() {
         if (!lotList) return;
@@ -555,7 +563,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (addLotBtn) addLotBtn.addEventListener('click', addLotField);
 
-    // botones eliminar existentes
     document.querySelectorAll('.remove-lot').forEach(btn => {
         btn.addEventListener('click', function () {
             const lotItem = this.closest('.lot-item');
@@ -630,7 +637,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Mostrar/ocultar campos de depósito
     document.querySelectorAll('input[name="reservationType"]').forEach(radio => {
         radio.addEventListener('change', function () {
             if (depositFields) depositFields.style.display = this.value === 'deposit' ? 'block' : 'none';
@@ -645,7 +651,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (depositReceipt) depositReceipt.style.display = 'none';
         if (depositFields) depositFields.style.display = 'none';
 
-        // Mantener solo un campo de lote
         if (lotList) {
             while (lotList.children.length > 1) {
                 lotList.removeChild(lotList.lastChild);
@@ -662,7 +667,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* ===========================
-       CÁLCULO DE COSTO (botón calcular)
+       CÁLCULO DE COSTO
        =========================== */
     if (calculateBtn) {
         calculateBtn.addEventListener('click', async function () {
@@ -671,7 +676,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!lotNumberInput) return;
             const lotNumber = lotNumberInput.value.trim();
 
-            // validaciones
             if (!lotNumber) {
                 if (lotError) { lotError.textContent = 'Por favor ingrese un número de lote'; lotError.style.display = 'block'; }
                 return;
@@ -688,7 +692,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const fraccionamientoId = {{ $datosFraccionamiento['id'] }};
                 const url = `/asesor/fraccionamiento/${fraccionamientoId}/lote/${encodeURIComponent(lotNumber)}`;
-                console.log('Realizando petición a:', url);
 
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -713,9 +716,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (data.success) {
                     const lote = data.lote || {};
-                    console.log('Datos recibidos del backend:', lote);
-
-                    // Rellenar detalles
                     const status = lote.estatus || 'no disponible';
                     const statusBadge = document.getElementById('statusBadge');
                     if (statusBadge) {
@@ -769,7 +769,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* ===========================
-       ENVÍO FORMULARIO APARTADO (UI only)
+       ENVÍO FORMULARIO APARTADO
        =========================== */
     if (reservationForm) {
         reservationForm.addEventListener('submit', function (e) {
@@ -833,73 +833,194 @@ document.addEventListener('DOMContentLoaded', function () {
             if (reservationModal) reservationModal.style.display = 'none';
             document.body.style.overflow = 'auto';
             resetReservationForm();
-            // Aquí podrías llamar a saveReservationToDatabase();
         });
     }
 
     /* ===========================
-       SAVE APARTADO (ejemplo AJAX con CSRF)
+       INICIALIZACIÓN DEL MAPA
        =========================== */
-    async function saveReservationToDatabase(payload = {}) {
+    function initializeMap() {
+        if (typeof mapboxgl === 'undefined') {
+            console.error('❌ Mapbox GL JS no está cargado');
+            return;
+        }
+
+        if (!mapContainer || mapContainer.offsetParent === null) {
+            console.warn('❌ Contenedor de mapa no visible o no existe');
+            return;
+        }
+
         try {
-            const response = await fetch('/asesor/apartado/guardar', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify(payload)
+            mapboxgl.accessToken = 'pk.eyJ1Ijoicm9qYXNkZXYiLCJhIjoiY21leDF4N2JtMTI0NTJrcHlsdjBiN2Y3YiJ9.RB87H34djrYH3WrRa-12Pg';
+        } catch (err) {
+            console.error('❌ Error con accessToken de Mapbox:', err);
+            return;
+        }
+
+        const mapStyles = {
+            'satellite-streets': 'mapbox://styles/mapbox/satellite-streets-v12',
+            'outdoors': 'mapbox://styles/mapbox/outdoors-v12',
+            'streets': 'mapbox://styles/mapbox/streets-v12',
+            'light': 'mapbox://styles/mapbox/light-v11'
+        };
+
+        try {
+            map = new mapboxgl.Map({
+                container: 'mapPlano',
+                style: mapStyles['satellite-streets'],
+                center: [-96.7779, 15.7345],
+                zoom: 17,
+                pitch: 45,
+                bearing: -17,
+                antialias: true
             });
-            if (response.ok) console.log('Apartado guardado exitosamente');
+
+            map.on('load', () => {
+                console.log('✅ Mapa cargado correctamente');
+                initMapControls();
+                loadGeoJSONFromPublic();
+            });
+
+            map.on('error', (e) => {
+                console.error('❌ Error en el mapa:', e.error);
+            });
+
         } catch (error) {
-            console.error('Error al guardar el apartado:', error);
+            console.error('❌ Error creando el mapa:', error);
         }
     }
 
     /* ===========================
-       MAPBOX: inicialización y carga de lotes
+       CARGAR GEOJSON DESDE CARPETA PÚBLICA
        =========================== */
-    // Asegúrate de que las librerías Mapbox GL JS y su CSS estén incluidos en la vista.
-    try {
-        mapboxgl.accessToken = 'pk.eyJ1Ijoicm9qYXNkZXYiLCJhIjoiY21leDF4N2JtMTI0NTJrcHlsdjBiN2Y3YiJ9.RB87H34djrYH3WrRa-12Pg';
-    } catch (err) {
-        console.error('Mapbox no está disponible. Revisa que la librería esté incluida.', err);
-    }
+    async function loadGeoJSONFromPublic() {
+        if (!map) {
+            console.error('❌ Mapa no inicializado');
+            return;
+        }
 
-    const mapStyles = {
-        'satellite-streets': 'mapbox://styles/mapbox/satellite-streets-v12',
-        'outdoors': 'mapbox://styles/mapbox/outdoors-v12',
-        'streets': 'mapbox://styles/mapbox/streets-v12',
-        'light': 'mapbox://styles/mapbox/light-v11'
-    };
-
-    // Crear mapa solo si existe el contenedor
-    const mapContainer = document.getElementById('mapPlano');
-    let map = null;
-    if (mapContainer && typeof mapboxgl !== 'undefined') {
-        map = new mapboxgl.Map({
-            container: 'mapPlano',
-            style: mapStyles['satellite-streets'],
-            center: [-96.7779, 15.7345],
-            zoom: 17,
-            pitch: 45,
-            bearing: -17,
-            antialias: true
-        });
-    } else {
-        console.warn('Contenedor de mapa no encontrado (#mapPlano) o mapboxgl no disponible.');
-    }
-
-    let currentFilter = 'all';
-    let lotesData = null;
-    let pendingFilter = null; // si el usuario aplica filtro antes de que la capa exista
-
-    if (map) {
-        map.on('load', () => {
-            console.log('Mapa cargado correctamente');
-            initMapControls();
+        try {
+            const fraccionamientoNombre = '{{ $datosFraccionamiento["nombre"] }}'.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '_');
+            const geoJsonUrl = `/geojson/${fraccionamientoNombre}.geojson`;
+            
+            console.log('🔄 Cargando GeoJSON desde:', geoJsonUrl);
+            
+            const response = await fetch(geoJsonUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} - No se pudo cargar el archivo GeoJSON`);
+            }
+            
+            const geoJsonData = await response.json();
+            console.log('✅ GeoJSON cargado exitosamente');
+            
+            processGeoJSONData(geoJsonData);
+            
+        } catch (error) {
+            console.error('❌ Error cargando GeoJSON:', error);
             loadLotesFromServer();
+        }
+    }
+
+    function processGeoJSONData(geoJsonData) {
+        if (!geoJsonData || !geoJsonData.features || !Array.isArray(geoJsonData.features)) {
+            throw new Error('Formato de GeoJSON inválido');
+        }
+
+        console.log('📊 Total de features en GeoJSON:', geoJsonData.features.length);
+        
+        const lotesFeatures = geoJsonData.features.filter((feature, index) => {
+            if (index === 0) {
+                console.log('✅ Excluyendo polígono del fraccionamiento:', feature.properties?.lote);
+                return false;
+            }
+            return true;
         });
+
+        console.log('🏠 Lotes a mostrar:', lotesFeatures.length);
+
+        enrichGeoJSONWithServerData({
+            ...geoJsonData,
+            features: lotesFeatures
+        });
+    }
+
+    async function enrichGeoJSONWithServerData(filteredGeoJsonData) {
+        try {
+            const fraccionamientoId = {{ $datosFraccionamiento['id'] }};
+            const response = await fetch(`/asesor/fraccionamiento/${fraccionamientoId}/lotes`);
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const serverData = await response.json();
+            
+            if (serverData.success && serverData.lotes) {
+                const lotesMap = {};
+                serverData.lotes.forEach(lote => {
+                    lotesMap[lote.numeroLote] = lote;
+                });
+
+                filteredGeoJsonData.features.forEach(feature => {
+                    const loteNumber = feature.properties.lote;
+                    const serverLote = lotesMap[loteNumber];
+                    
+                    if (serverLote) {
+                        feature.properties = {
+                            ...feature.properties,
+                            id: serverLote.id_lote,
+                            lote: serverLote.numeroLote,
+                            estatus: serverLote.estatus,
+                            manzana: serverLote.manzana || 'N/A',
+                            area: serverLote.area_total || 'N/A',
+                            norte: serverLote.medidas?.norte || 'N/A',
+                            sur: serverLote.medidas?.sur || 'N/A',
+                            oriente: serverLote.medidas?.oriente || 'N/A',
+                            poniente: serverLote.medidas?.poniente || 'N/A',
+                            area_metros: serverLote.medidas?.area_metros || 'N/A'
+                        };
+                    } else {
+                        feature.properties = {
+                            ...feature.properties,
+                            id: feature.properties.id || null,
+                            lote: loteNumber,
+                            estatus: 'disponible',
+                            manzana: feature.properties.manzana || 'N/A',
+                            area: 'N/A',
+                            norte: 'N/A',
+                            sur: 'N/A',
+                            oriente: 'N/A',
+                            poniente: 'N/A',
+                            area_metros: 'N/A'
+                        };
+                    }
+                });
+
+                lotesData = filteredGeoJsonData;
+                addLotesToMap(filteredGeoJsonData);
+                
+            } else {
+                throw new Error(serverData.message || 'Error en los datos del servidor');
+            }
+        } catch (error) {
+            console.error('❌ Error enriqueciendo GeoJSON:', error);
+            
+            filteredGeoJsonData.features.forEach(feature => {
+                feature.properties = {
+                    ...feature.properties,
+                    id: feature.properties.id || null,
+                    lote: feature.properties.lote || 'N/A',
+                    estatus: feature.properties.estatus || 'disponible',
+                    manzana: feature.properties.manzana || 'N/A',
+                    area: 'N/A',
+                    norte: 'N/A',
+                    sur: 'N/A',
+                    oriente: 'N/A',
+                    poniente: 'N/A',
+                    area_metros: 'N/A'
+                };
+            });
+            
+            lotesData = filteredGeoJsonData;
+            addLotesToMap(filteredGeoJsonData);
+        }
     }
 
     async function loadLotesFromServer() {
@@ -908,7 +1029,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const response = await fetch(`/asesor/fraccionamiento/${fraccionamientoId}/lotes`);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
-            console.log('Lotes cargados del servidor:', data);
 
             if (data.success && data.lotes) {
                 processLotesData(data.lotes);
@@ -917,7 +1037,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         } catch (error) {
             console.error('Error cargando lotes:', error);
-            alert('Error al cargar los lotes: ' + (error.message || error));
         }
     }
 
@@ -946,7 +1065,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (map) addLotesToMap(geojson);
     }
 
-    // Genera una geometría simulada si el backend no aporta coordenadas reales
     function generateLoteGeometry(lote) {
         const baseLng = -96.7779;
         const baseLat = 15.7345;
@@ -968,11 +1086,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function safeRemoveLayer(id) {
+        if (!map) return;
         try {
             if (map.getLayer(id)) map.removeLayer(id);
         } catch (e) { /* ignore */ }
     }
+    
     function safeRemoveSource(id) {
+        if (!map) return;
         try {
             if (map.getSource(id)) map.removeSource(id);
         } catch (e) { /* ignore */ }
@@ -981,53 +1102,92 @@ document.addEventListener('DOMContentLoaded', function () {
     function addLotesToMap(data) {
         if (!map) return;
 
-        // Eliminar capas/fuente previas si existen
         safeRemoveLayer('lotes-fill');
         safeRemoveLayer('lotes-borders');
+        safeRemoveLayer('lotes-labels');
         safeRemoveSource('lotes');
 
-        map.addSource('lotes', { type: 'geojson', data });
+        try {
+            map.addSource('lotes', { type: 'geojson', data });
 
-        // capa de relleno usando 'match' para colores por estatus
-        map.addLayer({
-            id: 'lotes-fill',
-            type: 'fill',
-            source: 'lotes',
-            paint: {
-                'fill-color': [
-                    'match',
-                    ['get', 'estatus'],
-                    'disponible', '#16a34a',
-                    'vendido', '#dc2626',
-                    'apartadoPalabra', '#ea580c',
-                    'apartadoVendido', '#ea580c',
-                    '#6b7280'
-                ],
-                'fill-opacity': 0.7,
-                'fill-outline-color': '#ffffff'
+            map.addLayer({
+                id: 'lotes-fill',
+                type: 'fill',
+                source: 'lotes',
+                paint: {
+                    'fill-color': [
+                        'match',
+                        ['get', 'estatus'],
+                        'disponible', '#16a34a',
+                        'vendido', '#dc2626',
+                        'apartadoPalabra', '#ea580c',
+                        'apartadoVendido', '#ea580c',
+                        '#6b7280'
+                    ],
+                    'fill-opacity': 0.7,
+                    'fill-outline-color': '#ffffff'
+                }
+            });
+
+            map.addLayer({
+                id: 'lotes-borders',
+                type: 'line',
+                source: 'lotes',
+                paint: {
+                    'line-color': '#ffffff',
+                    'line-width': 2,
+                    'line-opacity': 0.9
+                }
+            });
+
+            map.addLayer({
+                id: 'lotes-labels',
+                type: 'symbol',
+                source: 'lotes',
+                layout: {
+                    'text-field': ['get', 'lote'],
+                    'text-size': 14,
+                    'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold']
+                },
+                paint: {
+                    'text-color': '#ffffff',
+                    'text-halo-color': '#000000',
+                    'text-halo-width': 1
+                }
+            });
+
+            addFraccionamientoLabel();
+            map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+            setupMapInteractions();
+
+            if (pendingFilter) {
+                filterLotesByStatus(pendingFilter);
+                pendingFilter = null;
             }
-        });
 
-        map.addLayer({
-            id: 'lotes-borders',
-            type: 'line',
-            source: 'lotes',
-            paint: {
-                'line-color': '#ffffff',
-                'line-width': 2,
-                'line-opacity': 0.9
-            }
-        });
+            fitMapToLotes(data);
 
-        setupMapInteractions();
-
-        // Aplicar filtro pendiente si existía
-        if (pendingFilter) {
-            filterLotesByStatus(pendingFilter);
-            pendingFilter = null;
+        } catch (error) {
+            console.error('❌ Error agregando lotes al mapa:', error);
         }
+    }
 
-        fitMapToLotes(data);
+    function addFraccionamientoLabel() {
+        const fraccionamientoNombre = '{{ $datosFraccionamiento["nombre"] }}';
+        const center = map.getCenter();
+        
+        new mapboxgl.Popup({ 
+            closeButton: false, 
+            closeOnClick: false,
+            className: 'fraccionamiento-label-popup'
+        })
+        .setLngLat(center)
+        .setHTML(`
+            <div class="fraccionamiento-center-label">
+                <h3>${fraccionamientoNombre}</h3>
+            </div>
+        `)
+        .addTo(map);
     }
 
     function fitMapToLotes(data) {
@@ -1038,7 +1198,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!feature.geometry || !feature.geometry.coordinates) return;
             const coords = feature.geometry.coordinates;
 
-            // polygon: coords is [ [ [lng,lat], ... ] , ...rings ]
             if (feature.geometry.type === 'Polygon' && Array.isArray(coords[0])) {
                 coords[0].forEach(c => {
                     if (Array.isArray(c) && c.length >= 2) bounds.extend(c);
@@ -1058,41 +1217,85 @@ document.addEventListener('DOMContentLoaded', function () {
     function setupMapInteractions() {
         if (!map.getLayer('lotes-fill')) return;
 
-        const popup = new mapboxgl.Popup({ closeButton: true, closeOnClick: false, maxWidth: '300px' });
-
-        map.on('mouseenter', 'lotes-fill', (e) => {
-            map.getCanvas().style.cursor = 'pointer';
-            const properties = e.features[0].properties;
-            popup.setLngLat(e.lngLat).setHTML(createPopupContent(properties)).addTo(map);
+        const popup = new mapboxgl.Popup({
+            closeButton: true,
+            closeOnClick: true,
+            maxWidth: '280px',
+            className: 'lote-popup-compact'
         });
 
-        map.on('mousemove', 'lotes-fill', (e) => {
-            popup.setLngLat(e.lngLat);
+        map.on('mouseenter', 'lotes-fill', () => {
+            map.getCanvas().style.cursor = 'pointer';
         });
 
         map.on('mouseleave', 'lotes-fill', () => {
             map.getCanvas().style.cursor = '';
-            popup.remove();
         });
 
         map.on('click', 'lotes-fill', (e) => {
             const properties = e.features[0].properties;
-            showLoteInfo(properties);
+            popup.remove();
+            popup.setLngLat(e.lngLat)
+                 .setHTML(createCompactPopupContent(properties))
+                 .addTo(map);
         });
     }
 
-    function createPopupContent(properties) {
+    function createCompactPopupContent(properties) {
         const statusClass = getStatusClass(properties.estatus);
         const statusText = formatStatus(properties.estatus);
+        
         return `
-            <div class="popup-content">
-                <h4>Lote ${properties.lote}</h4>
-                <div class="popup-status ${statusClass}">${statusText}</div>
-                <div class="popup-details">
-                    <p><strong>Manzana:</strong> ${properties.manzana}</p>
-                    <p><strong>Área:</strong> ${properties.area_metros} m²</p>
+            <div class="popup-compact-container">
+                <div class="popup-compact-header">
+                    <div class="popup-compact-title">
+                        <span class="lote-number">Lote ${properties.lote}</span>
+                        <span class="popup-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="popup-compact-subtitle">
+                        <i class="fas fa-layer-group"></i>
+                        Manzana ${properties.manzana}
+                    </div>
                 </div>
-                <div class="popup-click-hint"><small>Click para más detalles</small></div>
+
+                <div class="popup-compact-info">
+                    <div class="compact-info-item">
+                        <i class="fas fa-vector-square"></i>
+                        <span>${properties.area_metros} m²</span>
+                    </div>
+                </div>
+
+                <div class="popup-compact-measures">
+                    <div class="compact-measure-row">
+                        <div class="measure-compact">
+                            <span class="measure-direction">N</span>
+                            <span class="measure-value">${properties.norte}m</span>
+                        </div>
+                        <div class="measure-compact">
+                            <span class="measure-direction">S</span>
+                            <span class="measure-value">${properties.sur}m</span>
+                        </div>
+                    </div>
+                    <div class="compact-measure-row">
+                        <div class="measure-compact">
+                            <span class="measure-direction">E</span>
+                            <span class="measure-value">${properties.oriente}m</span>
+                        </div>
+                        <div class="measure-compact">
+                            <span class="measure-direction">O</span>
+                            <span class="measure-value">${properties.poniente}m</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="popup-compact-actions">
+                    <button class="btn-compact btn-calculate" onclick="openCalculationForLote('${properties.lote}')">
+                        <i class="fas fa-calculator"></i>
+                    </button>
+                    <button class="btn-compact btn-reserve" onclick="openReservationForLote('${properties.lote}')">
+                        <i class="fas fa-handshake"></i>
+                    </button>
+                </div>
             </div>
         `;
     }
@@ -1133,7 +1336,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* ===========================
-       CONTROLES DEL MAPA (estilo/filtros/fullscreen)
+       CONTROLES DEL MAPA
        =========================== */
     function initMapControls() {
         document.querySelectorAll('.style-btn').forEach(btn => {
@@ -1145,7 +1348,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!mapStyles[style]) return;
                 map.setStyle(mapStyles[style]);
 
-                // re-add layers after style change
                 map.once('style.load', () => {
                     if (lotesData) addLotesToMap(lotesData);
                     if (pendingFilter) { filterLotesByStatus(pendingFilter); pendingFilter = null; }
@@ -1172,7 +1374,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function filterLotesByStatus(status) {
         if (!map) return;
-        // Si aún no existe la capa, guardar filtro para aplicar después
         if (!map.getLayer('lotes-fill')) {
             pendingFilter = status;
             return;
@@ -1181,6 +1382,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (status === 'all') {
             map.setFilter('lotes-fill', null);
             map.setFilter('lotes-borders', null);
+            map.setFilter('lotes-labels', null);
         } else if (status === 'apartado') {
             map.setFilter('lotes-fill', [
                 'any',
@@ -1192,9 +1394,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 ['==', ['get', 'estatus'], 'apartadoPalabra'],
                 ['==', ['get', 'estatus'], 'apartadoVendido']
             ]);
+            map.setFilter('lotes-labels', [
+                'any',
+                ['==', ['get', 'estatus'], 'apartadoPalabra'],
+                ['==', ['get', 'estatus'], 'apartadoVendido']
+            ]);
         } else {
             map.setFilter('lotes-fill', ['==', ['get', 'estatus'], status]);
             map.setFilter('lotes-borders', ['==', ['get', 'estatus'], status]);
+            map.setFilter('lotes-labels', ['==', ['get', 'estatus'], status]);
         }
     }
 
@@ -1209,7 +1417,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* ===========================
-       FUNCIONES GLOBALES USADAS POR EL HTML
+       FUNCIONES GLOBALES
        =========================== */
     window.openCalculationForLote = function (loteNumber) {
         const lotInput = document.getElementById('lotNumber');
@@ -1230,11 +1438,27 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     /* ===========================
-       FIN
+       INICIALIZACIÓN FINAL
        =========================== */
-    // console.log('Script depurado cargado.');
+    setTimeout(() => {
+        initializeMap();
+    }, 100);
+
+    window.addEventListener('beforeunload', function() {
+        if (map) {
+            try {
+                map.remove();
+            } catch (e) {
+                console.log('⚠️ Error limpiando mapa:', e.message);
+            }
+        }
+    });
+
+    console.log('✅ Script de fraccionamiento cargado correctamente');
 });
 </script>
+
+
 <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
 @endsection
 

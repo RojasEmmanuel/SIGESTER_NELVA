@@ -17,7 +17,7 @@ class InicioController extends Controller
         
         // Contar lotes por estatus (asumiendo los valores posibles)
         $lotesVendidos = Lote::where('estatus', 'vendido')->count();
-        $lotesApartados = Lote::where('estatus', ['apartadoPalabra','apartadoDeposito'])->count();
+        $lotesApartados = Lote::whereIn('estatus', ['apartadoPalabra', 'apartadoDeposito'])->count();
         $lotesDisponibles = Lote::where('estatus', 'disponible')->count();
         $totalLotes = Lote::count();
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Asesor\ApartadoController;
 use App\Http\Controllers\Asesor\InicioController;
 use App\Http\Controllers\Asesor\FraccionamientoController;
 use App\Http\Controllers\Asesor\PerfilController;
+use App\Http\Controllers\Asesor\ventasController;
 
 // Rutas de autenticación
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -44,7 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/asesor/apartados/{id}', [ApartadoController::class, 'show'])->name('asesor.apartados.show');
     Route::get('/asesor/apartados/estadisticas', [ApartadoController::class, 'estadisticas'])->name('asesor.apartados.estadisticas');
 
-
+    Route::get('/asesor/ventas', [ventasController::class, 'index'])->name('asesor.ventas.index');
     
    
     Route::get('/perfil', [PerfilController::class, 'index'])->name('asesor.perfil.index');

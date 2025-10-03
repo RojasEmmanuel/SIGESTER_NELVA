@@ -69,7 +69,7 @@ class FraccionamientoController extends Controller
             $totalLotes = $fraccionamiento->lotes->count();
             $lotesDisponibles = $fraccionamiento->lotes->where('estatus', 'disponible')->count();
             $lotesApartadosPalabra = $fraccionamiento->lotes->where('estatus', 'apartadoPalabra')->count();
-            $lotesApartadosVendido = $fraccionamiento->lotes->where('estatus', 'apartadoVendido')->count();
+            $lotesApartadosVendido = $fraccionamiento->lotes->where('estatus', 'apartadoDeposito')->count();
             $lotesVendidos = $fraccionamiento->lotes->where('estatus', 'vendido')->count();
             
             $lotesApartados = $lotesApartadosPalabra + $lotesApartadosVendido;

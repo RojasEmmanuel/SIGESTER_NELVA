@@ -14,8 +14,7 @@
     <nav class="navbar-desktop">
         <div class="navbar-desktop-container">
             <div class="logo">
-                <i class="fas fa-home"></i>
-                <span>Nelva Bienes Raíces</span>
+                <img src="https://nelvabienesraices.com/images/logo.png"  width="200px">
             </div>
             <div class="nav-links">
                 <a href="{{ url('asesor/inicio') }}" class="{{ Request::is('inicio') ? 'active' : '' }}">
@@ -65,7 +64,7 @@
                     <i class="fas fa-calendar-check"></i>
                     <span>Apartados</span>
                 </a>
-                <a href="{{ url('asesor.ventas') }}" class="nav-item {{ Request::is('ventas') ? 'active' : '' }}">
+                <a href="{{ url('asesor/ventas') }}" class="nav-item {{ Request::is('ventas') ? 'active' : '' }}">
                     <i class="fas fa-history"></i>
                     <span>Ventas</span>
                 </a>
