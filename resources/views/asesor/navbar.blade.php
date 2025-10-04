@@ -39,10 +39,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
         <div class="mobile-header-container">
-            <div class="logo">
-                <i class="fas fa-home"></i>
-                <span>Nelva Bienes Raíces</span>
-            </div>
+            <img src="https://nelvabienesraices.com/images/logo.png" width="200px">
             <button class="hamburger-btn" id="hamburger-btn">
                 <i class="fas fa-bars"></i>
             </button>

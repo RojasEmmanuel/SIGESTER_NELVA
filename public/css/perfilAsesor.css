@@ -1,94 +1,110 @@
 :root {
     --profile-primary: #1e478a;
     --profile-primary-dark: #15325e;
-    --profile-secondary: #64748b;
+    --profile-secondary: #3d86df;
+    --profile-accent: #e1f3fd;
     --profile-light-bg: #f8fafc;
     --profile-card-bg: #ffffff;
     --profile-text: #334155;
     --profile-text-light: #64748b;
     --profile-border: #e2e8f0;
-    --profile-border-focus: #93c5fd;
-    --profile-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    --profile-radius: 8px;
+    --profile-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --profile-radius: 12px;
+    --profile-transition: all 0.2s ease;
 }
 
 .profile-page-body {
     background-color: var(--profile-light-bg);
     color: var(--profile-text);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    line-height: 1.5;
-    padding: 2rem 0;
+    line-height: 1.6;
+    padding: 3rem 0;
     min-height: 100vh;
 }
 
 .profile-page-container {
-    max-width: 900px;
+    max-width: 960px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0 1.5rem;
 }
 
 .profile-page-card {
     background-color: var(--profile-card-bg);
     border-radius: var(--profile-radius);
     box-shadow: var(--profile-shadow);
-    overflow: hidden;
     border: 1px solid var(--profile-border);
-    animation: fadeIn 0.3s ease-out;
+    animation: fadeIn 0.4s ease-out;
+    transition: var(--profile-transition);
 }
 
 .profile-page-header {
-    background-color: var(--profile-primary);
+    background: linear-gradient(135deg, var(--profile-primary) 0%, var(--profile-secondary) 100%);
     color: white;
-    padding: 2rem;
+    padding: 2.5rem;
     text-align: center;
+    border-top-left-radius: var(--profile-radius);
+    border-top-right-radius: var(--profile-radius);
 }
 
 .profile-page-title {
-    font-weight: 600;
-    font-size: 1.5rem;
+    font-weight: 700;
+    font-size: 1.75rem;
     margin-bottom: 0.5rem;
 }
 
 .profile-page-lead {
-    opacity: 0.9;
+    font-size: 1rem;
+    opacity: 0.85;
     font-weight: 400;
 }
 
 .profile-page-body-content {
-    padding: 2rem;
+    padding: 2.5rem;
 }
 
 .profile-page-img-container {
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
 }
 
 .profile-page-img {
-    width: 120px;
-    height: 120px;
+    width: 140px;
+    height: 140px;
     object-fit: cover;
     border-radius: 50%;
-    border: 3px solid var(--profile-border);
-    background-color: #f1f5f9;
+    border: 4px solid var(--profile-accent);
+    background-color: var(--profile-light-bg);
+    transition: var(--profile-transition);
+}
+
+.profile-page-img:hover {
+    transform: scale(1.05);
 }
 
 .profile-page-file-upload {
-    margin: 1rem 0;
+    margin: 1.25rem 0;
 }
 
 .profile-page-file-upload-btn {
-    background: transparent;
-    border: 1px solid var(--profile-border);
-    color: var(--profile-text);
-    padding: 0.5rem 1rem;
+    background-color: var(--profile-primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
     border-radius: var(--profile-radius);
+    border: none;
     cursor: pointer;
-    font-size: 0.875rem;
-    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    transition: var(--profile-transition);
 }
 
 .profile-page-file-upload-btn:hover {
-    background-color: #f8fafc;
+    background-color: var(--profile-primary-dark);
+    transform: translateY(-2px);
 }
 
 .profile-page-file-upload input {
@@ -96,34 +112,38 @@
 }
 
 .profile-page-form-label {
-    display: block;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 0.9rem;
     margin-bottom: 0.5rem;
     color: var(--profile-text);
 }
 
 .profile-page-form-control {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.85rem;
     border: 1px solid var(--profile-border);
     border-radius: var(--profile-radius);
-    font-size: 0.875rem;
-    transition: border-color 0.2s ease;
+    font-size: 0.9rem;
+    background-color: var(--profile-light-bg);
+    transition: var(--profile-transition);
 }
 
 .profile-page-form-control:focus {
     outline: none;
     border-color: var(--profile-primary);
-    box-shadow: 0 0 0 2px rgba(30, 71, 138, 0.1);
+    box-shadow: 0 0 0 3px rgba(30, 71, 138, 0.15);
 }
 
 .profile-page-form-control:disabled {
-    background-color: #f8fafc;
+    background-color: #f1f5f9;
     color: var(--profile-text-light);
+    cursor: not-allowed;
 }
 
 .profile-page-social-input {
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .profile-page-social-input .input-group-text {
@@ -133,117 +153,144 @@
     height: 100%;
     background: transparent;
     border: none;
-    padding: 0 1rem;
-    color: var(--profile-text-light);
+    padding: 0 1.25rem;
+    color: var(--profile-primary);
     z-index: 2;
+    font-size: 1.1rem;
 }
 
 .profile-page-social-input .profile-page-form-control {
-    padding-left: 2.5rem;
+    padding-left: 3rem;
 }
 
 .profile-page-divider {
     height: 1px;
     background-color: var(--profile-border);
-    margin: 1.5rem 0;
+    margin: 2rem 0;
 }
 
 .profile-page-text-muted {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--profile-text-light);
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
 }
 
 .profile-page-btn {
-    padding: 0.75rem 1.5rem;
+    padding: 0.85rem 2rem;
     border-radius: var(--profile-radius);
-    font-weight: 500;
-    font-size: 0.875rem;
+    font-weight: 600;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: var(--profile-transition);
     border: 1px solid transparent;
 }
 
 .profile-page-btn-primary {
     background-color: var(--profile-primary);
     color: white;
-    border-color: var(--profile-primary);
 }
 
 .profile-page-btn-primary:hover {
     background-color: var(--profile-primary-dark);
-    border-color: var(--profile-primary-dark);
+    transform: translateY(-2px);
 }
 
 .profile-page-btn-outline {
     background-color: transparent;
     color: var(--profile-primary);
-    border-color: var(--profile-border);
+    border-color: var(--profile-primary);
 }
 
 .profile-page-btn-outline:hover {
-    background-color: #f8fafc;
-    border-color: var(--profile-primary);
+    background-color: var(--profile-accent);
+    transform: translateY(-2px);
 }
 
 .profile-page-actions {
     display: flex;
-    gap: 1rem;
+    gap: 1.25rem;
     justify-content: flex-end;
-    margin-top: 2rem;
+    margin-top: 2.5rem;
 }
 
-/* Layout mejorado */
 .profile-page-row {
     display: flex;
     flex-wrap: wrap;
-    margin: 0 -1rem;
+    margin: 0 -1.25rem;
 }
 
 .profile-page-col {
     flex: 1;
-    padding: 0 1rem;
-    min-width: 300px;
+    padding: 0 1.25rem;
+    min-width: 280px;
 }
 
 .profile-page-col-sidebar {
-    flex: 0 0 300px;
+    flex: 0 0 320px;
     text-align: center;
 }
 
-/* Responsive */
+.alert {
+    padding: 1rem;
+    border-radius: var(--profile-radius);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.alert-success {
+    background-color: #d4f4e2;
+    color: #166534;
+    border: 1px solid #6ee7b7;
+}
+
+.alert-danger {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #f87171;
+}
+
 @media (max-width: 768px) {
     .profile-page-body {
-        padding: 1rem 0;
+        padding: 1.5rem 0;
     }
-    
+
+    .profile-page-container {
+        padding: 0 1rem;
+    }
+
     .profile-page-header {
-        padding: 1.5rem 1rem;
+        padding: 2rem 1.5rem;
     }
-    
+
     .profile-page-body-content {
-        padding: 1.5rem 1rem;
+        padding: 2rem 1.5rem;
     }
-    
+
     .profile-page-col-sidebar {
         flex: 0 0 100%;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
     }
-    
+
     .profile-page-actions {
         flex-direction: column;
+        gap: 0.75rem;
     }
-    
+
     .profile-page-btn {
         width: 100%;
         text-align: center;
+    }
+
+    .profile-page-img {
+        width: 120px;
+        height: 120px;
     }
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(15px);
     }
     to {
         opacity: 1;

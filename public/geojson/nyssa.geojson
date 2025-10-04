@@ -4,6 +4,40 @@
     {
       "type": "Feature",
       "properties": {
+        "lote": "Fraccionamiento"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -96.77851606,
+              15.73415244
+            ],
+            
+            [
+              -96.77829959,
+              15.73500745
+            ],
+            [
+              -96.77735310,
+              15.73468511
+            ],
+            [
+              -96.77757571,
+              15.73384019
+            ],
+            [
+              -96.77851606,
+              15.73415244
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "lote": 1
       },
       "geometry": {
@@ -21,7 +55,7 @@
     },
     {
       "type": "Feature",
-      "properties": {
+      "properties": { 
         "lote": 2
       },
       "geometry": {

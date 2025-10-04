@@ -1277,3 +1277,191 @@ body {
     border: 2px solid #1e40af;
     text-align: center;
 }
+
+
+/* Estilos para controles personalizados del mapa */
+.custom-map-controls {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.custom-nav-control, .custom-rotate-control {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    padding: 5px;
+    border: 1px solid #e5e7eb;
+}
+
+.custom-control-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #374151;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.custom-control-btn:hover {
+    background: #f8fafc;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.custom-control-btn:active {
+    transform: translateY(0);
+}
+
+.toggle-3d {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    border: 1px solid #e5e7eb;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.toggle-3d:hover {
+    background: #f8fafc;
+    transform: translateY(-1px);
+}
+
+/* Estilos para los botones de filtro */
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.filter-btn:hover {
+    border-color: #3b82f6;
+    background: #f8fafc;
+}
+
+.filter-btn.active {
+    border-color: #3b82f6;
+    background: #3b82f6;
+    color: white;
+}
+
+.color-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.disponible-indicator {
+    background-color: #16a34a;
+}
+
+.vendido-indicator {
+    background-color: #dc2626;
+}
+
+.apartado-indicator {
+    background-color: #ea580c;
+}
+
+.no-disponible-indicator {
+    background-color: #6b7280;
+}
+
+/* Botón de pantalla completa */
+.fullscreen-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.fullscreen-btn:hover {
+    background-color: #3b82f6;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Estilos para pantalla completa */
+#planContainer:fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white;
+}
+
+#planContainer:fullscreen #mapPlano {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+}
+
+#planContainer:-webkit-full-screen {
+    width: 100vw !important;
+    height: 100vh !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white;
+}
+
+#planContainer:-webkit-full-screen #mapPlano {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+}
+
+/* Ocultar controles nativos de Mapbox */
+.mapboxgl-ctrl-top-right {
+    display: none !important;
+}
