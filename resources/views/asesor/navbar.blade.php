@@ -7,6 +7,8 @@
     <title>@yield('title', 'Nelva Bienes Raíces')</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
+    <link rel="icon" href="{{ asset('/images/favicon.ico') }}" type="image/x-icon">
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
    @stack('styles')
 </head>
@@ -15,7 +17,7 @@
     <nav class="navbar-desktop">
         <div class="navbar-desktop-container">
             <div class="logo">
-                <img src="https://nelvabienesraices.com/images/logo.png"  width="200px">
+                <img src="/images/Logo.png"  width="200px">
             </div>
             <div class="nav-links">
                 <a href="{{ url('asesor/inicio') }}" class="{{ Request::is('inicio') ? 'active' : '' }}">
@@ -40,7 +42,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
         <div class="mobile-header-container">
-            <img src="https://nelvabienesraices.com/images/logo.png" width="150px">
+            <img src="/images/LogoNegativo.png" width="150px">
             <button class="hamburger-btn" id="hamburger-btn">
                 <i class="fas fa-bars"></i>
             </button>

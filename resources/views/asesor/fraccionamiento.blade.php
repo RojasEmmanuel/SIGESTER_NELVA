@@ -1,6 +1,6 @@
 @extends('asesor.navbar')
 
-@section('title', 'Detalles del Fraccionamiento')
+@section('title', 'Nelva Bienes Raíces - Fraccionamiento')
 
 @push('styles')
 <link href="{{ asset('css/fraccionamientoAsesor.css') }}" rel="stylesheet">

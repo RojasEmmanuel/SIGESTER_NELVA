@@ -1,6 +1,6 @@
 @extends('asesor.navbar')
 
-@section('title', 'Página de Inicio')
+@section('title', 'Nelva Bienes Raíces - Detalles del Apartado')
 
 @push('styles')
 <link href="{{ asset('css/showApartado.css') }}" rel="stylesheet">
