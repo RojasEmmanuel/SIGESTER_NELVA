@@ -11,11 +11,7 @@ class LoteApartado extends Model
 
     // Nombre de la tabla
     protected $table = 'lotes_apartados';
-
-    // Clave primaria
     protected $primaryKey = 'id';
-
-    // Campos que se pueden asignar en masa
     protected $fillable = [
         'id_apartado',
         'id_lote',

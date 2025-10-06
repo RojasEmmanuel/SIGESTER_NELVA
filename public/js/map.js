@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             map = new mapboxgl.Map({
                 container: 'mapPlano',
-                style: mapStyles['satellite-streets'],
+                style: 'mapbox://styles/mapbox/satellite-streets-v12',
                 center: [-99.1332, 19.4326],
                 zoom: 10,
                 pitch: 0,

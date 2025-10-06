@@ -44,9 +44,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/asesor/apartados', [ApartadoController::class, 'index'])->name('asesor.apartados.index');
     Route::get('/asesor/apartados/{id}', [ApartadoController::class, 'show'])->name('asesor.apartados.show');
     Route::get('/asesor/apartados/estadisticas', [ApartadoController::class, 'estadisticas'])->name('asesor.apartados.estadisticas');
+    Route::post('/asesor/apartados', [ApartadoController::class, 'store'])->name('asesor.apartados.store');
 
     Route::get('/asesor/ventas', [ventasController::class, 'index'])->name('asesor.ventas.index');
-    
    
     Route::get('/perfil', [PerfilController::class, 'index'])->name('asesor.perfil.index');
     Route::post('/perfil', [PerfilController::class, 'update'])->name('asesor.perfil.update');

@@ -11,7 +11,6 @@ class ApartadoDeposito extends Model
 
     protected $table = 'apartados_deposito';
     protected $primaryKey = 'id_deposito';
-
     protected $fillable = [
         'cantidad',
         'ticket_estatus',

@@ -247,10 +247,7 @@
         @endif
     </div>
    
-
- 
     <!-- Modal de Apartado -->
-     <!-- Modal de Apartado -->
     <div class="modal-fraccionamiento" id="reservationModal">
         <div class="modal-content-fraccionamiento">
             <button class="close-modal-fraccionamiento" id="closeModal">&times;</button>
@@ -325,7 +322,7 @@
                     <p><strong>Fraccionamiento:</strong> {{ $datosFraccionamiento['nombre'] }}</p>
                 </div>
                 <div class="text-center">
-                    <p>Una vez finalizado el tiempo limite se cancelará el apartado.</p>
+                    <p>Una vez finalizado el tiempo límite se cancelará el apartado.</p>
                     <a href="#" class="share-btn verbal-share-btn" id="verbalWhatsappShare">
                         <i class="fab fa-whatsapp"></i> Notificar
                     </a>
@@ -351,7 +348,6 @@
                     <p><strong>Nombre:</strong> Nelva Bienes Raíces S.A. de C.V.</p>
                     <p><strong>Cuenta:</strong> 0123 4567 8910 1112</p>
                     <p><strong>CLABE:</strong> 012 320 0123 4567 8910 11</p>
-                    <p><strong>Referencia:</strong> {{ substr($datosFraccionamiento['nombre'], 0, 3) }}-<span id="referenceNumber"></span></p>
                 </div>
                 
                 <div class="text-center">
@@ -363,7 +359,7 @@
             </div>
         </div>
     </div>
-    <!-- Modal de Cálculo de Costo Mejorado -->
+
     <!-- Modal de Cálculo de Costo Mejorado -->
     <div class="modal-fraccionamiento" id="calculationModal">
         <div class="modal-content-fraccionamiento">
@@ -449,9 +445,8 @@
 
 @include('app_config')
 
-<script src="{{ asset('js/map.js') }}"></script>
-<script src="{{ asset('js/modals.js') }}"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+<script src="{{ asset('js/modals.js') }}"></script>
+<script src="{{ asset('js/map.js') }}"></script>
 
 @endsection
-

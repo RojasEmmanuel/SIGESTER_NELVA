@@ -343,40 +343,81 @@ document.addEventListener('DOMContentLoaded', function () {
         console.warn('⚠️ Botón calculateBtn no encontrado');
     }
 
-    /* ===========================
-       ENVÍO FORMULARIO APARTADO
-       =========================== */
-    if (reservationForm) {
-        reservationForm.addEventListener('submit', function (e) {
-            e.preventDefault();
+   /* ===========================
+   ENVÍO FORMULARIO APARTADO (con integración backend)
+   =========================== */
+if (reservationForm) {
+    reservationForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-            const reservationType = document.querySelector('input[name="reservationType"]:checked')?.value || 'verbal';
-            const firstName = (document.getElementById('firstName')?.value || '').trim();
-            const lastName = (document.getElementById('lastName')?.value || '').trim();
-            const lotNumbers = Array.from(document.querySelectorAll('.lot-number'))
-                .map(input => input.value.trim())
-                .filter(v => v !== '');
+        const reservationType = document.querySelector('input[name="reservationType"]:checked')?.value || 'verbal';
+        const firstName = (document.getElementById('firstName')?.value || '').trim();
+        const lastName = (document.getElementById('lastName')?.value || '').trim();
+        const lotNumbers = Array.from(document.querySelectorAll('.lot-number'))
+            .map(input => input.value.trim())
+            .filter(v => v !== '');
 
-            if (!firstName || !lastName) {
-                alert('Por favor complete todos los campos requeridos');
+        if (!firstName || !lastName) {
+            alert('Por favor complete todos los campos requeridos');
+            return;
+        }
+        if (lotNumbers.length === 0) {
+            alert('Por favor ingrese al menos un número de lote');
+            return;
+        }
+
+        const fraccionamientoId = window.AppConfig.fraccionamientoId;
+        const formData = new FormData();
+        formData.append('tipoApartado', reservationType === 'verbal' ? 'apartadoPalabra' : 'apartadoDeposito');
+        formData.append('cliente_nombre', firstName);
+        formData.append('cliente_apellidos', lastName);
+        formData.append('id_fraccionamiento', fraccionamientoId);
+        
+        lotNumbers.forEach(lot => {
+            formData.append('lots[]', lot); // ✅ Correcto
+        });
+
+        if (reservationType === 'deposit') {
+            const amount = document.getElementById('amount')?.value;
+            if (!amount || amount < 1000) {
+                alert('Por favor ingrese un monto válido (mínimo $1,000 MXN)');
                 return;
             }
-            if (lotNumbers.length === 0) {
-                alert('Por favor ingrese al menos un número de lote');
-                return;
+            formData.append('cantidad', amount);
+        }
+
+        try {
+            // 🔄 Mostrar estado de carga
+            const submitBtn = reservationForm.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
             }
 
+            // 📡 Enviar datos al backend
+            const response = await fetch('/asesor/apartados', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Error al registrar el apartado');
+            }
+
+            // ✅ Si todo salió bien, mostrar recibo y WhatsApp
             const randomRef = Math.floor(1000 + Math.random() * 9000);
             const fraccionamientoNombre = window.AppConfig.fraccionamientoNombre || 'default';
+            const deadline = new Date(data.apartado.fechaVencimiento);
 
             if (reservationType === 'verbal') {
                 if (verbalName) verbalName.textContent = `${firstName} ${lastName}`;
                 if (verbalLots) verbalLots.textContent = lotNumbers.join(', ');
-                const deadline = new Date();
-                deadline.setDate(deadline.getDate() + 2);
-                if (deadlineDate) deadlineDate.textContent = deadline.toLocaleString('es-MX', {
-                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                });
+                if (deadlineDate) deadlineDate.textContent = deadline.toLocaleDateString('es-MX');
 
                 const verbalMessage = `Hola ${firstName}, tu apartado de palabra para el lote(s) ${lotNumbers.join(', ')} en ${fraccionamientoNombre} ha sido registrado. Tienes hasta el ${deadline.toLocaleDateString('es-MX')} para confirmar.`;
                 if (verbalWhatsappShare) verbalWhatsappShare.href = `https://wa.me/?text=${encodeURIComponent(verbalMessage)}`;
@@ -384,11 +425,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 reservationForm.style.display = 'none';
                 if (verbalReceipt) verbalReceipt.style.display = 'block';
             } else {
-                const amount = document.getElementById('amount')?.value;
-                if (!amount || amount < 1000) {
-                    alert('Por favor ingrese un monto válido (mínimo $1,000 MXN)');
-                    return;
-                }
+                const amount = formData.get('cantidad');
                 if (depositName) depositName.textContent = `${firstName} ${lastName}`;
                 if (depositLots) depositLots.textContent = lotNumbers.join(', ');
                 if (depositAmount) depositAmount.textContent = parseFloat(amount).toLocaleString('es-MX', { minimumFractionDigits: 2 });
@@ -401,10 +438,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 reservationForm.style.display = 'none';
                 if (depositReceipt) depositReceipt.style.display = 'block';
             }
-        });
-    } else {
-        console.warn('⚠️ Formulario reservationForm no encontrado');
-    }
+
+            alert('✅ Apartado registrado correctamente');
+        } catch (error) {
+            console.error('❌ Error al registrar el apartado:', error);
+            alert(error.message || 'Error inesperado al registrar el apartado');
+        } finally {
+            // 🔁 Restaurar botón
+            const submitBtn = reservationForm.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Registrar Apartado';
+            }
+        }
+    });
+} else {
+    console.warn('⚠️ Formulario reservationForm no encontrado');
+}
+
 
     if (closeAfterVerbal) {
         closeAfterVerbal.addEventListener('click', function () {
