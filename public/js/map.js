@@ -29,9 +29,11 @@ document.addEventListener('DOMContentLoaded', function () {
     let mapLayersLoaded = false;
     const mapStyles = {
         'satellite-streets': 'mapbox://styles/mapbox/satellite-streets-v12',
-        'outdoors': 'mapbox://styles/mapbox/outdoors-v12',
         'streets': 'mapbox://styles/mapbox/streets-v12',
-        'light': 'mapbox://styles/mapbox/light-v11'
+        'light': 'mapbox://styles/mapbox/light-v11',
+        'dark': 'mapbox://styles/mapbox/dark-v11',
+        'standard': 'mapbox://styles/mapbox/standard-v1',
+        'tourist': 'mapbox://styles/your-username/custom-tourist-style' // Reemplaza con tu ID de estilo personalizado
     };
 
     /* ===========================
@@ -40,17 +42,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const STATUS_CLASS_MAP = {
         'disponible': 'status-disponible',
         'apartadoPalabra': 'status-apartado',
-        'apartadoVendido': 'status-apartado',
-        'vendido': 'status-vendido',
-        'no disponible': 'status-no-disponible'
+        'apartadoDeposito': 'status-apartado',
+        'vendido': 'status-vendido'
     };
 
     const STATUS_LABEL_MAP = {
         'disponible': 'Disponible',
         'apartadoPalabra': 'Apartado (Palabra)',
-        'apartadoVendido': 'Apartado (Vendido)',
-        'vendido': 'Vendido',
-        'no disponible': 'No Disponible'
+        'apartadoDeposito': 'Apartado (Depósito)',
+        'vendido': 'Vendido'
     };
 
     function getStatusClass(status) {
@@ -97,16 +97,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 map.setFilter('lotes-borders', null);
                 map.setFilter('lotes-labels', null);
                 console.log('✅ Mostrando todos los lotes');
-            } else if (status === 'apartado') {
+            } else if (status === 'apartado-palabra-deposito') {
                 const filter = [
                     'any',
                     ['==', ['get', 'estatus'], 'apartadoPalabra'],
-                    ['==', ['get', 'estatus'], 'apartadoVendido']
+                    ['==', ['get', 'estatus'], 'apartadoDeposito']
                 ];
                 map.setFilter('lotes-fill', filter);
                 map.setFilter('lotes-borders', filter);
                 map.setFilter('lotes-labels', filter);
-                console.log('✅ Filtrando lotes apartados');
+                console.log('✅ Filtrando lotes apartados (Palabra/Depósito)');
             } else {
                 const filter = ['==', ['get', 'estatus'], status];
                 map.setFilter('lotes-fill', filter);
@@ -522,6 +522,30 @@ document.addEventListener('DOMContentLoaded', function () {
                             [-96.778, 15.7344]
                         ]]
                     }
+                },
+                {
+                    type: "Feature",
+                    properties: {
+                        id: 4,
+                        lote: "4",
+                        estatus: "apartadoDeposito",
+                        manzana: "B",
+                        area_metros: "290",
+                        norte: "29",
+                        sur: "29",
+                        oriente: "10",
+                        poniente: "10"
+                    },
+                    geometry: {
+                        type: "Polygon",
+                        coordinates: [[
+                            [-96.7782, 15.7344],
+                            [-96.7780, 15.7344],
+                            [-96.7780, 15.7346],
+                            [-96.7782, 15.7346],
+                            [-96.7782, 15.7344]
+                        ]]
+                    }
                 }
             ]
         };
@@ -604,7 +628,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         'disponible', '#16a34a',
                         'vendido', '#dc2626',
                         'apartadoPalabra', '#ea580c',
-                        'apartadoVendido', '#ea580c',
+                        'apartadoDeposito', '#ea580c',
                         '#6b7280'
                     ],
                     'fill-opacity': 0.7,

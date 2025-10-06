@@ -1465,3 +1465,33 @@ body {
 .mapboxgl-ctrl-top-right {
     display: none !important;
 }
+
+.style-btn {
+    padding: 8px 16px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.style-btn.active {
+    background-color: #3b82f6;
+    color: #fff;
+    border-color: #3b82f6;
+}
+.style-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+}
+
+.palabra-deposito-indicator {
+    background-color: #ea580c; /* Naranja para apartados palabra/depósito */
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+}

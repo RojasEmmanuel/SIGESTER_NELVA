@@ -72,93 +72,98 @@
 
         
         {{-- Development Plan --}}
-        
-        <div class="development-plan">
-            <h3 class="info-title">
-                <i class="fas fa-map"></i>
-                <span>Plano Interactivo del Fraccionamiento</span>
-            </h3>
+     <div class="development-plan">
+    <h3 class="info-title">
+        <i class="fas fa-map"></i>
+        <span>Plano Interactivo del Fraccionamiento</span>
+    </h3>
+    
+    <div class="plan-container" id="planContainer">
+        <button class="fullscreen-btn" id="fullscreenBtn">
+            <i class="fas fa-expand"></i> Pantalla Completa
+        </button>
+
+        {{-- Contenedor del mapa de Mapbox --}}
+        <div id="mapPlano" style="width: 100%; height: 600px; border-radius: 12px;"></div>
+    </div>
+
+    <!-- Controles del Mapa -->
+    <div class="map-controls-overlay">
+        <div class="control-panel-map">
+            <div class="control-section">
+                <div class="control-title"><i class="fas fa-layer-group"></i> Estilo del Mapa</div>
+                <div class="style-buttons">
+                    <button class="style-btn active" data-style="satellite-streets">
+                        <i class="fas fa-satellite"></i> Satélite
+                    </button>
+                    <button class="style-btn" data-style="streets">
+                        <i class="fas fa-road"></i> Calles
+                    </button>
+                    <button class="style-btn" data-style="light">
+                        <i class="fas fa-map"></i> Claro
+                    </button>
+                    <button class="style-btn" data-style="dark">
+                        <i class="fas fa-moon"></i> Oscuro
+                    </button>
+                    <button class="style-btn" data-style="standard">
+                        <i class="fas fa-map-marked-alt"></i> Estándar
+                    </button>
+                    <button class="style-btn" data-style="tourist">
+                        <i class="fas fa-landmark"></i> Lugares Turísticos
+                    </button>
+                </div>
+            </div>
             
-            <div class="plan-container" id="planContainer">
-                <button class="fullscreen-btn" id="fullscreenBtn">
-                    <i class="fas fa-expand"></i> Pantalla Completa
-                </button>
-
-                {{-- Contenedor del mapa de Mapbox --}}
-                <div id="mapPlano" style="width: 100%; height: 600px; border-radius: 12px;"></div>
-            </div>
-
-            <!-- Controles del Mapa -->
-            <div class="map-controls-overlay">
-                <div class="control-panel-map">
-                    <div class="control-section">
-                        <div class="control-title"><i class="fas fa-layer-group"></i> Estilo del Mapa</div>
-                        <div class="style-buttons">
-                            <button class="style-btn active" data-style="satellite-streets">
-                                <i class="fas fa-satellite"></i> Satélite
-                            </button>
-                            <button class="style-btn" data-style="outdoors">
-                                <i class="fas fa-mountain"></i> Relieve
-                            </button>
-                            <button class="style-btn" data-style="streets">
-                                <i class="fas fa-road"></i> Calles
-                            </button>
-                            <button class="style-btn" data-style="light">
-                                <i class="fas fa-map"></i> Light
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="control-section">
-                        <div class="control-title"><i class="fas fa-filter"></i> Filtros</div>
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" data-filter="all">
-                                <div class="color-indicator" style="background: conic-gradient(#16a34a 0% 33%, #dc2626 33% 66%, #ea580c 66% 100%);"></div>
-                                Todos los lotes
-                            </button>
-                            <button class="filter-btn" data-filter="disponible">
-                                <div class="color-indicator disponible-indicator"></div>
-                                Disponibles
-                            </button>
-                            <button class="filter-btn" data-filter="vendido">
-                                <div class="color-indicator vendido-indicator"></div>
-                                Vendidos
-                            </button>
-                            <button class="filter-btn" data-filter="apartado">
-                                <div class="color-indicator apartado-indicator"></div>
-                                Apartados
-                            </button>
-                        </div>
-                    </div>
+           <div class="control-section">
+                <div class="control-title"><i class="fas fa-filter"></i> Filtros</div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">
+                        <div class="color-indicator" style="background: conic-gradient(#16a34a 0% 33%, #dc2626 33% 66%, #ea580c 66% 100%);"></div>
+                        Todos los lotes
+                    </button>
+                    <button class="filter-btn" data-filter="disponible">
+                        <div class="color-indicator disponible-indicator"></div>
+                        Disponibles
+                    </button>
+                    <button class="filter-btn" data-filter="vendido">
+                        <div class="color-indicator vendido-indicator"></div>
+                        Vendidos
+                    </button>
+                    <button class="filter-btn" data-filter="apartado-palabra-deposito">
+                        <div class="color-indicator palabra-deposito-indicator"></div>
+                        Apartado Palabra/Depósito
+                    </button>
                 </div>
-
-                <!-- Panel de información del lote -->
-                <div class="info-panel-map hidden" id="infoPanelMap">
-                    <div class="info-header">
-                        <div class="info-title">Información del Lote</div>
-                        <button class="info-close" id="infoCloseMap">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="lote-info-content" id="loteInfoContent">
-                        <!-- La información del lote se cargará aquí dinámicamente -->
-                    </div>
-                </div>
-            </div>
-
-            <div class="plan-actions mt-3">
-                <h5><i class="fas fa-file-download"></i> Planos disponibles:</h5>
-                @foreach($planos as $plano)
-                    <a href="{{ route('asesor.fraccionamiento.download-plano', [
-                        'idFraccionamiento' => $datosFraccionamiento['id'],
-                        'idPlano' => $plano['id']
-                    ]) }}"
-                    class="btn btn-outline m-1" target="_blank">
-                    <i class="fas fa-download"></i> {{ $plano['nombre'] }}
-                    </a>
-                @endforeach
             </div>
         </div>
+
+        <!-- Panel de información del lote -->
+        <div class="info-panel-map hidden" id="infoPanelMap">
+            <div class="info-header">
+                <div class="info-title">Información del Lote</div>
+                <button class="info-close" id="infoCloseMap">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="lote-info-content" id="loteInfoContent">
+                <!-- La información del lote se cargará aquí dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <div class="plan-actions mt-3">
+        <h5><i class="fas fa-file-download"></i> Planos disponibles:</h5>
+        @foreach($planos as $plano)
+            <a href="{{ route('asesor.fraccionamiento.download-plano', [
+                'idFraccionamiento' => $datosFraccionamiento['id'],
+                'idPlano' => $plano['id']
+            ]) }}"
+            class="btn btn-outline m-1" target="_blank">
+            <i class="fas fa-download"></i> {{ $plano['nombre'] }}
+            </a>
+        @endforeach
+    </div>
+</div>
         
          {{-- Development Plan --}}
         
