@@ -106,7 +106,7 @@
                         <a href="{{ route('asesor.fraccionamiento.show', $fraccionamiento->id_fraccionamiento) }}" 
                         class="btn btn-primary ver-detalles">
                             <i class="fas fa-eye"></i>
-                            <span>Ver Detalles</span>
+                            <span>Ver</span>
                         </a>
                     </div>
                 </div>

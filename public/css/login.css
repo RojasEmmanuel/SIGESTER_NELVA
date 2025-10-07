@@ -22,7 +22,10 @@
 }
 
 body {
-    background-color: var(--light-bg);
+    background: linear-gradient(135deg, 
+    #2563eb 0%, 
+    #4facfe  50%, 
+    #2563eb 100%);
     color: var(--text);
     display: flex;
     justify-content: center;
