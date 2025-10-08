@@ -22,8 +22,8 @@ class Apartado extends Model
     ];
 
     protected $casts = [
-        'fechaApartado' => 'date',
-        'fechaVencimiento' => 'date',
+        'fechaApartado' => 'datetime',
+        'fechaVencimiento' => 'datetime',
     ];
 
     public function usuario()

@@ -3,7 +3,6 @@
 @section('title', 'Nelva Bienes Raíces - Apartados')
 
 @push('styles')
-<!-- Agregar Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 <link href="{{ asset('css/ApartadoAsesor.css') }}" rel="stylesheet">
 @endpush
@@ -48,50 +47,78 @@
         @if(isset($apartados) && $apartados->count() > 0)
             @foreach($apartados as $apartado)
                 @php
-                    $hoy = \Carbon\Carbon::now();
-                    $vencimiento = \Carbon\Carbon::parse($apartado->fechaVencimiento);
-                    $estaVencido = $vencimiento->lt($hoy);
-                    $estadoClass = $estaVencido ? 'vencido' : 'activo';
-                    
-                    // SOLUCIÓN CORREGIDA: Calcular días, horas y minutos exactos
-                    if ($estaVencido) {
-                        $tiempoRestante = 'Vencido';
+                    $errorMessage = 'Ninguno';
+                    try {
+                        $hoy = \Carbon\Carbon::now('America/Mexico_City');
+                        $vencimiento = !empty($apartado->fechaVencimiento) ? \Carbon\Carbon::parse($apartado->fechaVencimiento) : null;
+                        $fechaApartado = !empty($apartado->fechaApartado) ? \Carbon\Carbon::parse($apartado->fechaApartado) : null;
+
+                        if (!$vencimiento || !$fechaApartado) {
+                            throw new \Exception('Fecha de apartado o vencimiento inválida');
+                        }
+
+                        $estaVencido = $vencimiento->lt($hoy);
+                        $estadoClass = $estaVencido ? 'vencido' : 'activo';
+
+                        if ($estaVencido) {
+                            $tiempoRestante = 'Vencido';
+                            $tiempoClass = 'text-danger';
+                            $diasRestantes = 0;
+                            $horasRestantes = 0;
+                            $minutosRestantes = 0;
+                            $segundosRestantes = 0;
+                        } else {
+                            $diferencia = $vencimiento->diff($hoy);
+
+                            $diasRestantes = $diferencia->days;
+                            $horasRestantes = $diferencia->h;
+                            $minutosRestantes = $diferencia->i;
+                            $segundosRestantes = $diferencia->s;
+
+                            $partes = [];
+                            if ($diasRestantes > 0) {
+                                $partes[] = $diasRestantes . 'd';
+                            }
+                            if ($horasRestantes > 0 || $diasRestantes > 0) {
+                                $partes[] = $horasRestantes . 'h';
+                            }
+                            $partes[] = $minutosRestantes . 'm';
+
+                            if ($diasRestantes == 0 && $horasRestantes == 0 && $minutosRestantes < 5) {
+                                $partes[] = $segundosRestantes . 's';
+                            }
+
+                            $tiempoRestante = implode(' ', $partes);
+                            if (empty($tiempoRestante)) {
+                                $tiempoRestante = 'Menos de 1m';
+                            }
+
+                            $totalHorasRestantes = ($diasRestantes * 24) + $horasRestantes + ($minutosRestantes / 60);
+                            if ($totalHorasRestantes <= 12) {
+                                $tiempoClass = 'text-danger';
+                            } elseif ($totalHorasRestantes <= 48) {
+                                $tiempoClass = 'text-warning';
+                            } elseif ($totalHorasRestantes <= 120) {
+                                $tiempoClass = 'text-warning-light';
+                            } else {
+                                $tiempoClass = 'text-success';
+                            }
+                        }
+
+                        $fechaApartadoFormatted = $fechaApartado ? $fechaApartado->isoFormat('D MMM YYYY, h:mm:ss A') : 'N/A';
+                        $fechaVencimientoFormatted = $vencimiento ? $vencimiento->isoFormat('D MMM YYYY, h:mm:ss A') : 'N/A';
+                    } catch (\Exception $e) {
+                        $errorMessage = $e->getMessage();
+                        $tiempoRestante = 'Error en fecha';
                         $tiempoClass = 'text-danger';
-                        $diasRestantes = 0;
-                        $horasRestantes = 0;
-                        $minutosRestantes = 0;
-                    } else {
-                        // Calcular la diferencia completa
-                        $diferencia = $vencimiento->diff($hoy);
-                        
-                        $diasRestantes = $diferencia->days;
-                        $horasRestantes = $diferencia->h;
-                        $minutosRestantes = $diferencia->i;
-                        
-                        // Formatear el tiempo restante de manera compacta
-                        if ($diasRestantes > 0) {
-                            $tiempoRestante = $diasRestantes . 'd ' . $horasRestantes . 'h';
-                        } elseif ($horasRestantes > 0) {
-                            $tiempoRestante = $horasRestantes . 'h ' . $minutosRestantes . 'm';
-                        } else {
-                            $tiempoRestante = $minutosRestantes . 'm';
-                        }
-                        
-                        // Determinar la clase de color según el tiempo restante
-                        $totalHorasRestantes = ($diasRestantes * 24) + $horasRestantes;
-                        if ($totalHorasRestantes <= 24) {
-                            $tiempoClass = 'text-danger'; // Menos de 24 horas - ROJO
-                        } elseif ($totalHorasRestantes <= 72) {
-                            $tiempoClass = 'text-warning'; // 1-3 días - AMARILLO
-                        } else {
-                            $tiempoClass = 'text-success'; // Más de 3 días - VERDE
-                        }
+                        $estadoClass = 'error';
+                        $fechaApartadoFormatted = 'N/A';
+                        $fechaVencimientoFormatted = 'N/A';
                     }
-                    
-                    $fechaApartado = \Carbon\Carbon::parse($apartado->fechaApartado)->isoFormat('D MMM YYYY');
-                    $fechaVencimiento = \Carbon\Carbon::parse($apartado->fechaVencimiento)->isoFormat('D MMM YYYY');
                 @endphp
                 
+                
+
                 <div class="apartado-card {{ $estadoClass }}" data-estado="{{ $estadoClass }}" data-tipo="{{ $apartado->tipoApartado }}">
                     <!-- Header compacto -->
                     <div class="card-header-compact">
@@ -104,11 +131,11 @@
                                 <div class="client-meta">
                                     <span class="meta-item">
                                         <i class="bi bi-calendar-check"></i>
-                                        {{ $fechaApartado }}
+                                        {{ $fechaApartadoFormatted }}
                                     </span>
                                     <span class="meta-item">
                                         <i class="bi bi-calendar-x {{ $estaVencido ? 'text-danger' : 'text-success' }}"></i>
-                                        {{ $fechaVencimiento }}
+                                        {{ $fechaVencimientoFormatted }}
                                     </span>
                                 </div>
                             </div>
@@ -230,11 +257,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         filterBtns.forEach(btn => {
             btn.addEventListener('click', function() {
-                // Remover active de todos los botones del mismo grupo
                 const group = this.closest('.filter-buttons');
                 group.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                
-                // Agregar active al botón clickeado
                 this.classList.add('active');
                 applyFilters();
             });
