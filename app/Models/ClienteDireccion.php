@@ -11,11 +11,7 @@ class ClienteDireccion extends Model
 
     // Nombre de la tabla
     protected $table = 'cliente_direccion';
-
-    // Clave primaria
     protected $primaryKey = 'id_direccion';
-
-    // Campos que se pueden asignar en masa
     protected $fillable = [
         'nacionalidad',
         'estado',

@@ -11,11 +11,7 @@ class Venta extends Model
 
     // Nombre de la tabla
     protected $table = 'ventas';
-
-    // Clave primaria
     protected $primaryKey = 'id_venta';
-
-    // Campos que se pueden asignar en masa
     protected $fillable = [
         'fechaSolicitud',
         'estatus',
@@ -28,14 +24,33 @@ class Venta extends Model
 
     // Casts para tipos de datos
     protected $casts = [
-        'fechaSolicitud' => 'date',
+        'fechaSolicitud' => 'datetime',
         'enganche' => 'double',
         'total' => 'double',
     ];
 
-    // Relación con Apartado (muchos a uno)
+
+    // Relación con Apartado
     public function apartado()
     {
         return $this->belongsTo(Apartado::class, 'id_apartado', 'id_apartado');
+    }
+
+    // Relación con ClienteVenta
+    public function clienteVenta()
+    {
+        return $this->hasOne(ClienteVenta::class, 'id_venta', 'id_venta');
+    }
+
+    // Relación con Beneficiario
+    public function beneficiario()
+    {
+        return $this->hasOne(BeneficiarioClienteVenta::class, 'id_venta', 'id_venta');
+    }
+
+    // Relación con Credito
+    public function credito()
+    {
+        return $this->hasOne(Credito::class, 'id_venta', 'id_venta'); // Asumiendo que existe una relación con creditos
     }
 }

@@ -15,10 +15,7 @@ class Usuario extends Authenticatable
 
     // Especifica el nombre de la columna de contraseña
     protected $password = 'password';
-    
-    // Especifica el nombre de la columna de "remember token"
-    protected $rememberTokenName = 'remember_token';
-
+        protected $rememberTokenName = 'remember_token';
     protected $fillable = [
         'nombre',
         'telefono',

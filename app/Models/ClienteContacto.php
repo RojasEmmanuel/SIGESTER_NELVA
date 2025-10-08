@@ -22,4 +22,5 @@ class ClienteContacto extends Model
     {
         return $this->belongsTo(ClienteVenta::class, 'id_cliente', 'id_cliente');
     }
+    
 }

@@ -41,4 +41,11 @@ class Apartado extends Model
     {
         return $this->hasMany(LoteApartado::class, 'id_apartado', 'id_apartado');
     }
+
+
+    // Relación inversa con Venta
+    public function venta()
+    {
+        return $this->hasOne(Venta::class, 'id_apartado', 'id_apartado');
+    }
 }

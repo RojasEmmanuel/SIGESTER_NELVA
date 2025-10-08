@@ -9,13 +9,8 @@ class ClienteVenta extends Model
 {
     use HasFactory;
 
-    // Nombre de la tabla
     protected $table = 'cliente_venta';
-
-    // Clave primaria
     protected $primaryKey = 'id_cliente';
-
-    // Campos que se pueden asignar en masa
     protected $fillable = [
         'nombres',
         'apellidos',
@@ -36,5 +31,17 @@ class ClienteVenta extends Model
     public function venta()
     {
         return $this->belongsTo(Venta::class, 'id_venta', 'id_venta');
+    }
+    
+    // Relación con ClienteContacto
+    public function contacto()
+    {
+        return $this->hasOne(ClienteContacto::class, 'id_cliente', 'id_cliente');
+    }
+
+    // Relación con ClienteDireccion
+    public function direccion()
+    {
+        return $this->hasOne(ClienteDireccion::class, 'id_cliente', 'id_cliente');
     }
 }

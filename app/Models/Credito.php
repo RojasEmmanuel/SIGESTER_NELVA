@@ -10,7 +10,6 @@ class Credito extends Model
     use HasFactory;
     protected $table = 'creditos';
     protected $primaryKey = 'id_credito';
-
     protected $fillable = [
         'fecha_inicio',
         'observaciones',
@@ -19,9 +18,16 @@ class Credito extends Model
         'modalidad_pago',
         'formas_pago',
         'dia_pago',
+        'id_venta',
     ];
 
     protected $casts = [
         'fecha_inicio' => 'date',
     ];
+
+    // Relación con Venta
+    public function venta()
+    {
+        return $this->belongsTo(Venta::class, 'id_venta', 'id_venta'); // Asumiendo que id_venta es la llave foránea
+    }
 }
