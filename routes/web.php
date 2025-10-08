@@ -51,5 +51,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/perfil', [PerfilController::class, 'index'])->name('asesor.perfil.index');
     Route::post('/perfil', [PerfilController::class, 'update'])->name('asesor.perfil.update');
 
-
+    Route::post('/asesor/apartados/{id}/upload-ticket', [ApartadoController::class, 'uploadTicket'])->name('asesor.apartados.upload-ticket');
 });

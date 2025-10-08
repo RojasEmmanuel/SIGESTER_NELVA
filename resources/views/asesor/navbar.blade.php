@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link rel="icon" href="{{ asset('/images/favicon.ico') }}" type="image/x-icon">
-    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+    
     <meta name="csrf-token" content="{{ csrf_token() }}">
    @stack('styles')
 </head>

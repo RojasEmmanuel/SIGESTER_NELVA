@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('id_fraccionamiento');
             $table->string('nombre', 150);
             $table->string('ubicacion', 400);
+            $table->enum('zona', ["costa","istmo"])->nullable();
             $table->string('path_imagen', 400)->nullable();
             $table->boolean('estatus')->default(true);
             $table->timestamps();
