@@ -15,43 +15,65 @@ use App\Models\Usuario;
 use App\Models\Lote; // Asumiendo que existe un modelo Lote
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 class ventasController extends Controller
 {
     public function index()
-    {
-        // Cargar las ventas con sus relaciones, incluyendo usuario en apartado
-        $ventas = Venta::with([
+{
+    // Obtener el asesor en sesión
+    $usuarioId = Auth::user()->id_usuario;
+
+    // Consultar solo las ventas cuyos apartados pertenecen al asesor en sesión
+    $ventas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
+            $query->where('id_usuario', $usuarioId);
+        })
+        ->with([
             'apartado.lotesApartados',
-            'apartado.usuario', // Cargar la relación con el modelo Usuario
+            'apartado.usuario',
             'clienteVenta',
             'credito'
-        ])->paginate(10);
+        ])
+        ->paginate(10);
 
-        // Calcular estadísticas
-        $totalVentas = Venta::count();
-        $liquidadas = Venta::where('estatus', 'liquidado')->count();
-        $enPagos = Venta::where('estatus', 'pagos')->count();
-        $retrasadas = Venta::where('estatus', 'retraso')->count();
-        $canceladas = Venta::where('estatus', 'cancelado')->count();
+    // Calcular estadísticas filtradas solo por el asesor en sesión
+    $totalVentas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
+        $query->where('id_usuario', $usuarioId);
+    })->count();
 
-        // Porcentajes
-        $porcentajeLiquidadas = $totalVentas > 0 ? round(($liquidadas / $totalVentas) * 100) : 0;
-        $porcentajeEnPagos = $totalVentas > 0 ? round(($enPagos / $totalVentas) * 100) : 0;
-        $porcentajeCanceladas = $totalVentas > 0 ? round(($canceladas / $totalVentas) * 100) : 0;
+    $liquidadas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
+        $query->where('id_usuario', $usuarioId);
+    })->where('estatus', 'liquidado')->count();
 
-        // Pasar los datos a la vista
-        return view('asesor.ventas', compact(
-            'ventas',
-            'totalVentas',
-            'liquidadas',
-            'enPagos',
-            'retrasadas',
-            'canceladas',
-            'porcentajeLiquidadas',
-            'porcentajeEnPagos',
-            'porcentajeCanceladas'
-        ));
-    }
+    $enPagos = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
+        $query->where('id_usuario', $usuarioId);
+    })->where('estatus', 'pagos')->count();
+
+    $retrasadas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
+        $query->where('id_usuario', $usuarioId);
+    })->where('estatus', 'retraso')->count();
+
+    $canceladas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
+        $query->where('id_usuario', $usuarioId);
+    })->where('estatus', 'cancelado')->count();
+
+    // Porcentajes
+    $porcentajeLiquidadas = $totalVentas > 0 ? round(($liquidadas / $totalVentas) * 100) : 0;
+    $porcentajeEnPagos = $totalVentas > 0 ? round(($enPagos / $totalVentas) * 100) : 0;
+    $porcentajeCanceladas = $totalVentas > 0 ? round(($canceladas / $totalVentas) * 100) : 0;
+
+    // Retornar la vista con los datos
+    return view('asesor.ventas', compact(
+        'ventas',
+        'totalVentas',
+        'liquidadas',
+        'enPagos',
+        'retrasadas',
+        'canceladas',
+        'porcentajeLiquidadas',
+        'porcentajeEnPagos',
+        'porcentajeCanceladas'
+    ));
+}
 
     public function show($id_venta)
     {
