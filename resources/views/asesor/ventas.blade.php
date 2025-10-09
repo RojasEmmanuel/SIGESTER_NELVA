@@ -7,14 +7,22 @@
 @endpush
 
 @section('content')
-
     <!-- Main Content -->
     <div class="container">
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <div class="page-header">
             <h1 class="page-title">
                 <i class="fas fa-history"></i>
                 <span>Historial de Ventas</span>
             </h1>
+            <a href="{{ route('ventas.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Crear Nueva Venta
+            </a>
         </div>
 
         <!-- Stats Overview -->
