@@ -16,9 +16,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Rutas protegidas por el middleware 'auth'
 Route::middleware('auth')->group(function () {
 
-    Route::get('/admin/index', function () {
-        return view('admin.index');
-    })->name('admin.index');
+    Route::get('/admin/index', function () { return view('admin.index'); })->name('admin.index');
 
     Route::get('/ingeniero/dashboard', function () {
         return view('ingeniero.dashboard');

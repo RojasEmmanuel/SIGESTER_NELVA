@@ -119,7 +119,7 @@ class ApartadoController extends Controller
                 'cliente_nombre' => $clienteNombre,
                 'cliente_apellidos' => $clienteApellidos,
                 'fechaApartado' => Carbon::now('America/Mexico_City')->toDateTimeString(),
-                'fechaVencimiento' => Carbon::now('America/Mexico_City')->addDays(2)->endOfDay()->toDateTimeString(),
+                'fechaVencimiento' => Carbon::now('America/Mexico_City')->addDays(2)->toDateTimeString(),
                 'id_usuario' => $usuarioId
             ]);
 
@@ -144,8 +144,15 @@ class ApartadoController extends Controller
                     'observaciones' => 'Apartado registrado desde formulario',
                 ]);
 
-                $lote->estatus = $tipoApartado;
-                $lote->save();
+
+                if($tipoApartado == "palabra"){
+                    $lote->estatus = "apartadoPalabra";
+                    $lote->save();
+                }else{
+                    $lote->estatus = "apartadoDeposito";
+                    $lote->save();
+                }
+                
             }
 
             // 6️⃣ Registrar depósito si aplica
