@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 
 class Apartado extends Model
 {
@@ -18,6 +19,7 @@ class Apartado extends Model
         'cliente_apellidos',
         'fechaApartado',
         'fechaVencimiento',
+        'estatus',
         'id_usuario',
     ];
 
@@ -31,7 +33,6 @@ class Apartado extends Model
         return $this->belongsTo(Usuario::class, 'id_usuario', 'id_usuario');
     }
 
-    // AGREGAR ESTAS RELACIONES:
     public function deposito()
     {
         return $this->hasOne(ApartadoDeposito::class, 'id_apartado', 'id_apartado');
@@ -42,10 +43,31 @@ class Apartado extends Model
         return $this->hasMany(LoteApartado::class, 'id_apartado', 'id_apartado');
     }
 
-
-    // Relación inversa con Venta
     public function venta()
     {
         return $this->hasOne(Venta::class, 'id_apartado', 'id_apartado');
+    }
+
+    /**
+     * Scope para filtrar apartados por estatus
+     */
+    public function scopeByEstatus($query, $estatus)
+    {
+        return $query->where('estatus', $estatus);
+    }
+
+    /**
+     * Método para actualizar el estatus automáticamente
+     */
+    public function updateEstatus()
+    {
+        if ($this->venta) {
+            $this->estatus = 'venta';
+        } elseif ($this->fechaVencimiento->isPast()) {
+            $this->estatus = 'vencido';
+        } else {
+            $this->estatus = 'en curso';
+        }
+        $this->save();
     }
 }

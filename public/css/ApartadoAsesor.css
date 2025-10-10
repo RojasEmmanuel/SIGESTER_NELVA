@@ -698,3 +698,22 @@ body {
     }
 }
 
+.apartado-card.vendido {
+    border-left: 4px solid #28a745; /* Verde para vendidos */
+}
+.status-badge.vendido {
+    background-color: #28a745;
+    color: white;
+}
+.header-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+.stat-item {
+    padding: 0.2rem 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}

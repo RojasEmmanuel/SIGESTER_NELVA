@@ -11,8 +11,6 @@ use App\Models\ClienteContacto;
 use App\Models\ClienteDireccion;
 use App\Models\BeneficiarioClienteVenta;
 use App\Models\Credito;
-use App\Models\Usuario;
-use App\Models\Lote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -29,9 +27,11 @@ class ventasController extends Controller
                 $query->where('id_usuario', $usuarioId);
             })
             ->with([
-                'apartado.lotesApartados',
+                'apartado.lotesApartados.lote',
                 'apartado.usuario',
-                'clienteVenta',
+                'clienteVenta.contacto',
+                'clienteVenta.direccion',
+                'beneficiario',
                 'credito'
             ])
             ->paginate(10);
@@ -76,7 +76,7 @@ class ventasController extends Controller
     public function show($id_venta)
     {
         $venta = Venta::with([
-            'apartado.lotesApartados',
+            'apartado.lotesApartados.lote',
             'apartado.usuario',
             'clienteVenta.contacto',
             'clienteVenta.direccion',
@@ -84,12 +84,18 @@ class ventasController extends Controller
             'credito'
         ])->findOrFail($id_venta);
 
+        // Verificar que el usuario tenga permiso para ver la venta
+        if ($venta->apartado->id_usuario !== Auth::user()->id_usuario) {
+            return redirect()->route('ventas.index')->with('error', 'No tienes permiso para ver esta venta.');
+        }
+
         return view('asesor.ventas_detalle', compact('venta'));
     }
 
     public function create()
     {
         $apartados = Apartado::where('fechaVencimiento', '>=', Carbon::today())
+            ->where('estatus', 'en curso')
             ->with(['usuario', 'lotesApartados.lote'])
             ->get();
 
@@ -106,7 +112,7 @@ class ventasController extends Controller
             'cliente.nombres' => 'required|string|max:255',
             'cliente.apellidos' => 'required|string|max:255',
             'cliente.edad' => 'required|integer|min:18',
-            'cliente.estado_civil' => 'required|string',
+            'cliente.estado_civil' => 'required|in:soltero,casado,divorciado,viudo,unión libre',
             'cliente.lugar_origen' => 'required|string|max:255',
             'cliente.ocupacion' => 'required|string|max:255',
             'cliente.clave_elector' => 'nullable|string|regex:/^[A-Z0-9]{18}$/',
@@ -133,9 +139,22 @@ class ventasController extends Controller
         ]);
 
         return DB::transaction(function () use ($request, $validated) {
-            $ticketPath = $request->file('ticket_path')->store('tickets', 'public');
-            $apartado = Apartado::findOrFail($validated['id_apartado']);
+            $apartado = Apartado::with('lotesApartados.lote')->findOrFail($validated['id_apartado']);
 
+            // Verificar que el apartado esté en curso y pertenezca al usuario autenticado
+            if ($apartado->estatus !== 'en curso') {
+                return redirect()->route('ventas.create')
+                    ->with('error', 'El apartado seleccionado no está en curso y no puede ser usado para una venta.');
+            }
+            if ($apartado->id_usuario !== Auth::user()->id_usuario) {
+                return redirect()->route('ventas.create')
+                    ->with('error', 'No tienes permiso para usar este apartado.');
+            }
+
+            // Guardar el ticket
+            $ticketPath = $request->file('ticket_path')->store('tickets', 'public');
+
+            // Crear la venta
             $venta = Venta::create([
                 'fechaSolicitud' => Carbon::now(),
                 'estatus' => 'solicitud',
@@ -145,6 +164,16 @@ class ventasController extends Controller
                 'total' => $validated['total'],
                 'id_apartado' => $apartado->id_apartado,
             ]);
+
+            // Actualizar el estatus del apartado a 'venta'
+            $apartado->update(['estatus' => 'venta']);
+
+            // Actualizar el estatus de los lotes asociados a 'vendido'
+            foreach ($apartado->lotesApartados as $loteApartado) {
+                if ($loteApartado->lote) {
+                    $loteApartado->lote->update(['estatus' => 'vendido']);
+                }
+            }
 
             // Guardar fotos del INE del cliente
             $ineFrentePath = $request->file('cliente.ine_frente')->store('ine_photos', 'public');
@@ -224,7 +253,12 @@ class ventasController extends Controller
         ]);
 
         return DB::transaction(function () use ($request, $id_venta, $validated) {
-            $venta = Venta::findOrFail($id_venta);
+            $venta = Venta::with('apartado')->findOrFail($id_venta);
+
+            // Verificar que el usuario tenga permiso
+            if ($venta->apartado->id_usuario !== Auth::user()->id_usuario) {
+                return redirect()->route('ventas.index')->with('error', 'No tienes permiso para actualizar esta venta.');
+            }
 
             // Verificar que el ticket_estatus sea 'rechazado'
             if ($venta->ticket_estatus !== 'rechazado') {
@@ -249,6 +283,46 @@ class ventasController extends Controller
 
             return redirect()->route('ventas.show', $id_venta)
                 ->with('success', 'Ticket actualizado exitosamente.');
+        });
+    }
+
+    public function cancel($id_venta)
+    {
+        return DB::transaction(function () use ($id_venta) {
+            $venta = Venta::with('apartado.lotesApartados.lote')->findOrFail($id_venta);
+
+            // Verificar que el usuario tenga permiso
+            if ($venta->apartado->id_usuario !== Auth::user()->id_usuario) {
+                return redirect()->route('ventas.index')->with('error', 'No tienes permiso para cancelar esta venta.');
+            }
+
+            // Verificar que la venta no esté ya cancelada
+            if ($venta->estatus === 'cancelado') {
+                return redirect()->route('ventas.show', $id_venta)
+                    ->with('error', 'La venta ya está cancelada.');
+            }
+
+            // Actualizar el estatus de la venta a 'cancelado'
+            $venta->update([
+                'estatus' => 'cancelado',
+                'updated_at' => Carbon::now(),
+            ]);
+
+            // Actualizar el estatus del apartado
+            $apartado = $venta->apartado;
+            $nuevoEstatusApartado = $apartado->fechaVencimiento->isPast() ? 'vencido' : 'en curso';
+            $apartado->update(['estatus' => $nuevoEstatusApartado]);
+
+            // Actualizar el estatus de los lotes asociados
+            $nuevoEstatusLote = $nuevoEstatusApartado === 'vencido' ? 'disponible' : ($apartado->tipoApartado === 'palabra' ? 'apartadoPalabra' : 'apartadoDeposito');
+            foreach ($apartado->lotesApartados as $loteApartado) {
+                if ($loteApartado->lote) {
+                    $loteApartado->lote->update(['estatus' => $nuevoEstatusLote]);
+                }
+            }
+
+            return redirect()->route('ventas.show', $id_venta)
+                ->with('success', 'Venta cancelada exitosamente.');
         });
     }
 }

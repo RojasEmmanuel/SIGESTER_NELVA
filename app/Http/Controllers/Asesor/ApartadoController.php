@@ -23,15 +23,26 @@ class ApartadoController extends Controller
         $usuarioId = Auth::user()->id_usuario;
 
         $apartados = Apartado::with([
-            'usuario', 
+            'usuario',
             'lotesApartados.lote.fraccionamiento'
         ])
         ->where('id_usuario', $usuarioId)
         ->orderBy('fechaVencimiento', 'desc')
         ->get();
 
-        return view('asesor.apartados', compact('apartados'));
-        
+        // Contar apartados por estado
+        $totalApartados = $apartados->count();
+        $enCurso = $apartados->where('estatus', 'en curso')->count();
+        $vencidos = $apartados->where('estatus', 'vencido')->count();
+        $vendidos = $apartados->where('estatus', 'venta')->count();
+
+        return view('asesor.apartados', compact(
+            'apartados',
+            'totalApartados',
+            'enCurso',
+            'vencidos',
+            'vendidos'
+        ));
     }
 
    

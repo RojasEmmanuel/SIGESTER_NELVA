@@ -114,7 +114,7 @@
                     <div class="form-group">
                         <label for="id_apartado">Apartado <span class="required">*</span></label>
                         <select name="id_apartado" id="id_apartado" class="form-control" required>
-                            <option value="">Seleccione un apartado</option>
+                            <option value="">Seleccione un apartado en curso</option>
                             @foreach ($apartados as $apartado)
                                 <option value="{{ $apartado->id_apartado }}"
                                         data-nombre="{{ $apartado->cliente_nombre }}"
@@ -124,7 +124,7 @@
                                         data-fecha-vencimiento="{{ $apartado->fechaVencimiento }}"
                                         data-asesor="{{ $apartado->usuario->nombre }}"
                                         data-lotes="{{ $apartado->lotesApartados->pluck('lote.id_lote')->toJson() }}">
-                                    {{ $apartado->cliente_nombre }} {{ $apartado->cliente_apellidos }} - {{ $apartado->tipoApartado }}
+                                    {{ $apartado->cliente_nombre }} {{ $apartado->cliente_apellidos }} - {{ $apartado->tipoApartado }} (Vence: {{ $apartado->fechaVencimiento->format('d/m/Y') }})
                                 </option>
                             @endforeach
                         </select>

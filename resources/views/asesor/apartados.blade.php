@@ -9,26 +9,33 @@
 
 @section('content')
 <div class="container">
-    <!-- Header Simple -->
+    <!-- Header con estadísticas -->
     <div class="page-header">
         <div class="header-main">
             <h1 class="page-title">
                 <i class="bi bi-journal-text"></i>
                 Mis Apartados
             </h1>
-            <p class="page-subtitle">Gestiona tus apartados activos y vencidos</p>
+            <p class="page-subtitle">Gestiona tus apartados activos, vencidos y vendidos</p>
+        </div>
+        <div class="header-stats">
+            <span class="stat-item">Total: {{ $totalApartados }}</span>
+            <span class="stat-item">En curso: {{ $enCurso }}</span>
+            <span class="stat-item">Vencidos: {{ $vencidos }}</span>
+            <span class="stat-item">Vendidos: {{ $vendidos }}</span>
         </div>
     </div>
 
     @if($apartados->count() > 0)
-    <!-- Filtros Simples -->
+    <!-- Filtros -->
     <div class="filters-bar">
         <div class="filter-group">
             <label>Estado:</label>
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="todos">Todos</button>
-                <button class="filter-btn" data-filter="activo">Activos</button>
+                <button class="filter-btn" data-filter="en curso">En curso</button>
                 <button class="filter-btn" data-filter="vencido">Vencidos</button>
+                <button class="filter-btn" data-filter="venta">Vendidos</button>
             </div>
         </div>
         <div class="filter-group">
@@ -44,32 +51,30 @@
 
     <!-- Grid de Tarjetas Horizontal -->
     <div class="cards-container">
-        @if(isset($apartados) && $apartados->count() > 0)
+        @if($apartados->count() > 0)
             @foreach($apartados as $apartado)
                 @php
-                    $errorMessage = 'Ninguno';
                     try {
                         $hoy = \Carbon\Carbon::now('America/Mexico_City');
                         $vencimiento = !empty($apartado->fechaVencimiento) ? \Carbon\Carbon::parse($apartado->fechaVencimiento) : null;
                         $fechaApartado = !empty($apartado->fechaApartado) ? \Carbon\Carbon::parse($apartado->fechaApartado) : null;
 
-                        if (!$vencimiento || !$fechaApartado) {
-                            throw new \Exception('Fecha de apartado o vencimiento inválida');
-                        }
+                        $estadoClass = match ($apartado->estatus) {
+                            'en curso' => 'activo',
+                            'vencido' => 'vencido',
+                            'venta' => 'vendido',
+                            default => 'error',
+                        };
 
-                        $estaVencido = $vencimiento->lt($hoy);
-                        $estadoClass = $estaVencido ? 'vencido' : 'activo';
+                        $estadoDisplay = match ($apartado->estatus) {
+                            'en curso' => 'En curso',
+                            'vencido' => 'Vencido',
+                            'venta' => 'Vendido',
+                            default => 'Error',
+                        };
 
-                        if ($estaVencido) {
-                            $tiempoRestante = 'Vencido';
-                            $tiempoClass = 'text-danger';
-                            $diasRestantes = 0;
-                            $horasRestantes = 0;
-                            $minutosRestantes = 0;
-                            $segundosRestantes = 0;
-                        } else {
+                        if ($apartado->estatus === 'en curso' && $vencimiento) {
                             $diferencia = $vencimiento->diff($hoy);
-
                             $diasRestantes = $diferencia->days;
                             $horasRestantes = $diferencia->h;
                             $minutosRestantes = $diferencia->i;
@@ -103,23 +108,24 @@
                             } else {
                                 $tiempoClass = 'text-success';
                             }
+                        } else {
+                            $tiempoRestante = $apartado->estatus === 'vencido' ? 'Vencido' : 'Vendido';
+                            $tiempoClass = $apartado->estatus === 'vencido' ? 'text-danger' : 'text-success';
                         }
 
                         $fechaApartadoFormatted = $fechaApartado ? $fechaApartado->isoFormat('D MMM YYYY, h:mm:ss A') : 'N/A';
                         $fechaVencimientoFormatted = $vencimiento ? $vencimiento->isoFormat('D MMM YYYY, h:mm:ss A') : 'N/A';
                     } catch (\Exception $e) {
-                        $errorMessage = $e->getMessage();
                         $tiempoRestante = 'Error en fecha';
                         $tiempoClass = 'text-danger';
                         $estadoClass = 'error';
+                        $estadoDisplay = 'Error';
                         $fechaApartadoFormatted = 'N/A';
                         $fechaVencimientoFormatted = 'N/A';
                     }
                 @endphp
-                
-                
 
-                <div class="apartado-card {{ $estadoClass }}" data-estado="{{ $estadoClass }}" data-tipo="{{ $apartado->tipoApartado }}">
+                <div class="apartado-card {{ $estadoClass }}" data-estado="{{ $apartado->estatus }}" data-tipo="{{ $apartado->tipoApartado }}">
                     <!-- Header compacto -->
                     <div class="card-header-compact">
                         <div class="client-info-compact">
@@ -134,7 +140,7 @@
                                         {{ $fechaApartadoFormatted }}
                                     </span>
                                     <span class="meta-item">
-                                        <i class="bi bi-calendar-x {{ $estaVencido ? 'text-danger' : 'text-success' }}"></i>
+                                        <i class="bi bi-calendar-x {{ $apartado->estatus === 'vencido' ? 'text-danger' : ($apartado->estatus === 'venta' ? 'text-success' : 'text-success') }}"></i>
                                         {{ $fechaVencimientoFormatted }}
                                     </span>
                                 </div>
@@ -145,8 +151,8 @@
                                 {{ $apartado->tipoApartado == 'palabra' ? 'Palabra' : 'Depósito' }}
                             </span>
                             <span class="status-badge {{ $estadoClass }}">
-                                <i class="bi bi-{{ $estaVencido ? 'x-circle' : 'check-circle' }}"></i>
-                                {{ $estaVencido ? 'Vencido' : 'Activo' }}
+                                <i class="bi bi-{{ $apartado->estatus === 'vencido' ? 'x-circle' : ($apartado->estatus === 'venta' ? 'check-circle-fill' : 'check-circle') }}"></i>
+                                {{ $estadoDisplay }}
                             </span>
                         </div>
                     </div>
