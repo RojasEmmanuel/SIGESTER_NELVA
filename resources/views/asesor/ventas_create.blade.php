@@ -220,7 +220,7 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="cliente_ine_frente">Foto INE (Frente) <span class="required">*</span></label>
+                        <label for="cliente_ine_frente">Foto de Identificación Oficial (Frente) <span class="required">*</span></label>
                         <input type="file" name="cliente[ine_frente]" id="cliente_ine_frente" class="form-control" accept=".jpg,.png" required>
                         <div class="helper-text">Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB</div>
                         @error('cliente.ine_frente')
@@ -228,7 +228,7 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="cliente_ine_reverso">Foto INE (Reverso) <span class="required">*</span></label>
+                        <label for="cliente_ine_reverso">Foto de Identificación Oficial (Reverso) <span class="required">*</span></label>
                         <input type="file" name="cliente[ine_reverso]" id="cliente_ine_reverso" class="form-control" accept=".jpg,.png" required>
                         <div class="helper-text">Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB</div>
                         @error('cliente.ine_reverso')
@@ -331,7 +331,7 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="beneficiario_ine_frente">Foto INE (Frente)</label>
+                        <label for="beneficiario_ine_frente">Foto de Identificación Oficial (Frente)</label>
                         <input type="file" name="beneficiario[ine_frente]" id="beneficiario_ine_frente" class="form-control" accept=".jpg,.png">
                         <div class="helper-text">Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB</div>
                         @error('beneficiario.ine_frente')
@@ -339,7 +339,7 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="beneficiario_ine_reverso">Foto INE (Reverso)</label>
+                        <label for="beneficiario_ine_reverso">Foto de Identificación Oficial (Reverso)</label>
                         <input type="file" name="beneficiario[ine_reverso]" id="beneficiario_ine_reverso" class="form-control" accept=".jpg,.png">
                         <div class="helper-text">Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB</div>
                         @error('beneficiario.ine_reverso')

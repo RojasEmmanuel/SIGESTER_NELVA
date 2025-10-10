@@ -5,6 +5,90 @@
 @push('styles')
 <link href="{{ asset('css/fraccionamientoAsesor.css') }}" rel="stylesheet">
 <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+<style>
+    /* Estilos para la galería */
+    .gallery-section {
+        margin-top: 2rem;
+    }
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .gallery-item {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+    .gallery-item:hover {
+        transform: scale(1.02);
+    }
+    .gallery-item img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    .gallery-info {
+        padding: 1rem;
+    }
+    .gallery-info h5 {
+        margin: 0 0 0.5rem;
+        font-size: 1rem;
+        color: #333;
+    }
+    .gallery-info p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* Estilos para los archivos */
+    .files-section {
+        margin-top: 2rem;
+    }
+    .files-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    .file-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fff;
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .file-info {
+        flex-grow: 1;
+    }
+    .file-info h5 {
+        margin: 0 0 0.5rem;
+        font-size: 1rem;
+        color: #333;
+    }
+    .file-info p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #666;
+    }
+    .file-item .btn-download {
+        background-color: #1e88e5;
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+    .file-item .btn-download:hover {
+        background-color: #1565c0;
+    }
+</style>
 @endpush
 
 @section('content')
@@ -70,104 +154,97 @@
             </button>
         </div>
 
-        
-        {{-- Development Plan --}}
-     <div class="development-plan">
-    <h3 class="info-title">
-        <i class="fas fa-map"></i>
-        <span>Plano Interactivo del Fraccionamiento</span>
-    </h3>
-    
-    <div class="plan-container" id="planContainer">
-        <button class="fullscreen-btn" id="fullscreenBtn">
-            <i class="fas fa-expand"></i> Pantalla Completa
-        </button>
-
-        {{-- Contenedor del mapa de Mapbox --}}
-        <div id="mapPlano" style="width: 100%; height: 600px; border-radius: 12px;"></div>
-    </div>
-
-    <!-- Controles del Mapa -->
-    <div class="map-controls-overlay">
-        <div class="control-panel-map">
-            <div class="control-section">
-                <div class="control-title"><i class="fas fa-layer-group"></i> Estilo del Mapa</div>
-                <div class="style-buttons">
-                    <button class="style-btn active" data-style="satellite-streets">
-                        <i class="fas fa-satellite"></i> Satélite
-                    </button>
-                    <button class="style-btn" data-style="streets">
-                        <i class="fas fa-road"></i> Calles
-                    </button>
-                    <button class="style-btn" data-style="light">
-                        <i class="fas fa-map"></i> Claro
-                    </button>
-                    <button class="style-btn" data-style="dark">
-                        <i class="fas fa-moon"></i> Oscuro
-                    </button>
-                    <button class="style-btn" data-style="standard">
-                        <i class="fas fa-map-marked-alt"></i> Estándar
-                    </button>
-                    <button class="style-btn" data-style="tourist">
-                        <i class="fas fa-landmark"></i> Lugares Turísticos
-                    </button>
-                </div>
-            </div>
+        <!-- Development Plan -->
+        <div class="development-plan">
+            <h3 class="info-title">
+                <i class="fas fa-map"></i>
+                <span>Plano Interactivo del Fraccionamiento</span>
+            </h3>
             
-           <div class="control-section">
-                <div class="control-title"><i class="fas fa-filter"></i> Filtros</div>
-                <div class="filter-buttons">
-                    <button class="filter-btn active" data-filter="all">
-                        <div class="color-indicator" style="background: conic-gradient(#16a34a 0% 33%, #dc2626 33% 66%, #ea580c 66% 100%);"></div>
-                        Todos los lotes
-                    </button>
-                    <button class="filter-btn" data-filter="disponible">
-                        <div class="color-indicator disponible-indicator"></div>
-                        Disponibles
-                    </button>
-                    <button class="filter-btn" data-filter="vendido">
-                        <div class="color-indicator vendido-indicator"></div>
-                        Vendidos
-                    </button>
-                    <button class="filter-btn" data-filter="apartado-palabra-deposito">
-                        <div class="color-indicator palabra-deposito-indicator"></div>
-                        Apartado Palabra/Depósito
-                    </button>
+            <div class="plan-container" id="planContainer">
+                <button class="fullscreen-btn" id="fullscreenBtn">
+                    <i class="fas fa-expand"></i> Pantalla Completa
+                </button>
+                <div id="mapPlano" style="width: 100%; height: 600px; border-radius: 12px;"></div>
+            </div>
+
+            <!-- Controles del Mapa -->
+            <div class="map-controls-overlay">
+                <div class="control-panel-map">
+                    <div class="control-section">
+                        <div class="control-title"><i class="fas fa-layer-group"></i> Estilo del Mapa</div>
+                        <div class="style-buttons">
+                            <button class="style-btn active" data-style="satellite-streets">
+                                <i class="fas fa-satellite"></i> Satélite
+                            </button>
+                            <button class="style-btn" data-style="streets">
+                                <i class="fas fa-road"></i> Calles
+                            </button>
+                            <button class="style-btn" data-style="light">
+                                <i class="fas fa-map"></i> Claro
+                            </button>
+                            <button class="style-btn" data-style="dark">
+                                <i class="fas fa-moon"></i> Oscuro
+                            </button>
+                            <button class="style-btn" data-style="standard">
+                                <i class="fas fa-map-marked-alt"></i> Estándar
+                            </button>
+                            <button class="style-btn" data-style="tourist">
+                                <i class="fas fa-landmark"></i> Lugares Turísticos
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <div class="control-title"><i class="fas fa-filter"></i> Filtros</div>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">
+                                <div class="color-indicator" style="background: conic-gradient(#16a34a 0% 33%, #dc2626 33% 66%, #ea580c 66% 100%);"></div>
+                                Todos los lotes
+                            </button>
+                            <button class="filter-btn" data-filter="disponible">
+                                <div class="color-indicator disponible-indicator"></div>
+                                Disponibles
+                            </button>
+                            <button class="filter-btn" data-filter="vendido">
+                                <div class="color-indicator vendido-indicator"></div>
+                                Vendidos
+                            </button>
+                            <button class="filter-btn" data-filter="apartado-palabra-deposito">
+                                <div class="color-indicator palabra-deposito-indicator"></div>
+                                Apartado Palabra/Depósito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel de información del lote -->
+                <div class="info-panel-map hidden" id="infoPanelMap">
+                    <div class="info-header">
+                        <div class="info-title">Información del Lote</div>
+                        <button class="info-close" id="infoCloseMap">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="lote-info-content" id="loteInfoContent">
+                        <!-- La información del lote se cargará aquí dinámicamente -->
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Panel de información del lote -->
-        <div class="info-panel-map hidden" id="infoPanelMap">
-            <div class="info-header">
-                <div class="info-title">Información del Lote</div>
-                <button class="info-close" id="infoCloseMap">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="lote-info-content" id="loteInfoContent">
-                <!-- La información del lote se cargará aquí dinámicamente -->
+            <div class="plan-actions mt-3">
+                <h5><i class="fas fa-file-download"></i> Planos disponibles:</h5>
+                @foreach($planos as $plano)
+                    <a href="{{ route('asesor.fraccionamiento.download-plano', [
+                        'idFraccionamiento' => $datosFraccionamiento['id'],
+                        'idPlano' => $plano['id']
+                    ]) }}"
+                    class="btn btn-outline m-1" target="_blank">
+                    <i class="fas fa-download"></i> {{ $plano['nombre'] }}
+                    </a>
+                @endforeach
             </div>
         </div>
-    </div>
-
-    <div class="plan-actions mt-3">
-        <h5><i class="fas fa-file-download"></i> Planos disponibles:</h5>
-        @foreach($planos as $plano)
-            <a href="{{ route('asesor.fraccionamiento.download-plano', [
-                'idFraccionamiento' => $datosFraccionamiento['id'],
-                'idPlano' => $plano['id']
-            ]) }}"
-            class="btn btn-outline m-1" target="_blank">
-            <i class="fas fa-download"></i> {{ $plano['nombre'] }}
-            </a>
-        @endforeach
-    </div>
-</div>
-        
-         {{-- Development Plan --}}
-        
-        
 
         <!-- Development Info -->
         <div class="development-info">
@@ -226,10 +303,56 @@
             </div>
             @endif
 
-            
+            <!-- Galería -->
+            @if($galeria->count() > 0)
+            <div class="info-section gallery-section">
+                <h3 class="info-title">
+                    <i class="fas fa-images"></i>
+                    <span>Galería</span>
+                </h3>
+                <div class="gallery-grid">
+                    @foreach($galeria as $foto)
+                    <div class="gallery-item">
+                        <img src="{{ asset('storage/' . $foto['fotografia_path']) }}" alt="{{ $foto['nombre'] ?? 'Foto del fraccionamiento' }}">
+                        <div class="gallery-info">
+                            <h5>{{ $foto['nombre'] ?? 'Sin título' }}</h5>
+                            <p>Subido: {{ $foto['fecha_subida'] }}</p>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            <!-- Archivos -->
+            @if($archivos->count() > 0)
+            <div class="info-section files-section">
+                <h3 class="info-title">
+                    <i class="fas fa-file-download"></i>
+                    <span>Archivos</span>
+                </h3>
+                <div class="files-list">
+                    @foreach($archivos as $archivo)
+                    <div class="file-item">
+                        <div class="file-info">
+                            <h5>{{ $archivo['nombre_archivo'] ?? 'Sin título' }}</h5>
+                            <p>Subido: {{ $archivo['fecha_subida'] }}</p>
+                        </div>
+                        <a href="{{ route('asesor.fraccionamiento.download-archivo', [
+                            'idFraccionamiento' => $datosFraccionamiento['id'],
+                            'idArchivo' => $archivo['id']
+                        ]) }}"
+                        class="btn btn-download" target="_blank">
+                            <i class="fas fa-download"></i> Descargar
+                        </a>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
         </div>
 
-         <!-- Development Map -->
+        <!-- Development Map -->
         @if(isset($datosFraccionamiento['ubicacionMaps']) && !empty($datosFraccionamiento['ubicacionMaps']))
         <div class="development-map">
             <h3 class="info-title">
@@ -251,7 +374,7 @@
         </div>
         @endif
     </div>
-   
+
     <!-- Modal de Apartado -->
     <div class="modal-fraccionamiento" id="reservationModal">
         <div class="modal-content-fraccionamiento">
@@ -447,11 +570,9 @@
         </div>
     </div>
 
+    @include('app_config')
 
-@include('app_config')
-
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-<script src="{{ asset('js/modals.js') }}"></script>
-<script src="{{ asset('js/map.js') }}"></script>
-
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <script src="{{ asset('js/modals.js') }}"></script>
+    <script src="{{ asset('js/map.js') }}"></script>
 @endsection

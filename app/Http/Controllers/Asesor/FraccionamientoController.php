@@ -17,12 +17,14 @@ class FraccionamientoController extends Controller
     public function show($id)
     {
         try {
-            // Obtener el fraccionamiento con información básica
+            // Obtener el fraccionamiento con todas las relaciones necesarias
             $fraccionamiento = Fraccionamiento::with([
                 'infoFraccionamiento',
                 'planosFraccionamiento',
                 'amenidadesFraccionamiento',
-                'lotes' // Solo cargar lotes básicos por ahora
+                'lotes',
+                'galeria', // Nueva relación para galería
+                'archivosFraccionamiento' // Nueva relación para archivos
             ])->findOrFail($id);
 
             // Obtener información general del fraccionamiento
@@ -64,8 +66,28 @@ class FraccionamientoController extends Controller
                     'tipo' => $amenidad->tipo,
                 ];
             });
-            
-            // Obtener estadísticas de lotes (sin medidas por ahora)
+
+            // Obtener galería del fraccionamiento
+            $galeria = $fraccionamiento->galeria->map(function($foto) {
+                return [
+                    'id' => $foto->id_foto,
+                    'nombre' => $foto->nombre,
+                    'fotografia_path' => $foto->fotografia_path,
+                    'fecha_subida' => $foto->fecha_subida->toDateTimeString(),
+                ];
+            });
+
+            // Obtener archivos del fraccionamiento
+            $archivos = $fraccionamiento->archivosFraccionamiento->map(function($archivo) {
+                return [
+                    'id' => $archivo->id_archivo,
+                    'nombre_archivo' => $archivo->nombre_archivo,
+                    'archivo_path' => $archivo->archivo_path,
+                    'fecha_subida' => $archivo->fecha_subida->toDateTimeString(),
+                ];
+            });
+
+            // Obtener estadísticas de lotes
             $totalLotes = $fraccionamiento->lotes->count();
             $lotesDisponibles = $fraccionamiento->lotes->where('estatus', 'disponible')->count();
             $lotesApartadosPalabra = $fraccionamiento->lotes->where('estatus', 'apartadoPalabra')->count();
@@ -78,6 +100,8 @@ class FraccionamientoController extends Controller
                 'datosFraccionamiento',
                 'planos',
                 'amenidades',
+                'galeria', // Nueva variable para la vista
+                'archivos', // Nueva variable para la vista
                 'totalLotes',
                 'lotesDisponibles',
                 'lotesApartados',
@@ -250,6 +274,4 @@ class FraccionamientoController extends Controller
 
         return response()->json($geojson);
     }
-
-
 }

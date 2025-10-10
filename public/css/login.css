@@ -23,9 +23,9 @@
 
 body {
     background: linear-gradient(135deg, 
-    #2563eb 0%, 
+    #bae5fd 0%, 
     #4facfe  50%, 
-    #2563eb 100%);
+    #bae5fd 100%);
     color: var(--text);
     display: flex;
     justify-content: center;

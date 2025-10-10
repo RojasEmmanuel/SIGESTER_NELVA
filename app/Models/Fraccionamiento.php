@@ -44,4 +44,16 @@ class Fraccionamiento extends Model
     {
         return $this->hasMany(AmenidadFraccionamiento::class, 'id_fraccionamiento', 'id_fraccionamiento');
     }
+
+    // Relación con Galeria (uno a muchos)
+    public function galeria()
+    {
+        return $this->hasMany(Galeria::class, 'id_fraccionamiento', 'id_fraccionamiento');
+    }
+
+    // Relación con ArchivosFraccionamiento (uno a muchos)
+    public function archivosFraccionamiento()
+    {
+        return $this->hasMany(ArchivosFraccionamiento::class, 'id_fraccionamiento', 'id_fraccionamiento');
+    }
 }
