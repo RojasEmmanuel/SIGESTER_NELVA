@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/asesor/ventas/{id_venta}', [VentasController::class, 'show'])->name('ventas.show');
     Route::get('/ventas/crear', [VentasController::class, 'create'])->name('ventas.create');
     Route::post('/asesor/ventas', [VentasController::class, 'store'])->name('ventas.store');
-
+    Route::patch('/ventas/{id_venta}/ticket', [ventasController::class, 'updateTicket'])->name('ventas.updateTicket');
     
     Route::get('/perfil', [PerfilController::class, 'index'])->name('asesor.perfil.index');
     Route::post('/perfil', [PerfilController::class, 'update'])->name('asesor.perfil.update');

@@ -19,6 +19,8 @@ class ClienteVenta extends Model
         'lugar_origen',
         'ocupacion',
         'clave_elector',
+        'ine_frente',
+        'ine_reverso',
         'id_venta',
     ];
 
@@ -39,7 +41,7 @@ class ClienteVenta extends Model
         return $this->hasOne(ClienteContacto::class, 'id_cliente', 'id_cliente');
     }
 
-    // Relación con ClienteDireccion
+    // Relación con ClienteContacto
     public function direccion()
     {
         return $this->hasOne(ClienteDireccion::class, 'id_cliente', 'id_cliente');

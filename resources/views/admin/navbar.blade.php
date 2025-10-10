@@ -2,35 +2,42 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Nelva Bienes Raíces')</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     <link rel="icon" href="{{ asset('/images/favicon.ico') }}" type="image/x-icon">
-    
     <meta name="csrf-token" content="{{ csrf_token() }}">
-   @stack('styles')
+    @stack('styles')
 </head>
 <body>
     <!-- Navbar Desktop -->
     <nav class="navbar-desktop">
         <div class="navbar-desktop-container">
             <div class="logo">
-                <img src="/images/Logo.png"  width="200px">
+                <img src="/images/Logo.png" width="200px">
             </div>
             <div class="nav-links">
                 <a href="{{ url('asesor/inicio') }}" class="{{ Request::is('inicio') ? 'active' : '' }}">
                     <i class="fas fa-home"></i> Inicio
                 </a>
                 <a href="{{ url('asesor/apartados') }}" class="{{ Request::is('apartados') ? 'active' : '' }}">
-                    <i class="fas fa-calendar-check"></i> Apartados
+                    <i class="fas fa-bookmark"></i> Apartados
                 </a>
                 <a href="{{ url('asesor/ventas') }}" class="{{ Request::is('ventas') ? 'active' : '' }}">
-                    <i class="fas fa-history"></i> Ventas
+                    <i class="fas fa-dollar-sign"></i> Ventas
                 </a>
-               <a href="{{ route('asesor.perfil.index') }}" class="{{ Request::routeIs('asesor.perfil') ? 'active' : '' }}">
-                    <i class="fas fa-user"></i> Perfil
+                <a href="{{ route('asesor.perfil.index') }}" class="{{ Request::routeIs('asesor.perfil') ? 'active' : '' }}">
+                    <i class="fas fa-user-circle"></i> Perfil
+                </a>
+                <a href="{{ url('asesor/usuarios') }}" class="{{ Request::is('usuarios') ? 'active' : '' }}">
+                    <i class="fas fa-users"></i> Usuarios
+                </a>
+                <a href="{{ url('asesor/apartados-pendientes') }}" class="{{ Request::is('apartados-pendientes') ? 'active' : '' }}">
+                    <i class="fas fa-clock"></i> Apartados pendientes
+                </a>
+                <a href="{{ url('asesor/ventas-pendientes') }}" class="{{ Request::is('ventas-pendientes') ? 'active' : '' }}">
+                    <i class="fas fa-hourglass-half"></i> Ventas pendientes
                 </a>
                 <a href="#" id="logout-btn-desktop">
                     <i class="fas fa-sign-out-alt"></i> Salir
@@ -61,16 +68,28 @@
                     <span>Inicio</span>
                 </a>
                 <a href="{{ url('asesor/apartados') }}" class="nav-item {{ Request::is('apartados') ? 'active' : '' }}">
-                    <i class="fas fa-calendar-check"></i>
+                    <i class="fas fa-bookmark"></i>
                     <span>Apartados</span>
                 </a>
                 <a href="{{ url('asesor/ventas') }}" class="nav-item {{ Request::is('ventas') ? 'active' : '' }}">
-                    <i class="fas fa-history"></i>
+                    <i class="fas fa-dollar-sign"></i>
                     <span>Ventas</span>
                 </a>
                 <a href="{{ route('asesor.perfil.index') }}" class="nav-item {{ Request::routeIs('asesor.perfil') ? 'active' : '' }}">
-                    <i class="fas fa-user"></i>
+                    <i class="fas fa-user-circle"></i>
                     <span>Perfil</span>
+                </a>
+                <a href="{{ url('asesor/usuarios') }}" class="nav-item {{ Request::is('usuarios') ? 'active' : '' }}">
+                    <i class="fas fa-users"></i>
+                    <span>Usuarios</span>
+                </a>
+                <a href="{{ url('asesor/apartados-pendientes') }}" class="nav-item {{ Request::is('apartados-pendientes') ? 'active' : '' }}">
+                    <i class="fas fa-clock"></i>
+                    <span>Apartados pendientes</span>
+                </a>
+                <a href="{{ url('asesor/ventas-pendientes') }}" class="nav-item {{ Request::is('ventas-pendientes') ? 'active' : '' }}">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span>Ventas pendientes</span>
                 </a>
                 <a href="#" class="nav-item" id="logout-btn-mobile">
                     <i class="fas fa-sign-out-alt"></i>
@@ -83,11 +102,9 @@
     <!-- Main Content -->
     <div class="container">
         @yield('content')
-        
         @yield('scripts')
     </div>
 
-    <!-- Modal de cierre de sesión -->
     <!-- Modal de cierre de sesión -->
     <div id="logout-modal" style="display: none;">
         <div class="modal-overlay"></div>
@@ -124,7 +141,7 @@
             });
         }
 
-        // Modal de cierre de sesión - CÓDIGO MEJORADO
+        // Modal de cierre de sesión
         const logoutBtns = [
             document.getElementById('logout-btn-desktop'), 
             document.getElementById('logout-btn-mobile')
@@ -134,21 +151,16 @@
         const cancelBtn = document.getElementById('cancel-logout');
 
         if (modal && confirmBtn && cancelBtn) {
-            // Función para mostrar el modal
             function showModal() {
                 modal.style.display = 'block';
-                // Prevenir scroll del body cuando el modal está abierto
                 document.body.style.overflow = 'hidden';
             }
 
-            // Función para ocultar el modal
             function hideModal() {
                 modal.style.display = 'none';
-                // Restaurar scroll del body
                 document.body.style.overflow = 'auto';
             }
 
-            // Agregar event listeners a los botones de logout
             logoutBtns.forEach(btn => {
                 if (btn) {
                     btn.addEventListener('click', function(e) {
@@ -158,21 +170,16 @@
                 }
             });
 
-            // Botón cancelar
             cancelBtn.addEventListener('click', hideModal);
 
-            // Botón confirmar
             confirmBtn.addEventListener('click', function() {
-                // Redirige o realiza el cierre de sesión
                 window.location.href = '{{ url("/") }}';
             });
 
-            // Cerrar modal al hacer clic fuera del contenido
             if (modal.querySelector('.modal-overlay')) {
                 modal.querySelector('.modal-overlay').addEventListener('click', hideModal);
             }
 
-            // Cerrar modal con la tecla Escape
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && modal.style.display === 'block') {
                     hideModal();
@@ -183,5 +190,4 @@
     
     @stack('scripts')
 </body>
-
 </html>

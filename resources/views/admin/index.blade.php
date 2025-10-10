@@ -1,6 +1,10 @@
-@extends('layouts.master')
+@extends('admin.navbar')
 
-@section('title', 'Dashboard Administrador')
+@section('title', 'Nelva Bienes Raíces - Inicio')
+
+@push('styles')
+<link href="{{ asset('css/inicioAsesor.css') }}" rel="stylesheet">
+@endpush
 
 @section('content')
     <h1>Bienvenido, Administrador</h1>

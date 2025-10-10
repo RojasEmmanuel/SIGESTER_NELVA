@@ -12,75 +12,72 @@ use App\Models\ClienteDireccion;
 use App\Models\BeneficiarioClienteVenta;
 use App\Models\Credito;
 use App\Models\Usuario;
-use App\Models\Lote; // Asumiendo que existe un modelo Lote
+use App\Models\Lote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+
 class ventasController extends Controller
 {
     public function index()
-{
-    // Obtener el asesor en sesión
-    $usuarioId = Auth::user()->id_usuario;
+    {
+        $usuarioId = Auth::user()->id_usuario;
 
-    // Consultar solo las ventas cuyos apartados pertenecen al asesor en sesión
-    $ventas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
+        $ventas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
+                $query->where('id_usuario', $usuarioId);
+            })
+            ->with([
+                'apartado.lotesApartados',
+                'apartado.usuario',
+                'clienteVenta',
+                'credito'
+            ])
+            ->paginate(10);
+
+        $totalVentas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
             $query->where('id_usuario', $usuarioId);
-        })
-        ->with([
-            'apartado.lotesApartados',
-            'apartado.usuario',
-            'clienteVenta',
-            'credito'
-        ])
-        ->paginate(10);
+        })->count();
 
-    // Calcular estadísticas filtradas solo por el asesor en sesión
-    $totalVentas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
-        $query->where('id_usuario', $usuarioId);
-    })->count();
+        $liquidadas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
+            $query->where('id_usuario', $usuarioId);
+        })->where('estatus', 'liquidado')->count();
 
-    $liquidadas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
-        $query->where('id_usuario', $usuarioId);
-    })->where('estatus', 'liquidado')->count();
+        $enPagos = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
+            $query->where('id_usuario', $usuarioId);
+        })->where('estatus', 'pagos')->count();
 
-    $enPagos = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
-        $query->where('id_usuario', $usuarioId);
-    })->where('estatus', 'pagos')->count();
+        $retrasadas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
+            $query->where('id_usuario', $usuarioId);
+        })->where('estatus', 'retraso')->count();
 
-    $retrasadas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
-        $query->where('id_usuario', $usuarioId);
-    })->where('estatus', 'retraso')->count();
+        $canceladas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
+            $query->where('id_usuario', $usuarioId);
+        })->where('estatus', 'cancelado')->count();
 
-    $canceladas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
-        $query->where('id_usuario', $usuarioId);
-    })->where('estatus', 'cancelado')->count();
+        $porcentajeLiquidadas = $totalVentas > 0 ? round(($liquidadas / $totalVentas) * 100) : 0;
+        $porcentajeEnPagos = $totalVentas > 0 ? round(($enPagos / $totalVentas) * 100) : 0;
+        $porcentajeCanceladas = $totalVentas > 0 ? round(($canceladas / $totalVentas) * 100) : 0;
 
-    // Porcentajes
-    $porcentajeLiquidadas = $totalVentas > 0 ? round(($liquidadas / $totalVentas) * 100) : 0;
-    $porcentajeEnPagos = $totalVentas > 0 ? round(($enPagos / $totalVentas) * 100) : 0;
-    $porcentajeCanceladas = $totalVentas > 0 ? round(($canceladas / $totalVentas) * 100) : 0;
-
-    // Retornar la vista con los datos
-    return view('asesor.ventas', compact(
-        'ventas',
-        'totalVentas',
-        'liquidadas',
-        'enPagos',
-        'retrasadas',
-        'canceladas',
-        'porcentajeLiquidadas',
-        'porcentajeEnPagos',
-        'porcentajeCanceladas'
-    ));
-}
+        return view('asesor.ventas', compact(
+            'ventas',
+            'totalVentas',
+            'liquidadas',
+            'enPagos',
+            'retrasadas',
+            'canceladas',
+            'porcentajeLiquidadas',
+            'porcentajeEnPagos',
+            'porcentajeCanceladas'
+        ));
+    }
 
     public function show($id_venta)
     {
-        // Cargar la venta específica con sus relaciones
         $venta = Venta::with([
             'apartado.lotesApartados',
-            'apartado.usuario', // Cargar la relación con el modelo Usuario
+            'apartado.usuario',
             'clienteVenta.contacto',
             'clienteVenta.direccion',
             'beneficiario',
@@ -92,37 +89,29 @@ class ventasController extends Controller
 
     public function create()
     {
-        // Cargar datos para el formulario
-        $asesores = Usuario::where('tipo_usuario', 'asesor')->get(); // Asumiendo que los asesores tienen tipo_usuario = 'asesor'
-        $lotes = Lote::all(); // Cargar todos los lotes disponibles
+        $apartados = Apartado::where('fechaVencimiento', '>=', Carbon::today())
+            ->with(['usuario', 'lotesApartados.lote'])
+            ->get();
 
-        return view('asesor.ventas_create', compact('asesores', 'lotes'));
+        return view('asesor.ventas_create', compact('apartados'));
     }
 
     public function store(Request $request)
     {
-        // Validar los datos del formulario
         $validated = $request->validate([
-            'fechaSolicitud' => 'required|date',
-            'estatus' => 'required|in:solicitud,pagos,retraso,liquidado,cancelado',
-            'ticket_path' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
+            'id_apartado' => 'required|exists:apartados,id_apartado',
+            'ticket_path' => 'required|file|mimes:pdf,jpg,png|max:5120',
             'enganche' => 'required|numeric|min:0',
             'total' => 'required|numeric|min:0',
-            'tipoApartado' => 'required|string',
-            'cliente_nombre' => 'required|string|max:255',
-            'cliente_apellidos' => 'required|string|max:255',
-            'fechaApartado' => 'required|date',
-            'fechaVencimiento' => 'required|date|after_or_equal:fechaApartado',
-            'id_usuario' => 'required|exists:usuarios,id_usuario',
-            'lotes' => 'required|array',
-            'lotes.*' => 'exists:lotes,id_lote',
             'cliente.nombres' => 'required|string|max:255',
             'cliente.apellidos' => 'required|string|max:255',
             'cliente.edad' => 'required|integer|min:18',
             'cliente.estado_civil' => 'required|string',
             'cliente.lugar_origen' => 'required|string|max:255',
             'cliente.ocupacion' => 'required|string|max:255',
-            'cliente.clave_elector' => 'nullable|string|max:18',
+            'cliente.clave_elector' => 'nullable|string|regex:/^[A-Z0-9]{18}$/',
+            'cliente.ine_frente' => 'required|file|mimes:jpg,png|max:5120',
+            'cliente.ine_reverso' => 'required|file|mimes:jpg,png|max:5120',
             'contacto.telefono' => 'required|string|max:20',
             'contacto.email' => 'required|email|max:255',
             'direccion.nacionalidad' => 'required|string|max:255',
@@ -132,52 +121,35 @@ class ventasController extends Controller
             'beneficiario.nombres' => 'nullable|string|max:255',
             'beneficiario.apellidos' => 'nullable|string|max:255',
             'beneficiario.telefono' => 'nullable|string|max:20',
+            'beneficiario.ine_frente' => 'nullable|file|mimes:jpg,png|max:5120',
+            'beneficiario.ine_reverso' => 'nullable|file|mimes:jpg,png|max:5120',
             'credito.fecha_inicio' => 'nullable|date',
             'credito.observaciones' => 'nullable|string',
-            'credito.plazo_financiamiento' => 'nullable|integer|min:1',
-            'credito.modalidad_pago' => 'nullable|string',
-            'credito.formas_pago' => 'nullable|string',
+            'credito.plazo_financiamiento' => 'nullable|in:12 meses,24 meses,36 meses,48 meses,otro',
+            'credito.otro_plazo' => 'required_if:credito.plazo_financiamiento,otro|nullable|integer|min:1',
+            'credito.modalidad_pago' => 'nullable|in:mensual,bimestral,trimestral,semestral,anual',
+            'credito.formas_pago' => 'nullable|in:efectivo,transferencia,cheque,tarjeta credito/debito,otro',
             'credito.dia_pago' => 'nullable|integer|min:1|max:31',
         ]);
 
-        // Iniciar una transacción para garantizar la integridad de los datos
         return DB::transaction(function () use ($request, $validated) {
-            // Manejar la carga del archivo ticket_path
-            $ticketPath = null;
-            if ($request->hasFile('ticket_path')) {
-                $ticketPath = $request->file('ticket_path')->store('tickets', 'public');
-            }
+            $ticketPath = $request->file('ticket_path')->store('tickets', 'public');
+            $apartado = Apartado::findOrFail($validated['id_apartado']);
 
-            // Crear el apartado
-            $apartado = Apartado::create([
-                'tipoApartado' => $validated['tipoApartado'],
-                'cliente_nombre' => $validated['cliente_nombre'],
-                'cliente_apellidos' => $validated['cliente_apellidos'],
-                'fechaApartado' => $validated['fechaApartado'],
-                'fechaVencimiento' => $validated['fechaVencimiento'],
-                'id_usuario' => $validated['id_usuario'],
-            ]);
-
-            // Crear los lotes apartados
-            foreach ($validated['lotes'] as $loteId) {
-                LoteApartado::create([
-                    'id_apartado' => $apartado->id_apartado,
-                    'id_lote' => $loteId,
-                ]);
-            }
-
-            // Crear la venta
             $venta = Venta::create([
-                'fechaSolicitud' => $validated['fechaSolicitud'],
-                'estatus' => $validated['estatus'],
+                'fechaSolicitud' => Carbon::now(),
+                'estatus' => 'solicitud',
                 'ticket_path' => $ticketPath,
-                'ticket_estatus' => $request->ticket_estatus ?? 'pendiente', // Asumiendo un valor por defecto
+                'ticket_estatus' => 'solicitud',
                 'enganche' => $validated['enganche'],
                 'total' => $validated['total'],
                 'id_apartado' => $apartado->id_apartado,
             ]);
 
-            // Crear el cliente
+            // Guardar fotos del INE del cliente
+            $ineFrentePath = $request->file('cliente.ine_frente')->store('ine_photos', 'public');
+            $ineReversoPath = $request->file('cliente.ine_reverso')->store('ine_photos', 'public');
+
             $cliente = ClienteVenta::create([
                 'nombres' => $validated['cliente']['nombres'],
                 'apellidos' => $validated['cliente']['apellidos'],
@@ -186,17 +158,17 @@ class ventasController extends Controller
                 'lugar_origen' => $validated['cliente']['lugar_origen'],
                 'ocupacion' => $validated['cliente']['ocupacion'],
                 'clave_elector' => $validated['cliente']['clave_elector'],
+                'ine_frente' => $ineFrentePath,
+                'ine_reverso' => $ineReversoPath,
                 'id_venta' => $venta->id_venta,
             ]);
 
-            // Crear el contacto del cliente
             ClienteContacto::create([
                 'telefono' => $validated['contacto']['telefono'],
                 'email' => $validated['contacto']['email'],
                 'id_cliente' => $cliente->id_cliente,
             ]);
 
-            // Crear la dirección del cliente
             ClienteDireccion::create([
                 'nacionalidad' => $validated['direccion']['nacionalidad'],
                 'estado' => $validated['direccion']['estado'],
@@ -205,23 +177,35 @@ class ventasController extends Controller
                 'id_cliente' => $cliente->id_cliente,
             ]);
 
-            // Crear el beneficiario (si se proporcionó)
-            if ($validated['beneficiario']['nombres'] && $validated['beneficiario']['apellidos']) {
-                BeneficiarioClienteVenta::create([
+            if (!empty($validated['beneficiario']['nombres']) && !empty($validated['beneficiario']['apellidos'])) {
+                $beneficiarioData = [
                     'nombres' => $validated['beneficiario']['nombres'],
                     'apellidos' => $validated['beneficiario']['apellidos'],
                     'telefono' => $validated['beneficiario']['telefono'],
                     'id_venta' => $venta->id_venta,
                     'id_cliente' => $cliente->id_cliente,
-                ]);
+                ];
+
+                // Guardar fotos del INE del beneficiario si se proporcionaron
+                if ($request->hasFile('beneficiario.ine_frente')) {
+                    $beneficiarioData['ine_frente'] = $request->file('beneficiario.ine_frente')->store('ine_photos', 'public');
+                }
+                if ($request->hasFile('beneficiario.ine_reverso')) {
+                    $beneficiarioData['ine_reverso'] = $request->file('beneficiario.ine_reverso')->store('ine_photos', 'public');
+                }
+
+                BeneficiarioClienteVenta::create($beneficiarioData);
             }
 
-            // Crear el crédito (si se proporcionó)
-            if ($validated['credito']['fecha_inicio']) {
+            if (!empty($validated['credito']['fecha_inicio'])) {
+                $plazoFinanciamiento = $validated['credito']['plazo_financiamiento'];
+                $otroPlazo = $plazoFinanciamiento === 'otro' ? $validated['credito']['otro_plazo'] : null;
+
                 Credito::create([
                     'fecha_inicio' => $validated['credito']['fecha_inicio'],
                     'observaciones' => $validated['credito']['observaciones'],
-                    'plazo_financiamiento' => $validated['credito']['plazo_financiamiento'],
+                    'plazo_financiamiento' => $plazoFinanciamiento,
+                    'otro_plazo' => $otroPlazo,
                     'modalidad_pago' => $validated['credito']['modalidad_pago'],
                     'formas_pago' => $validated['credito']['formas_pago'],
                     'dia_pago' => $validated['credito']['dia_pago'],
@@ -230,6 +214,41 @@ class ventasController extends Controller
             }
 
             return redirect()->route('ventas.index')->with('success', 'Venta creada exitosamente.');
+        });
+    }
+
+    public function updateTicket(Request $request, $id_venta)
+    {
+        $validated = $request->validate([
+            'new_ticket_path' => 'required|file|mimes:pdf,jpg,png|max:5120',
+        ]);
+
+        return DB::transaction(function () use ($request, $id_venta, $validated) {
+            $venta = Venta::findOrFail($id_venta);
+
+            // Verificar que el ticket_estatus sea 'rechazado'
+            if ($venta->ticket_estatus !== 'rechazado') {
+                return redirect()->route('ventas.show', $id_venta)
+                    ->with('error', 'No se puede actualizar el ticket porque no está en estado rechazado.');
+            }
+
+            // Eliminar el ticket anterior si existe
+            if ($venta->ticket_path && Storage::disk('public')->exists($venta->ticket_path)) {
+                Storage::disk('public')->delete($venta->ticket_path);
+            }
+
+            // Guardar el nuevo ticket
+            $newTicketPath = $request->file('new_ticket_path')->store('tickets', 'public');
+
+            // Actualizar la venta
+            $venta->update([
+                'ticket_path' => $newTicketPath,
+                'ticket_estatus' => 'solicitud',
+                'updated_at' => Carbon::now(),
+            ]);
+
+            return redirect()->route('ventas.show', $id_venta)
+                ->with('success', 'Ticket actualizado exitosamente.');
         });
     }
 }

@@ -14,6 +14,8 @@ class BeneficiarioClienteVenta extends Model
         'nombres',
         'apellidos',
         'telefono',
+        'ine_frente',
+        'ine_reverso',
         'id_venta',
         'id_cliente',
     ];

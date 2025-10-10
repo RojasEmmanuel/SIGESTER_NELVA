@@ -1,15 +1,12 @@
 @extends('asesor.navbar')
 
-@section('title', 'Nelva Bienes Raíces - Apartado Detalles')
+@section('title', 'Nelva Bienes Raíces - Crear Venta')
 
 @push('styles')
 <link href="{{ asset('css/ventaForm.css') }}" rel="stylesheet">
 @endpush
 
-
 @section('content')
-    
-</head>
 <body>
     <div class="container">
         <div class="page-header">
@@ -17,7 +14,7 @@
                 <i class="fas fa-plus-circle"></i>
                 <span>Crear Nueva Venta</span>
             </h1>
-            <a href="#" class="btn btn-secondary">
+            <a href="{{ route('ventas.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver al listado
             </a>
         </div>
@@ -57,7 +54,9 @@
             </div>
         </div>
 
-        <form action="#" method="POST" enctype="multipart/form-data" id="venta-form">
+        <form action="{{ route('ventas.store') }}" method="POST" enctype="multipart/form-data" id="venta-form">
+            @csrf
+
             <!-- Información de la Venta -->
             <div class="card" id="card-venta">
                 <div class="card-header" data-target="card-venta-body">
@@ -66,46 +65,27 @@
                 </div>
                 <div class="card-body" id="card-venta-body">
                     <div class="form-group">
-                        <label for="fechaSolicitud">Fecha de Solicitud <span class="required">*</span></label>
-                        <input type="date" name="fechaSolicitud" id="fechaSolicitud" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="estatus">Estatus <span class="required">*</span></label>
-                        <select name="estatus" id="estatus" class="form-control" required>
-                            <option value="">Seleccione un estatus</option>
-                            <option value="solicitud">Solicitud</option>
-                            <option value="pagos">Pagos</option>
-                            <option value="retraso">Retraso</option>
-                            <option value="liquidado">Liquidado</option>
-                            <option value="cancelado">Cancelado</option>
-                        </select>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="ticket_path">Ticket de Pago (PDF, JPG, PNG)</label>
-                        <input type="file" name="ticket_path" id="ticket_path" class="form-control" accept=".pdf,.jpg,.png">
+                        <label for="ticket_path">Ticket de Pago (PDF, JPG, PNG) <span class="required">*</span></label>
+                        <input type="file" name="ticket_path" id="ticket_path" class="form-control" accept=".pdf,.jpg,.png" required>
                         <div class="helper-text">Formatos aceptados: PDF, JPG, PNG. Tamaño máximo: 5MB</div>
+                        @error('ticket_path')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="enganche">Enganche <span class="required">*</span></label>
                         <input type="number" name="enganche" id="enganche" class="form-control" value="" step="0.01" min="0" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
+                        @error('enganche')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="total">Precio Total <span class="required">*</span></label>
                         <input type="number" name="total" id="total" class="form-control" value="" step="0.01" min="0" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
+                        @error('total')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
-                    
                     <!-- Financial Summary -->
                     <div class="financial-summary" id="financial-summary" style="display: none;">
                         <div class="financial-item">
@@ -132,65 +112,45 @@
                 </div>
                 <div class="card-body" id="card-apartado-body">
                     <div class="form-group">
-                        <label for="tipoApartado">Tipo de Apartado <span class="required">*</span></label>
-                        <input type="text" name="tipoApartado" id="tipoApartado" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="cliente_nombre">Nombre del Cliente (Apartado) <span class="required">*</span></label>
-                        <input type="text" name="cliente_nombre" id="cliente_nombre" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="cliente_apellidos">Apellidos del Cliente (Apartado) <span class="required">*</span></label>
-                        <input type="text" name="cliente_apellidos" id="cliente_apellidos" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="fechaApartado">Fecha de Apartado <span class="required">*</span></label>
-                        <input type="date" name="fechaApartado" id="fechaApartado" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="fechaVencimiento">Fecha de Vencimiento <span class="required">*</span></label>
-                        <input type="date" name="fechaVencimiento" id="fechaVencimiento" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="id_usuario">Asesor <span class="required">*</span></label>
-                        <select name="id_usuario" id="id_usuario" class="form-control" required>
-                            <option value="">Seleccione un asesor</option>
-                            <option value="1">Juan Pérez</option>
-                            <option value="2">María García</option>
-                            <option value="3">Carlos López</option>
+                        <label for="id_apartado">Apartado <span class="required">*</span></label>
+                        <select name="id_apartado" id="id_apartado" class="form-control" required>
+                            <option value="">Seleccione un apartado</option>
+                            @foreach ($apartados as $apartado)
+                                <option value="{{ $apartado->id_apartado }}"
+                                        data-nombre="{{ $apartado->cliente_nombre }}"
+                                        data-apellidos="{{ $apartado->cliente_apellidos }}"
+                                        data-tipo="{{ $apartado->tipoApartado }}"
+                                        data-fecha-apartado="{{ $apartado->fechaApartado }}"
+                                        data-fecha-vencimiento="{{ $apartado->fechaVencimiento }}"
+                                        data-asesor="{{ $apartado->usuario->nombre }}"
+                                        data-lotes="{{ $apartado->lotesApartados->pluck('lote.id_lote')->toJson() }}">
+                                    {{ $apartado->cliente_nombre }} {{ $apartado->cliente_apellidos }} - {{ $apartado->tipoApartado }}
+                                </option>
+                            @endforeach
                         </select>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
+                        @error('id_apartado')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
-                        <label for="lotes">Lotes <span class="required">*</span></label>
-                        <select name="lotes[]" id="lotes" class="form-control" multiple required>
-                            <option value="1">Lote A-001</option>
-                            <option value="2">Lote A-002</option>
-                            <option value="3">Lote A-003</option>
-                            <option value="4">Lote B-001</option>
-                            <option value="5">Lote B-002</option>
-                        </select>
-                        <div class="helper-text">Mantén presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples lotes</div>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
+                        <label>Tipo de Apartado</label>
+                        <input type="text" id="tipo_apartado_display" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Apartado</label>
+                        <input type="text" id="fecha_apartado_display" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Vencimiento</label>
+                        <input type="text" id="fecha_vencimiento_display" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Asesor</label>
+                        <input type="text" id="asesor_display" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Lotes Apartados</label>
+                        <ul id="lotes_display" class="list-group"></ul>
                     </div>
                 </div>
             </div>
@@ -205,23 +165,23 @@
                     <div class="form-group">
                         <label for="cliente_nombres">Nombres <span class="required">*</span></label>
                         <input type="text" name="cliente[nombres]" id="cliente_nombres" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
+                        @error('cliente.nombres')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="cliente_apellidos">Apellidos <span class="required">*</span></label>
                         <input type="text" name="cliente[apellidos]" id="cliente_apellidos" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
+                        @error('cliente.apellidos')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="cliente_edad">Edad <span class="required">*</span></label>
                         <input type="number" name="cliente[edad]" id="cliente_edad" class="form-control" value="" min="18" max="100" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> La edad debe estar entre 18 y 100 años
-                        </div>
+                        @error('cliente.edad')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="cliente_estado_civil">Estado Civil <span class="required">*</span></label>
@@ -231,33 +191,49 @@
                             <option value="casado">Casado(a)</option>
                             <option value="divorciado">Divorciado(a)</option>
                             <option value="viudo">Viudo(a)</option>
-                            <option value="union_libre">Unión Libre</option>
+                            <option value="unión libre">Unión Libre</option>
                         </select>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
+                        @error('cliente.estado_civil')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="cliente_lugar_origen">Lugar de Origen <span class="required">*</span></label>
                         <input type="text" name="cliente[lugar_origen]" id="cliente_lugar_origen" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
+                        @error('cliente.lugar_origen')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="cliente_ocupacion">Ocupación <span class="required">*</span></label>
                         <input type="text" name="cliente[ocupacion]" id="cliente_ocupacion" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
+                        @error('cliente.ocupacion')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="cliente_clave_elector">Clave de Elector</label>
                         <input type="text" name="cliente[clave_elector]" id="cliente_clave_elector" class="form-control" value="" pattern="[A-Z0-9]{18}">
-                        <div class="helper-text">Formato: 18 caracteres alfanuméricos</div>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> La clave de elector debe tener 18 caracteres alfanuméricos
-                        </div>
+                        <div class="helper-text">Formato: 18 caracteres alfanuméricos (ejemplo: GOMP920715HDFRRN08)</div>
+                        @error('cliente.clave_elector')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="cliente_ine_frente">Foto INE (Frente) <span class="required">*</span></label>
+                        <input type="file" name="cliente[ine_frente]" id="cliente_ine_frente" class="form-control" accept=".jpg,.png" required>
+                        <div class="helper-text">Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB</div>
+                        @error('cliente.ine_frente')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="cliente_ine_reverso">Foto INE (Reverso) <span class="required">*</span></label>
+                        <input type="file" name="cliente[ine_reverso]" id="cliente_ine_reverso" class="form-control" accept=".jpg,.png" required>
+                        <div class="helper-text">Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB</div>
+                        @error('cliente.ine_reverso')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             </div>
@@ -273,16 +249,16 @@
                         <label for="contacto_telefono">Teléfono <span class="required">*</span></label>
                         <input type="tel" name="contacto[telefono]" id="contacto_telefono" class="form-control" value="" pattern="[0-9]{10}" required>
                         <div class="helper-text">Formato: 10 dígitos sin espacios ni guiones</div>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> El teléfono debe tener 10 dígitos
-                        </div>
+                        @error('contacto.telefono')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="contacto_email">Email <span class="required">*</span></label>
                         <input type="email" name="contacto[email]" id="contacto_email" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Por favor ingresa un email válido
-                        </div>
+                        @error('contacto.email')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             </div>
@@ -297,30 +273,30 @@
                     <div class="form-group">
                         <label for="direccion_nacionalidad">Nacionalidad <span class="required">*</span></label>
                         <input type="text" name="direccion[nacionalidad]" id="direccion_nacionalidad" class="form-control" value="Mexicana" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
+                        @error('direccion.nacionalidad')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="direccion_estado">Estado <span class="required">*</span></label>
                         <input type="text" name="direccion[estado]" id="direccion_estado" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
+                        @error('direccion.estado')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="direccion_municipio">Municipio <span class="required">*</span></label>
                         <input type="text" name="direccion[municipio]" id="direccion_municipio" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
+                        @error('direccion.municipio')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="direccion_localidad">Localidad <span class="required">*</span></label>
                         <input type="text" name="direccion[localidad]" id="direccion_localidad" class="form-control" value="" required>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> Este campo es obligatorio
-                        </div>
+                        @error('direccion.localidad')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             </div>
@@ -335,18 +311,40 @@
                     <div class="form-group">
                         <label for="beneficiario_nombres">Nombres</label>
                         <input type="text" name="beneficiario[nombres]" id="beneficiario_nombres" class="form-control" value="">
+                        @error('beneficiario.nombres')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="beneficiario_apellidos">Apellidos</label>
                         <input type="text" name="beneficiario[apellidos]" id="beneficiario_apellidos" class="form-control" value="">
+                        @error('beneficiario.apellidos')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="beneficiario_telefono">Teléfono</label>
                         <input type="tel" name="beneficiario[telefono]" id="beneficiario_telefono" class="form-control" value="" pattern="[0-9]{10}">
                         <div class="helper-text">Formato: 10 dígitos sin espacios ni guiones</div>
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> El teléfono debe tener 10 dígitos
-                        </div>
+                        @error('beneficiario.telefono')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="beneficiario_ine_frente">Foto INE (Frente)</label>
+                        <input type="file" name="beneficiario[ine_frente]" id="beneficiario_ine_frente" class="form-control" accept=".jpg,.png">
+                        <div class="helper-text">Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB</div>
+                        @error('beneficiario.ine_frente')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="beneficiario_ine_reverso">Foto INE (Reverso)</label>
+                        <input type="file" name="beneficiario[ine_reverso]" id="beneficiario_ine_reverso" class="form-control" accept=".jpg,.png">
+                        <div class="helper-text">Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB</div>
+                        @error('beneficiario.ine_reverso')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             </div>
@@ -361,19 +359,44 @@
                     <div class="form-group">
                         <label for="credito_fecha_inicio">Fecha de Inicio</label>
                         <input type="date" name="credito[fecha_inicio]" id="credito_fecha_inicio" class="form-control" value="">
+                        @error('credito.fecha_inicio')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="credito_plazo_financiamiento">Plazo de Financiamiento (meses)</label>
-                        <input type="number" name="credito[plazo_financiamiento]" id="credito_plazo_financiamiento" class="form-control" value="" min="1" max="360">
+                        <select name="credito[plazo_financiamiento]" id="credito_plazo_financiamiento" class="form-control">
+                            <option value="">Seleccione un plazo</option>
+                            <option value="12 meses">12 meses</option>
+                            <option value="24 meses">24 meses</option>
+                            <option value="36 meses">36 meses</option>
+                            <option value="48 meses">48 meses</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                        @error('credito.plazo_financiamiento')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="form-group" id="custom_plazo_group" style="display: none;">
+                        <label for="credito_otro_plazo">Especificar Plazo (meses) <span class="required">*</span></label>
+                        <input type="number" name="credito[otro_plazo]" id="credito_otro_plazo" class="form-control" value="" min="1" max="360">
+                        @error('credito.otro_plazo')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="credito_modalidad_pago">Modalidad de Pago</label>
                         <select name="credito[modalidad_pago]" id="credito_modalidad_pago" class="form-control">
                             <option value="">Seleccione una modalidad</option>
                             <option value="mensual">Mensual</option>
-                            <option value="quincenal">Quincenal</option>
-                            <option value="semanal">Semanal</option>
+                            <option value="bimestral">Bimestral</option>
+                            <option value="trimestral">Trimestral</option>
+                            <option value="semestral">Semestral</option>
+                            <option value="anual">Anual</option>
                         </select>
+                        @error('credito.modalidad_pago')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="credito_formas_pago">Formas de Pago</label>
@@ -381,16 +404,27 @@
                             <option value="">Seleccione una forma de pago</option>
                             <option value="efectivo">Efectivo</option>
                             <option value="transferencia">Transferencia</option>
-                            <option value="tarjeta">Tarjeta</option>
+                            <option value="cheque">Cheque</option>
+                            <option value="tarjeta credito/debito">Tarjeta de Crédito/Débito</option>
+                            <option value="otro">Otro</option>
                         </select>
+                        @error('credito.formas_pago')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="credito_dia_pago">Día de Pago</label>
                         <input type="number" name="credito[dia_pago]" id="credito_dia_pago" class="form-control" value="" min="1" max="31">
+                        @error('credito.dia_pago')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="credito_observaciones">Observaciones</label>
                         <textarea name="credito[observaciones]" id="credito_observaciones" class="form-control"></textarea>
+                        @error('credito.observaciones')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             </div>
@@ -399,7 +433,7 @@
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i> Crear Venta
                 </button>
-                <a href="#" class="btn btn-secondary">
+                <a href="{{ route('ventas.index') }}" class="btn btn-secondary">
                     <i class="fas fa-times"></i> Cancelar
                 </a>
             </div>
@@ -482,16 +516,13 @@
                 const pattern = field.getAttribute('pattern');
                 const type = field.getAttribute('type');
                 
-                // Remove previous validation classes
                 field.classList.remove('is-invalid', 'is-valid');
                 
-                // Check if field is required and empty
-                if (isRequired && value === '') {
+                if (isRequired && (value === '' || (type === 'file' && !field.files.length))) {
                     field.classList.add('is-invalid');
                     return false;
                 }
                 
-                // Check pattern if exists
                 if (pattern && value !== '') {
                     const regex = new RegExp(pattern);
                     if (!regex.test(value)) {
@@ -500,7 +531,6 @@
                     }
                 }
                 
-                // Special validation for email
                 if (type === 'email' && value !== '') {
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!emailRegex.test(value)) {
@@ -509,7 +539,6 @@
                     }
                 }
                 
-                // Special validation for number fields with min/max
                 if ((type === 'number' || field.tagName === 'SELECT') && value !== '') {
                     const min = field.getAttribute('min');
                     const max = field.getAttribute('max');
@@ -525,21 +554,82 @@
                     }
                 }
                 
-                // If we passed all validations and field has value, mark as valid
-                if (value !== '') {
+                if (value !== '' || (type === 'file' && field.files.length)) {
                     field.classList.add('is-valid');
                 }
                 
                 return true;
             }
-            
+
+            // Handle apartado selection
+            const apartadoSelect = document.getElementById('id_apartado');
+            const tipoApartadoDisplay = document.getElementById('tipo_apartado_display');
+            const fechaApartadoDisplay = document.getElementById('fecha_apartado_display');
+            const fechaVencimientoDisplay = document.getElementById('fecha_vencimiento_display');
+            const asesorDisplay = document.getElementById('asesor_display');
+            const lotesDisplay = document.getElementById('lotes_display');
+            const clienteNombres = document.getElementById('cliente_nombres');
+            const clienteApellidos = document.getElementById('cliente_apellidos');
+
+            apartadoSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                if (selectedOption.value) {
+                    tipoApartadoDisplay.value = selectedOption.dataset.tipo;
+                    fechaApartadoDisplay.value = selectedOption.dataset.fechaApartado;
+                    fechaVencimientoDisplay.value = selectedOption.dataset.fechaVencimiento;
+                    asesorDisplay.value = selectedOption.dataset.asesor;
+                    clienteNombres.value = selectedOption.dataset.nombre;
+                    clienteApellidos.value = selectedOption.dataset.apellidos;
+
+                    // Display lotes
+                    const lotes = JSON.parse(selectedOption.dataset.lotes);
+                    lotesDisplay.innerHTML = '';
+                    lotes.forEach(lote => {
+                        const li = document.createElement('li');
+                        li.classList.add('list-group-item');
+                        li.textContent = `Lote ${lote}`;
+                        lotesDisplay.appendChild(li);
+                    });
+                } else {
+                    tipoApartadoDisplay.value = '';
+                    fechaApartadoDisplay.value = '';
+                    fechaVencimientoDisplay.value = '';
+                    asesorDisplay.value = '';
+                    clienteNombres.value = '';
+                    clienteApellidos.value = '';
+                    lotesDisplay.innerHTML = '';
+                }
+                updateProgress();
+            });
+
+            // Handle custom plazo financiamiento
+            const plazoSelect = document.getElementById('credito_plazo_financiamiento');
+            const customPlazoGroup = document.getElementById('custom_plazo_group');
+            const customPlazoInput = document.getElementById('credito_otro_plazo');
+
+            plazoSelect.addEventListener('change', function() {
+                if (this.value === 'otro') {
+                    customPlazoGroup.style.display = 'block';
+                    customPlazoInput.setAttribute('required', 'required');
+                } else {
+                    customPlazoGroup.style.display = 'none';
+                    customPlazoInput.removeAttribute('required');
+                    customPlazoInput.value = '';
+                }
+                updateProgress();
+            });
+
             // Progress tracking
             function updateProgress() {
                 const requiredFields = form.querySelectorAll('[required]');
                 let completedFields = 0;
                 
                 requiredFields.forEach(field => {
-                    if (field.value.trim() !== '') {
+                    if (field.type === 'file') {
+                        if (field.files.length > 0) {
+                            completedFields++;
+                        }
+                    } else if (field.value.trim() !== '') {
                         completedFields++;
                     }
                 });
@@ -551,7 +641,6 @@
                 progressBar.style.width = `${progressPercentage}%`;
                 progressPercentageDisplay.textContent = `${progressPercentage}%`;
                 
-                // Update step indicators
                 const steps = document.querySelectorAll('.step');
                 steps.forEach(step => {
                     const stepNumber = parseInt(step.getAttribute('data-step'));
@@ -565,9 +654,11 @@
                 });
             }
             
-            // Update progress on any input
             inputs.forEach(input => {
                 input.addEventListener('input', updateProgress);
+                if (input.type === 'file') {
+                    input.addEventListener('change', updateProgress);
+                }
             });
             
             // Form submission
@@ -582,11 +673,8 @@
                 });
                 
                 if (isValid) {
-                    // Show success message
-                    alert('¡Formulario enviado correctamente!');
-                    // In a real application, you would submit the form here
+                    this.submit();
                 } else {
-                    // Scroll to first error
                     const firstError = form.querySelector('.is-invalid');
                     if (firstError) {
                         firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -595,7 +683,6 @@
                 }
             });
             
-            // Initialize progress
             updateProgress();
         });
     </script>
