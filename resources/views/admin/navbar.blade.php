@@ -49,7 +49,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
         <div class="mobile-header-container">
-            <img src="/images/LogoNegativo.png" width="150px">
+            <img src="/images/Logo.png" width="150px">
             <button class="hamburger-btn" id="hamburger-btn">
                 <i class="fas fa-bars"></i>
             </button>

@@ -7,7 +7,6 @@
 @endpush
 
 @section('content')
-    
     <div class="container"> 
         <h1 class="page-title">
             <i class="fas fa-map-marked-alt"></i>
@@ -70,13 +69,14 @@
             <span>Lista de Fraccionamientos</span>
         </h2>
 
-        <!-- LISTA DE FRACCIONAMIENTOS-->
+        <!-- LISTA DE FRACCIONAMIENTOS -->
         <div class="fraccionamientos-list">
-            @foreach($fraccionamientos as $fraccionamiento)
+            @forelse($fraccionamientos as $fraccionamiento)
             <div class="fraccionamiento-card">
                 <div class="fraccionamiento-image-container">
-                    <img src="{{ $fraccionamiento->path_imagen}}" 
-                        alt="{{ $fraccionamiento->nombre }}" class="fraccionamiento-image">
+                    <img src="{{ $fraccionamiento->path_imagen ? asset('storage/' . $fraccionamiento->path_imagen) : asset('images/placeholder.jpg') }}" 
+                         alt="{{ $fraccionamiento->nombre }}" 
+                         class="fraccionamiento-image">
                 </div>
                 <div class="fraccionamiento-content">
                     <div class="fraccionamiento-header"> 
@@ -104,14 +104,16 @@
                     </div>
                     <div class="fraccionamiento-actions">
                         <a href="{{ route('asesor.fraccionamiento.show', $fraccionamiento->id_fraccionamiento) }}" 
-                        class="btn btn-primary ver-detalles">
+                           class="btn btn-primary ver-detalles">
                             <i class="fas fa-eye"></i>
                             <span>Ver</span>
                         </a>
                     </div>
                 </div>
             </div>
-            @endforeach
+            @empty
+                <p class="no-data">No hay fraccionamientos disponibles.</p>
+            @endforelse
         </div>
     </div>
 @endsection

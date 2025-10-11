@@ -7,6 +7,7 @@ use App\Http\Controllers\Asesor\InicioController;
 use App\Http\Controllers\Asesor\FraccionamientoController;
 use App\Http\Controllers\Asesor\PerfilController;
 use App\Http\Controllers\Asesor\ventasController;
+use App\Http\Controllers\Admin\AdminFraccionamientoController;
 
 // Rutas de autenticación
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -54,4 +55,31 @@ Route::middleware('auth')->group(function () {
     Route::post('/perfil', [PerfilController::class, 'update'])->name('asesor.perfil.update');
 
     Route::post('/asesor/apartados/{id}/upload-ticket', [ApartadoController::class, 'uploadTicket'])->name('asesor.apartados.upload-ticket');
+
+
+
+
+
+
+
+
+    
+
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/fraccionamiento/{id}', [AdminFraccionamientoController::class, 'show'])->name('fraccionamiento.show');
+        Route::put('/fraccionamiento/{id}', [AdminFraccionamientoController::class, 'update'])->name('fraccionamiento.update');
+        Route::put('/fraccionamiento/{id}/info', [AdminFraccionamientoController::class, 'updateInfo'])->name('fraccionamiento.update-info');
+        Route::post('/fraccionamiento/{id}/amenidad', [AdminFraccionamientoController::class, 'addAmenidad'])->name('fraccionamiento.add-amenidad');
+        Route::delete('/fraccionamiento/{id}/amenidad/{amenidadId}', [AdminFraccionamientoController::class, 'deleteAmenidad'])->name('fraccionamiento.delete-amenidad');
+        Route::post('/fraccionamiento/{id}/foto', [AdminFraccionamientoController::class, 'addFoto'])->name('fraccionamiento.add-foto');
+        Route::delete('/fraccionamiento/{id}/foto/{fotoId}', [AdminFraccionamientoController::class, 'deleteFoto'])->name('fraccionamiento.delete-foto');
+        Route::post('/fraccionamiento/{id}/archivo', [AdminFraccionamientoController::class, 'addArchivo'])->name('fraccionamiento.add-archivo');
+        Route::delete('/fraccionamiento/{id}/archivo/{archivoId}', [AdminFraccionamientoController::class, 'deleteArchivo'])->name('fraccionamiento.delete-archivo');
+        Route::get('/fraccionamiento/{id}/plano/{planoId}/download', [AdminFraccionamientoController::class, 'downloadPlano'])->name('fraccionamiento.download-plano');
+        Route::get('/fraccionamiento/{id}/lotes', [AdminFraccionamientoController::class, 'getLotes'])->name('fraccionamiento.lotes');
+        Route::get('/fraccionamiento/{id}/lote/{numeroLote}', [AdminFraccionamientoController::class, 'getLoteDetails'])->name('fraccionamiento.lote-details');
+        Route::get('/fraccionamiento/{id}/geojson', [AdminFraccionamientoController::class, 'getGeoJsonConEstatus'])->name('fraccionamiento.geojson');
+    });
 });
+
+
