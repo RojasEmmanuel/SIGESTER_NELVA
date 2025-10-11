@@ -14,6 +14,10 @@
     --warning-light: #fde68a;
     --danger-color: #ef4444;
     --danger-light: #fee2e2;
+    --info-color: #3b82f6;
+    --info-light: #dbeafe;
+    --neutral-color: #6b7280;
+    --neutral-light: #f3f4f6;
     --white: #ffffff;
     --dark-bg: #1e293b;
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -437,4 +441,50 @@ body {
 
 .btn-outline:hover {
     background-color: var(--accent-color);
+}
+
+/* ... (el resto del CSS se mantiene igual hasta la sección de estatus) ... */
+
+.sale-status {
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Colores para los estatus específicos */
+.status-solicitud {
+    background-color: var(--info-light);
+    color: var(--info-color);
+    border: 1px solid var(--info-light);
+}
+
+.status-pagos {
+    background-color: var(--warning-light);
+    color: var(--warning-color);
+    border: 1px solid var(--warning-light);
+}
+
+.status-retraso {
+    background-color: var(--danger-light);
+    color: var(--danger-color);
+    border: 1px solid var(--danger-light);
+}
+
+.status-liquidado {
+    background-color: var(--success-light);
+    color: var(--success-color);
+    border: 1px solid var(--success-light);
+}
+
+.status-cancelado {
+    background-color: var(--neutral-light);
+    color: var(--neutral-color);
+    border: 1px solid var(--neutral-light);
+}
+
+
+.sale-body {
+    padding: 1rem;
 }

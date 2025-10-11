@@ -26,6 +26,7 @@ class ventasController extends Controller
         $ventas = Venta::whereHas('apartado', function ($query) use ($usuarioId) {
                 $query->where('id_usuario', $usuarioId);
             })
+            ->orderBy('fechaSolicitud', 'desc')
             ->with([
                 'apartado.lotesApartados.lote',
                 'apartado.usuario',
@@ -94,8 +95,13 @@ class ventasController extends Controller
 
     public function create()
     {
+        // Obtener el ID del usuario autenticado
+        $userId = Auth::user()->id_usuario;
+
+        // Consultar los apartados, filtrando por el ID del usuario autenticado
         $apartados = Apartado::where('fechaVencimiento', '>=', Carbon::today())
             ->where('estatus', 'en curso')
+            ->where('id_usuario', $userId) // Agregar filtro para el usuario autenticado
             ->with(['usuario', 'lotesApartados.lote'])
             ->get();
 

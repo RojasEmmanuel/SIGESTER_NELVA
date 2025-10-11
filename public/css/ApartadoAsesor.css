@@ -24,6 +24,8 @@ body {
     background-color: #f8fafc;
     margin: 0;
     padding: 0;
+    line-height: 1.5;
+    color: #334155;
 }
 
 .container {
@@ -32,11 +34,11 @@ body {
     padding: 0 1rem;
 }
 
-/* Header */
+/* Header Responsive */
 .page-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    flex-direction: column;
+    gap: 1rem;
     margin-bottom: 2rem;
     padding: 1.5rem 0;
     border-bottom: 1px solid var(--border);
@@ -47,55 +49,73 @@ body {
 }
 
 .page-title {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: var(--text);
     margin: 0 0 0.5rem 0;
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
 .page-subtitle {
     color: var(--text-light);
     margin: 0;
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
-/* Filtros */
+.header-stats {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    padding: 0.3rem 0.6rem;
+    background-color: var(--bg-light);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+/* Filtros Responsive */
 .filters-bar {
     background: var(--white);
-    padding: 1.5rem;
+    padding: 1.25rem;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     margin-bottom: 2rem;
     display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .filter-group {
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
 .filter-group label {
     font-weight: 600;
     color: var(--text);
-    min-width: 60px;
+    font-size: 0.9rem;
 }
 
 .filter-buttons {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.25rem;
     background: var(--bg-light);
     padding: 0.25rem;
     border-radius: var(--radius-sm);
+    flex-wrap: wrap;
 }
 
 .filter-btn {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.75rem;
     border: none;
     background: transparent;
     border-radius: 6px;
@@ -103,7 +123,10 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     color: var(--text-light);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    flex: 1;
+    min-width: 80px;
+    text-align: center;
 }
 
 .filter-btn.active {
@@ -125,7 +148,7 @@ body {
     margin-bottom: 2rem;
 }
 
-/* Tarjetas Compactas Horizontales */
+/* Tarjetas Compactas Horizontales - Responsive */
 .apartado-card {
     background: var(--white);
     border-radius: var(--radius);
@@ -146,13 +169,16 @@ body {
     border-left-color: var(--danger);
 }
 
-/* Header Compacto */
+.apartado-card.vendido {
+    border-left-color: #28a745;
+}
+
+/* Header Compacto Responsive */
 .card-header-compact {
-    padding: 1rem 1.25rem;
+    padding: 1rem;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.75rem;
     background: var(--bg-light);
     border-bottom: 1px solid var(--border);
 }
@@ -161,62 +187,66 @@ body {
     display: flex;
     align-items: flex-start;
     gap: 0.75rem;
-    flex: 1;
+    width: 100%;
 }
 
 .client-avatar-mini {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
     background: var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1rem;
+    font-size: 0.9rem;
     flex-shrink: 0;
 }
 
 .client-details {
     flex: 1;
+    min-width: 0;
 }
 
 .client-name-compact {
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: var(--text);
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 0.4rem 0;
     line-height: 1.2;
+    word-wrap: break-word;
 }
 
 .client-meta {
     display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 0.3rem;
 }
 
 .meta-item {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-light);
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.3rem;
 }
 
 .header-badges {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
     gap: 0.5rem;
-    align-items: flex-end;
 }
 
 .type-badge {
     padding: 0.3rem 0.6rem;
     border-radius: 12px;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
 .type-badge.palabra {
@@ -234,12 +264,13 @@ body {
 .status-badge {
     padding: 0.3rem 0.6rem;
     border-radius: 12px;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 600;
     text-transform: uppercase;
     display: flex;
     align-items: center;
     gap: 0.3rem;
+    white-space: nowrap;
 }
 
 .status-badge.activo {
@@ -254,36 +285,60 @@ body {
     border: 1px solid #fecaca;
 }
 
-/* Contenido Horizontal */
+.status-badge.vendido {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-badge.badge-solicitud,
+.status-badge.badge-pendiente {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.status-badge.badge-aprobado {
+    background: #d1edff;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.status-badge.badge-rechazado {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Contenido Horizontal Responsive */
 .card-content-horizontal {
-    padding: 1rem 1.25rem;
+    padding: 1rem;
     display: flex;
-    align-items: center;
-    gap: 1.5rem;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .time-section {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    gap: 0.25rem;
-    min-width: 100px;
+    padding: 0.5rem 0;
 }
 
 .time-display {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-weight: 700;
-    font-size: 1.1rem;
-}
-
-.time-value {
+    font-weight: 600;
     font-size: 1rem;
 }
 
+.time-value {
+    font-size: 0.95rem;
+}
+
 .time-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-light);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -302,19 +357,18 @@ body {
 }
 
 .divider {
-    width: 1px;
-    height: 40px;
+    width: 100%;
+    height: 1px;
     background: var(--border);
 }
 
-/* Lotes Compactos */
+/* Lotes Compactos Responsive */
 .lotes-section-compact {
-    flex: 1;
-    min-width: 180px;
+    width: 100%;
 }
 
 .lotes-header {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--text);
     margin-bottom: 0.5rem;
@@ -336,12 +390,12 @@ body {
     padding: 0.5rem 0.6rem;
     background: var(--bg-light);
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
 }
 
 .lote-item-compact i {
     color: var(--primary);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     margin-top: 0.1rem;
     flex-shrink: 0;
 }
@@ -351,23 +405,26 @@ body {
     flex-direction: column;
     gap: 0.1rem;
     flex: 1;
+    min-width: 0;
 }
 
 .lote-number {
     color: var(--text);
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     line-height: 1.2;
+    word-wrap: break-word;
 }
 
 .fraccionamiento-name {
     color: var(--text-light);
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     line-height: 1.2;
+    word-wrap: break-word;
 }
 
 .lote-more {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-light);
     font-style: italic;
     padding: 0.3rem 0.6rem;
@@ -375,27 +432,28 @@ body {
 }
 
 .no-lotes-compact {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-light);
     font-style: italic;
     padding: 0.4rem 0.6rem;
     text-align: center;
 }
 
-/* Acciones */
+/* Acciones Responsive */
 .actions-section {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
     gap: 0.75rem;
-    min-width: 120px;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
 }
 
 .asesor-info {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.8rem;
+    gap: 0.4rem;
+    font-size: 0.75rem;
     color: var(--text-light);
 }
 
@@ -407,15 +465,16 @@ body {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.5rem 0.9rem;
+    padding: 0.5rem 0.8rem;
     background: var(--primary);
     color: white;
     text-decoration: none;
     border-radius: var(--radius-sm);
     font-weight: 500;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     transition: all 0.2s ease;
     border: 1px solid var(--primary);
+    white-space: nowrap;
 }
 
 .view-btn-compact:hover {
@@ -431,7 +490,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 3rem 2rem;
+    padding: 2rem 1rem;
     text-align: center;
     background: var(--white);
     border-radius: var(--radius);
@@ -439,7 +498,7 @@ body {
 }
 
 .empty-icon {
-    font-size: 3rem;
+    font-size: 2.5rem;
     color: var(--text-light);
     margin-bottom: 1rem;
     opacity: 0.7;
@@ -448,188 +507,60 @@ body {
 .empty-state h3 {
     color: var(--text);
     margin: 0 0 0.5rem 0;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 600;
 }
 
 .empty-state p {
     color: var(--text-light);
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .page-header {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .filters-bar {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .filter-group {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .filter-buttons {
-        justify-content: center;
-    }
-    
-    .card-content-horizontal {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-    }
-    
-    .divider {
-        width: 100%;
-        height: 1px;
-    }
-    
-    .time-section {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .time-label {
-        font-size: 0.8rem;
-    }
-    
-    .lotes-section-compact {
-        min-width: auto;
-    }
-    
-    .actions-section {
-        flex-direction: row;
-        justify-content: space-between;
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 0 0.5rem;
-    }
-    
-    .card-header-compact {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    
-    .header-badges {
-        flex-direction: row;
-        align-self: stretch;
-        justify-content: space-between;
-    }
-    
-    .client-meta {
-        flex-direction: column;
-        gap: 0.3rem;
-    }
-    
-    .time-display {
-        font-size: 1rem;
-    }
-    
-    .view-btn-compact {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.75rem;
-    }
-    
-    .lote-info-compact {
-        min-width: 0;
-    }
-}
-
+/* Existing Ticket Card Responsive */
 .existing-ticket-card {
     background: #f8f9fa;
     border: 1px solid #e9ecef;
     border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .ticket-info {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 1rem;
 }
 
-.ticket-status {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-}
-
-.ticket-status strong {
-    color: #495057;
-    font-weight: 600;
-    min-width: 120px;
-}
-
-.status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.status-badge.badge-solicitud {
-    background: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeaa7;
-}
-
-.status-badge.badge-pendiente {
-    background: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeaa7;
-}
-
-.status-badge.badge-aprobado {
-    background: #d1edff;
-    color: #0c5460;
-    border: 1px solid #bee5eb;
-}
-
-.status-badge.badge-rechazado {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
+.ticket-status,
 .ticket-file {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
+.ticket-status strong,
 .ticket-file strong {
     color: #495057;
     font-weight: 600;
-    min-width: 120px;
+    font-size: 0.9rem;
 }
 
 .file-link {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 0.4rem;
     color: #007bff;
     text-decoration: none;
-    padding: 8px 12px;
+    padding: 0.5rem 0.75rem;
     background: white;
     border: 1px solid #dee2e6;
     border-radius: 6px;
     transition: all 0.3s ease;
+    font-size: 0.85rem;
+    width: fit-content;
 }
 
 .file-link:hover {
@@ -642,7 +573,7 @@ body {
 
 .ticket-observations {
     background: white;
-    padding: 15px;
+    padding: 1rem;
     border-radius: 8px;
     border-left: 4px solid #007bff;
 }
@@ -651,69 +582,277 @@ body {
     color: #495057;
     font-weight: 600;
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
 }
 
 .ticket-observations p {
     margin: 0;
     color: #6c757d;
     line-height: 1.5;
+    font-size: 0.85rem;
 }
 
-/* Estados adicionales para diferentes situaciones */
-.status-badge.badge-warning {
-    background: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeaa7;
-}
+/* ===== MEDIA QUERIES ===== */
 
-.status-badge.badge-success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.status-badge.badge-danger {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
+/* Tablets y pantallas medianas */
+@media (min-width: 768px) {
+    .page-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    
+    .filters-bar {
+        flex-direction: row;
+        gap: 2rem;
+    }
+    
+    .filter-group {
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .filter-group label {
+        min-width: 60px;
+        font-size: 0.9rem;
+    }
+    
+    .filter-buttons {
+        flex-wrap: nowrap;
+    }
+    
+    .filter-btn {
+        flex: none;
+        min-width: auto;
+    }
+    
+    .card-header-compact {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .header-badges {
+        flex-direction: column;
+        align-items: flex-end;
+        width: auto;
+        gap: 0.5rem;
+    }
+    
+    .client-meta {
+        flex-direction: row;
+        gap: 1rem;
+    }
+    
+    .card-content-horizontal {
+        flex-direction: row;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .time-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        min-width: 100px;
+        padding: 0;
+    }
+    
+    .divider {
+        width: 1px;
+        height: 40px;
+    }
+    
+    .lotes-section-compact {
+        min-width: 180px;
+    }
+    
+    .actions-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        min-width: 120px;
+        padding-top: 0;
+        border-top: none;
+    }
+    
     .ticket-status,
     .ticket-file {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
     }
     
     .ticket-status strong,
     .ticket-file strong {
-        min-width: auto;
-    }
-    
-    .existing-ticket-card {
-        padding: 15px;
+        min-width: 120px;
     }
 }
 
-.apartado-card.vendido {
-    border-left: 4px solid #28a745; /* Verde para vendidos */
+/* Desktop y pantallas grandes */
+@media (min-width: 1024px) {
+    .page-title {
+        font-size: 1.75rem;
+    }
+    
+    .page-subtitle {
+        font-size: 1rem;
+    }
+    
+    .header-stats {
+        font-size: 0.9rem;
+    }
+    
+    .filters-bar {
+        padding: 1.5rem;
+    }
+    
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .card-header-compact {
+        padding: 1rem 1.25rem;
+    }
+    
+    .client-avatar-mini {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .client-name-compact {
+        font-size: 1rem;
+    }
+    
+    .meta-item {
+        font-size: 0.8rem;
+    }
+    
+    .type-badge,
+    .status-badge {
+        font-size: 0.7rem;
+    }
+    
+    .card-content-horizontal {
+        padding: 1rem 1.25rem;
+    }
+    
+    .time-display {
+        font-size: 1.1rem;
+    }
+    
+    .time-value {
+        font-size: 1rem;
+    }
+    
+    .time-label {
+        font-size: 0.75rem;
+    }
+    
+    .lotes-header {
+        font-size: 0.8rem;
+    }
+    
+    .lote-item-compact {
+        font-size: 0.8rem;
+    }
+    
+    .lote-number {
+        font-size: 0.8rem;
+    }
+    
+    .fraccionamiento-name {
+        font-size: 0.7rem;
+    }
+    
+    .asesor-info {
+        font-size: 0.8rem;
+    }
+    
+    .view-btn-compact {
+        padding: 0.5rem 0.9rem;
+        font-size: 0.8rem;
+    }
+    
+    .empty-state {
+        padding: 3rem 2rem;
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+    }
+    
+    .empty-state h3 {
+        font-size: 1.25rem;
+    }
+    
+    .empty-state p {
+        font-size: 0.95rem;
+    }
+    
+    .existing-ticket-card {
+        padding: 20px;
+    }
 }
-.status-badge.vendido {
-    background-color: #28a745;
-    color: white;
+
+/* Pantallas muy pequeñas (móviles pequeños) */
+@media (max-width: 360px) {
+    .container {
+        padding: 0 0.5rem;
+    }
+    
+    .page-title {
+        font-size: 1.25rem;
+    }
+    
+    .header-stats {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+    
+    .stat-item {
+        text-align: center;
+    }
+    
+    .client-info-compact {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .client-details {
+        width: 100%;
+    }
+    
+    .meta-item {
+        justify-content: center;
+    }
+    
+    .header-badges {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .view-btn-compact {
+        width: 100%;
+        justify-content: center;
+    }
 }
-.header-stats {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    color: #6c757d;
-}
-.stat-item {
-    padding: 0.2rem 0.5rem;
-    background-color: #f8f9fa;
-    border-radius: 4px;
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    .apartado-card,
+    .filter-btn,
+    .view-btn-compact,
+    .file-link {
+        transition: none;
+    }
+    
+    .apartado-card:hover {
+        transform: none;
+    }
 }
