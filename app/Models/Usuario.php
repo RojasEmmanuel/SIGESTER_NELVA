@@ -39,4 +39,9 @@ class Usuario extends Authenticatable
     {
         return $this->belongsTo(TipoUsuario::class, 'tipo_usuario', 'id_tipo');
     }
+    // En App\Models\Usuario.php, agrega:
+    public function asesorInfo()
+    {
+        return $this->hasOne(AsesorInfo::class, 'id_usuario', 'id_usuario');
+    }
 }

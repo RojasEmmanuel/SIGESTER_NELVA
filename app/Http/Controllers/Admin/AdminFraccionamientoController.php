@@ -12,9 +12,92 @@ use App\Models\ArchivosFraccionamiento;
 use App\Models\Lote;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class AdminFraccionamientoController extends Controller
 {
+    public function create()
+    {
+        return view('admin.fraccionamiento-create');
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            Log::info('Intentando crear nuevo fraccionamiento', [
+                'has_file' => $request->hasFile('path_imagen'),
+                'file_details' => $request->hasFile('path_imagen') ? [
+                    'name' => $request->file('path_imagen')->getClientOriginalName(),
+                    'extension' => $request->file('path_imagen')->getClientOriginalExtension(),
+                    'size' => $request->file('path_imagen')->getSize(),
+                    'mime' => $request->file('path_imagen')->getMimeType(),
+                ] : 'No file uploaded'
+            ]);
+
+            $data = $request->validate([
+                // Campos para Fraccionamiento
+                'nombre' => 'required|string|max:255',
+                'ubicacion' => 'required|string|max:255',
+                'estatus' => 'required|boolean',
+                'zona' => 'required|in:costa,istmo',
+                'path_imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                
+                // Campos para InfoFraccionamiento
+                'descripcion' => 'nullable|string',
+                'precio_metro_cuadrado' => 'nullable|numeric|min:0',
+                'tipo_propiedad' => 'nullable|string|max:255',
+                'precioGeneral' => 'nullable|numeric|min:0',
+                'ubicacionMaps' => 'nullable|string',
+            ]);
+
+            // Manejo de la imagen principal
+            $pathImagen = null;
+            if ($request->hasFile('path_imagen') && $request->file('path_imagen')->isValid()) {
+                $pathImagen = $request->file('path_imagen')->store('fraccionamientos', 'public');
+                Log::info("Imagen principal guardada en: storage/$pathImagen");
+            }
+
+            // Crear Fraccionamiento
+            $fraccionamiento = Fraccionamiento::create([
+                'nombre' => $data['nombre'],
+                'ubicacion' => $data['ubicacion'],
+                'path_imagen' => $pathImagen,
+                'estatus' => $data['estatus'],
+                'zona' => $data['zona'],
+            ]);
+
+            // Crear InfoFraccionamiento asociada
+            InfoFraccionamiento::create([
+                'id_fraccionamiento' => $fraccionamiento->id_fraccionamiento,
+                'descripcion' => $data['descripcion'],
+                'precio_metro_cuadrado' => $data['precio_metro_cuadrado'],
+                'tipo_propiedad' => $data['tipo_propiedad'],
+                'precioGeneral' => $data['precioGeneral'],
+                'ubicacionMaps' => $data['ubicacionMaps'],
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('admin.fraccionamiento.show', $fraccionamiento->id_fraccionamiento)
+                             ->with('success', 'Fraccionamiento creado correctamente. Ahora puedes agregar amenidades, fotos y archivos.');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::error("Error de validación al crear fraccionamiento: " . json_encode($e->errors()));
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            if (isset($pathImagen) && Storage::disk('public')->exists($pathImagen)) {
+                Storage::disk('public')->delete($pathImagen);
+            }
+            Log::error("Error al crear fraccionamiento: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al crear el fraccionamiento: ' . $e->getMessage());
+        }
+    }
+
     public function show($id)
     {
         try {
@@ -32,6 +115,7 @@ class AdminFraccionamientoController extends Controller
                 'ubicacion' => $fraccionamiento->ubicacion,
                 'path_imagen' => $fraccionamiento->path_imagen,
                 'estatus' => $fraccionamiento->estatus,
+                'zona' => $fraccionamiento->zona,
                 'descripcion' => $fraccionamiento->infoFraccionamiento->descripcion ?? null,
                 'precio_metro_cuadrado' => $fraccionamiento->infoFraccionamiento->precio_metro_cuadrado ?? null,
                 'tipo_propiedad' => $fraccionamiento->infoFraccionamiento->tipo_propiedad ?? null,
@@ -93,10 +177,22 @@ class AdminFraccionamientoController extends Controller
         try {
             $fraccionamiento = Fraccionamiento::findOrFail($id);
 
+            Log::info('Intentando actualizar fraccionamiento', [
+                'id_fraccionamiento' => $id,
+                'has_file' => $request->hasFile('path_imagen'),
+                'file_details' => $request->hasFile('path_imagen') ? [
+                    'name' => $request->file('path_imagen')->getClientOriginalName(),
+                    'extension' => $request->file('path_imagen')->getClientOriginalExtension(),
+                    'size' => $request->file('path_imagen')->getSize(),
+                    'mime' => $request->file('path_imagen')->getMimeType(),
+                ] : 'No file uploaded'
+            ]);
+
             $data = $request->validate([
                 'nombre' => 'required|string|max:255',
                 'ubicacion' => 'required|string|max:255',
                 'estatus' => 'required|boolean',
+                'zona' => 'required|in:costa,istmo',
                 'path_imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
@@ -112,7 +208,6 @@ class AdminFraccionamientoController extends Controller
             $fraccionamiento->update($data);
 
             return redirect()->back()->with('success', 'Fraccionamiento actualizado correctamente.');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error("Error de validación al actualizar fraccionamiento: " . json_encode($e->errors()));
             return redirect()->back()->withErrors($e->errors())->withInput();
@@ -190,12 +285,25 @@ class AdminFraccionamientoController extends Controller
     public function addFoto(Request $request, $id)
     {
         try {
+            Log::info('Intentando subir foto', [
+                'id_fraccionamiento' => $id,
+                'has_file' => $request->hasFile('fotografia_path'),
+                'file_details' => $request->hasFile('fotografia_path') ? [
+                    'name' => $request->file('fotografia_path')->getClientOriginalName(),
+                    'extension' => $request->file('fotografia_path')->getClientOriginalExtension(),
+                    'size' => $request->file('fotografia_path')->getSize(),
+                    'mime' => $request->file('fotografia_path')->getMimeType(),
+                ] : 'No file uploaded'
+            ]);
+
             $data = $request->validate([
                 'nombre' => 'nullable|string|max:255',
                 'fotografia_path' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
             $path = $request->file('fotografia_path')->store('galeria', 'public');
+            Log::info('Foto guardada en', ['path' => $path]);
+
             Galeria::create([
                 'id_fraccionamiento' => $id,
                 'nombre' => $data['nombre'],
@@ -204,7 +312,6 @@ class AdminFraccionamientoController extends Controller
             ]);
 
             return redirect()->back()->with('success_foto', 'Foto agregada correctamente.');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error("Error de validación al agregar foto: " . json_encode($e->errors()));
             return redirect()->back()->withErrors($e->errors())->withInput()->with('error_foto', 'Error en la validación de la foto.');
@@ -293,14 +400,123 @@ class AdminFraccionamientoController extends Controller
             $path = storage_path('app/public/' . $archivo->archivo_path);
 
             if (!file_exists($path)) {
+                Log::error("El archivo no existe en la ruta: " . $path);
                 return redirect()->back()->with('error_archivo', 'El archivo no existe.');
             }
 
-            return response()->download($path, $archivo->nombre_archivo ?? 'archivo.pdf');
+            // Asegurar que el nombre del archivo termine en .pdf
+            $nombreArchivo = $archivo->nombre_archivo ?? 'archivo';
+            if (!Str::endsWith($nombreArchivo, '.pdf')) {
+                $nombreArchivo .= '.pdf';
+            }
 
+            return response()->download($path, $nombreArchivo, ['Content-Type' => 'application/pdf']);
         } catch (\Exception $e) {
             Log::error("Error al descargar archivo: " . $e->getMessage());
             return redirect()->back()->with('error_archivo', 'Error al descargar el archivo: ' . $e->getMessage());
+        }
+    }
+
+
+    public function showFraccionamiento($id)
+    {
+        try {
+            // Obtener el fraccionamiento con todas las relaciones necesarias
+            $fraccionamiento = Fraccionamiento::with([
+                'infoFraccionamiento',
+                'planosFraccionamiento',
+                'amenidadesFraccionamiento',
+                'lotes',
+                'galeria', // Nueva relación para galería
+                'archivosFraccionamiento' // Nueva relación para archivos
+            ])->findOrFail($id);
+
+            // Obtener información general del fraccionamiento
+            $infoFraccionamiento = $fraccionamiento->infoFraccionamiento;
+
+            // Preparar datos para la vista
+            $datosFraccionamiento = [
+                'id' => $fraccionamiento->id_fraccionamiento,
+                'nombre' => $fraccionamiento->nombre,
+                'ubicacion' => $fraccionamiento->ubicacion,
+                'path_imagen' => $fraccionamiento->path_imagen,
+                'estatus' => $fraccionamiento->estatus,
+            ];
+
+            // Si existe información adicional, agregarla
+            if ($infoFraccionamiento) {
+                $datosFraccionamiento['descripcion'] = $infoFraccionamiento->descripcion;
+                $datosFraccionamiento['precio_metro_cuadrado'] = $infoFraccionamiento->precio_metro_cuadrado;
+                $datosFraccionamiento['tipo_propiedad'] = $infoFraccionamiento->tipo_propiedad;
+                $datosFraccionamiento['precioGeneral'] = $infoFraccionamiento->precioGeneral;
+                $datosFraccionamiento['ubicacionMaps'] = $infoFraccionamiento->ubicacionMaps;
+            }
+
+            // Obtener planos del fraccionamiento
+            $planos = $fraccionamiento->planosFraccionamiento->map(function($plano) {
+                return [
+                    'id' => $plano->id_plano,
+                    'nombre' => $plano->nombre,
+                    'plano_path' => $plano->plano_path,
+                ];
+            });
+
+            // Obtener amenidades del fraccionamiento
+            $amenidades = $fraccionamiento->amenidadesFraccionamiento->map(function($amenidad) {
+                return [
+                    'id' => $amenidad->id_amenidad,
+                    'nombre' => $amenidad->nombre,
+                    'descripcion' => $amenidad->descripcion,
+                    'tipo' => $amenidad->tipo,
+                ];
+            });
+
+            // Obtener galería del fraccionamiento
+            $galeria = $fraccionamiento->galeria->map(function($foto) {
+                return [
+                    'id' => $foto->id_foto,
+                    'nombre' => $foto->nombre,
+                    'fotografia_path' => $foto->fotografia_path,
+                    'fecha_subida' => $foto->fecha_subida->toDateTimeString(),
+                ];
+            });
+
+            // Obtener archivos del fraccionamiento
+            $archivos = $fraccionamiento->archivosFraccionamiento->map(function($archivo) {
+                return [
+                    'id' => $archivo->id_archivo,
+                    'nombre_archivo' => $archivo->nombre_archivo,
+                    'archivo_path' => $archivo->archivo_path,
+                    'fecha_subida' => $archivo->fecha_subida->toDateTimeString(),
+                ];
+            });
+
+            // Obtener estadísticas de lotes
+            $totalLotes = $fraccionamiento->lotes->count();
+            $lotesDisponibles = $fraccionamiento->lotes->where('estatus', 'disponible')->count();
+            $lotesApartadosPalabra = $fraccionamiento->lotes->where('estatus', 'apartadoPalabra')->count();
+            $lotesApartadosVendido = $fraccionamiento->lotes->where('estatus', 'apartadoDeposito')->count();
+            $lotesVendidos = $fraccionamiento->lotes->where('estatus', 'vendido')->count();
+            
+            $lotesApartados = $lotesApartadosPalabra + $lotesApartadosVendido;
+
+            return view('admin.fraccionamientoIndex', compact(
+                'datosFraccionamiento',
+                'planos',
+                'amenidades',
+                'galeria', // Nueva variable para la vista
+                'archivos', // Nueva variable para la vista
+                'totalLotes',
+                'lotesDisponibles',
+                'lotesApartados',
+                'lotesApartadosPalabra',
+                'lotesApartadosVendido',
+                'lotesVendidos'
+            ));
+
+        } catch (\Exception $e) {
+            // Manejar error de manera más elegante
+            return redirect()->back()->with('error', 'Error al cargar el fraccionamiento: ' . $e->getMessage());
         }
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Asesor\FraccionamientoController;
 use App\Http\Controllers\Asesor\PerfilController;
 use App\Http\Controllers\Asesor\ventasController;
 use App\Http\Controllers\Admin\AdminFraccionamientoController;
+use App\Http\Controllers\Admin\UsuarioController;
 
 // Rutas de autenticación
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -17,7 +18,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Rutas protegidas por el middleware 'auth'
 Route::middleware('auth')->group(function () {
 
-    Route::get('/admin/index', function () { return view('admin.index'); })->name('admin.index');
 
     Route::get('/ingeniero/dashboard', function () {
         return view('ingeniero.dashboard');
@@ -55,6 +55,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/perfil', [PerfilController::class, 'update'])->name('asesor.perfil.update');
 
     Route::post('/asesor/apartados/{id}/upload-ticket', [ApartadoController::class, 'uploadTicket'])->name('asesor.apartados.upload-ticket');
+    Route::get('/asesor/fraccionamiento/{idFraccionamiento}/archivo/{idArchivo}/download', [AdminFraccionamientoController::class, 'downloadArchivo'])->name('asesor.fraccionamiento.download-archivo');
 
 
 
@@ -62,10 +63,10 @@ Route::middleware('auth')->group(function () {
 
 
 
+   Route::prefix('admin')->name('admin.')->group(function () {
 
-    
+        Route::get('/inicio', [InicioController::class, 'index'])->name('admin.index');
 
-    Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/fraccionamiento/{id}', [AdminFraccionamientoController::class, 'show'])->name('fraccionamiento.show');
         Route::put('/fraccionamiento/{id}', [AdminFraccionamientoController::class, 'update'])->name('fraccionamiento.update');
         Route::put('/fraccionamiento/{id}/info', [AdminFraccionamientoController::class, 'updateInfo'])->name('fraccionamiento.update-info');
@@ -75,10 +76,26 @@ Route::middleware('auth')->group(function () {
         Route::delete('/fraccionamiento/{id}/foto/{fotoId}', [AdminFraccionamientoController::class, 'deleteFoto'])->name('fraccionamiento.delete-foto');
         Route::post('/fraccionamiento/{id}/archivo', [AdminFraccionamientoController::class, 'addArchivo'])->name('fraccionamiento.add-archivo');
         Route::delete('/fraccionamiento/{id}/archivo/{archivoId}', [AdminFraccionamientoController::class, 'deleteArchivo'])->name('fraccionamiento.delete-archivo');
+        // Agrega esta línea
+        Route::get('/fraccionamiento/{id}/archivo/{archivoId}/download', [AdminFraccionamientoController::class, 'downloadArchivo'])->name('fraccionamiento.download-archivo');
         Route::get('/fraccionamiento/{id}/plano/{planoId}/download', [AdminFraccionamientoController::class, 'downloadPlano'])->name('fraccionamiento.download-plano');
         Route::get('/fraccionamiento/{id}/lotes', [AdminFraccionamientoController::class, 'getLotes'])->name('fraccionamiento.lotes');
         Route::get('/fraccionamiento/{id}/lote/{numeroLote}', [AdminFraccionamientoController::class, 'getLoteDetails'])->name('fraccionamiento.lote-details');
         Route::get('/fraccionamiento/{id}/geojson', [AdminFraccionamientoController::class, 'getGeoJsonConEstatus'])->name('fraccionamiento.geojson');
+    
+
+        //crear un nuevo fraccionamiento con su info
+        Route::get('/fraccionamientos/create', [AdminFraccionamientoController::class, 'create'])->name('fraccionamiento.create');
+        Route::post('/fraccionamientos', [AdminFraccionamientoController::class, 'store'])->name('fraccionamiento.store');
+    
+        //usuarios
+        Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
+        Route::get('/usuarios/create', [UsuarioController::class, 'create'])->name('usuarios.create');
+        Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
+        Route::get('/usuarios/{id}/edit', [UsuarioController::class, 'edit'])->name('usuarios.edit');
+        Route::put('/usuarios/{id}', [UsuarioController::class, 'update'])->name('usuarios.update');
+        Route::patch('/usuarios/{id}/inactivate', [UsuarioController::class, 'inactivate'])->name('usuarios.inactivate');
+        Route::patch('/usuarios/{id}/activate', [UsuarioController::class, 'activate'])->name('usuarios.activate');
     });
 });
 

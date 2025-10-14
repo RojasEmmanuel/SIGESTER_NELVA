@@ -1,4 +1,4 @@
-@extends('asesor.navbar')
+@extends('admin.navbar')
 
 @section('title', 'Nelva Bienes Raíces - Fraccionamiento')
 
@@ -19,6 +19,10 @@
             <div class="page-actions">
                 <button class="btn btn-outline" onclick="window.location.href='/asesor/inicio'">
                     <i class="fas fa-arrow-left"></i> Volver
+                </button>
+                <!-- Botón Editar Fraccionamiento -->
+                <button class="btn btn-primary" onclick="window.location.href='{{ route('fraccionamiento.show', $datosFraccionamiento['id']) }}'">
+                    <i class="fas fa-edit"></i> Editar Fraccionamiento
                 </button>
             </div>
         </div>

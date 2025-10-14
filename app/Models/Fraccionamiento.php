@@ -16,6 +16,7 @@ class Fraccionamiento extends Model
         'ubicacion',
         'path_imagen',
         'estatus',
+        'zona'
     ];
 
     protected $casts = [

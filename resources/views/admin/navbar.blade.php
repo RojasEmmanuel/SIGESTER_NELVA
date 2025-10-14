@@ -18,7 +18,7 @@
                 <img src="/images/Logo.png" width="200px">
             </div>
             <div class="nav-links">
-                <a href="{{ url('asesor/inicio') }}" class="{{ Request::is('inicio') ? 'active' : '' }}">
+                <a href="{{ route('admin.index') }}" class="{{ Request::is('inicio') ? 'active' : '' }}">
                     <i class="fas fa-home"></i> Inicio
                 </a>
                 <a href="{{ url('asesor/apartados') }}" class="{{ Request::is('apartados') ? 'active' : '' }}">
@@ -30,13 +30,13 @@
                 <a href="{{ route('asesor.perfil.index') }}" class="{{ Request::routeIs('asesor.perfil') ? 'active' : '' }}">
                     <i class="fas fa-user-circle"></i> Perfil
                 </a>
-                <a href="{{ url('asesor/usuarios') }}" class="{{ Request::is('usuarios') ? 'active' : '' }}">
+                <a href="{{ url('admin/usuarios') }}" class="{{ Request::is('usuarios') ? 'active' : '' }}">
                     <i class="fas fa-users"></i> Usuarios
                 </a>
-                <a href="{{ url('asesor/apartados-pendientes') }}" class="{{ Request::is('apartados-pendientes') ? 'active' : '' }}">
+                <a href="{{ url('admin/apartados-pendientes') }}" class="{{ Request::is('apartados-pendientes') ? 'active' : '' }}">
                     <i class="fas fa-clock"></i> Apartados pendientes
                 </a>
-                <a href="{{ url('asesor/ventas-pendientes') }}" class="{{ Request::is('ventas-pendientes') ? 'active' : '' }}">
+                <a href="{{ url('admin/ventas-pendientes') }}" class="{{ Request::is('ventas-pendientes') ? 'active' : '' }}">
                     <i class="fas fa-hourglass-half"></i> Ventas pendientes
                 </a>
                 <a href="#" id="logout-btn-desktop">
@@ -187,6 +187,7 @@
             });
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     @stack('scripts')
 </body>
