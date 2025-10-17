@@ -1,4 +1,24 @@
-@extends('asesor.navbar')
+@php
+    $navbarMap = [
+        'Administrador' => 'admin.navbar',
+        'Asesor' => 'asesor.navbar',
+        'Cobranza' => 'cobranza.navbar',
+        'Ingeniero' => 'ingeniero.navbar',
+    ];
+
+    // Obtener el usuario autenticado directamente (asumiendo Auth::user() es instancia de App\Models\Usuario)
+    $usuario = Auth::user();
+    
+    // Cargar la relación 'tipo' si no está ya cargada para evitar errores
+    if (! $usuario->relationLoaded('tipo')) {
+        $usuario->load('tipo');
+    }
+    
+    $tipoNombre = $usuario->tipo->tipo ?? 'Asesor'; // Fallback a Asesor si no hay tipo
+    $navbar = $navbarMap[$tipoNombre] ?? 'asesor.navbar';
+@endphp
+
+@extends($navbar)
 
 @section('title', 'Nelva Bienes Raíces - Detalle de Venta')
 

@@ -8,6 +8,7 @@ use App\Http\Controllers\Asesor\FraccionamientoController;
 use App\Http\Controllers\Asesor\PerfilController;
 use App\Http\Controllers\Asesor\ventasController;
 use App\Http\Controllers\Admin\AdminFraccionamientoController;
+use App\Http\Controllers\Admin\inicioAdminController;
 use App\Http\Controllers\Admin\UsuarioController;
 
 // Rutas de autenticación
@@ -65,7 +66,7 @@ Route::middleware('auth')->group(function () {
 
    Route::prefix('admin')->name('admin.')->group(function () {
 
-        Route::get('/inicio', [InicioController::class, 'index'])->name('admin.index');
+        Route::get('/inicio', [inicioAdminController::class, 'index'])->name('index');
 
         Route::get('/fraccionamiento/{id}', [AdminFraccionamientoController::class, 'show'])->name('fraccionamiento.show');
         Route::put('/fraccionamiento/{id}', [AdminFraccionamientoController::class, 'update'])->name('fraccionamiento.update');

@@ -1,4 +1,28 @@
-@extends('asesor.navbar')
+@php
+    $navbarMap = [
+        'Administrador' => 'admin.navbar',
+        'Asesor' => 'asesor.navbar',
+        'Cobranza' => 'cobranza.navbar',
+        'Ingeniero' => 'ingeniero.navbar',
+    ];
+
+    // Obtener el usuario autenticado directamente (asumiendo Auth::user() es instancia de App\Models\Usuario)
+    $usuario = Auth::user();
+    
+    // Cargar la relación 'tipo' si no está ya cargada para evitar errores
+    if (! $usuario->relationLoaded('tipo')) {
+        $usuario->load('tipo');
+    }
+    
+    $tipoNombre = $usuario->tipo->tipo ?? 'Asesor'; // Fallback a Asesor si no hay tipo
+    $navbar = $navbarMap[$tipoNombre] ?? 'asesor.navbar';
+
+    // Verificar si el usuario es administrador
+    $esAdministrador = $tipoNombre === 'Administrador';
+@endphp
+
+@extends($navbar)
+
 
 @section('title', 'Nelva Bienes Raíces - Fraccionamiento')
 
@@ -17,6 +41,11 @@
                 <span>Detalles del Fraccionamiento</span>
             </h1>
             <div class="page-actions">
+                @if($esAdministrador)
+                <button class="btn btn-primary" onclick="window.location.href='{{ route('admin.fraccionamiento.show', $datosFraccionamiento['id']) }}'">
+                    <i class="fas fa-edit"></i> Editar Fraccionamiento
+                </button>
+                @endif
                 <button class="btn btn-outline" onclick="window.location.href='/asesor/inicio'">
                     <i class="fas fa-arrow-left"></i> Volver
                 </button>
@@ -314,7 +343,7 @@
         <div class="development-map">
             <h3 class="info-title">
                 <i class="fas fa-map-marked-alt"></i>
-                <span>Ubicación en Mapa</span>
+                <span>Google Maps</span>
             </hh3>
             <div class="map-container">
                 <iframe 

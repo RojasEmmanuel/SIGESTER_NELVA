@@ -60,7 +60,7 @@ body {
     font-size: 1.3rem;
 }
 
-/* Stats Cards */
+/* Stats Cards - BASE PARA MÓVIL */
 .stats-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -75,6 +75,12 @@ body {
     box-shadow: var(--shadow);
     transition: var(--transition);
     border-top: 4px solid transparent;
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: 1 / 1; /* CUADRADOS EN MÓVIL */
+    min-height: 140px;
+    text-align: center;
+    justify-content: center;
 }
 
 .stat-card:hover {
@@ -83,12 +89,13 @@ body {
 }
 
 .stat-card-title {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-light);
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
     gap: 0.4rem;
+    justify-content: center;
 }
 
 .stat-card-title i {
@@ -99,11 +106,13 @@ body {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 0.4rem;
+    line-height: 1.2;
 }
 
 .stat-card-description {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: var(--text-light);
+    margin-bottom: 0.8rem;
 }
 
 .total {
@@ -124,11 +133,11 @@ body {
 
 /* Progress Bar */
 .progress-container {
-    width: 100%;
+    width: 90%;
     height: 6px;
     background-color: var(--medium-gray);
     border-radius: 3px;
-    margin-top: 0.4rem;
+    margin: 0 auto;
     overflow: hidden;
 }
 
@@ -150,7 +159,16 @@ body {
     background-color: var(--blue-accent);
 }
 
-/* Section Title */
+/* Section Header con Filtros */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2rem 0 1rem 0;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
 .section-title {
     font-size: 1.1rem;
     margin: 1.5rem 0 1rem;
@@ -166,6 +184,69 @@ body {
     font-size: 1.1rem;
 }
 
+/* Filtros Zona */
+.filtros-zona {
+    display: flex;
+    gap: 0.5rem;
+    background: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.btn-filtro {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #6c757d;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-filtro:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.btn-filtro.active {
+    background: #007bff;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,123,255,0.3);
+}
+
+.btn-filtro i {
+    font-size: 1rem;
+}
+
+/* Badges para las zonas */
+.zona-badge {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.costa-badge {
+    background: linear-gradient(135deg, #87CEEB, #1E90FF);
+    color: white;
+}
+
+.istmo-badge {
+    background: linear-gradient(135deg, #32CD32, #228B22);
+    color: white;
+}
+
 /* Fraccionamientos List */
 .fraccionamientos-list {
     display: flex;
@@ -179,6 +260,7 @@ body {
     box-shadow: var(--shadow);
     overflow: hidden;
     transition: var(--transition);
+    position: relative;
 }
 
 .fraccionamiento-card:hover {
@@ -194,6 +276,7 @@ body {
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
+    position: relative;
 }
 
 .fraccionamiento-image {
@@ -387,27 +470,44 @@ body {
 .fraccionamiento-card:nth-child(2) { animation-delay: 0.2s; }
 .fraccionamiento-card:nth-child(3) { animation-delay: 0.3s; }
 
-/* Media Queries para contenido */
+/* ========== MEDIA QUERIES CORREGIDAS ========== */
+
+/* Tablets (768px en adelante) */
 @media (min-width: 768px) {
     .container {
         padding: 1.5rem 2rem;
     }
 
+    /* Stats Cards - 4 COLUMNAS RECTANGULARES */
     .stats-container {
         grid-template-columns: repeat(4, 1fr);
         gap: 1rem;
     }
 
     .stat-card {
+        aspect-ratio: auto; /* QUITAR CUADRADO */
+        min-height: 160px;
         padding: 1.5rem;
+        text-align: left;
+        justify-content: flex-start;
     }
 
     .stat-card-title {
         font-size: 0.85rem;
+        justify-content: flex-start;
     }
 
     .stat-card-value {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
+    }
+
+    .stat-card-description {
+        font-size: 0.8rem;
+    }
+
+    .progress-container {
+        width: 100%;
+        margin: auto 0 0 0;
     }
 
     .section-title {
@@ -415,6 +515,7 @@ body {
         margin: 1.8rem 0 1.2rem;
     }
 
+    /* Fraccionamientos en grid */
     .fraccionamientos-list {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -449,69 +550,131 @@ body {
     }
 }
 
-@media (max-width: 767px) {
+/* Móviles pequeños (480px y menos) */
+@media (max-width: 480px) {
+    .container {
+        padding: 1rem 0.75rem;
+    }
+
+    /* Stats Cards - 2 COLUMNAS CUADRADAS */
     .stats-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+    }
+
+    .stat-card {
+        aspect-ratio: 1 / 1; /* MANTENER CUADRADO */
+        padding: 1rem;
+    }
+
+    .stat-card-value {
+        font-size: 1.4rem;
+    }
+
+    /* Filtros en columna */
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filtros-zona {
+        flex-direction: column;
+    }
+    
+    .btn-filtro {
+        width: 100%;
+    }
+}
+
+/* Móviles medianos (481px a 767px) */
+@media (max-width: 767px) and (min-width: 481px) {
+    /* Stats Cards - 2 COLUMNAS CUADRADAS */
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
+    }
+
+    .stat-card {
+        aspect-ratio: 1 / 1; /* MANTENER CUADRADO */
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* Desktop grandes (1024px en adelante) */
+@media (min-width: 1024px) {
+    .stats-container {
+        gap: 1.5rem;
+    }
+
+    .stat-card {
+        padding: 2rem;
+        min-height: 180px;
+    }
+
+    .stat-card-value {
+        font-size: 2rem;
     }
 }
 
 
-/* Estilos para el header de la página */
-.page-header {
+
+/* Estilos para el botón Registrar Fraccionamiento */
+.section-actions {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
     gap: 1rem;
+    align-items: center;
 }
 
-/* Estilos para el botón Nuevo Fraccionamiento */
-.btn-new-fraccionamiento {
-    background: linear-gradient(135deg, #28a745, #20c997);
+.btn-registrar {
+    background: linear-gradient(135deg, #10b981, #059669);
     color: white;
-    padding: 12px 24px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
     border: none;
+    border-radius: 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 2px 12px rgba(16, 185, 129, 0.2);
+    padding: 0.7rem 1.4rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    letter-spacing: 0.5px;
+    text-decoration: none;
     cursor: pointer;
 }
 
-.btn-new-fraccionamiento:hover {
-    background: linear-gradient(135deg, #218838, #1e9e8a);
+.btn-registrar:hover {
+    background: linear-gradient(135deg, #059669, #047857);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    box-shadow: 0 4px 18px rgba(16, 185, 129, 0.3);
     color: white;
     text-decoration: none;
 }
 
-.btn-new-fraccionamiento:active {
-    transform: translateY(0);
+.btn-registrar i {
+    font-size: 1rem;
 }
 
-/* Estilos para el header de la sección */
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 2rem 0 1rem 0;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .page-header {
+/* Responsive para el botón */
+@media (max-width: 767px) {
+    .section-header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
+        gap: 1rem;
     }
     
-    .btn-new-fraccionamiento {
-        align-self: stretch;
+    .section-actions {
+        order: 2;
         justify-content: center;
     }
+    
+    .filtros-zona {
+        order: 3;
+    }
 }
+/* ELIMINAR CONFLICTOS - Quitar media queries que pisaban */
+/* No más @media (max-width: 767px) que conflictue */

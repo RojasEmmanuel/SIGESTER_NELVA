@@ -1,4 +1,24 @@
-@extends('asesor.navbar')
+@php
+    $navbarMap = [
+        'Administrador' => 'admin.navbar',
+        'Asesor' => 'asesor.navbar',
+        'Cobranza' => 'cobranza.navbar',
+        'Ingeniero' => 'ingeniero.navbar',
+    ];
+
+    // Obtener el usuario autenticado directamente (asumiendo Auth::user() es instancia de App\Models\Usuario)
+    $usuario = Auth::user();
+    
+    // Cargar la relación 'tipo' si no está ya cargada para evitar errores
+    if (! $usuario->relationLoaded('tipo')) {
+        $usuario->load('tipo');
+    }
+    
+    $tipoNombre = $usuario->tipo->tipo ?? 'Asesor'; // Fallback a Asesor si no hay tipo
+    $navbar = $navbarMap[$tipoNombre] ?? 'asesor.navbar';
+@endphp
+
+@extends($navbar)
 
 @section('title', 'Nelva Bienes Raíces - Inicio')
 
@@ -10,8 +30,9 @@
     <div class="container"> 
         <h1 class="page-title">
             <i class="fas fa-map-marked-alt"></i>
-            <span>Bienvenido de nuevo, {{ $usuario->nombre }}</span>
+            <span>Bienvenido, {{ $usuario->nombre }}</span>
         </h1>
+        
         <!-- Stats Overview -->
         <div class="stats-container">
             <div class="stat-card total">
@@ -64,19 +85,42 @@
         </div>
 
         <!-- Fraccionamientos List -->
-        <h2 class="section-title">
-            <i class="fas fa-list-ul"></i>
-            <span>Lista de Fraccionamientos</span>
-        </h2>
+        <div class="section-header">
+            <div class="section-title-container">
+                <h2 class="section-title">
+                    <i class="fas fa-list-ul"></i>
+                    <span>Lista de Fraccionamientos</span>
+                </h2>
+            </div>
+            
+            <!-- Filtros por Zona -->
+            <div class="filtros-zona">
+                <button class="btn-filtro active" data-zona="todos">
+                    <i class="fas fa-globe"></i>
+                    <span class="filtro-text">Todos</span>
+                </button>
+                <button class="btn-filtro" data-zona="costa">
+                    <i class="fas fa-umbrella-beach"></i>
+                    <span class="filtro-text">Costa</span>
+                </button>
+                <button class="btn-filtro" data-zona="istmo">
+                    <i class="fas fa-mountain"></i>
+                    <span class="filtro-text">Istmo</span>
+                </button>
+            </div>
+        </div>
 
         <!-- LISTA DE FRACCIONAMIENTOS -->
-        <div class="fraccionamientos-list">
+        <div class="fraccionamientos-list" id="fraccionamientos-container">
             @forelse($fraccionamientos as $fraccionamiento)
-            <div class="fraccionamiento-card">
+            <div class="fraccionamiento-card" data-zona="{{ strtolower($fraccionamiento->zona) }}">
                 <div class="fraccionamiento-image-container">
                     <img src="{{ $fraccionamiento->path_imagen ? asset('storage/' . $fraccionamiento->path_imagen) : asset('images/placeholder.jpg') }}" 
                          alt="{{ $fraccionamiento->nombre }}" 
                          class="fraccionamiento-image">
+                    <span class="zona-badge {{ strtolower($fraccionamiento->zona) }}-badge">
+                        {{ ucfirst($fraccionamiento->zona) }}
+                    </span>
                 </div>
                 <div class="fraccionamiento-content">
                     <div class="fraccionamiento-header"> 
@@ -106,7 +150,7 @@
                         <a href="{{ route('asesor.fraccionamiento.show', $fraccionamiento->id_fraccionamiento) }}" 
                            class="btn btn-primary ver-detalles">
                             <i class="fas fa-eye"></i>
-                            <span>Ver</span>
+                            <span>Ver Detalles</span>
                         </a>
                     </div>
                 </div>
@@ -116,4 +160,37 @@
             @endforelse
         </div>
     </div>
+
+   @push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filtros = document.querySelectorAll('.btn-filtro');
+        const fraccionamientos = document.querySelectorAll('.fraccionamiento-card');
+        
+        filtros.forEach(filtro => {
+            filtro.addEventListener('click', function() {
+                // Remover clase active de todos los botones
+                filtros.forEach(btn => btn.classList.remove('active'));
+                // Agregar clase active al botón clickeado
+                this.classList.add('active');
+                
+                const zona = this.getAttribute('data-zona');
+                
+                // Filtrar fraccionamientos - usar display block que funciona en ambos casos
+                fraccionamientos.forEach(fracc => {
+                    if (zona === 'todos') {
+                        fracc.style.display = 'block';
+                    } else {
+                        if (fracc.getAttribute('data-zona') === zona) {
+                            fracc.style.display = 'block';
+                        } else {
+                            fracc.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+    });
+</script>
+@endpush
 @endsection

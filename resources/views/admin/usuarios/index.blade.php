@@ -5,271 +5,282 @@
 
 @push('styles')
 <link href="{{ asset('css/indexUsuarios.css') }}" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+<!-- Alternativa: Usar una versión más reciente de Font Awesome -->
+<link rel="stylesheet" href="/inicioUsuarios.css">
 @endpush
 
 @section('content')
-<div class="container usuarios-container">
-    <div class="page-header">
-        <div class="header-content">
-            <div class="header-title">
-                <i class="fas fa-users-cog"></i>
-                <h1>Gestión de Usuarios</h1>
+<div class="usuarios-container">
+    <!-- Header Corporativo Mejorado -->
+    <div class="usu-corporate-header">
+        <div class="usu-header-content">
+            <div class="usu-header-text">
+                <div class="usu-header-title">
+                    <i class="fas fa-users-cog"></i>
+                    <h1>Gestión de Usuarios</h1>
+                </div>
+                <p class="usu-header-subtitle">Administre y supervise las cuentas de usuario del sistema</p>
             </div>
-            <p class="header-subtitle">Administre y supervise las cuentas de usuario del sistema</p>
-        </div>
-        <div class="page-actions">
-            <a href="{{ route('admin.usuarios.create') }}" class="btn">
-                <i class="fas fa-user-plus"></i> Nuevo Usuario
-            </a>
+            <div class="usu-header-actions">
+                <a href="{{ route('admin.usuarios.create') }}" class="usu-btn-corporate">
+                    <i class="fas fa-user-plus"></i> Nuevo Usuario
+                </a>
+            </div>
         </div>
     </div>
     
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show animate__animated animate__fadeIn" role="alert">
-            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="usu-alert-corporate">
+            <i class="fas fa-check-circle"></i>
+            <div class="usu-alert-content">{{ session('success') }}</div>
+            <button type="button" class="usu-btn-close-corporate" onclick="this.parentElement.style.display='none'">&times;</button>
         </div>
     @endif
     
-    <!-- Filtros globales -->
-    <div class="card filter-card animate__animated animate__fadeInUp">
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-3 search-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="form-control filter-input search-input" 
-                           placeholder="Buscar por nombre, email..." 
+    <!-- Panel de Filtros Simplificado -->
+    <div class="usu-filters-panel">
+        <div class="usu-filters-grid">
+            <div class="usu-filter-group">
+                <label class="usu-filter-label">Buscar Usuario</label>
+                <div class="usu-search-container">
+                    <i class="fas fa-search usu-search-icon"></i>
+                    <input type="text" class="usu-filter-input usu-search-input" 
+                           placeholder="Nombre, email, usuario..." 
                            id="live-search">
                 </div>
-                <div class="col-md-2">
-                    <select class="form-select filter-input" id="tipo-filter">
-                        <option value="">Todos los tipos</option>
-                        @foreach (\App\Models\TipoUsuario::all() as $tipo)
-                            <option value="{{ $tipo->id_tipo }}">{{ $tipo->tipo }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select class="form-select filter-input" id="estatus-filter">
-                        <option value="">Todos los estatus</option>
-                        <option value="1">Activo</option>
-                        <option value="0">Inactivo</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select class="form-select filter-input" id="zona-filter">
-                        <option value="">Todas las zonas</option>
-                        <option value="costa">Costa</option>
-                        <option value="istmo">Istmo</option>
-                    </select>
-                </div>
-                <div class="col-md-3 d-flex gap-2">
-                    <button type="button" id="reset-filters" class="btn btn-light flex-fill">
-                        <i class="fas fa-eraser me-1"></i> Limpiar
-                    </button>
-                </div>
             </div>
+            
+            <div class="usu-filter-group">
+                <label class="usu-filter-label">Tipo de Usuario</label>
+                <select class="usu-filter-input" id="tipo-filter">
+                    <option value="">Todos los tipos</option>
+                    @foreach (\App\Models\TipoUsuario::all() as $tipo)
+                        <option value="{{ $tipo->id_tipo }}">{{ $tipo->tipo }}</option>
+                    @endforeach
+                </select>
+            </div>
+            
+            <div class="usu-filter-group">
+                <label class="usu-filter-label">Estado</label>
+                <select class="usu-filter-input" id="estatus-filter">
+                    <option value="">Todos los estados</option>
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                </select>
+            </div>
+            
+            <div class="usu-filter-group">
+                <label class="usu-filter-label">Zona</label>
+                <select class="usu-filter-input" id="zona-filter">
+                    <option value="">Todas las zonas</option>
+                    <option value="costa">Costa</option>
+                    <option value="istmo">Istmo</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="usu-filter-actions">
+            <button type="button" id="reset-filters" class="usu-btn-corporate usu-btn-outline">
+                <i class="fas fa-eraser"></i> Limpiar
+            </button>
+            <button type="button" id="apply-filters" class="usu-btn-corporate">
+                <i class="fas fa-filter"></i> Aplicar Filtros
+            </button>
         </div>
     </div>
     
-    <div class="card animate__animated animate__fadeInUp">
-        <div class="card-header">
-            <h5><i class="fas fa-list me-2"></i>Usuarios Registrados</h5>
-            <span class="badge bg-primary" id="user-count">{{ $usuarios->total() }} usuarios</span>
-        </div>
-        <div class="card-body p-0">
-            <div class="loading-spinner" id="loading-spinner">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Cargando...</span>
+    <!-- Panel de Datos (TABLA CORPORATIVA MANTENIDA) -->
+    <div class="usu-data-panel">
+        <div class="usu-panel-header">
+            <div class="usu-panel-stats">
+                <div class="usu-panel-title">
+                    <i class="fas fa-list"></i>
+                    <span>Usuarios Registrados</span>
                 </div>
-                <p class="mt-2 text-muted">Buscando usuarios...</p>
+                <span class="usu-stats-badge" id="user-count">{{ $usuarios->total() }} usuarios</span>
             </div>
-            <div class="table-responsive" id="table-container">
-                <table class="table table-hover mb-0" id="users-table">
-                    <thead>
+        </div>
+        
+        <div class="usu-table-container">
+            <table class="usu-corporate-table" id="users-table">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-sort="nombre">
+                            Usuario <span class="sort-icon fas fa-sort"></span>
+                        </th>
+                        <th class="sortable" data-sort="email">
+                            Email <span class="sort-icon fas fa-sort"></span>
+                        </th>
+                        <th class="sortable" data-sort="tipo">
+                            Tipo de Usuario <span class="sort-icon fas fa-sort"></span>
+                        </th>
+                        <th class="sortable" data-sort="estatus">
+                            Estado <span class="sort-icon fas fa-sort"></span>
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody">
+                    @forelse ($usuarios as $usuario)
                         <tr>
-                            <th class="sortable" data-sort="nombre">
-                                Usuario
-                                <span class="sort-icon fas fa-sort"></span>
-                            </th>
-                            <th class="sortable" data-sort="email">
-                                Email
-                                <span class="sort-icon fas fa-sort"></span>
-                            </th>
-                            <th class="sortable" data-sort="tipo">
-                                Tipo de Usuario
-                                <span class="sort-icon fas fa-sort"></span>
-                            </th>
-                            <th class="sortable" data-sort="estatus">
-                                Estado
-                                <span class="sort-icon fas fa-sort"></span>
-                            </th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="users-tbody">
-                        @forelse ($usuarios as $usuario)
-                            <tr>
-                                <td data-label="Usuario">
-                                    <div class="user-avatar">
-                                        <div class="avatar-container">
-                                            @if($usuario->asesorInfo && $usuario->asesorInfo->path_fotografia)
-                                                <img src="{{ asset('storage/' . $usuario->asesorInfo->path_fotografia) }}" 
-                                                     alt="{{ $usuario->nombre }}" 
-                                                     class="avatar-img">
-                                            @else
-                                                @php
-                                                    $nombres = explode(' ', $usuario->nombre);
-                                                    $iniciales = '';
-                                                    foreach($nombres as $nombre) {
-                                                        $iniciales .= strtoupper(substr($nombre, 0, 1));
-                                                        if(strlen($iniciales) >= 2) break;
-                                                    }
-                                                @endphp
-                                                <div class="avatar-initials">
-                                                    {{ $iniciales }}
-                                                </div>
+                            <td data-label="Usuario">
+                                <div class="usu-user-profile">
+                                    @if($usuario->asesorInfo && $usuario->asesorInfo->path_fotografia)
+                                        <img src="{{ asset('storage/' . $usuario->asesorInfo->path_fotografia) }}" 
+                                             alt="{{ $usuario->nombre }}" 
+                                             class="usu-avatar-corporate">
+                                    @else
+                                        @php
+                                            $nombres = explode(' ', $usuario->nombre);
+                                            $iniciales = '';
+                                            foreach($nombres as $nombre) {
+                                                $iniciales .= strtoupper(substr($nombre, 0, 1));
+                                                if(strlen($iniciales) >= 2) break;
+                                            }
+                                        @endphp
+                                        <div class="usu-avatar-initials-corporate">
+                                            {{ $iniciales }}
+                                        </div>
+                                    @endif
+                                    <div class="usu-user-details-corporate">
+                                        <div class="usu-user-name-corporate">{{ $usuario->nombre }}</div>
+                                        <div class="usu-user-meta">
+                                            <span class="usu-user-email-corporate">{{ $usuario->usuario_nombre }}</span>
+                                            @if($usuario->asesorInfo && $usuario->asesorInfo->zona)
+                                                <span class="usu-user-zona-corporate">{{ $usuario->asesorInfo->zona }}</span>
                                             @endif
                                         </div>
-                                        <div class="user-info">
-                                            <div class="user-name">{{ $usuario->nombre }}</div>
-                                            <div class="user-details">
-                                                <span class="user-email">{{ $usuario->usuario_nombre }}</span>
-                                                @if($usuario->asesorInfo && $usuario->asesorInfo->zona)
-                                                    <span class="user-zona">{{ $usuario->asesorInfo->zona }}</span>
-                                                @endif
-                                            </div>
-                                        </div>
                                     </div>
-                                </td>
-                                <td data-label="Email">{{ $usuario->email }}</td>
-                                <td data-label="Tipo">
-                                    <span class="badge bg-secondary">{{ $usuario->tipo->tipo ?? 'N/A' }}</span>
-                                </td>
-                                <td data-label="Estado">
+                                </div>
+                            </td>
+                            <td data-label="Email">{{ $usuario->email }}</td>
+                            <td data-label="Tipo">
+                                <span class="usu-badge-corporate usu-badge-primary">{{ $usuario->tipo->tipo ?? 'N/A' }}</span>
+                            </td>
+                            <td data-label="Estado">
+                                @if ($usuario->estatus)
+                                    <span class="usu-badge-corporate usu-badge-success">
+                                        <span class="usu-status-indicator-corporate usu-status-active"></span>
+                                        Activo
+                                    </span>
+                                @else
+                                    <span class="usu-badge-corporate usu-badge-danger">
+                                        <span class="usu-status-indicator-corporate usu-status-inactive"></span>
+                                        Inactivo
+                                    </span>
+                                @endif
+                            </td>
+                            <td data-label="Acciones">
+                                <div class="usu-actions-corporate">
+                                    <a href="{{ route('admin.usuarios.edit', $usuario->id_usuario) }}" 
+                                       class="usu-btn-action-corporate usu-btn-edit-corporate" 
+                                       title="Editar usuario">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    
                                     @if ($usuario->estatus)
-                                        <span class="badge bg-success">
-                                            <span class="status-indicator status-active"></span>
-                                            Activo
-                                        </span>
+                                        <button type="button" class="usu-btn-action-corporate usu-btn-deactivate-corporate"
+                                                title="Inactivar usuario"
+                                                data-user-id="{{ $usuario->id_usuario }}"
+                                                data-user-name="{{ $usuario->nombre }}">
+                                            <i class="fas fa-user-slash"></i>
+                                        </button>
                                     @else
-                                        <span class="badge bg-danger">
-                                            <span class="status-indicator status-inactive"></span>
-                                            Inactivo
-                                        </span>
+                                        <button type="button" class="usu-btn-action-corporate usu-btn-activate-corporate"
+                                                title="Activar usuario"
+                                                data-user-id="{{ $usuario->id_usuario }}"
+                                                data-user-name="{{ $usuario->nombre }}">
+                                            <i class="fas fa-user-check"></i>
+                                        </button>
                                     @endif
-                                </td>
-                                <td data-label="Acciones">
-                                    <div class="action-buttons">
-                                        <a href="{{ route('admin.usuarios.edit', $usuario->id_usuario) }}" 
-                                           class="btn btn-action btn-edit" 
-                                           data-bs-toggle="tooltip" title="Editar usuario">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        
-                                        @if ($usuario->estatus)
-                                            <button type="button" class="btn btn-action btn-deactivate"
-                                                    data-bs-toggle="tooltip" title="Inactivar usuario">
-                                                <i class="fas fa-user-slash"></i>
-                                            </button>
-                                            <form action="{{ route('admin.usuarios.inactivate', $usuario->id_usuario) }}" method="POST" class="d-none">
-                                                @csrf
-                                                @method('PATCH')
-                                            </form>
-                                        @else
-                                            <button type="button" class="btn btn-action btn-activate"
-                                                    data-bs-toggle="tooltip" title="Activar usuario">
-                                                <i class="fas fa-user-check"></i>
-                                            </button>
-                                            <form action="{{ route('admin.usuarios.activate', $usuario->id_usuario) }}" method="POST" class="d-none">
-                                                @csrf
-                                                @method('PATCH')
-                                            </form>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="text-center py-4">
-                                    <div class="table-empty-state">
-                                        <i class="fas fa-users"></i>
-                                        <h5>No hay usuarios registrados</h5>
-                                        <p>Comience agregando el primer usuario al sistema.</p>
-                                        <a href="{{ route('admin.usuarios.create') }}" class="btn btn-primary mt-2">
-                                            <i class="fas fa-user-plus me-1"></i> Crear Usuario
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5">
+                                <div class="usu-empty-state-corporate">
+                                    <i class="fas fa-users"></i>
+                                    <h4>No hay usuarios registrados</h4>
+                                    <p>Comience agregando el primer usuario al sistema.</p>
+                                    <a href="{{ route('admin.usuarios.create') }}" class="usu-btn-corporate">
+                                        <i class="fas fa-user-plus"></i> Crear Primer Usuario
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
+        
         @if($usuarios->hasPages())
-        <div class="card-footer bg-light" id="pagination-container">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="text-muted">
-                    Mostrando {{ $usuarios->firstItem() }} - {{ $usuarios->lastItem() }} de {{ $usuarios->total() }} registros
-                </div>
-                {{ $usuarios->links() }}
+        <div class="usu-pagination-corporate">
+            <div class="usu-pagination-info">
+                Mostrando {{ $usuarios->firstItem() }} - {{ $usuarios->lastItem() }} de {{ $usuarios->total() }} registros
             </div>
+            <ul class="usu-pagination-nav">
+                @if ($usuarios->onFirstPage())
+                    <li class="page-item disabled"><span class="usu-page-link-corporate">Anterior</span></li>
+                @else
+                    <li class="page-item"><a class="usu-page-link-corporate" href="{{ $usuarios->previousPageUrl() }}">Anterior</a></li>
+                @endif
+
+                @foreach ($usuarios->getUrlRange(1, $usuarios->lastPage()) as $page => $url)
+                    @if ($page == $usuarios->currentPage())
+                        <li class="page-item usu-page-active"><span class="usu-page-link-corporate">{{ $page }}</span></li>
+                    @else
+                        <li class="page-item"><a class="usu-page-link-corporate" href="{{ $url }}">{{ $page }}</a></li>
+                    @endif
+                @endforeach
+
+                @if ($usuarios->hasMorePages())
+                    <li class="page-item"><a class="usu-page-link-corporate" href="{{ $usuarios->nextPageUrl() }}">Siguiente</a></li>
+                @else
+                    <li class="page-item disabled"><span class="usu-page-link-corporate">Siguiente</span></li>
+                @endif
+            </ul>
         </div>
         @endif
     </div>
 </div>
 
-<!-- Modal de Confirmación -->
-<div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Modal de Confirmación Corporativo MEJORADO -->
+<div class="usu-modal-corporate" id="confirmationModal">
+    <div class="usu-modal-content-corporate">
+        <div class="usu-modal-header-corporate">
+            <h5 id="modalTitle">Confirmar Acción</h5>
+            <button type="button" class="usu-modal-close" id="modalCloseButton">&times;</button>
+        </div>
+        <div class="usu-modal-body-corporate">
+            <div class="usu-confirmation-icon-corporate">
+                <i class="fas" id="modalIcon"></i>
             </div>
-            <div class="modal-body text-center">
-                <div class="confirmation-icon">
-                    <i class="fas" id="modalIcon"></i>
-                </div>
-                <h4 id="modalMessage"></h4>
-                <p class="text-muted" id="modalDetails"></p>
-            </div>
-            <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-2"></i>Cancelar
-                </button>
-                <form id="confirmationForm" method="POST" class="d-inline">
-                    @csrf
-                    @method('PATCH')
-                    <button type="submit" class="btn" id="confirmButton">
-                        <i class="fas fa-check me-2"></i>Confirmar
-                    </button>
-                </form>
-            </div>
+            <h4 class="usu-modal-message-corporate" id="modalMessage"></h4>
+            <p class="usu-modal-details-corporate" id="modalDetails"></p>
+        </div>
+        <div class="usu-modal-footer-corporate">
+            <button type="button" class="usu-modal-btn-corporate usu-btn-cancel-corporate" id="modalCancelButton">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
+            <button type="button" class="usu-modal-btn-corporate" id="confirmActionButton">
+                <i class="fas fa-check"></i> Confirmar
+            </button>
         </div>
     </div>
 </div>
 
 @push('scripts')
 <script>
-// JavaScript para funcionalidades dinámicas
 document.addEventListener('DOMContentLoaded', function() {
     let currentSort = 'nombre';
     let currentDirection = 'asc';
     let searchTimeout;
+    let currentActionUrl = '';
 
-    // Initialize tooltips
-    var tooltipList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(function (el) {
-        return new bootstrap.Tooltip(el);
-    });
-
-    // Live Search Functionality
+    // Búsqueda en tiempo real
     document.getElementById('live-search').addEventListener('input', function(e) {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
@@ -277,12 +288,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     });
 
-    // Filter change handlers
+    // Manejo de cambios en filtros
     document.getElementById('tipo-filter').addEventListener('change', updateUsers);
     document.getElementById('estatus-filter').addEventListener('change', updateUsers);
     document.getElementById('zona-filter').addEventListener('change', updateUsers);
 
-    // Reset filters
+    // Aplicar filtros
+    document.getElementById('apply-filters').addEventListener('click', updateUsers);
+
+    // Reiniciar filtros
     document.getElementById('reset-filters').addEventListener('click', function() {
         document.getElementById('live-search').value = '';
         document.getElementById('tipo-filter').value = '';
@@ -291,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateUsers();
     });
 
-    // Sorting functionality
+    // Ordenamiento
     document.querySelectorAll('.sortable').forEach(header => {
         header.addEventListener('click', function() {
             const sortField = this.dataset.sort;
@@ -313,85 +327,141 @@ document.addEventListener('DOMContentLoaded', function() {
         const estatus = document.getElementById('estatus-filter').value;
         const zona = document.getElementById('zona-filter').value;
 
-        showLoading();
-
         const params = new URLSearchParams({
             search: search,
             tipo_usuario: tipo,
             estatus: estatus,
             zona: zona,
             sort: currentSort,
-            direction: currentDirection,
-            ajax: true
+            direction: currentDirection
         });
 
-        fetch(`{{ route('admin.usuarios.index') }}?${params}`)
-            .then(response => response.text())
-            .then(html => {
-                // Simple page reload for this implementation
-                window.location.href = `{{ route('admin.usuarios.index') }}?${params}`;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                hideLoading();
-            });
+        // Recargar la página con los nuevos parámetros
+        window.location.href = `{{ route('admin.usuarios.index') }}?${params}`;
     }
 
-    function showLoading() {
-        document.getElementById('loading-spinner').style.display = 'block';
-        document.getElementById('table-container').style.opacity = '0.5';
-    }
-
-    function hideLoading() {
-        document.getElementById('loading-spinner').style.display = 'none';
-        document.getElementById('table-container').style.opacity = '1';
-    }
-
+    // Inicializar botones de activación/desactivación
     function initializeActionButtons() {
-        // Add click handlers for action buttons
-        document.querySelectorAll('.btn-activate, .btn-deactivate').forEach(btn => {
+        document.querySelectorAll('.usu-btn-activate-corporate, .usu-btn-deactivate-corporate').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
-                const form = this.nextElementSibling;
-                const userName = this.closest('tr').querySelector('.user-name').textContent;
-                const isActivate = this.classList.contains('btn-activate');
+                const userId = this.getAttribute('data-user-id');
+                const userName = this.getAttribute('data-user-name');
+                const isActivate = this.classList.contains('usu-btn-activate-corporate');
                 
-                showConfirmationModal(userName, isActivate, form.action);
+                // Determinar la URL de la acción
+                const actionUrl = isActivate 
+                    ? `{{ url('admin/usuarios') }}/${userId}/activate`
+                    : `{{ url('admin/usuarios') }}/${userId}/inactivate`;
+                
+                showConfirmationModal(userName, isActivate, actionUrl);
             });
         });
     }
 
-    function showConfirmationModal(userName, isActivate, formAction) {
-        const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+    function showConfirmationModal(userName, isActivate, actionUrl) {
+        const modal = document.getElementById('confirmationModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalIcon = document.getElementById('modalIcon');
         const modalMessage = document.getElementById('modalMessage');
         const modalDetails = document.getElementById('modalDetails');
-        const confirmButton = document.getElementById('confirmButton');
-        const confirmationForm = document.getElementById('confirmationForm');
+        const confirmButton = document.getElementById('confirmActionButton');
         
         if (isActivate) {
             modalTitle.textContent = 'Activar Usuario';
-            modalIcon.className = 'fas fa-user-check activate-icon';
+            modalIcon.className = 'fas fa-user-check usu-activate-icon';
             modalMessage.textContent = `¿Activar a ${userName}?`;
             modalDetails.textContent = 'El usuario podrá acceder al sistema nuevamente.';
-            confirmButton.className = 'btn btn-success';
+            confirmButton.className = 'usu-modal-btn-corporate usu-btn-confirm-corporate';
+            confirmButton.innerHTML = '<i class="fas fa-check"></i> Activar';
         } else {
             modalTitle.textContent = 'Inactivar Usuario';
-            modalIcon.className = 'fas fa-user-slash deactivate-icon';
+            modalIcon.className = 'fas fa-user-slash usu-deactivate-icon';
             modalMessage.textContent = `¿Inactivar a ${userName}?`;
             modalDetails.textContent = 'El usuario no podrá acceder al sistema temporalmente.';
-            confirmButton.className = 'btn btn-warning';
+            confirmButton.className = 'usu-modal-btn-corporate usu-btn-warning-corporate';
+            confirmButton.innerHTML = '<i class="fas fa-check"></i> Inactivar';
         }
         
-        confirmationForm.action = formAction;
-        modal.show();
+        // Guardar la URL de acción actual
+        currentActionUrl = actionUrl;
+        
+        // Mostrar el modal
+        modal.classList.add('usu-show');
+        
+        // Prevenir scroll del body
+        document.body.style.overflow = 'hidden';
     }
 
-    // Initialize action buttons on page load
-    initializeActionButtons();
-});
-</script>
-@endpush
+    function closeModal() {
+        const modal = document.getElementById('confirmationModal');
+        modal.classList.remove('usu-show');
+        document.body.style.overflow = 'auto';
+        currentActionUrl = '';
+    }
 
+    // Configurar eventos de cierre del modal
+    document.getElementById('modalCloseButton').addEventListener('click', closeModal);
+    document.getElementById('modalCancelButton').addEventListener('click', closeModal);
+
+    // Confirmar acción
+    document.getElementById('confirmActionButton').addEventListener('click', function() {
+        if (currentActionUrl) {
+            // Crear un formulario dinámico para enviar la petición
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = currentActionUrl;
+            
+            // Agregar token CSRF
+            const csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = '_token';
+            csrfToken.value = '{{ csrf_token() }}';
+            form.appendChild(csrfToken);
+            
+            // Agregar método PATCH
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = 'PATCH';
+            form.appendChild(methodInput);
+            
+            // Agregar formulario al body y enviar
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+
+    // Cerrar modal al hacer clic fuera del contenido
+    document.getElementById('confirmationModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+
+    // Cerrar modal con tecla Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    // Inicializar botones al cargar la página
+    initializeActionButtons();
+
+
+    
+});
+
+
+
+
+
+
+</script>
+
+
+
+
+@endpush
 @endsection

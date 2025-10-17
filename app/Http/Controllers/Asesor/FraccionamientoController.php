@@ -11,6 +11,7 @@ use App\Models\AmenidadFraccionamiento;
 use App\Models\Lote;
 use App\Models\LoteMedida;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class FraccionamientoController extends Controller
 {
@@ -108,6 +109,7 @@ class FraccionamientoController extends Controller
                 'lotesApartadosPalabra',
                 'lotesApartadosVendido',
                 'lotesVendidos'
+                
             ));
 
         } catch (\Exception $e) {

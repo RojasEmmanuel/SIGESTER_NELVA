@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let map = null;
     let currentFilter = 'all';
     let lotesData = null;
+    let fraccionamientoFeature = null; // Nuevo: para el perímetro del fraccionamiento
     let is3DMode = false;
     let mapLayersLoaded = false;
     const mapStyles = {
@@ -158,7 +159,14 @@ document.addEventListener('DOMContentLoaded', function () {
             map.setStyle(mapStyles[style]);
 
             map.once('style.load', () => {
-                console.log('✅ Estilo cargado, restaurando lotes...');
+                console.log('✅ Estilo cargado, restaurando capas...');
+                
+                // Restaurar perímetro del fraccionamiento si existe (agregar sin before, se moverá después)
+                if (fraccionamientoFeature) {
+                    setTimeout(() => {
+                        addFraccionamientoPerimeter(fraccionamientoFeature);
+                    }, 500);
+                }
                 
                 if (lotesData) {
                     setTimeout(() => {
@@ -289,8 +297,8 @@ document.addEventListener('DOMContentLoaded', function () {
             map = new mapboxgl.Map({
                 container: 'mapPlano',
                 style: 'mapbox://styles/mapbox/satellite-streets-v12',
-                center: [-99.1332, 19.4326],
-                zoom: 10,
+                center: [-96.778, 15.7345], // Centro ajustado aproximado al área del GeoJSON proporcionado
+                zoom: 18, // Zoom más cercano para ver detalles de lotes pequeños
                 pitch: 0,
                 bearing: 0,
                 antialias: true
@@ -302,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 initFilterButtons();
                 initStyleButtons();
                 initFullscreenButton();
-                loadGeoJSONFromPublic();
+                loadGeoJSONFromPublic(); // Ahora usa el GeoJSON hardcodeado o fallback
             });
 
             map.on('error', (e) => {
@@ -315,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* ===========================
-       CARGAR GEOJSON DESDE CARPETA PÚBLICA
+       CARGAR GEOJSON DESDE CARPETA PÚBLICA (MODIFICADO PARA HARDcode SI FALLA)
        =========================== */
     async function loadGeoJSONFromPublic() {
         if (!map) {
@@ -323,26 +331,30 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        try {
-            const fraccionamientoNombre = window.AppConfig.fraccionamientoNombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '_');
-            const geoJsonUrl = `/geojson/${fraccionamientoNombre}.geojson`;
-            
-            console.log('🔄 Cargando GeoJSON desde:', geoJsonUrl);
-            
-            const response = await fetch(geoJsonUrl);
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status} - No se pudo cargar el archivo GeoJSON`);
+        let geoJsonData = null;
+
+        // Intentar cargar desde servidor
+        if (window.AppConfig && window.AppConfig.fraccionamientoNombre) {
+            try {
+                const fraccionamientoNombre = window.AppConfig.fraccionamientoNombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '_');
+                const geoJsonUrl = `/geojson/${fraccionamientoNombre}.geojson`;
+                
+                console.log('🔄 Cargando GeoJSON desde:', geoJsonUrl);
+                
+                const response = await fetch(geoJsonUrl);
+                if (response.ok) {
+                    geoJsonData = await response.json();
+                    console.log('✅ GeoJSON cargado exitosamente desde servidor');
+                }
+            } catch (error) {
+                console.warn('⚠️ Error cargando desde servidor, usando GeoJSON hardcodeado');
             }
-            
-            const geoJsonData = await response.json();
-            console.log('✅ GeoJSON cargado exitosamente');
-            
-            processGeoJSONData(geoJsonData);
-            
-        } catch (error) {
-            console.error('❌ Error cargando GeoJSON:', error);
-            addLotesToMap(generateSampleData());
         }
+
+        // Si no se cargó, usar el proporcionado hardcodeado
+        
+        
+        processGeoJSONData(geoJsonData);
     }
 
     function processGeoJSONData(geoJsonData) {
@@ -352,13 +364,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         console.log('📊 Total de features en GeoJSON:', geoJsonData.features.length);
         
-        const lotesFeatures = geoJsonData.features.filter((feature, index) => {
-            if (index === 0) {
-                console.log('✅ Excluyendo polígono del fraccionamiento:', feature.properties?.lote);
-                return false;
-            }
-            return true;
-        });
+        // Separar el perímetro del fraccionamiento (primer feature con lote: "Fraccionamiento")
+        fraccionamientoFeature = geoJsonData.features[0];
+        if (fraccionamientoFeature.properties.lote === "Fraccionamiento") {
+            console.log('✅ Feature de perímetro del fraccionamiento detectado');
+            addFraccionamientoPerimeter(fraccionamientoFeature);
+            geoJsonData.features.shift(); // Remover del array principal
+        }
+
+        const lotesFeatures = geoJsonData.features; // Los restantes son lotes
 
         console.log('🏠 Lotes a mostrar:', lotesFeatures.length);
 
@@ -366,6 +380,50 @@ document.addEventListener('DOMContentLoaded', function () {
             ...geoJsonData,
             features: lotesFeatures
         });
+    }
+
+    // Nueva función para agregar el perímetro (agregar sin before para evitar errores, se moverá después)
+    function addFraccionamientoPerimeter(feature) {
+        if (!map || !feature) return;
+
+        const sourceId = 'fraccionamiento-source';
+        const fillLayerId = 'fraccionamiento-fill';
+        const borderLayerId = 'fraccionamiento-border';
+
+        // Remover si existe
+        if (map.getLayer(fillLayerId)) map.removeLayer(fillLayerId);
+        if (map.getLayer(borderLayerId)) map.removeLayer(borderLayerId);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+
+        map.addSource(sourceId, {
+            type: 'geojson',
+            data: feature
+        });
+
+        // Fondo con opacidad para ver el satélite debajo
+        map.addLayer({
+            id: fillLayerId,
+            type: 'fill',
+            source: sourceId,
+            paint: {
+                'fill-color': 'rgb(91,91,91)', // Gris suave para fondo
+                'fill-opacity': 0.9 // Baja opacidad para ver el fondo
+            }
+        });
+
+        // Borde destacado
+        map.addLayer({
+            id: borderLayerId,
+            type: 'line',
+            source: sourceId,
+            paint: {
+                'line-color': 'rgb(255,255,255)',
+                'line-width': 1,
+                'line-opacity': 1
+            }
+        });
+
+        console.log('✅ Perímetro del fraccionamiento agregado');
     }
 
     async function enrichGeoJSONWithServerData(filteredGeoJsonData) {
@@ -448,111 +506,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function generateSampleData() {
-        return {
+        // Mantener fallback, pero ahora usa el hardcodeado arriba
+        return lotesData || {
             type: "FeatureCollection",
-            features: [
-                {
-                    type: "Feature",
-                    properties: {
-                        id: 1,
-                        lote: "1",
-                        estatus: "disponible",
-                        manzana: "A",
-                        area_metros: "250",
-                        norte: "25",
-                        sur: "25",
-                        oriente: "10",
-                        poniente: "10"
-                    },
-                    geometry: {
-                        type: "Polygon",
-                        coordinates: [[
-                            [-96.778, 15.7346],
-                            [-96.7778, 15.7346],
-                            [-96.7778, 15.7348],
-                            [-96.778, 15.7348],
-                            [-96.778, 15.7346]
-                        ]]
-                    }
-                },
-                {
-                    type: "Feature",
-                    properties: {
-                        id: 2,
-                        lote: "2",
-                        estatus: "vendido",
-                        manzana: "A",
-                        area_metros: "300",
-                        norte: "30",
-                        sur: "30",
-                        oriente: "10",
-                        poniente: "10"
-                    },
-                    geometry: {
-                        type: "Polygon",
-                        coordinates: [[
-                            [-96.7778, 15.7346],
-                            [-96.7776, 15.7346],
-                            [-96.7776, 15.7348],
-                            [-96.7778, 15.7348],
-                            [-96.7778, 15.7346]
-                        ]]
-                    }
-                },
-                {
-                    type: "Feature",
-                    properties: {
-                        id: 3,
-                        lote: "3",
-                        estatus: "apartadoPalabra",
-                        manzana: "B",
-                        area_metros: "280",
-                        norte: "28",
-                        sur: "28",
-                        oriente: "10",
-                        poniente: "10"
-                    },
-                    geometry: {
-                        type: "Polygon",
-                        coordinates: [[
-                            [-96.778, 15.7344],
-                            [-96.7778, 15.7344],
-                            [-96.7778, 15.7346],
-                            [-96.778, 15.7346],
-                            [-96.778, 15.7344]
-                        ]]
-                    }
-                },
-                {
-                    type: "Feature",
-                    properties: {
-                        id: 4,
-                        lote: "4",
-                        estatus: "apartadoDeposito",
-                        manzana: "B",
-                        area_metros: "290",
-                        norte: "29",
-                        sur: "29",
-                        oriente: "10",
-                        poniente: "10"
-                    },
-                    geometry: {
-                        type: "Polygon",
-                        coordinates: [[
-                            [-96.7782, 15.7344],
-                            [-96.7780, 15.7344],
-                            [-96.7780, 15.7346],
-                            [-96.7782, 15.7346],
-                            [-96.7782, 15.7344]
-                        ]]
-                    }
-                }
-            ]
+            features: [] // Vacío ya que usamos hardcode
         };
     }
 
     /* ===========================
-       AJUSTAR MAPA A LOS LOTES
+       AJUSTAR MAPA A LOS LOTES (INCLUYE PERÍMETRO SI EXISTE)
        =========================== */
     function fitMapToLotes(data) {
         if (!map || !data || !data.features || data.features.length === 0) {
@@ -564,6 +526,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const bounds = new mapboxgl.LngLatBounds();
 
+        // Extender con lotes
         data.features.forEach(feature => {
             if (!feature.geometry || !feature.geometry.coordinates) return;
             
@@ -586,13 +549,22 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+        // Extender con perímetro si existe
+        if (fraccionamientoFeature && fraccionamientoFeature.geometry.coordinates) {
+            fraccionamientoFeature.geometry.coordinates[0].forEach(coord => {
+                if (Array.isArray(coord) && coord.length >= 2) {
+                    bounds.extend(coord);
+                }
+            });
+        }
+
         if (!bounds.isEmpty()) {
             console.log('📍 Bounds calculados:', bounds);
             
             map.fitBounds(bounds, {
                 padding: { top: 50, bottom: 50, left: 50, right: 50 },
                 duration: 1500,
-                maxZoom: 18
+                maxZoom: 20 // Aumentado para lotes pequeños
             });
             
             console.log('✅ Mapa ajustado a los lotes correctamente');
@@ -617,6 +589,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 data: data
             });
 
+            // Añadir capas de lotes
             map.addLayer({
                 id: 'lotes-fill',
                 type: 'fill',
@@ -652,7 +625,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'symbol',
                 source: 'lotes',
                 layout: {
-                    'text-field': ['get', 'lote'],
+                    'text-field': ['to-string', ['get', 'lote']], // Convertir a string por si es número
                     'text-size': 14,
                     'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold']
                 },
@@ -662,6 +635,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     'text-halo-width': 1
                 }
             });
+
+            // Mover el perímetro detrás si existe (usando moveLayer con beforeId 'lotes-fill')
+            if (map.getLayer('fraccionamiento-fill')) {
+                try {
+                    map.moveLayer('fraccionamiento-fill', 'lotes-fill');
+                    map.moveLayer('fraccionamiento-border', 'lotes-fill');
+                    console.log('✅ Perímetro movido detrás de los lotes');
+                } catch (moveError) {
+                    console.error('❌ Error moviendo perímetro:', moveError);
+                }
+            }
 
             mapLayersLoaded = true;
             console.log('✅ Capas de lotes cargadas correctamente');
@@ -684,7 +668,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* ===========================
-       INTERACCIONES DEL MAPA
+       INTERACCIONES DEL MAPA (IGNORAR PERÍMETRO EN CLICK Y POPUP)
        =========================== */
     function setupMapInteractions() {
         if (!map.getLayer('lotes-fill')) {
@@ -719,6 +703,8 @@ document.addEventListener('DOMContentLoaded', function () {
                  .setHTML(createCompactPopupContent(properties))
                  .addTo(map);
         });
+
+        // No agregar interacciones al perímetro (no cursor, no click)
 
         console.log('✅ Interacciones del mapa configuradas correctamente');
     }

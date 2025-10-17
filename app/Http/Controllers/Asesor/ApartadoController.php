@@ -36,12 +36,14 @@ class ApartadoController extends Controller
         $vencidos = $apartados->where('estatus', 'vencido')->count();
         $vendidos = $apartados->where('estatus', 'venta')->count();
 
+        $usuario = Auth::user(); // <--- agregamos el usuario autenticado
         return view('asesor.apartados', compact(
             'apartados',
             'totalApartados',
             'enCurso',
             'vencidos',
-            'vendidos'
+            'vendidos',
+            'usuario'
         ));
     }
 
