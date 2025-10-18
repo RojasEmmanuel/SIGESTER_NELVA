@@ -1,0 +1,389 @@
+
+/* Estilos generales */
+.py-12 {
+    padding: 3rem 0;
+}
+
+.max-w-7xl {
+    max-width: 80rem;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sm\:px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.lg\:px-8 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+/* Card principal */
+.bg-white {
+    background-color: var(--white);
+    background: linear-gradient(135deg, var(--white) 0%, var(--light-gray) 100%);
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.shadow-sm {
+    box-shadow: var(--shadow-md);
+}
+
+.sm\:rounded-lg {
+    border-radius: var(--rounded);
+}
+
+.p-6 {
+    padding: 2rem;
+}
+
+.border-b {
+    border-bottom-width: 1px;
+}
+
+.border-gray-200 {
+    border-color: var(--medium-gray);
+}
+
+/* Encabezados */
+.font-semibold {
+    font-weight: 600;
+}
+
+.text-xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.text-lg {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+}
+
+.text-gray-800 {
+    color: var(--text-color);
+}
+
+.leading-tight {
+    line-height: 1.25;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+/* Sección de información del apartado */
+.mb-4 p {
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    background-color: var(--light-gray);
+    border-radius: var(--rounded-sm);
+    border-left: 4px solid var(--primary-color);
+}
+
+.mb-4 p strong {
+    color: var(--primary-color);
+    min-width: 180px;
+    display: inline-block;
+}
+
+/* Alertas */
+.alert {
+    padding: 1rem 1.25rem;
+    border-radius: var(--rounded-sm);
+    margin-bottom: 1.5rem;
+    border: 1px solid transparent;
+    font-weight: 500;
+}
+
+.alert-success {
+    color: #065f46;
+    background-color: var(--success-light);
+    border-color: var(--success-color);
+    border-left: 4px solid var(--success-color);
+}
+
+.alert-danger {
+    color: #7f1d1d;
+    background-color: #fecaca;
+    border-color: #f87171;
+    border-left: 4px solid #dc2626;
+}
+
+/* Formulario */
+form {
+    background-color: var(--white);
+    padding: 2rem;
+    border-radius: var(--rounded);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--medium-gray);
+}
+
+/* Etiquetas y controles de formulario */
+.block {
+    display: block;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+}
+
+.text-gray-700 {
+    color: var(--text-color);
+}
+
+.mt-1 {
+    margin-top: 0.25rem;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.rounded-md {
+    border-radius: var(--rounded-sm);
+}
+
+.border-gray-300 {
+    border-color: var(--dark-gray);
+}
+
+.shadow-sm {
+    box-shadow: var(--shadow);
+}
+
+/* Campos de formulario */
+select, input, textarea {
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--medium-gray);
+    background-color: var(--white);
+    transition: var(--transition);
+    font-size: 0.875rem;
+}
+
+select:focus, input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(30, 71, 138, 0.1);
+    background-color: var(--accent-color);
+}
+
+select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%231e478a' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Grupos de campos condicionales */
+#fechaVencimientoGroup, #estatusGroup {
+    background-color: var(--accent-color);
+    padding: 1.5rem;
+    border-radius: var(--rounded-sm);
+    border-left: 4px solid var(--secondary-color);
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+/* Botones */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--rounded-sm);
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.875rem;
+    margin-right: 0.75rem;
+    min-width: 120px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+    background-color: var(--medium-gray);
+    color: var(--text-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--dark-gray);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Enlaces */
+.text-blue-600 {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+}
+
+.text-blue-600:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+
+.text-blue-600::before {
+    content: "📎";
+    margin-right: 0.5rem;
+    font-size: 1rem;
+}
+
+/* Mensajes de error */
+.text-red-600 {
+    color: #dc2626;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+}
+
+/* Secciones de información */
+h3 {
+    color: var(--primary-color);
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--medium-gray);
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+h3::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background-color: var(--primary-color);
+}
+
+/* Estados del ticket */
+select option[value="solicitud"] {
+    background-color: var(--warning-light);
+    color: var(--warning-color);
+}
+
+select option[value="aceptado"] {
+    background-color: var(--success-light);
+    color: var(--success-color);
+}
+
+select option[value="rechazado"] {
+    background-color: #fecaca;
+    color: #dc2626;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .p-6 {
+        padding: 1.5rem;
+    }
+
+    form {
+        padding: 1.5rem;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 0.75rem;
+        margin-right: 0;
+    }
+
+    .mb-4 p {
+        padding: 1rem;
+    }
+
+    .mb-4 p strong {
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* Animaciones para los grupos que aparecen/desaparecen */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#fechaVencimientoGroup[style*="display: block"],
+#estatusGroup[style*="display: block"] {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Mejora visual para campos deshabilitados */
+select:disabled, input:disabled, textarea:disabled {
+    background-color: var(--light-gray);
+    color: var(--text-light);
+    cursor: not-allowed;
+}
+
+/* Efecto de carga para el botón */
+.btn:active {
+    transform: translateY(0);
+}
+
+/* Estilo para el campo de fecha */
+input[type="datetime-local"] {
+    font-family: inherit;
+}
+
+/* Personalización del scroll en textarea */
+textarea::-webkit-scrollbar {
+    width: 6px;
+}
+
+textarea::-webkit-scrollbar-track {
+    background: var(--light-gray);
+    border-radius: 3px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}

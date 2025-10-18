@@ -8,6 +8,7 @@ use App\Http\Controllers\Asesor\FraccionamientoController;
 use App\Http\Controllers\Asesor\PerfilController;
 use App\Http\Controllers\Asesor\ventasController;
 use App\Http\Controllers\Admin\AdminFraccionamientoController;
+use App\Http\Controllers\Admin\AdminApartadoController;
 use App\Http\Controllers\Admin\inicioAdminController;
 use App\Http\Controllers\Admin\UsuarioController;
 
@@ -97,7 +98,12 @@ Route::middleware('auth')->group(function () {
         Route::put('/usuarios/{id}', [UsuarioController::class, 'update'])->name('usuarios.update');
         Route::patch('/usuarios/{id}/inactivate', [UsuarioController::class, 'inactivate'])->name('usuarios.inactivate');
         Route::patch('/usuarios/{id}/activate', [UsuarioController::class, 'activate'])->name('usuarios.activate');
+
+
+        // RUTAS PARA los apartados pendientes
+        Route::get('/apartados-pendientes', [AdminApartadoController::class, 'index'])->name('apartados-pendientes.index');
+        Route::get('/apartados-pendientes/{id}', [AdminApartadoController::class, 'show'])->name('apartados-pendientes.show');
+        Route::put('/apartados-pendientes/{id}/ticket-status', [AdminApartadoController::class, 'updateTicketStatus'])->name('apartados-pendientes.updateTicketStatus');
+
     });
 });
-
-
