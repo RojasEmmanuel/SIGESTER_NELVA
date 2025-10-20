@@ -26,7 +26,6 @@
 <link href="{{ asset('css/showApartado.css') }}" rel="stylesheet">
 @endpush
 
-
 @section('content')
 <div class="container">
     <!-- Encabezado de página -->
@@ -328,7 +327,6 @@
                         </div>
                     </div>
 
-                    
                     <!-- Mostrar mensaje específico según el estado -->
                     @if($apartadoDeposito->ticket_estatus === 'aceptado')
                     <div class="observations-box" style="border-left-color: var(--success-color);">
@@ -347,7 +345,7 @@
                             Comprobante Rechazado
                         </div>
                         <div class="observations-text">
-                            El comprobante de depósito ha sido rechazado. Por favor, contacte al administrador para más información.
+                            {{ $apartadoDeposito->observaciones ?? 'El comprobante de depósito ha sido rechazado. Por favor, suba un nuevo comprobante.' }}
                         </div>
                     </div>
                     @else
@@ -399,11 +397,13 @@
                 @endif
             </div>
 
-            <!-- Mostrar formulario solo si no hay comprobante subido -->
-            @if(!isset($apartadoDeposito) || !$apartadoDeposito || !$apartadoDeposito->path_ticket)
+            <!-- Mostrar formulario si no hay comprobante subido o si el ticket está rechazado -->
+            @if($apartado->tipoApartado === 'deposito' && (!isset($apartadoDeposito) || !$apartadoDeposito || !$apartadoDeposito->path_ticket || $apartadoDeposito->ticket_estatus === 'rechazado'))
             <form id="deposit-form" action="{{ route('asesor.apartados.upload-ticket', $apartado->id_apartado) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('POST')
+                
+                <input type="hidden" name="ticket_estatus" value="solicitud">
                 
                 <div class="upload-section" id="upload-area">
                     <div class="file-input-container">
@@ -429,6 +429,8 @@
                         </div>
                     </div>
                 </div>
+                
+                
                 
                 <div id="file-preview" class="file-preview" style="display: none;">
                     <div id="preview-content"></div>

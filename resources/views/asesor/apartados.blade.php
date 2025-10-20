@@ -93,40 +93,53 @@
                             default => 'Error',
                         };
 
+                        // CÁLCULO CORREGIDO DEL TIEMPO RESTANTE
                         if ($apartado->estatus === 'en curso' && $vencimiento) {
-                            $diferencia = $vencimiento->diff($hoy);
-                            $diasRestantes = $diferencia->days;
-                            $horasRestantes = $diferencia->h;
-                            $minutosRestantes = $diferencia->i;
-                            $segundosRestantes = $diferencia->s;
-
-                            $partes = [];
-                            if ($diasRestantes > 0) {
-                                $partes[] = $diasRestantes . 'd';
-                            }
-                            if ($horasRestantes > 0 || $diasRestantes > 0) {
-                                $partes[] = $horasRestantes . 'h';
-                            }
-                            $partes[] = $minutosRestantes . 'm';
-
-                            if ($diasRestantes == 0 && $horasRestantes == 0 && $minutosRestantes < 5) {
-                                $partes[] = $segundosRestantes . 's';
-                            }
-
-                            $tiempoRestante = implode(' ', $partes);
-                            if (empty($tiempoRestante)) {
-                                $tiempoRestante = 'Menos de 1m';
-                            }
-
-                            $totalHorasRestantes = ($diasRestantes * 24) + $horasRestantes + ($minutosRestantes / 60);
-                            if ($totalHorasRestantes <= 12) {
+                            // Verificar si la fecha de vencimiento ya pasó
+                            if ($vencimiento->isPast()) {
+                                // Si ya pasó, mostrar como vencido inmediatamente
+                                $tiempoRestante = 'Vencido';
                                 $tiempoClass = 'text-danger';
-                            } elseif ($totalHorasRestantes <= 48) {
-                                $tiempoClass = 'text-warning';
-                            } elseif ($totalHorasRestantes <= 120) {
-                                $tiempoClass = 'text-warning-light';
+                                
+                                // Actualizar el estado visual del apartado a vencido
+                                $estadoClass = 'vencido';
+                                $estadoDisplay = 'Vencido';
                             } else {
-                                $tiempoClass = 'text-success';
+                                // Si aún no vence, calcular el tiempo restante normal
+                                $diferencia = $vencimiento->diff($hoy);
+                                $diasRestantes = $diferencia->days;
+                                $horasRestantes = $diferencia->h;
+                                $minutosRestantes = $diferencia->i;
+                                $segundosRestantes = $diferencia->s;
+
+                                $partes = [];
+                                if ($diasRestantes > 0) {
+                                    $partes[] = $diasRestantes . 'd';
+                                }
+                                if ($horasRestantes > 0 || $diasRestantes > 0) {
+                                    $partes[] = $horasRestantes . 'h';
+                                }
+                                $partes[] = $minutosRestantes . 'm';
+
+                                if ($diasRestantes == 0 && $horasRestantes == 0 && $minutosRestantes < 5) {
+                                    $partes[] = $segundosRestantes . 's';
+                                }
+
+                                $tiempoRestante = implode(' ', $partes);
+                                if (empty($tiempoRestante)) {
+                                    $tiempoRestante = 'Menos de 1m';
+                                }
+
+                                $totalHorasRestantes = ($diasRestantes * 24) + $horasRestantes + ($minutosRestantes / 60);
+                                if ($totalHorasRestantes <= 12) {
+                                    $tiempoClass = 'text-danger';
+                                } elseif ($totalHorasRestantes <= 48) {
+                                    $tiempoClass = 'text-warning';
+                                } elseif ($totalHorasRestantes <= 120) {
+                                    $tiempoClass = 'text-warning-light';
+                                } else {
+                                    $tiempoClass = 'text-success';
+                                }
                             }
                         } else {
                             $tiempoRestante = $apartado->estatus === 'vencido' ? 'Vencido' : 'Vendido';
@@ -145,7 +158,7 @@
                     }
                 @endphp
 
-                <div class="apartado-card {{ $estadoClass }}" data-estado="{{ $apartado->estatus }}" data-tipo="{{ $apartado->tipoApartado }}">
+                <div class="apartado-card {{ $estadoClass }}" data-estado="{{ $estadoDisplay === 'Vencido' ? 'vencido' : $apartado->estatus }}" data-tipo="{{ $apartado->tipoApartado }}">
                     <!-- Header compacto -->
                     <div class="card-header-compact">
                         <div class="client-info-compact">
@@ -160,7 +173,7 @@
                                         {{ $fechaApartadoFormatted }}
                                     </span>
                                     <span class="meta-item">
-                                        <i class="bi bi-calendar-x {{ $apartado->estatus === 'vencido' ? 'text-danger' : ($apartado->estatus === 'venta' ? 'text-success' : 'text-success') }}"></i>
+                                        <i class="bi bi-calendar-x {{ $estadoDisplay === 'Vencido' ? 'text-danger' : ($estadoDisplay === 'Vendido' ? 'text-success' : 'text-success') }}"></i>
                                         {{ $fechaVencimientoFormatted }}
                                     </span>
                                 </div>
@@ -171,7 +184,7 @@
                                 {{ $apartado->tipoApartado == 'palabra' ? 'Palabra' : 'Depósito' }}
                             </span>
                             <span class="status-badge {{ $estadoClass }}">
-                                <i class="bi bi-{{ $apartado->estatus === 'vencido' ? 'x-circle' : ($apartado->estatus === 'venta' ? 'check-circle-fill' : 'check-circle') }}"></i>
+                                <i class="bi bi-{{ $estadoDisplay === 'Vencido' ? 'x-circle' : ($estadoDisplay === 'Vendido' ? 'check-circle-fill' : 'check-circle') }}"></i>
                                 {{ $estadoDisplay }}
                             </span>
                         </div>
@@ -184,7 +197,15 @@
                                 <i class="bi bi-clock"></i>
                                 <span class="time-value">{{ $tiempoRestante }}</span>
                             </div>
-                            <div class="time-label">Tiempo restante</div>
+                            <div class="time-label">
+                                @if($estadoDisplay === 'Vencido' || $tiempoRestante === 'Vencido')
+                                    Estado
+                                @elseif($estadoDisplay === 'Vendido')
+                                    Estado
+                                @else
+                                    Tiempo restante
+                                @endif
+                            </div>
                         </div>
 
                         <div class="divider"></div>

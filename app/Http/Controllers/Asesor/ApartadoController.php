@@ -17,7 +17,6 @@ use Carbon\Carbon;
 
 class ApartadoController extends Controller
 {
-
     public function index()
     {
         $usuarioId = Auth::user()->id_usuario;
@@ -36,7 +35,7 @@ class ApartadoController extends Controller
         $vencidos = $apartados->where('estatus', 'vencido')->count();
         $vendidos = $apartados->where('estatus', 'venta')->count();
 
-        $usuario = Auth::user(); // <--- agregamos el usuario autenticado
+        $usuario = Auth::user();
         return view('asesor.apartados', compact(
             'apartados',
             'totalApartados',
@@ -47,8 +46,6 @@ class ApartadoController extends Controller
         ));
     }
 
-   
-   
     public function show($id)
     {
         // Cargar el apartado con sus relaciones principales
@@ -69,16 +66,9 @@ class ApartadoController extends Controller
         return view('asesor.showApartado', compact('apartado', 'apartadoDeposito'));
     }
 
-
-
-
-     // ==========================
-    // MÉTODO PARA REGISTRAR APARTADO
-    // ==========================
-
     public function store(Request $request)
     {
-        // 1️⃣ Validación de datos
+        // Validación de datos
         $request->validate([
             'tipoApartado' => 'required|in:apartadoPalabra,apartadoDeposito',
             'id_fraccionamiento' => 'required|integer|exists:fraccionamientos,id_fraccionamiento',
@@ -93,7 +83,7 @@ class ApartadoController extends Controller
             'cantidad.required_if' => 'El monto es requerido para apartados con depósito.'
         ]);
 
-        // 2️⃣ Obtener datos
+        // Obtener datos
         $tipoApartado = $request->tipoApartado === 'apartadoPalabra' ? 'palabra' : 'deposito';
         $fraccionamientoId = $request->id_fraccionamiento;
         $clienteNombre = $request->cliente_nombre;
@@ -102,7 +92,7 @@ class ApartadoController extends Controller
         $lots = $request->input('lots', []);
         $usuarioId = Auth::user()->id_usuario;
 
-        // 3️⃣ Validar que los lotes existen y están disponibles
+        // Validar que los lotes existen y están disponibles
         $lotesModel = Lote::where('id_fraccionamiento', $fraccionamientoId)
             ->whereIn('numeroLote', $lots)
             ->get();
@@ -123,7 +113,7 @@ class ApartadoController extends Controller
             }
         }
 
-        // 4️⃣ Iniciar transacción para garantizar consistencia
+        // Iniciar transacción para garantizar consistencia
         DB::beginTransaction();
         try {
             // Crear el apartado
@@ -136,7 +126,7 @@ class ApartadoController extends Controller
                 'id_usuario' => $usuarioId
             ]);
 
-            // 5️⃣ Registrar lotes apartados y actualizar historial
+            // Registrar lotes apartados y actualizar historial
             foreach ($lots as $lotNumber) {
                 $lote = $lotesModel->firstWhere('numeroLote', $lotNumber);
                 
@@ -157,18 +147,16 @@ class ApartadoController extends Controller
                     'observaciones' => 'Apartado registrado desde formulario',
                 ]);
 
-
-                if($tipoApartado == "palabra"){
+                if ($tipoApartado == "palabra") {
                     $lote->estatus = "apartadoPalabra";
                     $lote->save();
-                }else{
+                } else {
                     $lote->estatus = "apartadoDeposito";
                     $lote->save();
                 }
-                
             }
 
-            // 6️⃣ Registrar depósito si aplica
+            // Registrar depósito si aplica
             if ($tipoApartado === 'deposito' && $cantidad) {
                 ApartadoDeposito::create([
                     'cantidad' => $cantidad,
@@ -189,7 +177,7 @@ class ApartadoController extends Controller
                 'fechaVencimiento' => $apartado->fechaVencimiento->toDateTimeString(),
             ]);
 
-            // 7️⃣ Respuesta JSON exitosa
+            // Respuesta JSON exitosa
             return response()->json([
                 'success' => true,
                 'message' => 'Apartado registrado correctamente.',
@@ -214,12 +202,31 @@ class ApartadoController extends Controller
         }
     }
 
-
     public function uploadTicket(Request $request, $id)
     {
-        try {
-            DB::beginTransaction();
+        // Validar que el usuario esté autenticado
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuario no autenticado.'
+            ], 401);
+        }
 
+        // Validar datos recibidos
+        $request->validate([
+            'ticket_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // Máx. 5MB
+            'ticket_estatus' => 'required|in:solicitud',
+            'observaciones' => 'nullable|string|max:500',
+        ], [
+            'ticket_file.required' => 'Debe seleccionar un archivo.',
+            'ticket_file.mimes' => 'El archivo debe ser PDF, JPG o PNG.',
+            'ticket_file.max' => 'El archivo no debe exceder los 5MB.',
+            'ticket_estatus.in' => 'El estatus del ticket debe ser solicitud.',
+            'observaciones.max' => 'Las observaciones no deben exceder los 500 caracteres.',
+        ]);
+
+        DB::beginTransaction();
+        try {
             // Buscar el apartado
             $apartado = Apartado::findOrFail($id);
 
@@ -231,47 +238,68 @@ class ApartadoController extends Controller
                 ], 400);
             }
 
-            // Validar archivo recibido
-            $request->validate([
-                'ticket_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120' // máx. 5 MB
-            ]);
+            // Buscar el registro en apartados_deposito
+            $deposito = ApartadoDeposito::where('id_apartado', $apartado->id_apartado)->first();
 
+            // Manejar la carga del archivo
             $file = $request->file('ticket_file');
-
-            // Generar nombre único
             $fileName = 'ticket_' . $apartado->id_apartado . '_' . time() . '.' . $file->getClientOriginalExtension();
-
-            // ✅ Guardar en la carpeta correcta dentro de storage/app/public
             $folderPath = 'tickets/' . $apartado->id_apartado;
             $filePath = $file->storeAs($folderPath, $fileName, 'public');
 
-            // Buscar si ya hay registro en apartados_deposito
-            $deposito = ApartadoDeposito::where('id_apartado', $apartado->id_apartado)->first();
-
+            // Actualizar o crear el registro de depósito
             if ($deposito) {
-                // Si ya existe, eliminar archivo anterior si existe
+                // Si ya existe un archivo, eliminar el anterior
                 if ($deposito->path_ticket && Storage::disk('public')->exists($deposito->path_ticket)) {
                     Storage::disk('public')->delete($deposito->path_ticket);
                 }
 
-                // Actualizar registro existente
+                // Actualizar el registro existente
                 $deposito->update([
                     'path_ticket' => $filePath,
-                    'fecha_subida' => now(),
+                    'ticket_estatus' => $request->ticket_estatus,
+                    'observaciones' => $request->observaciones ?? $deposito->observaciones,
+                    'fecha_subida' => now('America/Mexico_City'),
+                    'fecha_revision' => null, // Resetear fecha de revisión
                 ]);
             } else {
                 // Crear nuevo registro
                 ApartadoDeposito::create([
                     'id_apartado' => $apartado->id_apartado,
+                    'cantidad' => $apartado->deposito->cantidad ?? 0,
                     'path_ticket' => $filePath,
-                    'fecha_subida' => now(),
+                    'ticket_estatus' => $request->ticket_estatus,
+                    'observaciones' => $request->observaciones ?? 'Depósito pendiente de revisión',
+                    'fecha_subida' => now('America/Mexico_City'),
+                    'fecha_revision' => null,
                 ]);
             }
 
+            // Actualizar estatus del apartado según fechaVencimiento
+            $now = now('America/Mexico_City');
+            $fechaVencimiento = Carbon::parse($apartado->fechaVencimiento);
+            $apartado->estatus = $fechaVencimiento->isFuture() ? 'en curso' : 'vencido';
+            $apartado->save();
+
             DB::commit();
+
+            // Registrar log
+            Log::info('Comprobante de depósito subido:', [
+                'id_apartado' => $apartado->id_apartado,
+                'ticket_estatus' => $request->ticket_estatus,
+                'observaciones' => $request->observaciones,
+                'path_ticket' => $filePath,
+                'estatus_apartado' => $apartado->estatus,
+            ]);
 
             // Generar URL pública del archivo
             $fileUrl = Storage::url($filePath);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Comprobante guardado exitosamente.',
+                'file_url' => $fileUrl,
+            ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
@@ -279,15 +307,14 @@ class ApartadoController extends Controller
                 'success' => false,
                 'message' => $e->validator->errors()->first()
             ], 422);
-
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Error al subir comprobante:', ['error' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
-                'message' => 'Error al guardar el comprobante. Intente nuevamente.',
+                'message' => 'Error al guardar el comprobante: ' . $e->getMessage(),
                 'error' => $e->getMessage()
             ], 500);
         }
     }
-
 }

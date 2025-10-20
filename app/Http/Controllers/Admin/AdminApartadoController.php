@@ -22,7 +22,7 @@ class AdminApartadoController extends Controller
         $apartados = Apartado::with([
             'usuario',
             'lotesApartados.lote.fraccionamiento',
-            'deposito' // Cambiado de 'apartadoDeposito' a 'deposito'
+            'deposito'
         ])
         ->where('tipoApartado', 'deposito')
         ->whereHas('deposito', function ($query) {
@@ -44,7 +44,7 @@ class AdminApartadoController extends Controller
         $apartado = Apartado::with([
             'usuario',
             'lotesApartados.lote.fraccionamiento',
-            'deposito' // Cambiado de 'apartadoDeposito' a 'deposito'
+            'deposito'
         ])
         ->where('tipoApartado', 'deposito')
         ->findOrFail($id);
@@ -120,7 +120,7 @@ class AdminApartadoController extends Controller
                 }
             }
 
-            // Si el ticket es rechazado, liberar los lotes
+            // Si el ticket es rechazado, liberar los lotes y actualizar estatus según fechaVencimiento
             if ($request->ticket_estatus === 'rechazado') {
                 foreach ($apartado->lotesApartados as $loteApartado) {
                     $lote = $loteApartado->lote;
@@ -137,8 +137,10 @@ class AdminApartadoController extends Controller
                     ]);
                 }
 
-                // Actualizar estatus del apartado
-                $apartado->estatus = 'cancelado';
+                // Actualizar estatus del apartado según la fecha de vencimiento
+                $now = now('America/Mexico_City');
+                $fechaVencimiento = Carbon::parse($apartado->fechaVencimiento);
+                $apartado->estatus = $fechaVencimiento->isFuture() ? 'en curso' : 'vencido';
                 $apartado->save();
             }
 
@@ -149,7 +151,7 @@ class AdminApartadoController extends Controller
                 'ticket_estatus' => $request->ticket_estatus,
                 'observaciones' => $request->observaciones,
                 'fechaVencimiento' => $request->fechaVencimiento,
-                'estatus' => $request->estatus
+                'estatus' => $apartado->estatus
             ]);
 
             return redirect()->route('admin.apartados-pendientes.index')
