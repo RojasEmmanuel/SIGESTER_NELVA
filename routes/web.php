@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminFraccionamientoController;
 use App\Http\Controllers\Admin\AdminApartadoController;
 use App\Http\Controllers\Admin\inicioAdminController;
 use App\Http\Controllers\Admin\UsuarioController;
+use App\Http\Controllers\Admin\AdminVentasController;
 
 // Rutas de autenticación
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -105,5 +106,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/apartados-pendientes/{id}', [AdminApartadoController::class, 'show'])->name('apartados-pendientes.show');
         Route::put('/apartados-pendientes/{id}/ticket-status', [AdminApartadoController::class, 'updateTicketStatus'])->name('apartados-pendientes.updateTicketStatus');
 
+        // Historial de todas las ventas
+        Route::get('/ventas', [AdminVentasController::class, 'index'])->name('ventas.index');
+        
+        // Detalle de una venta específica
+        Route::get('/ventas/{id_venta}', [AdminVentasController::class, 'show'])->name('ventas.show');
+        
+        // Gestión de tickets (vista específica)
+        Route::get('/ventas/{id_venta}/ticket', [AdminVentasController::class, 'ticket'])->name('ventas.ticket');
+        
+        // Actualizar estatus del ticket
+        Route::put('/ventas/{id_venta}/ticket-estatus', [AdminVentasController::class, 'updateTicketEstatus'])->name('ventas.update-ticket-estatus');
+        // Actualizar estatus de la venta
+        Route::put('/ventas/{id_venta}/venta-estatus', [AdminVentasController::class, 'updateVentaEstatus'])->name('ventas.update-venta-estatus');
     });
 });

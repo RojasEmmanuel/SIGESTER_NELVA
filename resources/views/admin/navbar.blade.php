@@ -36,8 +36,8 @@
                 <a href="{{ url('admin/apartados-pendientes') }}" class="{{ Request::is('apartados-pendientes') ? 'active' : '' }}">
                     <i class="fas fa-clock"></i> Apartados pendientes
                 </a>
-                <a href="{{ url('admin/ventas-pendientes') }}" class="{{ Request::is('ventas-pendientes') ? 'active' : '' }}">
-                    <i class="fas fa-hourglass-half"></i> Ventas pendientes
+                <a href="{{ url('admin/ventas') }}" class="{{ Request::is('ventas-pendientes') ? 'active' : '' }}">
+                    <i class="fas fa-hourglass-half"></i> Historial de Ventas
                 </a>
                 <a href="#" id="logout-btn-desktop">
                     <i class="fas fa-sign-out-alt"></i> Salir
@@ -87,9 +87,9 @@
                     <i class="fas fa-clock"></i>
                     <span>Apartados pendientes</span>
                 </a>
-                <a href="{{ url('asesor/ventas-pendientes') }}" class="nav-item {{ Request::is('ventas-pendientes') ? 'active' : '' }}">
+                <a href="{{ url('admin/ventas') }}" class="nav-item {{ Request::is('ventas-pendientes') ? 'active' : '' }}">
                     <i class="fas fa-hourglass-half"></i>
-                    <span>Ventas pendientes</span>
+                    <span>Historial de Ventas</span>
                 </a>
                 <a href="#" class="nav-item" id="logout-btn-mobile">
                     <i class="fas fa-sign-out-alt"></i>
