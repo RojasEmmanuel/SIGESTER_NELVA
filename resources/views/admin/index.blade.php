@@ -77,7 +77,7 @@
                 <!-- Botón Registrar Fraccionamiento -->
                 <a href="{{ route('admin.fraccionamiento.create') }}" class="btn btn-registrar">
                     <i class="fas fa-plus-circle"></i>
-                    <span>Registrar Fraccionamiento</span>
+                    <span>Nuevo Fraccionamiento</span>
                 </a>
             </div>
             

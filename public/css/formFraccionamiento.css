@@ -132,6 +132,16 @@ body {
     grid-column: 1 / -1;
 }
 
+.form-group2.botontesRegistro {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 100px; /* Altura mínima para mejor visualización */
+    gap: 10px;
+    width: 100%;
+}
+
 .form-label {
     display: block;
     margin-bottom: 0.5rem;

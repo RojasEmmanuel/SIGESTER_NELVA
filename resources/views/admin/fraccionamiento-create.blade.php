@@ -176,14 +176,16 @@
                 @enderror
             </div>
 
-            <div class="form-group full-width mt-4">
-                <button type=";y" class="btn btn-primary btn-lg">
-                    <i class="fas fa-save"></i> Crear Fraccionamiento
-                </button>
-                <a href="{{ url()->previous() }}" class="btn btn-outline ml-2">
-                    <i class="fas fa-arrow-left"></i> Cancelar
-                </a>
-            </div>
+            
+        </div>
+
+        <div class="form-group2 botontesRegistro">
+            <button type=";y" class="btn btn-primary btn-lg">
+                <i class="fas fa-save"></i> Crear Fraccionamiento
+            </button>
+            <a href="{{ url()->previous() }}" class="btn btn-outline ml-2">
+                <i class="fas fa-arrow-left"></i> Cancelar
+            </a>
         </div>
     </form>
 </div>

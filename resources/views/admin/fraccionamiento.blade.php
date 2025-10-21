@@ -139,7 +139,7 @@
                             <div class="form-group full-width">
                                 <button type="submit" class="btn btn-primary btn-lg">
                                     <i class="fas fa-save"></i>
-                                    Actualizar Información
+                                    Actualizar
                                 </button>
                             </div>
 
@@ -232,7 +232,7 @@
                             <div class="form-group full-width">
                                 <button type="submit" class="btn btn-primary btn-lg">
                                     <i class="fas fa-save"></i>
-                                    Actualizar Información Adicional
+                                    Actualizar
                                 </button>
                             </div>
 
@@ -307,7 +307,7 @@
                             @csrf
                             <div class="form-group">
                                 <label for="amenidad_nombre" class="form-label">Nombre</label>
-                                <input type="text" id="amenidad_nombre" name="nombre" class="form-control" placeholder="Ej. Alberca, Gimnasio" value="{{ old('nombre') }}" required>
+                                <input type="text" id="amenidad_nombre" name="nombre" class="form-control" placeholder="Ej. Calles de 10 mts, Energía eléctrica" value="{{ old('nombre') }}" required>
                                 @error('nombre')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
@@ -332,7 +332,7 @@
                                 @enderror
                             </div>
                             
-                            <div class="form-group full-width">
+                            <div class="form-group2"">
                                 <button type="submit" class="btn btn-primary btn-sm">
                                     <i class="fas fa-plus"></i>
                                     Agregar Amenidad
@@ -411,7 +411,7 @@
                             @csrf
                             <div class="form-group">
                                 <label for="foto_nombre" class="form-label">Nombre de la Foto</label>
-                                <input type="text" id="foto_nombre" name="nombre" class="form-control" placeholder="Ej. Foto aérea, Área común" value="{{ old('nombre') }}">
+                                <input type="text" id="foto_nombre" name="nombre" class="form-control" placeholder="Ej. Foto aérea, Área común, Fachada de entrada" value="{{ old('nombre') }}">
                                 @error('nombre')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
@@ -431,7 +431,7 @@
                                 </div>
                             </div>
                             
-                            <div class="form-group full-width">
+                            <div class="form-group2">
                                 <button type="submit" class="btn btn-primary btn-sm">
                                     <i class="fas fa-plus"></i>
                                     Agregar Foto
@@ -532,7 +532,7 @@
                                 </div>
                             </div>
                             
-                            <div class="form-group full-width">
+                            <div class="form-group2">
                                 <button type="submit" class="btn btn-primary btn-sm">
                                     <i class="fas fa-plus"></i>
                                     Agregar Archivo
