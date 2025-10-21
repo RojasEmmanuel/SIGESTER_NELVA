@@ -151,7 +151,7 @@
                                                 <a href="{{ route('admin.apartados-pendientes.show', $apartado->id_apartado) }}"
                                                    class="apartados-pendientes-btn apartados-pendientes-btn-primary">
                                                     <span class="material-icons apartados-pendientes-btn-icon">visibility</span>
-                                                    Ver Detalles
+                                                    Ver 
                                                 </a>
                                             </td>
                                         </tr>
