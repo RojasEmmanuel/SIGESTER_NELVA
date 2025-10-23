@@ -436,10 +436,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (depositReceipt) depositReceipt.style.display = 'block';
                 }
 
-                alert('✅ Apartado registrado correctamente');
+                showCustomNotification('¡Apartado Registrado!', 'El apartado se ha registrado correctamente.', 'success');
             } catch (error) {
                 console.error('❌ Error al registrar el apartado:', error);
-                alert(error.message || 'Error inesperado al registrar el apartado');
+                showCustomNotification('Error al Registrar Apartado', error.message || 'Error inesperado al registrar el apartado', 'error');
             } finally {
                 const submitBtn = reservationForm.querySelector('button[type="submit"]');
                 if (submitBtn) {
@@ -509,4 +509,120 @@ document.addEventListener('DOMContentLoaded', function () {
        INICIALIZACIÓN FINAL
        =========================== */
     console.log('✅ Script de modales cargado correctamente');
-});
+
+
+
+        /* ===========================
+       SISTEMA DE NOTIFICACIONES
+       =========================== */
+    function showCustomNotification(title, message, type = 'success') {
+        // Cerrar notificación existente si hay una
+        closeCustomNotification();
+        
+        const notificationHTML = `
+            <div class="notification-overlay">
+                <div class="notification-modal">
+                    <div class="notification-header">
+                        <div class="notification-icon ${type}">
+                            <i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}"></i>
+                        </div>
+                        <h2 class="notification-title">${title}</h2>
+                    </div>
+                    <div class="notification-body">
+                        <p class="notification-message">${message}</p>
+                    </div>
+                    <div class="notification-footer">
+                        <button class="notification-btn" onclick="closeCustomNotification()">
+                            Aceptar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', notificationHTML);
+    }
+
+    function closeCustomNotification() {
+        const overlay = document.querySelector('.notification-overlay');
+        if (overlay) {
+            overlay.remove();
+        }
+    }
+
+    // Hacer las funciones globales para que funcionen con onclick
+    window.showCustomNotification = showCustomNotification;
+    window.closeCustomNotification = closeCustomNotification;
+
+    // Cerrar con tecla Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeCustomNotification();
+        }
+    });
+
+    // Cerrar haciendo clic fuera del modal
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('notification-overlay')) {
+            closeCustomNotification();
+        }
+    });
+
+    /* ===========================
+       INICIALIZACIÓN FINAL
+       =========================== */
+
+        /* ===========================
+       NOTIFICACIONES PARA DESCARGAS
+       =========================== */
+    function setupDownloadNotifications() {
+        // Galería - Descarga de imágenes
+        document.querySelectorAll('.gallery-download').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const filename = this.getAttribute('data-filename') || 'archivo';
+                const fileType = this.getAttribute('data-type') || 'imagen';
+                
+                // Mostrar notificación de descarga iniciada
+                showCustomNotification(
+                    'Descarga Iniciada', 
+                    `La ${fileType} "${filename}" se está descargando.`, 
+                    'success'
+                );
+                
+                // Opcional: Cerrar automáticamente después de 3 segundos
+                setTimeout(() => {
+                    closeCustomNotification();
+                }, 3000);
+            });
+        });
+
+        // Documentos - Descarga de archivos
+        document.querySelectorAll('.file-download').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const filename = this.getAttribute('data-filename') || 'documento';
+                const fileType = this.getAttribute('data-type') || 'documento';
+                
+                // Mostrar notificación de descarga iniciada
+                showCustomNotification(
+                    'Descarga Iniciada', 
+                    `El ${fileType} "${filename}" se está descargando.`, 
+                    'success'
+                );
+                
+                // Opcional: Cerrar automáticamente después de 3 segundos
+                setTimeout(() => {
+                    closeCustomNotification();
+                }, 3000);
+            });
+        });
+    }
+
+    // Inicializar las notificaciones de descarga cuando el DOM esté listo
+    setupDownloadNotifications();
+
+    /* ===========================
+       INICIALIZACIÓN FINAL
+       =========================== */
+
+    console.log('✅ Script de modales cargado correctamente');
+}); // ← Esta línea ya debe estar al final

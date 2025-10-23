@@ -857,3 +857,405 @@ body{
         gap: 5px;
     }
 }
+
+/* ===== MEJORAS ESPECÍFICAS PARA VISTA MÓVIL ===== */
+
+/* Media Queries para Vista Móvil Mejorada */
+@media (max-width: 768px) {
+  .usuarios-container {
+    padding: 15px 10px;
+  }
+  
+  /* Header Responsive Mejorado */
+  .usu-corporate-header {
+    padding: 20px 15px;
+    margin-bottom: 20px;
+    border-left-width: 3px;
+  }
+  
+  .usu-header-content {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .usu-header-text {
+    min-width: auto;
+  }
+  
+  .usu-header-title {
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .usu-header-title h1 {
+    font-size: 1.5rem;
+  }
+  
+  .usu-header-actions {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .usu-btn-corporate {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+    padding: 12px 20px;
+  }
+  
+  /* Panel de Filtros Responsive Mejorado */
+  .usu-filters-panel {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .usu-filters-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .usu-filter-group {
+    gap: 5px;
+  }
+  
+  .usu-filter-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  .usu-filter-input {
+    padding: 12px 15px;
+    font-size: 1rem;
+  }
+  
+  .usu-search-input {
+    padding-left: 45px !important;
+  }
+  
+  .usu-search-icon {
+    left: 15px;
+    font-size: 1.1rem;
+  }
+  
+  .usu-filter-actions {
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 20px;
+  }
+  
+  .usu-filter-actions .usu-btn-corporate {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 20px;
+  }
+  
+  /* Sistema Dual: Cards para Móvil */
+  .usu-table-container {
+    display: none;
+  }
+  
+  .usu-mobile-cards {
+    display: block;
+    padding: 10px 5px;
+  }
+  
+  .usu-mobile-card {
+    background: var(--usu-white);
+    border-radius: var(--usu-radius-lg);
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: var(--usu-shadow);
+    border: 1px solid var(--usu-gray-light);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  .usu-mobile-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  .usu-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--usu-gray-light);
+    gap: 15px;
+  }
+  
+  .usu-card-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .usu-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  
+  .usu-card-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 15px;
+  }
+  
+  .usu-card-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    background: var(--usu-light);
+    border-radius: var(--usu-radius);
+    border-left: 3px solid var(--usu-primary);
+  }
+  
+  .usu-card-label {
+    font-size: 0.8rem;
+    color: var(--usu-gray-dark);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .usu-card-value {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--usu-dark);
+    word-break: break-word;
+  }
+  
+  /* Estados Responsive Mejorados */
+  .usu-badge-corporate {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    border-radius: 4px;
+  }
+  
+  /* Botones de Acción Responsive Mejorados */
+  .usu-btn-action-corporate {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 1.1rem;
+  }
+  
+  /* Panel Header Responsive */
+  .usu-panel-header {
+    padding: 15px 20px;
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .usu-panel-stats {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .usu-panel-title {
+    font-size: 1.1rem;
+  }
+  
+  .usu-stats-badge {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+  
+  /* Paginación Responsive Mejorada */
+  .usu-pagination-corporate {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    padding: 20px 15px;
+    text-align: center;
+  }
+  
+  .usu-pagination-info {
+    font-size: 0.9rem;
+  }
+  
+  .usu-pagination-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  .usu-page-link-corporate {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    min-width: 44px;
+    text-align: center;
+  }
+  
+  /* Modal Responsive Mejorado */
+  .usu-modal-corporate {
+    padding: 15px;
+    align-items: flex-start;
+    padding-top: 50px;
+  }
+  
+  .usu-modal-content-corporate {
+    margin: 0;
+    width: 100%;
+    max-width: none;
+  }
+  
+  .usu-modal-header-corporate {
+    padding: 15px 20px;
+  }
+  
+  .usu-modal-body-corporate {
+    padding: 25px 20px;
+  }
+  
+  .usu-confirmation-icon-corporate {
+    font-size: 3rem;
+    margin-bottom: 15px;
+  }
+  
+  .usu-modal-message-corporate {
+    font-size: 1.1rem;
+  }
+  
+  .usu-modal-footer-corporate {
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+  }
+  
+  .usu-modal-btn-corporate {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+  
+  /* Estados vacíos responsive */
+  .usu-empty-state-corporate {
+    padding: 40px 20px;
+  }
+  
+  .usu-empty-state-corporate i {
+    font-size: 3rem;
+  }
+  
+  .usu-empty-state-corporate h4 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .usuarios-container {
+    padding: 10px 5px;
+  }
+  
+  .usu-corporate-header {
+    padding: 15px 10px;
+  }
+  
+  .usu-header-title h1 {
+    font-size: 1.3rem;
+  }
+  
+  .usu-header-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .usu-mobile-card {
+    padding: 15px;
+    margin-bottom: 12px;
+  }
+  
+  .usu-card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .usu-card-user {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .usu-card-actions {
+    justify-content: center;
+  }
+  
+  .usu-card-field {
+    padding: 8px 12px;
+  }
+  
+  .usu-user-profile {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .usu-user-details-corporate {
+    align-items: center;
+  }
+  
+  .usu-user-meta {
+    justify-content: center;
+  }
+}
+
+@media (min-width: 769px) {
+  .usu-mobile-cards {
+    display: none;
+  }
+  
+  .usu-table-container {
+    display: block;
+  }
+}
+
+/* Mejoras de accesibilidad para móviles */
+@media (max-width: 768px) {
+  .usu-btn-action-corporate:focus,
+  .usu-btn-corporate:focus,
+  .usu-modal-btn-corporate:focus {
+    outline: 2px solid var(--usu-primary);
+    outline-offset: 2px;
+  }
+  
+  .usu-filter-input:focus {
+    box-shadow: 0 0 0 3px rgba(30, 71, 138, 0.2);
+  }
+}
+
+/* Animaciones suaves para móviles */
+@media (max-width: 768px) {
+  .usu-mobile-card {
+    animation: usu-cardAppear 0.4s ease-out;
+  }
+  
+  @keyframes usu-cardAppear {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Scroll suave para elementos táctiles */
+@media (max-width: 768px) {
+  .usu-table-container {
+    -webkit-overflow-scrolling: touch;
+  }
+}

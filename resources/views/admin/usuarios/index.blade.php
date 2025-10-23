@@ -90,162 +90,263 @@
         </div>
     </div>
     
-    <!-- Panel de Datos (TABLA CORPORATIVA MANTENIDA) -->
-    <div class="usu-data-panel">
-        <div class="usu-panel-header">
-            <div class="usu-panel-stats">
-                <div class="usu-panel-title">
-                    <i class="fas fa-list"></i>
-                    <span>Usuarios Registrados</span>
-                </div>
-                <span class="usu-stats-badge" id="user-count">{{ $usuarios->total() }} usuarios</span>
+    <!-- Panel de Datos (Sistema Dual: Tabla + Cards Móvil) -->
+<div class="usu-data-panel">
+    <div class="usu-panel-header">
+        <div class="usu-panel-stats">
+            <div class="usu-panel-title">
+                <i class="fas fa-list"></i>
+                <span>Usuarios Registrados</span>
             </div>
+            <span class="usu-stats-badge" id="user-count">{{ $usuarios->total() }} usuarios</span>
         </div>
-        
-        <div class="usu-table-container">
-            <table class="usu-corporate-table" id="users-table">
-                <thead>
+    </div>
+    
+    <!-- Vista de Tabla (Desktop) -->
+    <div class="usu-table-container">
+        <table class="usu-corporate-table" id="users-table">
+            <!-- Mantener la tabla existente igual -->
+            <thead>
+                <tr>
+                    <th class="sortable" data-sort="nombre">
+                        Usuario <span class="sort-icon fas fa-sort"></span>
+                    </th>
+                    <th class="sortable" data-sort="email">
+                        Email <span class="sort-icon fas fa-sort"></span>
+                    </th>
+                    <th class="sortable" data-sort="tipo">
+                        Tipo de Usuario <span class="sort-icon fas fa-sort"></span>
+                    </th>
+                    <th class="sortable" data-sort="estatus">
+                        Estado <span class="sort-icon fas fa-sort"></span>
+                    </th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="users-tbody">
+                @forelse ($usuarios as $usuario)
                     <tr>
-                        <th class="sortable" data-sort="nombre">
-                            Usuario <span class="sort-icon fas fa-sort"></span>
-                        </th>
-                        <th class="sortable" data-sort="email">
-                            Email <span class="sort-icon fas fa-sort"></span>
-                        </th>
-                        <th class="sortable" data-sort="tipo">
-                            Tipo de Usuario <span class="sort-icon fas fa-sort"></span>
-                        </th>
-                        <th class="sortable" data-sort="estatus">
-                            Estado <span class="sort-icon fas fa-sort"></span>
-                        </th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="users-tbody">
-                    @forelse ($usuarios as $usuario)
-                        <tr>
-                            <td data-label="Usuario">
-                                <div class="usu-user-profile">
-                                    @if($usuario->asesorInfo && $usuario->asesorInfo->path_fotografia)
-                                        <img src="{{ asset('storage/' . $usuario->asesorInfo->path_fotografia) }}" 
-                                             alt="{{ $usuario->nombre }}" 
-                                             class="usu-avatar-corporate">
-                                    @else
-                                        @php
-                                            $nombres = explode(' ', $usuario->nombre);
-                                            $iniciales = '';
-                                            foreach($nombres as $nombre) {
-                                                $iniciales .= strtoupper(substr($nombre, 0, 1));
-                                                if(strlen($iniciales) >= 2) break;
-                                            }
-                                        @endphp
-                                        <div class="usu-avatar-initials-corporate">
-                                            {{ $iniciales }}
-                                        </div>
-                                    @endif
-                                    <div class="usu-user-details-corporate">
-                                        <div class="usu-user-name-corporate">{{ $usuario->nombre }}</div>
-                                        <div class="usu-user-meta">
-                                            <span class="usu-user-email-corporate">{{ $usuario->usuario_nombre }}</span>
-                                            @if($usuario->asesorInfo && $usuario->asesorInfo->zona)
-                                                <span class="usu-user-zona-corporate">{{ $usuario->asesorInfo->zona }}</span>
-                                            @endif
-                                        </div>
+                        <td data-label="Usuario">
+                            <div class="usu-user-profile">
+                                @if($usuario->asesorInfo && $usuario->asesorInfo->path_fotografia)
+                                    <img src="{{ asset('storage/' . $usuario->asesorInfo->path_fotografia) }}" 
+                                         alt="{{ $usuario->nombre }}" 
+                                         class="usu-avatar-corporate">
+                                @else
+                                    @php
+                                        $nombres = explode(' ', $usuario->nombre);
+                                        $iniciales = '';
+                                        foreach($nombres as $nombre) {
+                                            $iniciales .= strtoupper(substr($nombre, 0, 1));
+                                            if(strlen($iniciales) >= 2) break;
+                                        }
+                                    @endphp
+                                    <div class="usu-avatar-initials-corporate">
+                                        {{ $iniciales }}
+                                    </div>
+                                @endif
+                                <div class="usu-user-details-corporate">
+                                    <div class="usu-user-name-corporate">{{ $usuario->nombre }}</div>
+                                    <div class="usu-user-meta">
+                                        <span class="usu-user-email-corporate">{{ $usuario->usuario_nombre }}</span>
+                                        @if($usuario->asesorInfo && $usuario->asesorInfo->zona)
+                                            <span class="usu-user-zona-corporate">{{ $usuario->asesorInfo->zona }}</span>
+                                        @endif
                                     </div>
                                 </div>
-                            </td>
-                            <td data-label="Email">{{ $usuario->email }}</td>
-                            <td data-label="Tipo">
-                                <span class="usu-badge-corporate usu-badge-primary">{{ $usuario->tipo->tipo ?? 'N/A' }}</span>
-                            </td>
-                            <td data-label="Estado">
+                            </div>
+                        </td>
+                        <td data-label="Email">{{ $usuario->email }}</td>
+                        <td data-label="Tipo">
+                            <span class="usu-badge-corporate usu-badge-primary">{{ $usuario->tipo->tipo ?? 'N/A' }}</span>
+                        </td>
+                        <td data-label="Estado">
+                            @if ($usuario->estatus)
+                                <span class="usu-badge-corporate usu-badge-success">
+                                    <span class="usu-status-indicator-corporate usu-status-active"></span>
+                                    Activo
+                                </span>
+                            @else
+                                <span class="usu-badge-corporate usu-badge-danger">
+                                    <span class="usu-status-indicator-corporate usu-status-inactive"></span>
+                                    Inactivo
+                                </span>
+                            @endif
+                        </td>
+                        <td data-label="Acciones">
+                            <div class="usu-actions-corporate">
+                                <a href="{{ route('admin.usuarios.edit', $usuario->id_usuario) }}" 
+                                   class="usu-btn-action-corporate usu-btn-edit-corporate" 
+                                   title="Editar usuario">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                
                                 @if ($usuario->estatus)
-                                    <span class="usu-badge-corporate usu-badge-success">
-                                        <span class="usu-status-indicator-corporate usu-status-active"></span>
-                                        Activo
-                                    </span>
+                                    <button type="button" class="usu-btn-action-corporate usu-btn-deactivate-corporate"
+                                            title="Inactivar usuario"
+                                            data-user-id="{{ $usuario->id_usuario }}"
+                                            data-user-name="{{ $usuario->nombre }}">
+                                        <i class="fas fa-user-slash"></i>
+                                    </button>
                                 @else
-                                    <span class="usu-badge-corporate usu-badge-danger">
-                                        <span class="usu-status-indicator-corporate usu-status-inactive"></span>
-                                        Inactivo
-                                    </span>
+                                    <button type="button" class="usu-btn-action-corporate usu-btn-activate-corporate"
+                                            title="Activar usuario"
+                                            data-user-id="{{ $usuario->id_usuario }}"
+                                            data-user-name="{{ $usuario->nombre }}">
+                                        <i class="fas fa-user-check"></i>
+                                    </button>
                                 @endif
-                            </td>
-                            <td data-label="Acciones">
-                                <div class="usu-actions-corporate">
-                                    <a href="{{ route('admin.usuarios.edit', $usuario->id_usuario) }}" 
-                                       class="usu-btn-action-corporate usu-btn-edit-corporate" 
-                                       title="Editar usuario">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    
-                                    @if ($usuario->estatus)
-                                        <button type="button" class="usu-btn-action-corporate usu-btn-deactivate-corporate"
-                                                title="Inactivar usuario"
-                                                data-user-id="{{ $usuario->id_usuario }}"
-                                                data-user-name="{{ $usuario->nombre }}">
-                                            <i class="fas fa-user-slash"></i>
-                                        </button>
-                                    @else
-                                        <button type="button" class="usu-btn-action-corporate usu-btn-activate-corporate"
-                                                title="Activar usuario"
-                                                data-user-id="{{ $usuario->id_usuario }}"
-                                                data-user-name="{{ $usuario->nombre }}">
-                                            <i class="fas fa-user-check"></i>
-                                        </button>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5">
-                                <div class="usu-empty-state-corporate">
-                                    <i class="fas fa-users"></i>
-                                    <h4>No hay usuarios registrados</h4>
-                                    <p>Comience agregando el primer usuario al sistema.</p>
-                                    <a href="{{ route('admin.usuarios.create') }}" class="usu-btn-corporate">
-                                        <i class="fas fa-user-plus"></i> Crear Primer Usuario
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        
-        @if($usuarios->hasPages())
-        <div class="usu-pagination-corporate">
-            <div class="usu-pagination-info">
-                Mostrando {{ $usuarios->firstItem() }} - {{ $usuarios->lastItem() }} de {{ $usuarios->total() }} registros
-            </div>
-            <ul class="usu-pagination-nav">
-                @if ($usuarios->onFirstPage())
-                    <li class="page-item disabled"><span class="usu-page-link-corporate">Anterior</span></li>
-                @else
-                    <li class="page-item"><a class="usu-page-link-corporate" href="{{ $usuarios->previousPageUrl() }}">Anterior</a></li>
-                @endif
-
-                @foreach ($usuarios->getUrlRange(1, $usuarios->lastPage()) as $page => $url)
-                    @if ($page == $usuarios->currentPage())
-                        <li class="page-item usu-page-active"><span class="usu-page-link-corporate">{{ $page }}</span></li>
-                    @else
-                        <li class="page-item"><a class="usu-page-link-corporate" href="{{ $url }}">{{ $page }}</a></li>
-                    @endif
-                @endforeach
-
-                @if ($usuarios->hasMorePages())
-                    <li class="page-item"><a class="usu-page-link-corporate" href="{{ $usuarios->nextPageUrl() }}">Siguiente</a></li>
-                @else
-                    <li class="page-item disabled"><span class="usu-page-link-corporate">Siguiente</span></li>
-                @endif
-            </ul>
-        </div>
-        @endif
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5">
+                            <div class="usu-empty-state-corporate">
+                                <i class="fas fa-users"></i>
+                                <h4>No hay usuarios registrados</h4>
+                                <p>Comience agregando el primer usuario al sistema.</p>
+                                <a href="{{ route('admin.usuarios.create') }}" class="usu-btn-corporate">
+                                    <i class="fas fa-user-plus"></i> Crear Primer Usuario
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
-</div>
+    
+    <!-- Vista de Cards (Móvil) -->
+    <div class="usu-mobile-cards" id="users-cards">
+        @forelse ($usuarios as $usuario)
+            <div class="usu-mobile-card">
+                <div class="usu-card-header">
+                    <div class="usu-card-user">
+                        @if($usuario->asesorInfo && $usuario->asesorInfo->path_fotografia)
+                            <img src="{{ asset('storage/' . $usuario->asesorInfo->path_fotografia) }}" 
+                                 alt="{{ $usuario->nombre }}" 
+                                 class="usu-avatar-corporate">
+                        @else
+                            @php
+                                $nombres = explode(' ', $usuario->nombre);
+                                $iniciales = '';
+                                foreach($nombres as $nombre) {
+                                    $iniciales .= strtoupper(substr($nombre, 0, 1));
+                                    if(strlen($iniciales) >= 2) break;
+                                }
+                            @endphp
+                            <div class="usu-avatar-initials-corporate">
+                                {{ $iniciales }}
+                            </div>
+                        @endif
+                        <div class="usu-user-details-corporate">
+                            <div class="usu-user-name-corporate">{{ $usuario->nombre }}</div>
+                            <div class="usu-user-meta">
+                                <span class="usu-user-email-corporate">{{ $usuario->usuario_nombre }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="usu-card-actions">
+                        <a href="{{ route('admin.usuarios.edit', $usuario->id_usuario) }}" 
+                           class="usu-btn-action-corporate usu-btn-edit-corporate" 
+                           title="Editar usuario">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        
+                        @if ($usuario->estatus)
+                            <button type="button" class="usu-btn-action-corporate usu-btn-deactivate-corporate"
+                                    title="Inactivar usuario"
+                                    data-user-id="{{ $usuario->id_usuario }}"
+                                    data-user-name="{{ $usuario->nombre }}">
+                                <i class="fas fa-user-slash"></i>
+                            </button>
+                        @else
+                            <button type="button" class="usu-btn-action-corporate usu-btn-activate-corporate"
+                                    title="Activar usuario"
+                                    data-user-id="{{ $usuario->id_usuario }}"
+                                    data-user-name="{{ $usuario->nombre }}">
+                                <i class="fas fa-user-check"></i>
+                            </button>
+                        @endif
+                    </div>
+                </div>
+                
+                <div class="usu-card-body">
+                    <div class="usu-card-field">
+                        <span class="usu-card-label">Email</span>
+                        <span class="usu-card-value">{{ $usuario->email }}</span>
+                    </div>
+                    
+                    <div class="usu-card-field">
+                        <span class="usu-card-label">Tipo de Usuario</span>
+                        <span class="usu-badge-corporate usu-badge-primary">{{ $usuario->tipo->tipo ?? 'N/A' }}</span>
+                    </div>
+                    
+                    <div class="usu-card-field">
+                        <span class="usu-card-label">Estado</span>
+                        @if ($usuario->estatus)
+                            <span class="usu-badge-corporate usu-badge-success">
+                                <span class="usu-status-indicator-corporate usu-status-active"></span>
+                                Activo
+                            </span>
+                        @else
+                            <span class="usu-badge-corporate usu-badge-danger">
+                                <span class="usu-status-indicator-corporate usu-status-inactive"></span>
+                                Inactivo
+                            </span>
+                        @endif
+                    </div>
+                    
+                    @if($usuario->asesorInfo && $usuario->asesorInfo->zona)
+                    <div class="usu-card-field">
+                        <span class="usu-card-label">Zona</span>
+                        <span class="usu-card-value">{{ $usuario->asesorInfo->zona }}</span>
+                    </div>
+                    @endif
+                </div>
+            </div>
+        @empty
+            <div class="usu-empty-state-corporate">
+                <i class="fas fa-users"></i>
+                <h4>No hay usuarios registrados</h4>
+                <p>Comience agregando el primer usuario al sistema.</p>
+                <a href="{{ route('admin.usuarios.create') }}" class="usu-btn-corporate">
+                    <i class="fas fa-user-plus"></i> Crear Primer Usuario
+                </a>
+            </div>
+        @endforelse
+    </div>
+    
+    @if($usuarios->hasPages())
+    <div class="usu-pagination-corporate">
+        <div class="usu-pagination-info">
+            Mostrando {{ $usuarios->firstItem() }} - {{ $usuarios->lastItem() }} de {{ $usuarios->total() }} registros
+        </div>
+        <ul class="usu-pagination-nav">
+            @if ($usuarios->onFirstPage())
+                <li class="page-item disabled"><span class="usu-page-link-corporate">Anterior</span></li>
+            @else
+                <li class="page-item"><a class="usu-page-link-corporate" href="{{ $usuarios->previousPageUrl() }}">Anterior</a></li>
+            @endif
 
+            @foreach ($usuarios->getUrlRange(1, $usuarios->lastPage()) as $page => $url)
+                @if ($page == $usuarios->currentPage())
+                    <li class="page-item usu-page-active"><span class="usu-page-link-corporate">{{ $page }}</span></li>
+                @else
+                    <li class="page-item"><a class="usu-page-link-corporate" href="{{ $url }}">{{ $page }}</a></li>
+                @endif
+            @endforeach
+
+            @if ($usuarios->hasMorePages())
+                <li class="page-item"><a class="usu-page-link-corporate" href="{{ $usuarios->nextPageUrl() }}">Siguiente</a></li>
+            @else
+                <li class="page-item disabled"><span class="usu-page-link-corporate">Siguiente</span></li>
+            @endif
+        </ul>
+    </div>
+    @endif
+</div>
 <!-- Modal de Confirmación Corporativo MEJORADO -->
 <div class="usu-modal-corporate" id="confirmationModal">
     <div class="usu-modal-content-corporate">

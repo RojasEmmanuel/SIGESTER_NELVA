@@ -415,7 +415,7 @@
                     <a href="#" class="share-btn verbal-share-btn" id="verbalWhatsappShare">
                         <i class="fab fa-whatsapp"></i> Notificar
                     </a>
-                    <button class="btn btn-outline mt-3" id="closeAfterVerbal">
+                    <button class="btn btn-outline mt-3" id="closeAfterVerbal" onclick="window.location.reload();">
                         <i class="fas fa-check"></i> Aceptar
                     </button>
                 </div>
@@ -444,6 +444,9 @@
                     <a href="#" class="share-btn" id="whatsappShare">
                         <i class="fab fa-whatsapp"></i> Notificar
                     </a>
+                    <button class="btn btn-outline mt-3" id="closeAfterVerbal" onclick="window.location.reload();">
+                        <i class="fas fa-check"></i> Aceptar
+                    </button>
                 </div>
             </div>
         </div>
