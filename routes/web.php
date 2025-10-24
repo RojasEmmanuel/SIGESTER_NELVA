@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AdminApartadoController;
 use App\Http\Controllers\Admin\inicioAdminController;
 use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Admin\AdminVentasController;
+use App\Http\Controllers\Cobranza\CobranzaVentaController;
 
 // Rutas de autenticación
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -60,10 +61,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/asesor/apartados/{id}/upload-ticket', [ApartadoController::class, 'uploadTicket'])->name('asesor.apartados.upload-ticket');
     Route::get('/asesor/fraccionamiento/{idFraccionamiento}/archivo/{idArchivo}/download', [AdminFraccionamientoController::class, 'downloadArchivo'])->name('asesor.fraccionamiento.download-archivo');
 
-
-
-
-
+  
+  
+    Route::prefix('cobranza')->name('cobranza.')->group(function () {
+        Route::get('/ventas', [CobranzaVentaController::class, 'index'])->name('ventas.index');
+        Route::get('/ventas/{id_venta}', [CobranzaVentaController::class, 'show'])->name('ventas.show');
+        Route::get('/ventas/{id_venta}/contrato', [CobranzaVentaController::class, 'generarContrato'])->name('ventas.contrato');
+    });
 
 
    Route::prefix('admin')->name('admin.')->group(function () {

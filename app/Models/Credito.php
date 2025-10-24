@@ -23,6 +23,7 @@ class Credito extends Model
 
     protected $casts = [
         'fecha_inicio' => 'date',
+        'dia_pago' => 'integer',
     ];
 
     // Relación con Venta
