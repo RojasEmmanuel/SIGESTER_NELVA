@@ -30,7 +30,7 @@
                     <i class="fas fa-history"></i> Ventas
                 </a>
                 <!-- Nueva opción: Contratos Pendientes -->
-                <a href="{{ url('asesor/contratos-pendientes') }}" class="{{ Request::is('contratos-pendientes') ? 'active' : '' }}">
+                <a href="{{ url('cobranza/ventas') }}" class="{{ Request::is('contratos-pendientes') ? 'active' : '' }}">
                     <i class="fas fa-file-contract"></i> Contratos Pendientes
                 </a>
                <a href="{{ route('asesor.perfil.index') }}" class="{{ Request::routeIs('asesor.perfil') ? 'active' : '' }}">
@@ -73,7 +73,7 @@
                     <span>Ventas</span>
                 </a>
                 <!-- Nueva opción: Contratos Pendientes -->
-                <a href="{{ url('asesor/contratos-pendientes') }}" class="nav-item {{ Request::is('contratos-pendientes') ? 'active' : '' }}">
+                <a href="{{ url('cobranza/ventas') }}" class="nav-item {{ Request::is('contratos-pendientes') ? 'active' : '' }}">
                     <i class="fas fa-file-contract"></i>
                     <span>Contratos Pendientes</span>
                 </a>

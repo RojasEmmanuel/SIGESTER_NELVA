@@ -25,7 +25,7 @@
                 <p class="header-subtitle">{{ $datosFraccionamiento['ubicacion'] }} ({{ ucfirst($datosFraccionamiento['zona']) }})</p>
             </div>
             <div class="page-actions">
-                <button class="btn btn-outline" onclick="window.location.href='/asesor/inicio'">
+                <button class="btn btn-outline" onclick="window.location.href='/admin/inicio'">
                     <i class="fas fa-arrow-left"></i> Volver al Panel
                 </button>
             </div>

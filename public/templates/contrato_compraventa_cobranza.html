@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Contrato de Compraventa - Nelva Bienes Raíces</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman:ital,wght@0,400;0,700;1,400&display=swap');
+        
+        :root {
+            --primary-color: #1e478a;
+            --secondary-color: #2c3e50;
+            --accent-color: #8b0000;
+            --text-color: #333333;
+            --border-color: #cccccc;
+            --light-bg: #f9f9f9;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        /* Marca de agua simplificada - CSS puro */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://nelvabienesraices.com/images/logo.png'); /* Ruta de la imagen de marca de agua */
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 400px 200px; /* Ajusta según tu imagen */
+            opacity: 0.03; /* Muy sutil */
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 60px;
+            color: rgba(30, 71, 138, 0.03);
+            font-weight: bold;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: -1;
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 10mm auto;
+            padding: 20mm 25mm;
+            position: relative;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 0 0 5px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .header .subtitle {
+            font-size: 14px;
+            font-style: italic;
+            color: var(--secondary-color);
+            margin: 0;
+        }
+        
+        .company-info {
+            position: absolute;
+            top: 0;
+            right: 0;
+            text-align: right;
+            font-size: 11px;
+            color: var(--secondary-color);
+            max-width: 40%;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+            width: 100%;
+        }
+        
+        .section h2 {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+        
+        .contract-clause {
+            margin-bottom: 15px;
+            text-align: justify;
+            width: 100%;
+        }
+        
+        .contract-clause .clause-number {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        
+        .signature-area {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            page-break-inside: avoid;
+            width: 100%;
+            gap: 20px;
+        }
+        
+        .signature-box {
+            flex: 1;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 50px;
+            min-width: 0;
+        }
+        
+        .signature-box p {
+            margin: 5px 0;
+            font-size: 12px;
+            word-wrap: break-word;
+        }
+        
+        .signature-name {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        
+        .data-item {
+            margin-bottom: 8px;
+            min-width: 0;
+        }
+        
+        .data-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 150px;
+            flex-shrink: 0;
+        }
+        
+        .data-value {
+            display: inline-block;
+            word-wrap: break-word;
+            flex: 1;
+        }
+        
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            table-layout: fixed;
+        }
+        
+        .table th {
+            background-color: var(--light-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            text-align: left;
+            font-weight: bold;
+            word-wrap: break-word;
+        }
+        
+        .table td {
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            word-wrap: break-word;
+        }
+        
+        /* Columnas específicas para mejor ajuste */
+        .table th:nth-child(1),
+        .table td:nth-child(1) {
+            width: 15%;
+        }
+        
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            width: 25%;
+        }
+        
+        .table th:nth-child(3),
+        .table td:nth-child(3) {
+            width: 15%;
+        }
+        
+        .table th:nth-child(4),
+        .table td:nth-child(4) {
+            width: 20%;
+        }
+        
+        .table th:nth-child(5),
+        .table td:nth-child(5) {
+            width: 25%;
+        }
+        
+        .table .total-row {
+            font-weight: bold;
+            background-color: var(--light-bg);
+        }
+        
+        .legal-notice {
+            font-size: 10px;
+            font-style: italic;
+            text-align: justify;
+            margin-top: 30px;
+            color: var(--secondary-color);
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+            width: 100%;
+        }
+        
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: var(--secondary-color);
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+            width: 100%;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+        
+        .amount {
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        .highlight {
+            background-color: rgba(30, 71, 138, 0.05);
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .stamp {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            transform: rotate(15deg);
+            opacity: 0.1;
+            font-size: 80px;
+            color: var(--accent-color);
+            font-weight: bold;
+            pointer-events: none;
+        }
+        
+        /* Estilos específicos para impresión */
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                background: white;
+                display: block;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 15mm 20mm;
+                margin: 0 auto;
+                width: 210mm;
+                min-height: 297mm;
+            }
+            
+            .watermark {
+                opacity: 0.03;
+            }
+            
+            .page-break {
+                page-break-before: always;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+            }
+            
+            .signature-area {
+                page-break-inside: avoid;
+            }
+            
+            .table {
+                page-break-inside: avoid;
+            }
+        }
+        
+        /* Fallback para navegadores que no soportan grid */
+        @supports not (display: grid) {
+            .data-grid {
+                display: block;
+            }
+            
+            .data-item {
+                display: inline-block;
+                width: 48%;
+                vertical-align: top;
+            }
+        }
+        
+        /* Responsive para pantallas pequeñas */
+        @media screen and (max-width: 220mm) {
+            .container {
+                width: 95%;
+                margin: 20px auto;
+                padding: 20px;
+            }
+            
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .signature-area {
+                flex-direction: column;
+            }
+            
+            .signature-box {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            
+            .company-info {
+                position: static;
+                text-align: center;
+                margin-bottom: 15px;
+                max-width: 100%;
+            }
+        }
+        
+        /* Asegurar que el contenido no se salga */
+        .content-wrapper {
+            width: 100%;
+            max-width: 160mm; /* Ancho máximo del contenido */
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Marca de agua simplificada -->
+    <div class="watermark">NELVA BIENES RAÍCES</div>
+    
+    <div class="container">
+        <div class="content-wrapper">
+            <div class="stamp">CONTRATO</div>
+            
+            <div class="header">
+                <div class="company-info">
+                    NELVA BIENES RAÍCES<br>
+                    RFC: ABC123456XYZ<br>
+                    Tel: (123) 456-7890
+                </div>
+                <h1>CONTRATO DE COMPRAVENTA</h1>
+                <p class="subtitle">Constitutivo de Adquisición de Bien Inmueble</p>
+                <p><strong>Fecha:</strong> {{FECHA_ACTUAL}}</p>
+            </div>
+
+            <div class="section">
+                <h2>I. IDENTIFICACIÓN DE LAS PARTES</h2>
+                
+                <div class="contract-clause">
+                    <span class="clause-number">1.1.</span> 
+                    <strong>VENDEDOR:</strong> NELVA BIENES RAÍCES, S.A. DE C.V., representada en este acto por su apoderado legal, con domicilio en [Dirección de la Empresa], en lo sucesivo referido como "EL VENDEDOR".
+                </div>
+                
+                <div class="contract-clause">
+                    <span class="clause-number">1.2.</span> 
+                    <strong>COMPRADOR:</strong>
+                </div>
+                
+                <div class="data-grid">
+                    <div class="data-item">
+                        <span class="data-label">Nombre completo:</span>
+                        <span class="data-value highlight">{{CLIENTE_NOMBRE}}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Edad:</span>
+                        <span class="data-value">{{CLIENTE_EDAD}} años</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Estado civil:</span>
+                        <span class="data-value">{{CLIENTE_ESTADO_CIVIL}}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Ocupación:</span>
+                        <span class="data-value">{{CLIENTE_OCUPACION}}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Domicilio:</span>
+                        <span class="data-value">{{CLIENTE_DIRECCION}}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Teléfono:</span>
+                        <span class="data-value">{{CLIENTE_TELEFONO}}</span>
+                    </div>
+                </div>
+                
+                <!-- {{SECCION_BENEFICIARIO}} -->
+            </div>
+
+            <div class="section">
+                <h2>II. OBJETO DEL CONTRATO</h2>
+                
+                <div class="contract-clause">
+                    <span class="clause-number">2.1.</span> 
+                    Por medio del presente instrumento, EL VENDEDOR se obliga a transferir la propiedad de los bienes inmuebles descritos en el apartado III, y EL COMPRADOR se obliga a pagar el precio convenido en los términos y condiciones establecidos en este contrato.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>III. DESCRIPCIÓN DE LOS BIENES</h2>
+                
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Número de Lote</th>
+                                <th>Fraccionamiento</th>
+                                <th>Área (m²)</th>
+                                <th>Precio por m²</th>
+                                <th>Precio Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{LOTES_TABLA}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>IV. CONDICIONES DE LA OPERACIÓN</h2>
+                
+                <div class="data-grid">
+                    <div class="data-item">
+                        <span class="data-label">ID de Venta:</span>
+                        <span class="data-value">{{VENTA_ID}}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Fecha de Solicitud:</span>
+                        <span class="data-value">{{FECHA_SOLICITUD}}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Enganche:</span>
+                        <span class="data-value amount">$ {{ENGANCHE}}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Total del Contrato:</span>
+                        <span class="data-value amount">$ {{TOTAL}}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Saldo Pendiente:</span>
+                        <span class="data-value amount">$ {{SALDO}}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Días de Retraso:</span>
+                        <span class="data-value">{{DIAS_RETRASO}}</span>
+                    </div>
+                </div>
+                
+                <!-- {{SECCION_CREDITO}} -->
+            </div>
+
+            <div class="section">
+                <h2>V. FIRMAS Y TESTIGOS</h2>
+                
+                <div class="signature-area">
+                    <div class="signature-box">
+                        <p>EL VENDEDOR</p>
+                        <p class="signature-name">NELVA BIENES RAÍCES, S.A. DE C.V.</p>
+                        <p>Representante Legal</p>
+                    </div>
+                    
+                    <div class="signature-box">
+                        <p>EL COMPRADOR</p>
+                        <p class="signature-name">{{CLIENTE_NOMBRE}}</p>
+                        <p>Comprador</p>
+                    </div>
+                </div>
+                
+                <div class="signature-area">
+                    <div class="signature-box">
+                        <p>TESTIGO</p>
+                        <p class="signature-name">_________________________</p>
+                        <p>Nombre y Firma</p>
+                    </div>
+                    
+                    <div class="signature-box">
+                        <p>TESTIGO</p>
+                        <p class="signature-name">_________________________</p>
+                        <p>Nombre y Firma</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="data-grid">
+                    <div class="data-item">
+                        <span class="data-label">Asesor Comercial:</span>
+                        <span class="data-value">{{ASESOR_NOMBRE}}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Representante de Cobranza:</span>
+                        <span class="data-value">{{COBRANZA_NOMBRE}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="legal-notice">
+                <p>El presente contrato se firma en dos ejemplares del mismo tenor y valor, quedando uno en poder de cada una de las partes. Cualquier modificación a este contrato deberá realizarse por escrito y firmada por ambas partes. Para cualquier controversia derivada de la interpretación o cumplimiento de este contrato, las partes se someten a la jurisdicción de los tribunales competentes en [Ciudad, Estado].</p>
+            </div>
+
+            <div class="footer">
+                Documento generado automáticamente el {{FECHA_ACTUAL}} | Página 1 de 1
+            </div>
+        </div>
+    </div>
+</body>
+</html>
