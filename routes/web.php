@@ -17,6 +17,15 @@ use App\Http\Controllers\Cobranza\CobranzaVentaController;
 // Rutas de autenticación
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
+
+Route::get('/nosotros', [App\Http\Controllers\pagina\NosotrosController::class, 'index'])->name('nosotros');
+Route::get('/contacto', [App\Http\Controllers\pagina\ContactoController::class, 'index'])->name('contacto');
+Route::get('/mas', [App\Http\Controllers\pagina\MasController::class, 'index'])->name('mas');
+Route::get('/servicios', [App\Http\Controllers\pagina\ServiciosController::class, 'index'])->name('servicios');
+Route::get('/asesores', [App\Http\Controllers\pagina\AsesoresController::class, 'index'])->name('asesores');
+Route::get('/atractivos', [App\Http\Controllers\pagina\AtractivosController::class, 'index'])->name('atractivos');
+Route::get('/mapaInteractivo', [App\Http\Controllers\pagina\MapaInteractivoController::class, 'index'])->name('mapa-interactivo');
+
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Rutas protegidas por el middleware 'auth'

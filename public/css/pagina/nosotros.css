@@ -1,0 +1,269 @@
+
+        /* Estilos para el contenido de la página Nosotros */
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../images/nosotros/nelva.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Esto agrega el efecto parallax */
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            margin-top: 0px;
+            position: relative; /* Asegura que el contenido se mantenga por encima */
+            z-index: 1; /* Asegura que la sección esté por encima de otros elementos */
+        }
+
+/* Mejora la responsividad del parallax */
+@media (max-width: 768px) {
+    .hero {
+        background-attachment: scroll; 
+    }
+}
+        
+        .hero-content h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .hero-content p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Sección Nosotros */
+        .about-section {
+            padding: 0px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-title h2 {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .section-title p {
+            color: #7f8c8d;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .about-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .about-text h3 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .about-text p {
+            margin-bottom: 15px;
+            color: #555;
+        }
+        
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .about-image img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Equipo */
+        .team-section {
+            background-color: #f9f9f9;
+            padding: 0px 5%;
+        }
+        
+        .team-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            
+        }
+        
+        .team-members {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .team-member {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 340px;
+            text-align: center;
+            transition: transform 0.3s;
+            display: flex; /* Agregamos display flex */
+            flex-direction: column;
+        }
+        
+        .team-member:hover {
+            transform: translateY(-10px);
+        }
+        
+        /* Modifica estos estilos en la sección de CSS */
+        .member-image {
+            height: 390px; /* Aumentamos la altura para imágenes verticales */
+            overflow: hidden;
+            position: relative; /* Agregamos posición relativa */
+            padding: 20px;
+        }
+        
+        .member-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            object-position: center; 
+            background-color: #f9f9f9; 
+        }
+        
+        .member-info {
+            padding: 2px;
+        }
+
+        .member-info h4 {
+            font-size: 20px;
+            color: #1e3042ff;
+            margin-bottom: 5px;
+        }
+
+        .member-info p {
+            color: #0c1149ff;
+            font-weight: 500;
+            margin-bottom: 15px;
+            padding: 0 15px;
+        }
+
+        /* Agregar esta regla específica para el párrafo de descripción */
+        .member-info p:last-child {
+            text-align: left;
+            color: #555; 
+            font-weight: normal; 
+            line-height: 1.6; /* Mejor espaciado entre líneas */
+            
+        }
+        
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .value-card {
+            text-align: center;
+            padding: 30px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+        
+        .value-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .value-icon {
+            font-size: 40px;
+            color: #FEB818;
+            margin-bottom: 20px;
+        }
+        
+        .value-card h4 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .value-card p {
+            color: #7f8c8d;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                margin-top: 0px;
+                height: 50vh;
+            }
+            
+            .hero-content h1 {
+                font-size: 36px;
+            }
+            
+            .hero-content p {
+                font-size: 18px;
+            }
+            
+            .about-content {
+                flex-direction: column;
+            }
+            
+            .section-title h2 {
+                font-size: 30px;
+            }
+        }
+
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            padding: 0 20px 20px;
+        }
+
+        .social-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .social-button i {
+            margin-right: 8px;
+        }
+
+        .facebook-btn {
+            background-color: #1877f2;
+        }
+
+        .whatsapp-btn {
+            background-color: #25d366;
+        }
+
+        .social-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }

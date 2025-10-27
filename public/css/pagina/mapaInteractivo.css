@@ -1,0 +1,183 @@
+ :root {
+        --nelva-primary: #2c3e50;
+        --nelva-secondary: #2e5aeb;
+        --nelva-accent: #3498db;
+        --nelva-light: #ecf0f1;
+        --nelva-dark: #2c3e50;
+        --nelva-text: #333;
+        --nelva-text-light: #7f8c8d;
+    }
+
+    .nelva-container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0;
+    }
+
+    /* Parallax Hero Section */
+    .nelva-parallax-hero {
+        width: 100vw;
+        left: 50%;
+        margin-left: -50vw;
+        position: relative;
+        background-image: url('../images/atractivos/mazunte1.png');
+        background-attachment: fixed;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .nelva-parallax-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(44, 62, 80, 0.7);
+    }
+
+    .nelva-parallax-content {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+    }
+
+    .nelva-main-title {
+        font-size: 2.8rem;
+        color: white;
+        margin-bottom: 15px;
+        font-weight: 700;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .nelva-hero-subtitle {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.9);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Map Display Section */
+    .nelva-map-display {
+        margin: 40px auto 80px;
+        max-width: 800px; /* Hacemos el contenedor más estrecho */
+        width: 90%;
+    }
+
+    .nelva-map-wrapper {
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 40px;
+    }
+
+    .nelva-iframe-map {
+        border: 0;
+        border-radius: 8px;
+        display: block;
+    }
+
+    .nelva-map-actions {
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .nelva-action-title {
+        font-size: 1.8rem;
+        color: var(--nelva-dark);
+        margin-bottom: 15px;
+    }
+
+    .nelva-action-text {
+        font-size: 1.1rem;
+        color: var(--nelva-text-light);
+        margin-bottom: 30px;
+    }
+
+    .nelva-primary-button {
+        display: inline-block;
+        background-color: var(--nelva-secondary);
+        color: white;
+        padding: 14px 35px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+    }
+
+    .nelva-primary-button:hover {
+        background-color: #2348c5;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1024px) {
+        .nelva-parallax-hero {
+            background-attachment: scroll;
+            min-height: 350px;
+        }
+        
+        .nelva-main-title {
+            font-size: 2.4rem;
+        }
+        
+        .nelva-map-display {
+            max-width: 700px;
+        }
+        
+        .nelva-iframe-map {
+            height: 600px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .nelva-main-title {
+            font-size: 2rem;
+        }
+        
+        .nelva-map-display {
+            max-width: 90%;
+            width: 90%;
+        }
+        
+        .nelva-iframe-map {
+            height: 500px;
+        }
+        
+        .nelva-parallax-hero {
+            min-height: 300px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .nelva-iframe-map {
+            height: 400px;
+        }
+        
+        .nelva-main-title {
+            font-size: 1.8rem;
+        }
+        
+        .nelva-hero-subtitle {
+            font-size: 1rem;
+        }
+        
+        .nelva-action-title {
+            font-size: 1.5rem;
+        }
+        
+        .nelva-primary-button {
+            padding: 12px 25px;
+            font-size: 1rem;
+        }
+    }
