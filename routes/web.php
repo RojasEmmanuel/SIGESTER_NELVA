@@ -28,6 +28,10 @@ Route::get('/asesores', [InicioClientController::class, 'Asesores'])->name('ases
 Route::get('/atractivos', [InicioClientController::class, 'Atractivos'])->name('atractivos');
 Route::get('/mapaInteractivo', [InicioClientController::class, 'MapaInteractivo'])->name('mapa-interactivo');
 
+Route::get('/mazunte', [InicioClientController::class, 'mazunte'])->name('mazunte');
+Route::get('/salinaCruz', [InicioClientController::class, 'salinaCruz'])->name('salinaCruz');
+Route::get('/tonameca', [InicioClientController::class, 'tonameca'])->name('tonameca');
+
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Rutas protegidas por el middleware 'auth'
