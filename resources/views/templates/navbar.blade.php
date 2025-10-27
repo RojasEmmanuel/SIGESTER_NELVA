@@ -387,7 +387,7 @@
             
             <div class="nav-main-content" id="navMainContent">
                 <div class="nav-links" id="navLinks">
-                    <a href="/">Inicio</a>
+                    <a href="/inicio">Inicio</a>
                     <a href="/nosotros">Nosotros</a>
                     <a href="/servicios">Servicios</a>
                     <a href="/contacto">Contacto</a>

@@ -1,5 +1,6 @@
 <?= view('templates/navbar', ['title' => 'Más - Nelva Bienes Raíces']) ?>
 <link href="{{ asset('css/pagina/mas.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="news-section">
     <div class="news-container">

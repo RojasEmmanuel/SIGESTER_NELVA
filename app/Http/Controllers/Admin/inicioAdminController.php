@@ -21,8 +21,8 @@ class inicioAdminController extends Controller
         $totalLotes = Lote::count();
 
         // Obtener fraccionamientos activos con sus estadísticas de lotes
-        $fraccionamientos = Fraccionamiento::where('estatus', true)
-            ->withCount([
+        $fraccionamientos = Fraccionamiento::
+            withCount([
                 'lotes as lotes_disponibles' => function($query) {
                     $query->where('estatus', 'disponible');
                 },
