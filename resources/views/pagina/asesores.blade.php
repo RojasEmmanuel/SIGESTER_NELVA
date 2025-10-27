@@ -3,8 +3,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('css/pagina/asesores.css') }}">
-</head>
-<body>
+
 <div class="container">
     <div class="header">
         <h1>Nuestros Asesores</h1>
@@ -31,16 +30,19 @@
     </div>
     
     <div class="asesores-grid" id="asesoresContainer">
-        <!-- Los asesores se cargarán dinámicamente aquí -->
+        <!-- Los asesores se renderizan dinámicamente aquí -->
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     const filterButtons = document.querySelectorAll('.filter-btn');
     const searchInput = document.getElementById('searchInput');
     const asesoresContainer = document.getElementById('asesoresContainer');
     
+    // Datos de asesores inyectados desde el controlador
+    const asesores = @json($asesores);
+
     // Función para obtener parámetros de la URL
     function getUrlParameter(name) {
         name = name.replace(/[\[\]]/g, '\\$&');
@@ -59,28 +61,6 @@
             [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
         }
         return newArray;
-    }
-
-    // Función para parsear CSV
-    function parseCSV(csv) {
-        const lines = csv.split('\n');
-        const headers = lines[0].split(',').map(h => h.trim());
-        const result = [];
-        
-        for (let i = 1; i < lines.length; i++) {
-            if (!lines[i]) continue;
-            
-            const obj = {};
-            const currentline = lines[i].split(',');
-            
-            for (let j = 0; j < headers.length; j++) {
-                obj[headers[j]] = currentline[j] ? currentline[j].trim() : '';
-            }
-            
-            result.push(obj);
-        }
-        
-        return result;
     }
 
     // Función para formatear número de teléfono
@@ -116,7 +96,7 @@
         let html = '';
         
         asesoresFiltrados.forEach(asesor => {
-            const nombreCompleto = `${asesor.nombre} ${asesor.apellido_paterno} ${asesor.apellido_materno}`;
+            const nombreCompleto = `${asesor.nombre} ${asesor.apellido_paterno} ${asesor.apellido_materno}`.trim();
             const zona = asesor.zona.toLowerCase();
             const iniciales = `${asesor.nombre.charAt(0)}${asesor.apellido_paterno.charAt(0)}`;
             
@@ -161,7 +141,7 @@
     }
 
     // Función para configurar el filtrado
-    function setupFiltering(asesores) {
+    function setupFiltering() {
         const asesorCards = () => document.querySelectorAll('.asesor-card');
         
         function filterAsesores() {
@@ -225,44 +205,21 @@
         searchInput.addEventListener('input', filterAsesores);
     }
 
-    // Cargar los datos al iniciar
-    async function loadAsesoresData() {
-        try {
-            const response = await fetch('/asesores.csv');
-            const csvData = await response.text();
-            const asesores = parseCSV(csvData);
-            
-            // Obtener filtro inicial de la URL
-            const initialFilter = getUrlParameter('zona');
-            
-            // Renderizar con filtro inicial
-            renderAsesores(asesores, initialFilter);
-            
-            // Configurar filtros y búsqueda
-            setupFiltering(asesores);
-            
-            // Activar el botón de filtro correspondiente
-            if (initialFilter) {
-                const filterBtn = document.querySelector(`.filter-btn[data-filter="${initialFilter}"]`);
-                if (filterBtn) {
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    filterBtn.classList.add('active');
-                }
-            }
-        } catch (error) {
-            console.error('Error al cargar los datos de los asesores:', error);
-            asesoresContainer.innerHTML = `
-                <div class="no-results">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h3>Error al cargar los datos</h3>
-                    <p>No se pudieron cargar los datos de los asesores. Por favor intenta más tarde.</p>
-                </div>
-            `;
+    // Renderizar asesores al cargar la página
+    const initialFilter = getUrlParameter('zona');
+    renderAsesores(asesores, initialFilter);
+    
+    // Configurar filtros y búsqueda
+    setupFiltering();
+    
+    // Activar el botón de filtro correspondiente
+    if (initialFilter) {
+        const filterBtn = document.querySelector(`.filter-btn[data-filter="${initialFilter}"]`);
+        if (filterBtn) {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            filterBtn.classList.add('active');
         }
     }
-    
-    // Iniciar la carga de datos
-    loadAsesoresData();
 });
 </script>
 

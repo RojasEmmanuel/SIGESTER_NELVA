@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 
 class InicioClientController extends Controller
 {
-   
     public function index()
     {
         // Obtener fraccionamientos activos agrupados por zona
@@ -24,7 +23,7 @@ class InicioClientController extends Controller
             'title' => 'Nelva Bienes Raíces'
         ]);
     }
-
+    
     public function Atractivos()
     {
         return view('pagina.atractivos', [
