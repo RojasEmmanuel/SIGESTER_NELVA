@@ -73,4 +73,25 @@ class InicioClientController extends Controller
             'title' => 'Nosotros - Nelva Bienes Raíces'
         ]);
     }
+
+    public function mazunte()
+    {
+        return view('inversiones.mazunte', [
+            'title' => 'Mazunte - Nelva Bienes Raíces'
+        ]);
+    }
+
+    public function salinaCruz()
+    {
+        return view('inversiones.salinaCruz', [
+            'title' => 'Salina Cruz - Nelva Bienes Raíces'
+        ]);
+    }
+
+    public function tonameca()
+    {
+        return view('inversiones.tonameca', [
+            'title' => 'Tonameca - Nelva Bienes Raíces'
+        ]);
+    }
 }
