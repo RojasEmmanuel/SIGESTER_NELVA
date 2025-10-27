@@ -21,8 +21,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Rutas protegidas por el middleware 'auth'
 Route::middleware('auth')->group(function () {
-
-
     Route::get('/ingeniero/dashboard', function () {
         return view('ingeniero.dashboard');
     })->name('ingeniero.dashboard');
@@ -60,15 +58,12 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/asesor/apartados/{id}/upload-ticket', [ApartadoController::class, 'uploadTicket'])->name('asesor.apartados.upload-ticket');
     Route::get('/asesor/fraccionamiento/{idFraccionamiento}/archivo/{idArchivo}/download', [AdminFraccionamientoController::class, 'downloadArchivo'])->name('asesor.fraccionamiento.download-archivo');
-
-  
   
     Route::prefix('cobranza')->name('cobranza.')->group(function () {
         Route::get('/ventas', [CobranzaVentaController::class, 'index'])->name('ventas.index');
         Route::get('/ventas/{id_venta}', [CobranzaVentaController::class, 'show'])->name('ventas.show');
         Route::get('/ventas/{id_venta}/contrato', [CobranzaVentaController::class, 'generarContrato'])->name('ventas.contrato');
     });
-
 
    Route::prefix('admin')->name('admin.')->group(function () {
 
@@ -90,7 +85,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/fraccionamiento/{id}/lote/{numeroLote}', [AdminFraccionamientoController::class, 'getLoteDetails'])->name('fraccionamiento.lote-details');
         Route::get('/fraccionamiento/{id}/geojson', [AdminFraccionamientoController::class, 'getGeoJsonConEstatus'])->name('fraccionamiento.geojson');
     
-
         //crear un nuevo fraccionamiento con su info
         Route::get('/fraccionamientos/create', [AdminFraccionamientoController::class, 'create'])->name('fraccionamiento.create');
         Route::post('/fraccionamientos', [AdminFraccionamientoController::class, 'store'])->name('fraccionamiento.store');
@@ -104,7 +98,6 @@ Route::middleware('auth')->group(function () {
         Route::patch('/usuarios/{id}/inactivate', [UsuarioController::class, 'inactivate'])->name('usuarios.inactivate');
         Route::patch('/usuarios/{id}/activate', [UsuarioController::class, 'activate'])->name('usuarios.activate');
 
-
         // RUTAS PARA los apartados pendientes
         Route::get('/apartados-pendientes', [AdminApartadoController::class, 'index'])->name('apartados-pendientes.index');
         Route::get('/apartados-pendientes/{id}', [AdminApartadoController::class, 'show'])->name('apartados-pendientes.show');
@@ -115,13 +108,8 @@ Route::middleware('auth')->group(function () {
         
         // Detalle de una venta específica
         Route::get('/ventas/{id_venta}', [AdminVentasController::class, 'show'])->name('ventas.show');
-        
-        // Gestión de tickets (vista específica)
         Route::get('/ventas/{id_venta}/ticket', [AdminVentasController::class, 'ticket'])->name('ventas.ticket');
-        
-        // Actualizar estatus del ticket
         Route::put('/ventas/{id_venta}/ticket-estatus', [AdminVentasController::class, 'updateTicketEstatus'])->name('ventas.update-ticket-estatus');
-        // Actualizar estatus de la venta
         Route::put('/ventas/{id_venta}/venta-estatus', [AdminVentasController::class, 'updateVentaEstatus'])->name('ventas.update-venta-estatus');
     });
 });
