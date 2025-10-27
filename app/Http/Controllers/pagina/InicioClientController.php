@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\pagina;
 
 use App\Models\Fraccionamiento;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -38,9 +39,28 @@ class InicioClientController extends Controller
         ]);
     }
     
-    public function Asesores()
+   // Método para la página de asesores
+    public function asesores()
     {
+        // Obtener los asesores activos con información en asesores_info
+        $asesores = Usuario::where('estatus', 1)
+            ->has('asesorInfo') // Solo usuarios con registro en asesores_info
+            ->with('asesorInfo') // Cargar la relación asesorInfo
+            ->get()
+            ->map(function ($usuario) {
+                return [
+                    'nombre' => $usuario->nombre,
+                    'apellido_paterno' => $usuario->apellido_paterno ?? '',
+                    'apellido_materno' => $usuario->apellido_materno ?? '',
+                    'telefono' => $usuario->telefono,
+                    'zona' => $usuario->asesorInfo->zona,
+                    'facebook_url' => $usuario->asesorInfo->path_facebook,
+                    'foto_url' => $usuario->asesorInfo->path_fotografia ? asset('storage/' . $usuario->asesorInfo->path_fotografia) : null,
+                ];
+            });
+
         return view('pagina.asesores', [
+            'asesores' => $asesores,
             'title' => 'Asesores - Nelva Bienes Raíces'
         ]);
     }
