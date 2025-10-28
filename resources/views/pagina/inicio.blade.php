@@ -96,6 +96,7 @@
             <div class="zone-tab" data-zone="istmo">Istmo</div>
         </div>
         
+        
         <!-- Contenido de la Costa -->
         <div class="zone-content active" id="costa-zone">
             <div class="projects-grid">
@@ -109,13 +110,13 @@
                             <span>{{ $fraccionamiento->ubicacion }}</span>
                         </div>
                         <div class="project-overlay">
-                            <a href="/{{ Str::slug($fraccionamiento->nombre) }}" class="project-btn">Ver Proyecto</a>
+                            <a href="{{ route('pagina.fraccionamiento.show', $fraccionamiento->id_fraccionamiento) }}" class="project-btn">Ver Proyecto</a>
                         </div>
                     </div>
                 @endforeach
             </div>
         </div>
-        
+
         <!-- Contenido del Istmo -->
         <div class="zone-content" id="istmo-zone">
             <div class="projects-grid">
@@ -129,12 +130,14 @@
                             <span>{{ $fraccionamiento->ubicacion }}</span>
                         </div>
                         <div class="project-overlay">
-                            <a href="/{{ Str::slug($fraccionamiento->nombre) }}" class="project-btn">Ver Proyecto</a>
+                            <a href="{{ route('pagina.fraccionamiento.show', $fraccionamiento->id_fraccionamiento) }}" class="project-btn">Ver Proyecto</a>
                         </div>
                     </div>
                 @endforeach
             </div>
         </div>
+
+
     </div>
 </section>
 
