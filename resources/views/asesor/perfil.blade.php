@@ -6,15 +6,13 @@
         'Ingeniero' => 'ingeniero.navbar',
     ];
 
-    // Obtener el usuario autenticado directamente (asumiendo Auth::user() es instancia de App\Models\Usuario)
     $usuario = Auth::user();
     
-    // Cargar la relación 'tipo' si no está ya cargada para evitar errores
     if (! $usuario->relationLoaded('tipo')) {
         $usuario->load('tipo');
     }
     
-    $tipoNombre = $usuario->tipo->tipo ?? 'Asesor'; // Fallback a Asesor si no hay tipo
+    $tipoNombre = $usuario->tipo->tipo ?? 'Asesor';
     $navbar = $navbarMap[$tipoNombre] ?? 'asesor.navbar';
 @endphp
 
@@ -27,7 +25,7 @@
 @endpush
 
 @section('content')
-<body class="profile-page-body">
+<div class="profile-page-body">
     <div class="profile-page-container">
         <div class="profile-page-card">
             <div class="profile-page-header">
@@ -36,14 +34,12 @@
             </div>
             
             <div class="profile-page-body-content">
-                <!-- Mensaje de éxito -->
                 @if(session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
                     </div>
                 @endif
 
-                <!-- Errores de validación -->
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0">
@@ -56,80 +52,101 @@
 
                 <form id="profilePageForm" action="{{ route('asesor.perfil.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="profile-page-row">
-                        <div class="profile-page-col profile-page-col-sidebar">
-                            <div class="profile-page-img-container">
-                                <img 
-                                    src="{{ $asesorInfo && $asesorInfo->path_fotografia ? asset('storage/' . $asesorInfo->path_fotografia) : 'https://ui-avatars.com/api/?name=' . urlencode($usuario->nombre) . '&background=1e478a&color=fff&size=120' }}" 
-                                    alt="Foto de perfil" 
-                                    class="profile-page-img" 
-                                    id="profilePageImage">
+                    
+                    <div class="profile-vertical-layout">
+                        <!-- Sección Superior: Foto + Información Básica -->
+                        <div class="profile-top-section">
+                            <div class="profile-photo-compact">
+                                <div class="profile-photo-wrapper">
+                                    <img 
+                                        src="{{ $asesorInfo && $asesorInfo->path_fotografia ? asset('storage/' . $asesorInfo->path_fotografia) : 'https://ui-avatars.com/api/?name=' . urlencode($usuario->nombre) . '&background=1e478a&color=fff&size=100' }}" 
+                                        alt="Foto de perfil" 
+                                        class="profile-photo-img" 
+                                        id="profilePageImage">
+                                    <div class="profile-photo-overlay">
+                                        <button type="button" class="profile-photo-change-btn">
+                                            <i class="fas fa-camera"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="file" id="profilePageImageUpload" name="foto" accept="image/*" class="d-none">
+                                <div class="profile-photo-meta">
+                                    <button type="button" class="profile-upload-btn" onclick="document.getElementById('profilePageImageUpload').click()">
+                                        <i class="fas fa-camera me-1"></i>Cambiar
+                                    </button>
+                                    <small class="profile-text-muted">JPG, PNG, GIF • 2MB max</small>
+                                </div>
                             </div>
-                            <div class="profile-page-file-upload">
-                                <button type="button" class="profile-page-file-upload-btn">
-                                    <i class="fas fa-camera me-2"></i>Cambiar foto
-                                </button>
-                                <input type="file" id="profilePageImageUpload" name="foto" accept="image/*">
+
+                            <div class="profile-basic-info">
+                                <div class="profile-field-row">
+                                    <div class="profile-field-compact">
+                                        <label for="profilePageNombre" class="profile-field-label">Nombre completo *</label>
+                                        <input type="text" class="profile-field-input" id="profilePageNombre" name="nombre" value="{{ old('nombre', $usuario->nombre) }}" required>
+                                    </div>
+                                    
+                                    <div class="profile-field-compact">
+                                        <label for="profilePageUsuarioNombre" class="profile-field-label">Usuario *</label>
+                                        <input type="text" class="profile-field-input" id="profilePageUsuarioNombre" name="usuario_nombre" value="{{ old('usuario_nombre', $usuario->usuario_nombre) }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="profile-field-row">
+                                    <div class="profile-field-compact">
+                                        <label for="profilePageEmail" class="profile-field-label">Email *</label>
+                                        <input type="email" class="profile-field-input" id="profilePageEmail" name="email" value="{{ old('email', $usuario->email) }}" required>
+                                    </div>
+
+                                    <div class="profile-field-compact">
+                                        <label for="profilePageTelefono" class="profile-field-label">Teléfono</label>
+                                        <input type="tel" class="profile-field-input" id="profilePageTelefono" name="telefono" value="{{ old('telefono', $usuario->telefono) }}">
+                                    </div>
+                                    
+                                </div>
                             </div>
-                            <small class="profile-page-text-muted">Formatos: JPG, PNG, GIF. Máx. 2MB</small>
                         </div>
-                        
-                        <div class="profile-page-col">
-                            <div class="profile-page-row">
-                                <div class="profile-page-col">
-                                    <label for="profilePageNombre" class="profile-page-form-label">Nombre completo</label>
-                                    <input type="text" class="profile-page-form-control" id="profilePageNombre" name="nombre" value="{{ old('nombre', $usuario->nombre) }}" required>
+
+                        <!-- Sección Media: Información Profesional -->
+                        <div class="profile-middle-section">
+                            <div class="profile-professional-grid">
+                                <div class="profile-field-group">
+                                    <label for="profilePageZona" class="profile-field-label">Zona asignada</label>
+                                    <div class="profile-field-with-help">
+                                        <input type="text" class="profile-field-input" id="profilePageZona" value="{{ $asesorInfo->zona ?? 'No asignada' }}" disabled>
+                                        <small class="profile-field-help">Contacta al administrador para cambios</small>
+                                    </div>
+                                    <input type="hidden" name="zona" value="{{ $asesorInfo->zona ?? '' }}">
                                 </div>
-                                <div class="profile-page-col">
-                                    <label for="profilePageUsuarioNombre" class="profile-page-form-label">Nombre de usuario</label>
-                                    <input type="text" class="profile-page-form-control" id="profilePageUsuarioNombre" name="usuario_nombre" value="{{ old('usuario_nombre', $usuario->usuario_nombre) }}" required>
-                                </div>
-                            </div>
-                            
-                            <div class="profile-page-row">
-                                <div class="profile-page-col">
-                                    <label for="profilePageTelefono" class="profile-page-form-label">Teléfono</label>
-                                    <input type="tel" class="profile-page-form-control" id="profilePageTelefono" name="telefono" value="{{ old('telefono', $usuario->telefono) }}">
-                                </div>
-                                <div class="profile-page-col">
-                                    <label for="profilePageEmail" class="profile-page-form-label">Correo electrónico</label>
-                                    <input type="email" class="profile-page-form-control" id="profilePageEmail" name="email" value="{{ old('email', $usuario->email) }}" required>
-                                </div>
-                            </div>
-                            
-                            <div class="profile-page-row">
-                                <div class="profile-page-col">
-                                    <label for="profilePageZona" class="profile-page-form-label">Zona (solo lectura)</label>
-                                    <input type="text" class="profile-page-form-control" id="profilePageZona" name="zona" value="{{ $asesorInfo->zona ?? 'No asignada' }}" disabled>
-                                    <small class="profile-page-text-muted">Contacta al administrador para cambiar tu zona</small>
-                                </div>
-                            </div>
-                            
-                            <div class="profile-page-row">
-                                <div class="profile-page-col">
-                                    <label for="profilePageFacebook" class="profile-page-form-label">Perfil de Facebook</label>
-                                    <div class="profile-page-social-input">
-                                        <span class="input-group-text"><i class="fab fa-facebook"></i></span>
-                                        <input type="url" class="profile-page-form-control" id="profilePageFacebook" name="path_facebook" value="{{ old('path_facebook', $asesorInfo->path_facebook ?? '') }}" placeholder="https://facebook.com/tu-usuario">
+                                
+                                <div class="profile-field-group">
+                                    <label for="profilePageFacebook" class="profile-field-label">Facebook</label>
+                                    <div class="profile-social-input">
+                                        <i class="fab fa-facebook profile-social-icon"></i>
+                                        <input type="url" class="profile-field-input with-icon" id="profilePageFacebook" name="path_facebook" value="{{ old('path_facebook', $asesorInfo->path_facebook ?? '') }}" placeholder="https://facebook.com/tu-usuario">
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="profile-page-divider"></div>
-                            
-                            <!-- Información adicional sin campo de contraseña -->
-                            <div class="profile-page-row">
-                                <div class="profile-page-col">
-                                    <p class="profile-page-text-muted" style="font-style: italic;">
-                                        <i class="fas fa-info-circle me-1"></i>
-                                        Para cambiar tu contraseña, contacta al administrador del sistema.
-                                    </p>
+                        </div>
+
+                        <!-- Sección Inferior: Seguridad y Acciones -->
+                        <div class="profile-bottom-section">
+                            <div class="profile-security-compact">
+                                <div class="profile-security-content">
+                                    <i class="fas fa-shield-alt profile-security-icon"></i>
+                                    <div>
+                                        <p class="profile-security-title">Información de Seguridad</p>
+                                        <p class="profile-security-text">Para cambiar tu contraseña, contacta al administrador del sistema.</p>
+                                    </div>
                                 </div>
                             </div>
-                            
-                            <div class="profile-page-actions">
-                                <a href="{{ route('asesor.perfil.index') }}" class="profile-page-btn profile-page-btn-outline">Cancelar</a>
-                                <button type="submit" class="profile-page-btn profile-page-btn-primary">Guardar cambios</button>
+
+                            <div class="profile-actions-compact">
+                                <a href="{{ route('asesor.perfil.index') }}" class="profile-btn profile-btn-outline">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </a>
+                                <button type="submit" class="profile-btn profile-btn-primary">
+                                    <i class="fas fa-save me-2"></i>Guardar cambios
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -137,36 +154,34 @@
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Previsualización de imagen
-            const imageUpload = document.getElementById('profilePageImageUpload');
-            const profileImage = document.getElementById('profilePageImage');
-            const uploadButton = document.querySelector('.profile-page-file-upload-btn');
-            
-            uploadButton.addEventListener('click', function() {
-                imageUpload.click();
-            });
-            
-            imageUpload.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    if (file.size > 2 * 1024 * 1024) {
-                        alert('El archivo es demasiado grande. El tamaño máximo permitido es 2MB.');
-                        this.value = '';
-                        return;
-                    }
-                    
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        profileImage.src = event.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const imageUpload = document.getElementById('profilePageImageUpload');
+        const profileImage = document.getElementById('profilePageImage');
+        const uploadButton = document.querySelector('.profile-photo-change-btn');
+        
+        uploadButton.addEventListener('click', function() {
+            imageUpload.click();
         });
-    </script>
-</body>
+        
+        imageUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('El archivo es demasiado grande. El tamaño máximo permitido es 2MB.');
+                    this.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    profileImage.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+</script>
 @endsection
