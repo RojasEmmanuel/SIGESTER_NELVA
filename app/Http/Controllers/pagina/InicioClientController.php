@@ -42,10 +42,9 @@ class InicioClientController extends Controller
    // Método para la página de asesores
     public function asesores()
     {
-        // Obtener los asesores activos con información en asesores_info
         $asesores = Usuario::where('estatus', 1)
-            ->has('asesorInfo') // Solo usuarios con registro en asesores_info
-            ->with('asesorInfo') // Cargar la relación asesorInfo
+            ->has('asesorInfo') 
+            ->with('asesorInfo') 
             ->get()
             ->map(function ($usuario) {
                 return [
