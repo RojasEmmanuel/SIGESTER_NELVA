@@ -3,6 +3,7 @@
 <head>
     <!-- Incluir Font Awesome para los iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <link rel="icon" href="{{ asset('/images/favicon.ico') }}" type="image/x-icon">
     <title>{{ $title }}</title>
     <style>

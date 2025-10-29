@@ -2,6 +2,7 @@
 
 <!-- Agregar CSS de Mapbox -->
 <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+
 <link href="{{ asset('css/pagina/fraccionamiento.css') }}" rel="stylesheet">
 <!-- Configuración global para los scripts -->
 <script>
@@ -532,39 +533,41 @@
 </section>
 @endif
 
-<!-- Modal de Cálculo de Costo - ADAPTADO PARA CLIENTE -->
-<div class="modal-fraccionamiento" id="calculationModal">
+
+
+<!-- Modal de Cálculo de Costo - VERSIÓN CORREGIDA -->
+<div class="modal-fraccionamiento modal-compact" id="calculationModal">
     <div class="modal-content-fraccionamiento">
-        <button class="close-modal-fraccionamiento" id="closeCalculationModal">&times;</button>
+        <button class="close-modal-fraccionamiento" id="closeCalculationModal">✕</button>
         <h2 class="modal-title-fraccionamiento">Consultar Lote</h2>
         
         <form id="calculationForm">
             <div class="form-group">
-                <label for="lotNumber" class="form-label">Número de Lote</label>
-                <input type="text" id="lotNumber" class="form-control" required placeholder="Ej. 12, 5, etc.">
+                <input type="text" id="lotNumber" class="form-control" required placeholder="Ingresa número de lote (ej: 12)">
                 <div id="lotError" class="error-message" style="display: none;"></div>
             </div>
             
             <div class="form-group">
                 <button type="button" class="btn btn-primary" id="calculateBtn" style="width: 100%;">
-                    <i class="fas fa-calculator"></i> Consultar Lote
+                    🔍 Buscar Lote
                 </button>
             </div>
             
             <div id="lotDetails" class="lot-details-container" style="display: none;">
+                <!-- Información básica en grid 2x2 optimizado -->
                 <div class="lot-details-content">
-                    <h3 class="info-title" style="font-size: 1.3rem; margin-bottom: 20px;">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Detalles del Lote</span>
-                    </h3>
+                    <div class="lot-details-title">
+                        📋 Detalles del Lote
+                    </div>
+                    
                     <div class="lot-details-grid">
                         <div class="lot-detail-item">
-                            <div class="lot-detail-label">Número de Lote</div>
+                            <div class="lot-detail-label">Lote #</div>
                             <div class="lot-detail-value" id="lotNumberDisplay">-</div>
                         </div>
                         <div class="lot-detail-item">
                             <div class="lot-detail-label">Estatus</div>
-                            <div class="lot-detail-value" id="lotStatus">
+                            <div class="lot-detail-value">
                                 <span class="status-badge" id="statusBadge">-</span>
                             </div>
                         </div>
@@ -573,55 +576,76 @@
                             <div class="lot-detail-value" id="lotBlock">-</div>
                         </div>
                         <div class="lot-detail-item">
-                            <div class="lot-detail-label">Área total</div>
+                            <div class="lot-detail-label">Área Total</div>
                             <div class="lot-detail-value" id="lotArea">- m²</div>
                         </div>
-                        <div class="lot-detail-item">
-                            <div class="lot-detail-label">Norte</div>
-                            <div class="lot-detail-value" id="lotNorth">- m</div>
+                    </div>
+                    
+                    <!-- Medidas ultra compactas - CORREGIDAS -->
+                    <div class="measures-section">
+                        <div class="measures-title">
+                            📐 Medidas
                         </div>
-                        <div class="lot-detail-item">
-                            <div class="lot-detail-label">Sur</div>
-                            <div class="lot-detail-value" id="lotSouth">- m</div>
-                        </div>
-                        <div class="lot-detail-item">
-                            <div class="lot-detail-label">Oriente</div>
-                            <div class="lot-detail-value" id="lotEast">- m</div>
-                        </div>
-                        <div class="lot-detail-item">
-                            <div class="lot-detail-label">Poniente</div>
-                            <div class="lot-detail-value" id="lotWest">- m</div>
+                        <div class="measures-grid">
+                            <div class="measure-item">
+                                <div class="measure-direction north">
+                                    Norte
+                                </div>
+                                <div class="measure-value" id="lotNorth">- m</div>
+                            </div>
+                            <div class="measure-item">
+                                
+                                <div class="measure-value" id="lotSouth">- m</div>
+                            </div>
+                            <div class="measure-item">
+                                <div class="measure-direction east">
+                                    Oriente
+                                </div>
+                                <div class="measure-value" id="lotEast">- m</div>
+                            </div>
+                            <div class="measure-item">
+                                <div class="measure-direction west">
+                                    Poniente
+                                </div>
+                                <div class="measure-value" id="lotWest">- m</div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
+                <!-- Cálculo de costo ultra compacto -->
                 <div class="calculation-result">
-                    <h3 class="info-title" style="font-size: 1.3rem; margin-bottom: 20px;">
-                        <i class="fas fa-dollar-sign"></i>
-                        <span>Cálculo de Costo</span>
-                    </h3>
+                    <div class="calculation-title">
+                        🧮 Cálculo de Costo
+                    </div>
                     <div class="calculation-item">
-                        <div class="calculation-label">Precio por m²</div>
-                        <div class="calculation-value">${{ number_format($datosFraccionamiento['precio_metro_cuadrado'] ?? 0, 2) }} MXN</div>
+                        <div class="calculation-label">Precio m²</div>
+                        <div class="calculation-value">${{ number_format($datosFraccionamiento['precio_metro_cuadrado'] ?? 0, 2) }}</div>
+                    </div>
+                    <div class="calculation-item">
+                        <div class="calculation-label">Área total</div>
+                        <div class="calculation-value" id="calculationArea">0 m²</div>
                     </div>
                     <div class="calculation-item highlight">
-                        <div class="calculation-label">Costo total</div>
+                        <div class="calculation-label">Total</div>
                         <div class="calculation-value" id="totalCost">$0 MXN</div>
                     </div>
                 </div>
                 
+                <!-- Botones de acción mini - SIN ICONOS -->
                 <div class="modal-actions">
                     <button type="button" class="btn btn-outline" id="closeCalculationResult">
                         Cerrar
                     </button>
                     <button type="button" class="btn btn-primary" id="consultAnotherLot">
-                        <i class="fas fa-search"></i> Consultar Otro Lote
+                        Otro Lote
                     </button>
                 </div>
             </div>
         </form>
     </div>
 </div>
+
 
 <!-- Lightbox para Galería -->
 <div class="lightbox" id="lightbox">
@@ -803,6 +827,7 @@
         function updateLotDetails(lote) {
             console.log('🔄 Actualizando UI con datos del lote:', lote);
             
+            // Actualizar información básica
             const elements = {
                 'lotNumberDisplay': lote.numeroLote || lote.numero || 'N/A',
                 'lotBlock': lote.manzana || 'N/A',
@@ -856,6 +881,14 @@
             const pricePerM2 = {{ $datosFraccionamiento['precio_metro_cuadrado'] ?? 0 }};
             const areaTotal = parseFloat(lote.area_total || lote.area_metros || 0);
             const totalCost = areaTotal * pricePerM2;
+            
+            // Actualizar área en cálculo
+            const calculationArea = document.getElementById('calculationArea');
+            if (calculationArea) {
+                calculationArea.textContent = `${areaTotal} m²`;
+            }
+            
+            // Actualizar costo total
             const totalCostElement = document.getElementById('totalCost');
             if (totalCostElement) {
                 totalCostElement.textContent = `$${totalCost.toLocaleString('es-MX', {
