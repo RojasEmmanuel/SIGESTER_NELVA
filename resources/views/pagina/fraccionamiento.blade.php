@@ -38,7 +38,11 @@
 
 <!-- Hero Section -->
 <section class="hero">
-    <div class="hero-bg"></div>
+    @if(isset($datosFraccionamiento['hero_image']) && !empty($datosFraccionamiento['hero_image']))
+    <div class="hero-bg" style="background-image: url('{{ asset('storage/' . $datosFraccionamiento['hero_image']) }}')"></div>
+    @else
+    <div class="hero-bg" style="background-image: url('{{ asset('images/default-hero.jpg') }}')"></div>
+    @endif
     <div class="hero-content">
         <h1>{{ $datosFraccionamiento['nombre'] }}</h1>
         <div class="hero-location">
