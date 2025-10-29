@@ -15,31 +15,39 @@
     <nav class="navbar-desktop">
         <div class="navbar-desktop-container">
             <div class="logo">
-                <img src="/images/Logo.png" width="200px">
+                <img src="/images/Logo.png" width="200px" alt="Nelva Bienes Raíces">
             </div>
-            <div class="nav-links">
-                <a href="{{ route('admin.index') }}" class="{{ Request::is('inicio') ? 'active' : '' }}">
+            <div class="nav-links-desktop">
+
+                <!-- Principal -->
+                <a href="{{ route('admin.index') }}" class="{{ Request::is('admin/inicio*', 'inicio*') ? 'active' : '' }}">
                     <i class="fas fa-home"></i> Inicio
                 </a>
-                <a href="{{ url('asesor/apartados') }}" class="{{ Request::is('apartados') ? 'active' : '' }}">
-                    <i class="fas fa-bookmark"></i> Apartados
-                </a>
-                <a href="{{ url('asesor/ventas') }}" class="{{ Request::is('ventas') ? 'active' : '' }}">
-                    <i class="fas fa-dollar-sign"></i> Ventas
-                </a>
-                <a href="{{ route('asesor.perfil.index') }}" class="{{ Request::routeIs('asesor.perfil') ? 'active' : '' }}">
+                <a href="{{ route('asesor.perfil.index') }}" class="{{ Request::routeIs('asesor.perfil*') ? 'active' : '' }}">
                     <i class="fas fa-user-circle"></i> Perfil
                 </a>
-                <a href="{{ url('admin/usuarios') }}" class="{{ Request::is('usuarios') ? 'active' : '' }}">
+
+                <!-- Operaciones -->
+                <a href="{{ url('asesor/apartados') }}" class="{{ Request::is('asesor/apartados*') ? 'active' : '' }}">
+                    <i class="fas fa-bookmark"></i> Apartados
+                </a>
+                <a href="{{ url('asesor/ventas') }}" class="{{ Request::is('asesor/ventas*') ? 'active' : '' }}">
+                    <i class="fas fa-dollar-sign"></i> Ventas
+                </a>
+
+                <!-- Administración -->
+                <a href="{{ url('admin/usuarios') }}" class="{{ Request::is('admin/usuarios*') ? 'active' : '' }}">
                     <i class="fas fa-users"></i> Usuarios
                 </a>
-                <a href="{{ url('admin/apartados-pendientes') }}" class="{{ Request::is('apartados-pendientes') ? 'active' : '' }}">
-                    <i class="fas fa-clock"></i> Apartados pendientes
+                <a href="{{ url('admin/apartados-pendientes') }}" class="{{ Request::is('admin/apartados-pendientes*') ? 'active' : '' }}">
+                    <i class="fas fa-clock"></i> Pendientes
                 </a>
-                <a href="{{ url('admin/ventas') }}" class="{{ Request::is('ventas-pendientes') ? 'active' : '' }}">
-                    <i class="fas fa-hourglass-half"></i> Historial de Ventas
+                <a href="{{ url('admin/ventas') }}" class="{{ Request::is('admin/ventas*') ? 'active' : '' }}">
+                    <i class="fas fa-history"></i> Historial
                 </a>
-                <a href="#" id="logout-btn-desktop">
+
+                <!-- Salir -->
+                <a href="#" id="logout-btn-desktop" class="logout-link">
                     <i class="fas fa-sign-out-alt"></i> Salir
                 </a>
             </div>
@@ -49,7 +57,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
         <div class="mobile-header-container">
-            <img src="/images/Logo.png" width="150px">
+            <img src="/images/Logo.png" width="150px" alt="Nelva Bienes Raíces">
             <button class="hamburger-btn" id="hamburger-btn">
                 <i class="fas fa-bars"></i>
             </button>
@@ -63,38 +71,49 @@
                 <i class="fas fa-times"></i>
             </button>
             <div class="nav-items">
-                <a href="{{ url('asesor/inicio') }}" class="nav-item {{ Request::is('inicio') ? 'active' : '' }}">
-                    <i class="fas fa-home"></i>
-                    <span>Inicio</span>
-                </a>
-                <a href="{{ url('asesor/apartados') }}" class="nav-item {{ Request::is('apartados') ? 'active' : '' }}">
-                    <i class="fas fa-bookmark"></i>
-                    <span>Apartados</span>
-                </a>
-                <a href="{{ url('asesor/ventas') }}" class="nav-item {{ Request::is('ventas') ? 'active' : '' }}">
-                    <i class="fas fa-dollar-sign"></i>
-                    <span>Ventas</span>
-                </a>
-                <a href="{{ route('asesor.perfil.index') }}" class="nav-item {{ Request::routeIs('asesor.perfil') ? 'active' : '' }}">
-                    <i class="fas fa-user-circle"></i>
-                    <span>Perfil</span>
-                </a>
-                <a href="{{ url('asesor/usuarios') }}" class="nav-item {{ Request::is('usuarios') ? 'active' : '' }}">
-                    <i class="fas fa-users"></i>
-                    <span>Usuarios</span>
-                </a>
-                <a href="{{ url('asesor/apartados-pendientes') }}" class="nav-item {{ Request::is('apartados-pendientes') ? 'active' : '' }}">
-                    <i class="fas fa-clock"></i>
-                    <span>Apartados pendientes</span>
-                </a>
-                <a href="{{ url('admin/ventas') }}" class="nav-item {{ Request::is('ventas-pendientes') ? 'active' : '' }}">
-                    <i class="fas fa-hourglass-half"></i>
-                    <span>Historial de Ventas</span>
-                </a>
-                <a href="#" class="nav-item" id="logout-btn-mobile">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Salir</span>
-                </a>
+
+                <!-- Principal -->
+                <div class="nav-group-mobile">
+                    <span class="group-title">Principal</span>
+                    <a href="{{ route('admin.index') }}" class="nav-item {{ Request::is('admin/inicio*', 'inicio*') ? 'active' : '' }}">
+                        <i class="fas fa-home"></i> <span>Inicio</span>
+                    </a>
+                    <a href="{{ route('asesor.perfil.index') }}" class="nav-item {{ Request::routeIs('asesor.perfil*') ? 'active' : '' }}">
+                        <i class="fas fa-user-circle"></i> <span>Perfil</span>
+                    </a>
+                </div>
+
+                <!-- Operaciones -->
+                <div class="nav-group-mobile">
+                    <span class="group-title">Operaciones</span>
+                    <a href="{{ url('asesor/apartados') }}" class="nav-item {{ Request::is('asesor/apartados*') ? 'active' : '' }}">
+                        <i class="fas fa-bookmark"></i> <span>Apartados</span>
+                    </a>
+                    <a href="{{ url('asesor/ventas') }}" class="nav-item {{ Request::is('asesor/ventas*') ? 'active' : '' }}">
+                        <i class="fas fa-dollar-sign"></i> <span>Ventas</span>
+                    </a>
+                </div>
+
+                <!-- Administración -->
+                <div class="nav-group-mobile">
+                    <span class="group-title">Administración</span>
+                    <a href="{{ url('admin/usuarios') }}" class="nav-item {{ Request::is('admin/usuarios*') ? 'active' : '' }}">
+                        <i class="fas fa-users"></i> <span>Usuarios</span>
+                    </a>
+                    <a href="{{ url('admin/apartados-pendientes') }}" class="nav-item {{ Request::is('admin/apartados-pendientes*') ? 'active' : '' }}">
+                        <i class="fas fa-clock"></i> <span>Pendientes</span>
+                    </a>
+                    <a href="{{ url('admin/ventas') }}" class="nav-item {{ Request::is('admin/ventas*') ? 'active' : '' }}">
+                        <i class="fas fa-history"></i> <span>Historial</span>
+                    </a>
+                </div>
+
+                <!-- Salir -->
+                <div class="nav-group-mobile logout-group-mobile">
+                    <a href="#" class="nav-item" id="logout-btn-mobile">
+                        <i class="fas fa-sign-out-alt"></i> <span>Salir</span>
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
@@ -119,76 +138,64 @@
     </div>
 
     <script>
-        // Funcionalidad del menú hamburguesa
+        // Menú hamburguesa
         const hamburgerBtn = document.getElementById('hamburger-btn');
         const closeBtn = document.getElementById('close-btn');
         const navbarMobile = document.getElementById('navbar-mobile');
-        
-        if (hamburgerBtn && closeBtn && navbarMobile) {
-            hamburgerBtn.addEventListener('click', function() {
-                navbarMobile.classList.add('active');
-            });
-            
-            closeBtn.addEventListener('click', function() {
-                navbarMobile.classList.remove('active');
-            });
 
-            // Cerrar menú al hacer clic en un enlace
+        if (hamburgerBtn && closeBtn && navbarMobile) {
+            hamburgerBtn.addEventListener('click', () => navbarMobile.classList.add('active'));
+            closeBtn.addEventListener('click', () => navbarMobile.classList.remove('active'));
+
             document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    navbarMobile.classList.remove('active');
-                });
+                item.addEventListener('click', () => navbarMobile.classList.remove('active'));
             });
         }
 
-        // Modal de cierre de sesión
-        const logoutBtns = [
-            document.getElementById('logout-btn-desktop'), 
-            document.getElementById('logout-btn-mobile')
-        ];
+        // Modal de logout
+        const logoutBtns = [document.getElementById('logout-btn-desktop'), document.getElementById('logout-btn-mobile')];
         const modal = document.getElementById('logout-modal');
         const confirmBtn = document.getElementById('confirm-logout');
         const cancelBtn = document.getElementById('cancel-logout');
 
         if (modal && confirmBtn && cancelBtn) {
-            function showModal() {
+            const showModal = () => {
                 modal.style.display = 'block';
                 document.body.style.overflow = 'hidden';
-            }
-
-            function hideModal() {
+            };
+            const hideModal = () => {
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
-            }
+            };
 
-            logoutBtns.forEach(btn => {
-                if (btn) {
-                    btn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        showModal();
-                    });
-                }
-            });
-
+            logoutBtns.forEach(btn => btn?.addEventListener('click', e => { e.preventDefault(); showModal(); }));
             cancelBtn.addEventListener('click', hideModal);
 
-            confirmBtn.addEventListener('click', function() {
-                window.location.href = '{{ url("/") }}';
+            confirmBtn.addEventListener('click', () => {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route("logout") }}';
+                form.style.display = 'none';
+
+                const token = document.createElement('input');
+                token.type = 'hidden';
+                token.name = '_token';
+                token.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                form.appendChild(token);
+                document.body.appendChild(form);
+                form.submit();
             });
 
-            if (modal.querySelector('.modal-overlay')) {
-                modal.querySelector('.modal-overlay').addEventListener('click', hideModal);
-            }
+            modal.querySelector('.modal-overlay')?.addEventListener('click', hideModal);
 
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && modal.style.display === 'block') {
-                    hideModal();
-                }
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && modal.style.display === 'block') hideModal();
             });
         }
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     @stack('scripts')
 </body>
 </html>

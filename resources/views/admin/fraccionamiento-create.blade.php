@@ -181,7 +181,7 @@
 
         <div class="form-group2 botontesRegistro">
             <button type=";y" class="btn btn-primary btn-lg">
-                <i class="fas fa-save"></i> Crear Fraccionamiento
+                <i class="fas fa-save"></i> Crear
             </button>
             <a href="{{ url()->previous() }}" class="btn btn-outline ml-2">
                 <i class="fas fa-arrow-left"></i> Cancelar

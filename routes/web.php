@@ -17,10 +17,12 @@ use App\Http\Controllers\pagina\InicioClientController;
 use App\Http\Controllers\pagina\fraccClientController;
 
 // Rutas de autenticación
-Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
+Route::get('/', [InicioClientController::class, 'index'])->name('inicio');
 
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
-Route::get('/inicio', [InicioClientController::class, 'index'])->name('inicio');
+
+
 Route::get('/nosotros', [InicioClientController::class, 'Nosotros'])->name('nosotros');
 Route::get('/contacto', [InicioClientController::class, 'Contacto'])->name('contacto');
 Route::get('/mas', [InicioClientController::class, 'Mas'])->name('mas');

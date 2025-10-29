@@ -22,7 +22,7 @@
                 </button>
                 <!-- Botón Editar Fraccionamiento -->
                 <button class="btn btn-primary" onclick="window.location.href='{{ route('fraccionamiento.show', $datosFraccionamiento['id']) }}'">
-                    <i class="fas fa-edit"></i> Editar Fraccionamiento
+                    <i class="fas fa-edit"></i> Editar
                 </button>
             </div>
         </div>

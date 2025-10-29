@@ -95,6 +95,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'Has cerrado sesión c orrectamente.');
+        return redirect('/login')->with('success', 'Has cerrado sesión.');
     }
 }

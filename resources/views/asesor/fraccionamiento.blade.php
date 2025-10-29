@@ -43,7 +43,7 @@
             <div class="page-actions">
                 @if($esAdministrador)
                 <button class="btn btn-primary" onclick="window.location.href='{{ route('admin.fraccionamiento.show', $datosFraccionamiento['id']) }}'">
-                    <i class="fas fa-edit"></i> Editar Fraccionamiento
+                    <i class="fas fa-edit"></i> Editar
                 </button>
                 @endif
                 <button class="btn btn-outline" onclick="window.location.href='/asesor/inicio'">
