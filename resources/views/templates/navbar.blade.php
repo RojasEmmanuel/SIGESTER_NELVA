@@ -144,7 +144,7 @@
             color: #E4405F;
         }
         
-        .social-linksNavbars .fa-tiktok:hover {
+        .social-linksNavbar .fa-tiktok:hover {
             color: #000000;
         }
         
@@ -180,6 +180,17 @@
         
         .nav-links a:hover:after {
             width: 100%;
+        }
+        
+        /* ESTILOS NUEVOS: Indicador de página activa */
+        .nav-links a.active {
+            color: #022F4A;
+            font-weight: 600;
+        }
+        
+        .nav-links a.active:after {
+            width: 100%;
+            background: #022F4A;
         }
         
         /* Menú hamburguesa para móviles */
@@ -313,6 +324,13 @@
                 display: none;
             }
             
+            /* ESTILOS NUEVOS: Indicador de página activa en móviles */
+            .nav-links a.active {
+                background-color: rgba(2, 47, 74, 0.1);
+                color: #022F4A;
+                font-weight: 600;
+            }
+            
             .mobile-social-links {
                 display: flex;
             }
@@ -389,13 +407,13 @@
             
             <div class="nav-main-content" id="navMainContent">
                 <div class="nav-links" id="navLinks">
-                    <a href="/">Inicio</a>
-                    <a href="/nosotros">Nosotros</a>
-                    <a href="/servicios">Servicios</a>
-                    <a href="/contacto">Contacto</a>
-                    <a href="/mas">Más</a>
-                    <a href="/atractivos">Atractivos</a>
-                    <a href="/mapaInteractivo">Mapa</a>
+                    <a href="/" id="nav-home">Inicio</a>
+                    <a href="/nosotros" id="nav-nosotros">Nosotros</a>
+                    <a href="/servicios" id="nav-servicios">Servicios</a>
+                    <a href="/contacto" id="nav-contacto">Contacto</a>
+                    <a href="/mas" id="nav-mas">Más</a>
+                    <a href="/atractivos" id="nav-atractivos">Atractivos</a>
+                    <a href="/mapaInteractivo" id="nav-mapa">Mapa</a>
                 </div>
                 
                 <!-- Redes sociales para desktop -->
@@ -453,6 +471,51 @@
                     icon.classList.add('fa-bars');
                 }
             });
+            
+            // NUEVO CÓDIGO: Detectar página activa
+            function setActiveNavLink() {
+                // Obtener la ruta actual
+                const currentPath = window.location.pathname;
+                const navLinks = document.querySelectorAll('.nav-links a');
+                
+                // Remover clase active de todos los enlaces
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Encontrar y marcar el enlace activo
+                let activeLink = null;
+                
+                // Buscar coincidencia exacta primero
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === currentPath) {
+                        activeLink = link;
+                    }
+                });
+                
+                // Si no hay coincidencia exacta, buscar coincidencia parcial
+                if (!activeLink) {
+                    navLinks.forEach(link => {
+                        const href = link.getAttribute('href');
+                        if (href !== '/' && currentPath.startsWith(href)) {
+                            activeLink = link;
+                        }
+                    });
+                }
+                
+                // Marcar la página de inicio como activa si estamos en la raíz
+                if (currentPath === '/' || currentPath === '') {
+                    activeLink = document.getElementById('nav-home');
+                }
+                
+                // Aplicar clase active al enlace correspondiente
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }
+            
+            // Ejecutar al cargar la página
+            setActiveNavLink();
         });
     </script>
 </body>
