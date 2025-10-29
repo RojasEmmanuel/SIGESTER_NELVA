@@ -16,108 +16,111 @@ use Illuminate\Support\Facades\Auth;
 
 class fraccClientController extends Controller
 {
-    public function show($id)
-    {
-        try {
-            // Obtener el fraccionamiento con todas las relaciones necesarias
-            $fraccionamiento = Fraccionamiento::with([
-                'infoFraccionamiento',
-                'planosFraccionamiento',
-                'amenidadesFraccionamiento',
-                'lotes',
-                'galeria', // Nueva relación para galería
-                'archivosFraccionamiento' // Nueva relación para archivos
-            ])->findOrFail($id);
+public function show($id)
+{
+    try {
+        // Obtener el fraccionamiento con todas las relaciones necesarias
+        $fraccionamiento = Fraccionamiento::with([
+            'infoFraccionamiento',
+            'planosFraccionamiento',
+            'amenidadesFraccionamiento',
+            'lotes',
+            'galeria',
+            'archivosFraccionamiento'
+        ])->findOrFail($id);
 
-            // Obtener información general del fraccionamiento
-            $infoFraccionamiento = $fraccionamiento->infoFraccionamiento;
+        // Obtener información general del fraccionamiento
+        $infoFraccionamiento = $fraccionamiento->infoFraccionamiento;
 
-            // Preparar datos para la vista
-            $datosFraccionamiento = [
-                'id' => $fraccionamiento->id_fraccionamiento,
-                'nombre' => $fraccionamiento->nombre,
-                'ubicacion' => $fraccionamiento->ubicacion,
-                'path_imagen' => $fraccionamiento->path_imagen,
-                'estatus' => $fraccionamiento->estatus,
-            ];
+        // Obtener la primera imagen de la galería para el hero
+        $heroImage = $fraccionamiento->galeria->first();
+        $heroImagePath = $heroImage ? $heroImage->fotografia_path : null;
 
-            // Si existe información adicional, agregarla
-            if ($infoFraccionamiento) {
-                $datosFraccionamiento['descripcion'] = $infoFraccionamiento->descripcion;
-                $datosFraccionamiento['precio_metro_cuadrado'] = $infoFraccionamiento->precio_metro_cuadrado;
-                $datosFraccionamiento['tipo_propiedad'] = $infoFraccionamiento->tipo_propiedad;
-                $datosFraccionamiento['precioGeneral'] = $infoFraccionamiento->precioGeneral;
-                $datosFraccionamiento['ubicacionMaps'] = $infoFraccionamiento->ubicacionMaps;
-            }
+        // Preparar datos para la vista
+        $datosFraccionamiento = [
+            'id' => $fraccionamiento->id_fraccionamiento,
+            'nombre' => $fraccionamiento->nombre,
+            'ubicacion' => $fraccionamiento->ubicacion,
+            'path_imagen' => $fraccionamiento->path_imagen,
+            'estatus' => $fraccionamiento->estatus,
+            'hero_image' => $heroImagePath, // Nueva propiedad para la imagen del hero
+        ];
 
-            // Obtener planos del fraccionamiento
-            $planos = $fraccionamiento->planosFraccionamiento->map(function($plano) {
-                return [
-                    'id' => $plano->id_plano,
-                    'nombre' => $plano->nombre,
-                    'plano_path' => $plano->plano_path,
-                ];
-            });
-
-            // Obtener amenidades del fraccionamiento
-            $amenidades = $fraccionamiento->amenidadesFraccionamiento->map(function($amenidad) {
-                return [
-                    'id' => $amenidad->id_amenidad,
-                    'nombre' => $amenidad->nombre,
-                    'descripcion' => $amenidad->descripcion,
-                    'tipo' => $amenidad->tipo,
-                ];
-            });
-
-            // Obtener galería del fraccionamiento
-            $galeria = $fraccionamiento->galeria->map(function($foto) {
-                return [
-                    'id' => $foto->id_foto,
-                    'nombre' => $foto->nombre,
-                    'fotografia_path' => $foto->fotografia_path,
-                    'fecha_subida' => $foto->fecha_subida->toDateTimeString(),
-                ];
-            });
-
-            // Obtener archivos del fraccionamiento
-            $archivos = $fraccionamiento->archivosFraccionamiento->map(function($archivo) {
-                return [
-                    'id' => $archivo->id_archivo,
-                    'nombre_archivo' => $archivo->nombre_archivo,
-                    'archivo_path' => $archivo->archivo_path,
-                    'fecha_subida' => $archivo->fecha_subida->toDateTimeString(),
-                ];
-            });
-
-            // Obtener estadísticas de lotes
-            $totalLotes = $fraccionamiento->lotes->count();
-            $lotesDisponibles = $fraccionamiento->lotes->where('estatus', 'disponible')->count();
-            $lotesApartadosPalabra = $fraccionamiento->lotes->where('estatus', 'apartadoPalabra')->count();
-            $lotesApartadosVendido = $fraccionamiento->lotes->where('estatus', 'apartadoDeposito')->count();
-            $lotesVendidos = $fraccionamiento->lotes->where('estatus', 'vendido')->count();
-            
-            $lotesApartados = $lotesApartadosPalabra + $lotesApartadosVendido;
-
-            return view('pagina.fraccionamiento', compact(
-                'datosFraccionamiento',
-                'planos',
-                'amenidades',
-                'galeria', // Nueva variable para la vista
-                'archivos', // Nueva variable para la vista
-                'totalLotes',
-                'lotesDisponibles',
-                'lotesApartados',
-                'lotesApartadosPalabra',
-                'lotesApartadosVendido',
-                'lotesVendidos'
-                
-            ));
-
-        } catch (\Exception $e) {
-            // Manejar error de manera más elegante
-            return redirect()->back()->with('error', 'Error al cargar el fraccionamiento: ' . $e->getMessage());
+        // Si existe información adicional, agregarla
+        if ($infoFraccionamiento) {
+            $datosFraccionamiento['descripcion'] = $infoFraccionamiento->descripcion;
+            $datosFraccionamiento['precio_metro_cuadrado'] = $infoFraccionamiento->precio_metro_cuadrado;
+            $datosFraccionamiento['tipo_propiedad'] = $infoFraccionamiento->tipo_propiedad;
+            $datosFraccionamiento['precioGeneral'] = $infoFraccionamiento->precioGeneral;
+            $datosFraccionamiento['ubicacionMaps'] = $infoFraccionamiento->ubicacionMaps;
         }
+
+        // Obtener planos del fraccionamiento
+        $planos = $fraccionamiento->planosFraccionamiento->map(function($plano) {
+            return [
+                'id' => $plano->id_plano,
+                'nombre' => $plano->nombre,
+                'plano_path' => $plano->plano_path,
+            ];
+        });
+
+        // Obtener amenidades del fraccionamiento
+        $amenidades = $fraccionamiento->amenidadesFraccionamiento->map(function($amenidad) {
+            return [
+                'id' => $amenidad->id_amenidad,
+                'nombre' => $amenidad->nombre,
+                'descripcion' => $amenidad->descripcion,
+                'tipo' => $amenidad->tipo,
+            ];
+        });
+
+        // Obtener galería del fraccionamiento
+        $galeria = $fraccionamiento->galeria->map(function($foto) {
+            return [
+                'id' => $foto->id_foto,
+                'nombre' => $foto->nombre,
+                'fotografia_path' => $foto->fotografia_path,
+                'fecha_subida' => $foto->fecha_subida->toDateTimeString(),
+            ];
+        });
+
+        // Obtener archivos del fraccionamiento
+        $archivos = $fraccionamiento->archivosFraccionamiento->map(function($archivo) {
+            return [
+                'id' => $archivo->id_archivo,
+                'nombre_archivo' => $archivo->nombre_archivo,
+                'archivo_path' => $archivo->archivo_path,
+                'fecha_subida' => $archivo->fecha_subida->toDateTimeString(),
+            ];
+        });
+
+        // Obtener estadísticas de lotes
+        $totalLotes = $fraccionamiento->lotes->count();
+        $lotesDisponibles = $fraccionamiento->lotes->where('estatus', 'disponible')->count();
+        $lotesApartadosPalabra = $fraccionamiento->lotes->where('estatus', 'apartadoPalabra')->count();
+        $lotesApartadosVendido = $fraccionamiento->lotes->where('estatus', 'apartadoDeposito')->count();
+        $lotesVendidos = $fraccionamiento->lotes->where('estatus', 'vendido')->count();
+        
+        $lotesApartados = $lotesApartadosPalabra + $lotesApartadosVendido;
+
+        return view('pagina.fraccionamiento', compact(
+            'datosFraccionamiento',
+            'planos',
+            'amenidades',
+            'galeria',
+            'archivos',
+            'totalLotes',
+            'lotesDisponibles',
+            'lotesApartados',
+            'lotesApartadosPalabra',
+            'lotesApartadosVendido',
+            'lotesVendidos'
+        ));
+
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Error al cargar el fraccionamiento: ' . $e->getMessage());
     }
+}
 
     public function getLoteDetails($idFraccionamiento, $numeroLote)
     {
