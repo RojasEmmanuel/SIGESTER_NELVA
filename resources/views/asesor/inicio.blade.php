@@ -28,10 +28,16 @@
 
 @section('content')
     <div class="container"> 
-        <h1 class="page-title">
-            <i class="fas fa-map-marked-alt"></i>
-            <span>Bienvenido, {{ $usuario->nombre }}</span>
-        </h1>
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-map-marked-alt"></i>
+                <span>Bienvenido, {{ $usuario->nombre }}</span>
+            </h1>
+            <a href="{{ route('ventas.directa.crear') }}" class="btn-vender">
+                <i class="fas fa-handshake"></i>
+                <span>Vender</span>
+            </a>
+        </div>
         
         <!-- Stats Overview -->
         <div class="stats-container">

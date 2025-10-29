@@ -83,7 +83,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/asesor/fraccionamiento/{idFraccionamiento}/archivo/{idArchivo}/download', [AdminFraccionamientoController::class, 'downloadArchivo'])->name('asesor.fraccionamiento.download-archivo');
   
 
-
+    // Ventas directas (sin apartado)
+    Route::get('/ventas/directa/crear', [ventasController::class, 'createDirect'])->name('ventas.directa.crear');
+    Route::post('/ventas/directa', [ventasController::class, 'storeDirect']) ->name('ventas.direct.store');
 
     Route::prefix('cobranza')->name('cobranza.')->group(function () {
         Route::get('/ventas', [CobranzaVentaController::class, 'index'])->name('ventas.index');
