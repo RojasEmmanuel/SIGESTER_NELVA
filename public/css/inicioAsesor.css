@@ -630,8 +630,9 @@ body {
 }
 
 .btn-registrar {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: white;
+    background-color: #dbeafe;
+   
+    color: #3b82f6;
     border: none;
     border-radius: 24px;
     font-size: 0.9rem;
@@ -648,7 +649,7 @@ body {
 }
 
 .btn-registrar:hover {
-    background: linear-gradient(135deg, #059669, #047857);
+     background-color: #007bff;
     transform: translateY(-2px);
     box-shadow: 0 4px 18px rgba(16, 185, 129, 0.3);
     color: white;
