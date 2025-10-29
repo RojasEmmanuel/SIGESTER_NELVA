@@ -479,7 +479,7 @@
             
             <div class="form-group">
                 <button type="button" class="btn btn-primary" id="calculateBtn" style="width: 100%;">
-                    🔍 Buscar Lote
+                    Buscar Lote
                 </button>
             </div>
             
@@ -487,7 +487,7 @@
                 <!-- Información básica en grid 2x2 optimizado -->
                 <div class="lot-details-content">
                     <div class="lot-details-title">
-                        📋 Detalles del Lote
+                        Detalles del Lote
                     </div>
                     
                     <div class="lot-details-grid">
@@ -514,29 +514,23 @@
                     <!-- Medidas ultra compactas - CORREGIDAS -->
                     <div class="measures-section">
                         <div class="measures-title">
-                            📐 Medidas
+                            Medidas
                         </div>
                         <div class="measures-grid">
                             <div class="measure-item">
-                                <div class="measure-direction north">
-                                    Norte
-                                </div>
+                                <div class="lot-detail-label">Norte</div>
                                 <div class="measure-value" id="lotNorth">- m</div>
                             </div>
                             <div class="measure-item">
-                                
+                                <div class="lot-detail-label">Sur</div>
                                 <div class="measure-value" id="lotSouth">- m</div>
                             </div>
                             <div class="measure-item">
-                                <div class="measure-direction east">
-                                    Oriente
-                                </div>
+                               <div class="lot-detail-label">Oriente</div>
                                 <div class="measure-value" id="lotEast">- m</div>
                             </div>
                             <div class="measure-item">
-                                <div class="measure-direction west">
-                                    Poniente
-                                </div>
+                                <div class="lot-detail-label">Poniente</div>
                                 <div class="measure-value" id="lotWest">- m</div>
                             </div>
                         </div>
@@ -546,7 +540,7 @@
                 <!-- Cálculo de costo ultra compacto -->
                 <div class="calculation-result">
                     <div class="calculation-title">
-                        🧮 Cálculo de Costo
+                        Cálculo de Costo
                     </div>
                     <div class="calculation-item">
                         <div class="calculation-label">Precio m²</div>
