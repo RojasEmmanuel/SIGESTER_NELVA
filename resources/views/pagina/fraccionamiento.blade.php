@@ -35,107 +35,33 @@
     <i class="fab fa-whatsapp"></i>
 </a>
 
-<!-- Modal de Cálculo de Costo - VERSIÓN ULTRA COMPACTA -->
-<div class="modal-fraccionamiento modal-compact" id="calculationModal">
-    <div class="modal-content-fraccionamiento">
-        <button class="close-modal-fraccionamiento" id="closeCalculationModal">&times;</button>
-        <h2 class="modal-title-fraccionamiento">Consultar Lote</h2>
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+        <h1>{{ $datosFraccionamiento['nombre'] }}</h1>
+        <div class="hero-location">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ $datosFraccionamiento['ubicacion'] }}</span>
+        </div>
+        @if(isset($datosFraccionamiento['descripcion']))
+        <p>{{ $datosFraccionamiento['descripcion'] }}</p>
+        @endif
         
-        <form id="calculationForm">
-            <div class="form-group">
-                <input type="text" id="lotNumber" class="form-control" required placeholder="Ingresa número de lote (ej: 12)">
-                <div id="lotError" class="error-message" style="display: none;"></div>
-            </div>
-            
-            <div class="form-group">
-                <button type="button" class="btn btn-primary" id="calculateBtn" style="width: 100%;">
-                    <i class="fas fa-search"></i> Buscar Lote
-                </button>
-            </div>
-            
-            <div id="lotDetails" class="lot-details-container" style="display: none;">
-                <!-- Información básica en grid 2x2 -->
-                <div class="lot-details-content">
-                    <div class="info-title">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Detalles del Lote</span>
-                    </div>
-                    
-                    <div class="lot-details-grid">
-                        <div class="lot-detail-item">
-                            <div class="lot-detail-label">Lote #</div>
-                            <div class="lot-detail-value" id="lotNumberDisplay">-</div>
-                        </div>
-                        <div class="lot-detail-item">
-                            <div class="lot-detail-label">Estatus</div>
-                            <div class="lot-detail-value">
-                                <span class="status-badge" id="statusBadge">-</span>
-                            </div>
-                        </div>
-                        <div class="lot-detail-item">
-                            <div class="lot-detail-label">Manzana</div>
-                            <div class="lot-detail-value" id="lotBlock">-</div>
-                        </div>
-                        <div class="lot-detail-item">
-                            <div class="lot-detail-label">Área Total</div>
-                            <div class="lot-detail-value" id="lotArea">- m²</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Medidas compactas -->
-                    <div class="measures-section">
-                        <div class="measures-title">
-                            <i class="fas fa-ruler-combined"></i> Medidas
-                        </div>
-                        <div class="measures-grid">
-                            <div class="measure-item">
-                                <div class="measure-direction">Norte</div>
-                                <div class="measure-value" id="lotNorth">- m</div>
-                            </div>
-                            <div class="measure-item">
-                                <div class="measure-direction">Sur</div>
-                                <div class="measure-value" id="lotSouth">- m</div>
-                            </div>
-                            <div class="measure-item">
-                                <div class="measure-direction">Oriente</div>
-                                <div class="measure-value" id="lotEast">- m</div>
-                            </div>
-                            <div class="measure-item">
-                                <div class="measure-direction">Poniente</div>
-                                <div class="measure-value" id="lotWest">- m</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Cálculo de costo ultra compacto -->
-                <div class="calculation-result">
-                    <div class="calculation-title">
-                        <i class="fas fa-calculator"></i> Cálculo de Costo
-                    </div>
-                    <div class="calculation-item">
-                        <div class="calculation-label">Precio m²</div>
-                        <div class="calculation-value">${{ number_format($datosFraccionamiento['precio_metro_cuadrado'] ?? 0, 2) }}</div>
-                    </div>
-                    <div class="calculation-item highlight">
-                        <div class="calculation-label">Total</div>
-                        <div class="calculation-value" id="totalCost">$0 MXN</div>
-                    </div>
-                </div>
-                
-                <!-- Botones de acción mini -->
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-outline" id="closeCalculationResult">
-                        <i class="fas fa-times"></i> Cerrar
-                    </button>
-                    <button type="button" class="btn btn-primary" id="consultAnotherLot">
-                        <i class="fas fa-redo"></i> Otro Lote
-                    </button>
-                </div>
-            </div>
-        </form>
+        @if(isset($datosFraccionamiento['precioGeneral']) && $datosFraccionamiento['precioGeneral'] > 0)
+        <span class="price">${{ number_format($datosFraccionamiento['precioGeneral'], 2) }} MXN</span>
+        @endif
+        
+        <div class="hero-buttons">
+            <button class="btn btn-secondary" id="openCalculationModal">
+                <i class="fas fa-calculator"></i> Consultar Lotes
+            </button>
+            <a href="#gallery" class="btn">
+                <i class="fas fa-images"></i> Ver Galería
+            </a>
+        </div>
     </div>
-</div>
+</section>
 
 <!-- Quick Stats -->
 <section class="section">
