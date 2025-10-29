@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const mapContainer = document.getElementById('mapPlano');
     
     if (!mapContainer) {
-        console.warn('❌ Contenedor de mapa no encontrado (#mapPlano)');
         return;
     }
 
@@ -13,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function () {
        VALIDAR AppConfig
        =========================== */
     if (!window.AppConfig || window.AppConfig.fraccionamientoId === null || !window.AppConfig.fraccionamientoNombre) {
-        console.error('❌ Configuración de fraccionamiento no disponible, cargando datos de prueba');
         initializeMap();
         addLotesToMap(generateSampleData());
         return;
@@ -67,17 +65,14 @@ document.addEventListener('DOMContentLoaded', function () {
        =========================== */
     function initFilterButtons() {
         const filterButtons = document.querySelectorAll('.filter-btn');
-        console.log('🔄 Inicializando botones de filtro:', filterButtons.length);
         
         filterButtons.forEach(btn => {
             btn.addEventListener('click', function () {
-                console.log('🎯 Botón de filtro clickeado:', this.getAttribute('data-filter'));
                 
                 filterButtons.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
 
                 currentFilter = this.getAttribute('data-filter');
-                console.log('🔄 Aplicando filtro:', currentFilter);
                 
                 filterLotesByStatus(currentFilter);
             });
@@ -86,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function filterLotesByStatus(status) {
         if (!map || !mapLayersLoaded) {
-            console.warn('⚠️ Mapa o capas no cargadas, no se puede aplicar filtro');
             return;
         }
 
@@ -97,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 map.setFilter('lotes-fill', null);
                 map.setFilter('lotes-borders', null);
                 map.setFilter('lotes-labels', null);
-                console.log('✅ Mostrando todos los lotes');
             } else if (status === 'apartado-palabra-deposito') {
                 const filter = [
                     'any',
@@ -107,16 +100,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 map.setFilter('lotes-fill', filter);
                 map.setFilter('lotes-borders', filter);
                 map.setFilter('lotes-labels', filter);
-                console.log('✅ Filtrando lotes apartados (Palabra/Depósito)');
             } else {
                 const filter = ['==', ['get', 'estatus'], status];
                 map.setFilter('lotes-fill', filter);
                 map.setFilter('lotes-borders', filter);
                 map.setFilter('lotes-labels', filter);
-                console.log('✅ Filtrando lotes con estado:', status);
             }
         } catch (error) {
-            console.error('❌ Error aplicando filtro:', error);
         }
     }
 
@@ -125,17 +115,14 @@ document.addEventListener('DOMContentLoaded', function () {
        =========================== */
     function initStyleButtons() {
         const styleButtons = document.querySelectorAll('.style-btn');
-        console.log('🔄 Inicializando botones de estilo:', styleButtons.length);
         
         styleButtons.forEach(btn => {
             btn.addEventListener('click', function () {
-                console.log('🎯 Botón de estilo clickeado:', this.getAttribute('data-style'));
                 
                 styleButtons.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
 
                 const style = this.getAttribute('data-style');
-                console.log('🔄 Cambiando a estilo:', style);
                 
                 changeMapStyle(style);
             });
@@ -144,22 +131,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function changeMapStyle(style) {
         if (!map) {
-            console.error('❌ Mapa no inicializado');
             return;
         }
 
         if (!mapStyles[style]) {
-            console.error('❌ Estilo no válido:', style);
             return;
         }
 
-        console.log('🎨 Cambiando estilo del mapa a:', style);
 
         try {
             map.setStyle(mapStyles[style]);
 
             map.once('style.load', () => {
-                console.log('✅ Estilo cargado, restaurando capas...');
                 
                 // Restaurar perímetro del fraccionamiento si existe (agregar sin before, se moverá después)
                 if (fraccionamientoFeature) {
@@ -193,12 +176,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const fullscreenBtn = document.getElementById('fullscreenBtn');
         
         if (!fullscreenBtn) {
-            console.error('❌ Botón de pantalla completa no encontrado');
             return;
         }
 
         fullscreenBtn.addEventListener('click', toggleFullscreenMap);
-        console.log('✅ Botón de pantalla completa inicializado');
     }
 
     function toggleFullscreenMap() {
@@ -206,16 +187,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const fullscreenBtn = document.getElementById('fullscreenBtn');
         
         if (!container) {
-            console.error('❌ Contenedor de mapa no encontrado');
             return;
         }
 
-        console.log('🔄 Alternando pantalla completa');
 
         if (!document.fullscreenElement) {
             if (container.requestFullscreen) {
                 container.requestFullscreen().catch(err => {
-                    console.error('❌ Error al activar pantalla completa:', err);
                 });
             } else if (container.webkitRequestFullscreen) {
                 container.webkitRequestFullscreen();
@@ -251,22 +229,18 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (document.fullscreenElement) {
             fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i> Salir de Pantalla Completa';
-            console.log('📺 Modo pantalla completa activado');
             
             setTimeout(() => {
                 if (map) {
                     map.resize();
-                    console.log('✅ Mapa redimensionado para pantalla completa');
                 }
             }, 300);
         } else {
             fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i> Pantalla Completa';
-            console.log('📺 Modo pantalla completa desactivado');
             
             setTimeout(() => {
                 if (map) {
                     map.resize();
-                    console.log('✅ Mapa redimensionado después de pantalla completa');
                 }
             }, 300);
         }
@@ -277,19 +251,16 @@ document.addEventListener('DOMContentLoaded', function () {
        =========================== */
     function initializeMap() {
         if (typeof mapboxgl === 'undefined') {
-            console.error('❌ Mapbox GL JS no está cargado');
             return;
         }
 
         if (!mapContainer || mapContainer.offsetParent === null) {
-            console.warn('❌ Contenedor de mapa no visible o no existe');
             return;
         }
 
         try {
             mapboxgl.accessToken = 'pk.eyJ1Ijoicm9qYXNkZXYiLCJhIjoiY21leDF4N2JtMTI0NTJrcHlsdjBiN2Y3YiJ9.RB87H34djrYH3WrRa-12Pg';
         } catch (err) {
-            console.error('❌ Error con accessToken de Mapbox:', err);
             return;
         }
 
@@ -305,7 +276,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             map.on('load', () => {
-                console.log('✅ Mapa cargado correctamente');
                 initMapControls();
                 initFilterButtons();
                 initStyleButtons();
@@ -314,11 +284,9 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             map.on('error', (e) => {
-                console.error('❌ Error en el mapa:', e.error);
             });
 
         } catch (error) {
-            console.error('❌ Error creando el mapa:', error);
         }
     }
 
@@ -327,7 +295,6 @@ document.addEventListener('DOMContentLoaded', function () {
        =========================== */
     async function loadGeoJSONFromPublic() {
         if (!map) {
-            console.error('❌ Mapa no inicializado');
             return;
         }
 
@@ -339,15 +306,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 const fraccionamientoNombre = window.AppConfig.fraccionamientoNombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '_');
                 const geoJsonUrl = `/geojson/${fraccionamientoNombre}.geojson`;
                 
-                console.log('🔄 Cargando GeoJSON desde:', geoJsonUrl);
                 
                 const response = await fetch(geoJsonUrl);
                 if (response.ok) {
                     geoJsonData = await response.json();
-                    console.log('✅ GeoJSON cargado exitosamente desde servidor');
                 }
             } catch (error) {
-                console.warn('⚠️ Error cargando desde servidor, usando GeoJSON hardcodeado');
             }
         }
 
@@ -362,12 +326,10 @@ document.addEventListener('DOMContentLoaded', function () {
             throw new Error('Formato de GeoJSON inválido');
         }
 
-        console.log('📊 Total de features en GeoJSON:', geoJsonData.features.length);
         
         // Separar el perímetro del fraccionamiento (primer feature con lote: "Fraccionamiento")
         fraccionamientoFeature = geoJsonData.features[0];
         if (fraccionamientoFeature.properties.lote === "Fraccionamiento") {
-            console.log('✅ Feature de perímetro del fraccionamiento detectado');
             addFraccionamientoPerimeter(fraccionamientoFeature);
             geoJsonData.features.shift(); // Remover del array principal
         }
@@ -423,7 +385,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        console.log('✅ Perímetro del fraccionamiento agregado');
     }
 
     async function enrichGeoJSONWithServerData(filteredGeoJsonData) {
@@ -559,7 +520,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (!bounds.isEmpty()) {
-            console.log('📍 Bounds calculados:', bounds);
             
             map.fitBounds(bounds, {
                 padding: { top: 50, bottom: 50, left: 50, right: 50 },
@@ -567,9 +527,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 maxZoom: 20 // Aumentado para lotes pequeños
             });
             
-            console.log('✅ Mapa ajustado a los lotes correctamente');
         } else {
-            console.warn('⚠️ No se pudieron calcular bounds válidos');
         }
     }
 
@@ -641,14 +599,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 try {
                     map.moveLayer('fraccionamiento-fill', 'lotes-fill');
                     map.moveLayer('fraccionamiento-border', 'lotes-fill');
-                    console.log('✅ Perímetro movido detrás de los lotes');
                 } catch (moveError) {
-                    console.error('❌ Error moviendo perímetro:', moveError);
                 }
             }
 
             mapLayersLoaded = true;
-            console.log('✅ Capas de lotes cargadas correctamente');
 
             setTimeout(() => {
                 fitMapToLotes(data);
@@ -663,7 +618,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
         } catch (error) {
-            console.error('❌ Error agregando lotes al mapa:', error);
         }
     }
 
@@ -672,11 +626,9 @@ document.addEventListener('DOMContentLoaded', function () {
        =========================== */
     function setupMapInteractions() {
         if (!map.getLayer('lotes-fill')) {
-            console.warn('⚠️ Capa de lotes no disponible para interacciones');
             return;
         }
 
-        console.log('🎯 Configurando interacciones del mapa');
 
         const popup = new mapboxgl.Popup({
             closeButton: true,
@@ -706,7 +658,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // No agregar interacciones al perímetro (no cursor, no click)
 
-        console.log('✅ Interacciones del mapa configuradas correctamente');
     }
 
     function createCompactPopupContent(properties) {
@@ -903,5 +854,4 @@ document.addEventListener('DOMContentLoaded', function () {
         initializeMap();
     }, 100);
 
-    console.log('✅ Script de mapa cargado correctamente');
 });
