@@ -519,53 +519,88 @@
                     </div>
                     
                     <!-- Add File Form -->
-                    <div class="add-form-container">
-                        <h4 class="form-subtitle">Agregar Nuevo Archivo</h4>
-                        <form action="{{ route('admin.fraccionamiento.add-archivo', $datosFraccionamiento['id']) }}" method="POST" enctype="multipart/form-data" class="form-grid compact">
-                            @csrf
-                            <div class="form-group">
-                                <label for="archivo_nombre" class="form-label">Nombre del Archivo</label>
-                                <input type="text" id="archivo_nombre" name="nombre_archivo" class="form-control" placeholder="Ej. Reglamento, Plano general" value="{{ old('nombre_archivo') }}">
-                                @error('nombre_archivo')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <div class="form-group full-width">
-                                <label for="archivo_path" class="form-label">Subir Archivo (PDF)</label>
-                                <div class="file-upload-container">
-                                    <input type="file" id="archivo_path" name="archivo_path" class="file-input" accept="application/pdf" required>
-                                    <label for="archivo_path" class="file-upload-label">
-                                        <i class="fas fa-file-pdf"></i>
-                                        <span>Seleccionar archivo PDF</span>
-                                    </label>
-                                    @error('archivo_path')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                            
-                            <div class="form-group2">
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-plus"></i>
-                                    Agregar Archivo
-                                </button>
-                            </div>
+<!-- Add File Form -->
+<div class="add-form-container">
+    <h4 class="form-subtitle">Agregar Nuevo Archivo</h4>
+    <form action="{{ route('admin.fraccionamiento.add-archivo', $datosFraccionamiento['id']) }}"
+          method="POST"
+          enctype="multipart/form-data"
+          class="form-grid compact">
+        @csrf
 
-                            @if(session('success_archivo'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-check-circle"></i> {{ session('success_archivo') }}
-                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                </div>
-                            @endif
-                            @if(session('error_archivo'))
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-exclamation-circle"></i> {{ session('error_archivo') }}
-                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                </div>
-                            @endif
-                        </form>
-                    </div>
+        <!-- Nombre del archivo -->
+        <div class="form-group">
+            <label for="archivo_nombre" class="form-label">Nombre del Archivo</label>
+            <input type="text"
+                   id="archivo_nombre"
+                   name="nombre_archivo"
+                   class="form-control"
+                   placeholder="Ej. Reglamento, Plano general"
+                   value="{{ old('nombre_archivo') }}">
+            @error('nombre_archivo')
+                <div class="alert alert-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <!-- Input + Vista previa -->
+        <div class="form-group full-width">
+            <label for="archivo_path" class="form-label">Subir Archivo (PDF)</label>
+
+            <!-- Vista previa (oculta al inicio) -->
+            <div class="pdf-preview-container" id="pdfPreviewContainer" style="display:none;">
+                <div class="pdf-preview">
+                    <iframe id="pdfPreviewIframe" src="" style="width:100%;height:100%;border:none;"></iframe>
+                    <button type="button" class="btn-remove-preview" onclick="removePdfPreview()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <small class="file-name" id="pdfFileName"></small>
+            </div>
+
+            <!-- Input real -->
+            <div class="file-upload-container">
+                <input type="file"
+                       id="archivo_path"
+                       name="archivo_path"
+                       class="file-input"
+                       accept="application/pdf"
+                       required
+                       onchange="previewPdf(this)">
+                <label for="archivo_path"
+                       class="file-upload-label"
+                       id="pdfUploadLabel">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>Seleccionar archivo PDF</span>
+                </label>
+                @error('archivo_path')
+                    <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+            </div>
+        </div>
+
+        <!-- Botón de envío -->
+        <div class="form-group full-width">
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i>
+                Agregar Archivo
+            </button>
+        </div>
+
+        <!-- Mensajes flash -->
+        @if(session('success_archivo'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i> {{ session('success_archivo') }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        @endif
+        @if(session('error_archivo'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle"></i> {{ session('error_archivo') }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        @endif
+    </form>
+</div>
                     
                     <!-- Files List -->
                     @if($archivos->count() > 0)
@@ -761,6 +796,52 @@ window.removeGalleryPreview = function() {
     fileUploadLabel.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> <span>Seleccionar archivo</span>';
     fileUploadLabel.style.backgroundColor = '';
     fileUploadLabel.style.color = '';
+};
+
+/* ---------- VISTA PREVIA DE PDF ---------- */
+window.previewPdf = function(input) {
+    const container   = document.getElementById('pdfPreviewContainer');
+    const iframe      = document.getElementById('pdfPreviewIframe');
+    const fileNameEl  = document.getElementById('pdfFileName');
+    const label       = document.getElementById('pdfUploadLabel');
+
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+
+        // Solo PDF
+        if (file.type !== 'application/pdf') {
+            alert('Solo se permiten archivos PDF');
+            input.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            iframe.src = e.target.result;
+            container.style.display = 'block';
+            fileNameEl.textContent = file.name;
+            label.innerHTML = '<i class="fas fa-check"></i> <span>PDF seleccionado</span>';
+            label.style.backgroundColor = 'var(--success-color)';
+            label.style.color = 'white';
+        };
+
+        reader.readAsDataURL(file);
+    }
+};
+
+window.removePdfPreview = function() {
+    const input   = document.getElementById('archivo_path');
+    const container = document.getElementById('pdfPreviewContainer');
+    const label    = document.getElementById('pdfUploadLabel');
+    const fileName = document.getElementById('pdfFileName');
+
+    input.value = '';
+    container.style.display = 'none';
+    fileName.textContent = '';
+    label.innerHTML = '<i class="fas fa-file-pdf"></i> <span>Seleccionar archivo PDF</span>';
+    label.style.backgroundColor = '';
+    label.style.color = '';
 };
     </script>
 @endsection

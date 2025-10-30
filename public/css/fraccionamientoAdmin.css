@@ -1021,3 +1021,58 @@ textarea.form-control {
     color: var(--text-light);
     font-style: italic;
 }
+
+/* ---------- VISTA PREVIA DE PDF ---------- */
+.pdf-preview-container {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: var(--light-gray);
+    border-radius: var(--rounded-sm);
+    border: 1px solid var(--medium-gray);
+}
+
+.pdf-preview {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    overflow: hidden;
+    border-radius: var(--rounded-sm);
+    box-shadow: var(--shadow);
+    background: #fff;
+}
+
+.pdf-preview iframe {
+    display: block;
+}
+
+.btn-remove-preview {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(239,68,68,.9);
+    color: #fff;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: .9rem;
+    transition: var(--transition);
+}
+.btn-remove-preview:hover {
+    background: var(--danger-color);
+    transform: scale(1.1);
+}
+
+/* Nombre del archivo bajo la vista previa */
+.pdf-preview-container .file-name {
+    display: block;
+    margin-top: .5rem;
+    font-size: .85rem;
+    color: var(--text-light);
+    font-style: italic;
+}
