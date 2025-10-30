@@ -417,19 +417,32 @@
                                 @enderror
                             </div>
                             
-                            <div class="form-group full-width">
-                                <label for="fotografia_path" class="form-label">Subir Foto</label>
-                                <div class="file-upload-container">
-                                    <input type="file" id="fotografia_path" name="fotografia_path" class="file-input" accept="image/jpeg,image/png,image/jpg,image/gif" required>
-                                    <label for="fotografia_path" class="file-upload-label">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                        <span>Seleccionar archivo</span>
-                                    </label>
-                                    @error('fotografia_path')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
+<div class="form-group full-width">
+    <label for="fotografia_path" class="form-label">Subir Foto</label>
+    
+    <!-- Contenedor de vista previa -->
+    <div class="gallery-preview-container" id="galleryPreviewContainer" style="display: none;">
+        <div class="gallery-preview">
+            <img id="galleryPreviewImage" src="" alt="Vista previa">
+            <button type="button" class="btn-remove-preview" onclick="removeGalleryPreview()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Input de archivo -->
+    <div class="file-upload-container">
+        <input type="file" id="fotografia_path" name="fotografia_path" class="file-input" accept="image/jpeg,image/png,image/jpg,image/gif" required onchange="previewGalleryImage(this)">
+        <label for="fotografia_path" class="file-upload-label" id="fileUploadLabel">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Seleccionar archivo</span>
+        </label>
+        <small class="file-name" id="fileNameDisplay"></small>
+        @error('fotografia_path')
+            <div class="alert alert-danger">{{ $message }}</div>
+        @enderror
+    </div>
+</div>
                             
                             <div class="form-group2">
                                 <button type="submit" class="btn btn-primary btn-sm">
@@ -705,5 +718,49 @@
                 closeModal();
             }
         }
+
+        // Vista previa de imagen en galería
+window.previewGalleryImage = function(input) {
+    const previewContainer = document.getElementById('galleryPreviewContainer');
+    const previewImage = document.getElementById('galleryPreviewImage');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const fileUploadLabel = document.getElementById('fileUploadLabel');
+
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            previewContainer.style.display = 'block';
+            fileNameDisplay.textContent = file.name;
+            fileUploadLabel.innerHTML = '<i class="fas fa-check"></i> <span>Archivo seleccionado</span>';
+            fileUploadLabel.style.backgroundColor = 'var(--success-color)';
+            fileUploadLabel.style.color = 'white';
+        };
+
+        reader.readAsDataURL(file);
+    }
+};
+
+// Quitar vista previa
+window.removeGalleryPreview = function() {
+    const input = document.getElementById('fotografia_path');
+    const previewContainer = document.getElementById('galleryPreviewContainer');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const fileUploadLabel = document.getElementById('fileUploadLabel');
+
+    // Resetear input
+    input.value = '';
+    
+    // Ocultar vista previa
+    previewContainer.style.display = 'none';
+    
+    // Resetear label
+    fileNameDisplay.textContent = '';
+    fileUploadLabel.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> <span>Seleccionar archivo</span>';
+    fileUploadLabel.style.backgroundColor = '';
+    fileUploadLabel.style.color = '';
+};
     </script>
 @endsection
