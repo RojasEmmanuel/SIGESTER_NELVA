@@ -305,6 +305,7 @@
                         <h4 class="form-subtitle">Agregar Nueva Amenidad</h4>
                         <form action="{{ route('admin.fraccionamiento.add-amenidad', $datosFraccionamiento['id']) }}" method="POST" class="form-grid compact">
                             @csrf
+
                             <div class="form-group">
                                 <label for="amenidad_nombre" class="form-label">Nombre</label>
                                 <input type="text" id="amenidad_nombre" name="nombre" class="form-control" placeholder="Ej. Calles de 10 mts, Energía eléctrica" value="{{ old('nombre') }}" required>
@@ -312,7 +313,7 @@
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="amenidad_tipo" class="form-label">Tipo</label>
                                 <select id="amenidad_tipo" name="tipo" class="form-control" required>
@@ -323,16 +324,17 @@
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
-                            <div class="form-group full-width">
+
+                            <!-- Campo Descripción: se oculta si es "Característica" -->
+                            <div class="form-group full-width" id="descripcion-group">
                                 <label for="amenidad_descripcion" class="form-label">Descripción</label>
                                 <textarea id="amenidad_descripcion" name="descripcion" class="form-control" placeholder="Describe la amenidad...">{{ old('descripcion') }}</textarea>
                                 @error('descripcion')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
-                            <div class="form-group2"">
+
+                            <div class="form-group2">
                                 <button type="submit" class="btn btn-primary btn-sm">
                                     <i class="fas fa-plus"></i>
                                     Agregar Amenidad
@@ -342,18 +344,17 @@
                             @if(session('success_amenidad'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     <i class="fas fa-check-circle"></i> {{ session('success_amenidad') }}
-                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <button type="button" class="close" data-dismiss="alert">×</button>
                                 </div>
                             @endif
                             @if(session('error_amenidad'))
                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                     <i class="fas fa-exclamation-circle"></i> {{ session('error_amenidad') }}
-                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <button type="button" class="close" data-dismiss="alert">×</button>
                                 </div>
                             @endif
                         </form>
                     </div>
-                    
                     <!-- Amenities List -->
                     @if($amenidades->count() > 0)
                     <div class="amenities-list">
@@ -862,6 +863,32 @@
                 targetTabPane.classList.add('active');
             }
         @endif
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const tipoSelect = document.getElementById('amenidad_tipo');
+        const descripcionGroup = document.getElementById('descripcion-group');
+        const descripcionField = document.getElementById('amenidad_descripcion');
+
+        function toggleDescripcion() {
+            if (tipoSelect.value === 'Característica') {
+                descripcionGroup.classList.add('collapsed');
+                descripcionField.removeAttribute('name');
+                descripcionField.value = '';
+            } else {
+                descripcionGroup.classList.remove('collapsed');
+                if (!descripcionField.hasAttribute('name')) {
+                    descripcionField.setAttribute('name', 'descripcion');
+                }
+            }
+        }
+
+        // Inicializar
+        toggleDescripcion();
+
+        // Escuchar cambios
+        tipoSelect.addEventListener('change', toggleDescripcion);
     });
 </script>
 @endsection

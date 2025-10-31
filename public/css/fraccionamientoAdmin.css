@@ -1076,3 +1076,20 @@ textarea.form-control {
     color: var(--text-light);
     font-style: italic;
 }
+
+
+#descripcion-group {
+    overflow: hidden;
+    transition: all 0.3s ease;
+    max-height: 200px; /* Altura máxima aproximada */
+    opacity: 1;
+    margin-top: 1rem;
+}
+
+#descripcion-group.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
