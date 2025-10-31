@@ -600,7 +600,7 @@
             </div>
         @endif
     </form>
-</div>
+    </div>
                     
                     <!-- Files List -->
                     @if($archivos->count() > 0)
@@ -755,93 +755,113 @@
         }
 
         // Vista previa de imagen en galería
-window.previewGalleryImage = function(input) {
-    const previewContainer = document.getElementById('galleryPreviewContainer');
-    const previewImage = document.getElementById('galleryPreviewImage');
-    const fileNameDisplay = document.getElementById('fileNameDisplay');
-    const fileUploadLabel = document.getElementById('fileUploadLabel');
+    window.previewGalleryImage = function(input) {
+        const previewContainer = document.getElementById('galleryPreviewContainer');
+        const previewImage = document.getElementById('galleryPreviewImage');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const fileUploadLabel = document.getElementById('fileUploadLabel');
 
-    if (input.files && input.files[0]) {
-        const file = input.files[0];
-        const reader = new FileReader();
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const reader = new FileReader();
 
-        reader.onload = function(e) {
-            previewImage.src = e.target.result;
-            previewContainer.style.display = 'block';
-            fileNameDisplay.textContent = file.name;
-            fileUploadLabel.innerHTML = '<i class="fas fa-check"></i> <span>Archivo seleccionado</span>';
-            fileUploadLabel.style.backgroundColor = 'var(--success-color)';
-            fileUploadLabel.style.color = 'white';
-        };
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewContainer.style.display = 'block';
+                fileNameDisplay.textContent = file.name;
+                fileUploadLabel.innerHTML = '<i class="fas fa-check"></i> <span>Archivo seleccionado</span>';
+                fileUploadLabel.style.backgroundColor = 'var(--success-color)';
+                fileUploadLabel.style.color = 'white';
+            };
 
-        reader.readAsDataURL(file);
-    }
-};
-
-// Quitar vista previa
-window.removeGalleryPreview = function() {
-    const input = document.getElementById('fotografia_path');
-    const previewContainer = document.getElementById('galleryPreviewContainer');
-    const fileNameDisplay = document.getElementById('fileNameDisplay');
-    const fileUploadLabel = document.getElementById('fileUploadLabel');
-
-    // Resetear input
-    input.value = '';
-    
-    // Ocultar vista previa
-    previewContainer.style.display = 'none';
-    
-    // Resetear label
-    fileNameDisplay.textContent = '';
-    fileUploadLabel.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> <span>Seleccionar archivo</span>';
-    fileUploadLabel.style.backgroundColor = '';
-    fileUploadLabel.style.color = '';
-};
-
-/* ---------- VISTA PREVIA DE PDF ---------- */
-window.previewPdf = function(input) {
-    const container   = document.getElementById('pdfPreviewContainer');
-    const iframe      = document.getElementById('pdfPreviewIframe');
-    const fileNameEl  = document.getElementById('pdfFileName');
-    const label       = document.getElementById('pdfUploadLabel');
-
-    if (input.files && input.files[0]) {
-        const file = input.files[0];
-
-        // Solo PDF
-        if (file.type !== 'application/pdf') {
-            alert('Solo se permiten archivos PDF');
-            input.value = '';
-            return;
+            reader.readAsDataURL(file);
         }
+    };
 
-        const reader = new FileReader();
+    // Quitar vista previa
+    window.removeGalleryPreview = function() {
+        const input = document.getElementById('fotografia_path');
+        const previewContainer = document.getElementById('galleryPreviewContainer');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const fileUploadLabel = document.getElementById('fileUploadLabel');
 
-        reader.onload = function(e) {
-            iframe.src = e.target.result;
-            container.style.display = 'block';
-            fileNameEl.textContent = file.name;
-            label.innerHTML = '<i class="fas fa-check"></i> <span>PDF seleccionado</span>';
-            label.style.backgroundColor = 'var(--success-color)';
-            label.style.color = 'white';
-        };
+        // Resetear input
+        input.value = '';
+        
+        // Ocultar vista previa
+        previewContainer.style.display = 'none';
+        
+        // Resetear label
+        fileNameDisplay.textContent = '';
+        fileUploadLabel.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> <span>Seleccionar archivo</span>';
+        fileUploadLabel.style.backgroundColor = '';
+        fileUploadLabel.style.color = '';
+    };
 
-        reader.readAsDataURL(file);
-    }
-};
+    /* ---------- VISTA PREVIA DE PDF ---------- */
+    window.previewPdf = function(input) {
+        const container   = document.getElementById('pdfPreviewContainer');
+        const iframe      = document.getElementById('pdfPreviewIframe');
+        const fileNameEl  = document.getElementById('pdfFileName');
+        const label       = document.getElementById('pdfUploadLabel');
 
-window.removePdfPreview = function() {
-    const input   = document.getElementById('archivo_path');
-    const container = document.getElementById('pdfPreviewContainer');
-    const label    = document.getElementById('pdfUploadLabel');
-    const fileName = document.getElementById('pdfFileName');
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
 
-    input.value = '';
-    container.style.display = 'none';
-    fileName.textContent = '';
-    label.innerHTML = '<i class="fas fa-file-pdf"></i> <span>Seleccionar archivo PDF</span>';
-    label.style.backgroundColor = '';
-    label.style.color = '';
-};
-    </script>
+            // Solo PDF
+            if (file.type !== 'application/pdf') {
+                alert('Solo se permiten archivos PDF');
+                input.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                iframe.src = e.target.result;
+                container.style.display = 'block';
+                fileNameEl.textContent = file.name;
+                label.innerHTML = '<i class="fas fa-check"></i> <span>PDF seleccionado</span>';
+                label.style.backgroundColor = 'var(--success-color)';
+                label.style.color = 'white';
+            };
+
+            reader.readAsDataURL(file);
+        }
+    };
+
+    window.removePdfPreview = function() {
+        const input   = document.getElementById('archivo_path');
+        const container = document.getElementById('pdfPreviewContainer');
+        const label    = document.getElementById('pdfUploadLabel');
+        const fileName = document.getElementById('pdfFileName');
+
+        input.value = '';
+        container.style.display = 'none';
+        fileName.textContent = '';
+        label.innerHTML = '<i class="fas fa-file-pdf"></i> <span>Seleccionar archivo PDF</span>';
+        label.style.backgroundColor = '';
+        label.style.color = '';
+    };
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // === MANTENER PESTAÑA ACTIVA DESPUÉS DE ENVÍO ===
+        @if(session('active_tab'))
+            const tabToActivate = "{{ session('active_tab') }}";
+            const targetTabBtn = document.querySelector(`.tab-btn[data-tab="${tabToActivate}"]`);
+            const targetTabPane = document.getElementById(tabToActivate);
+
+            if (targetTabBtn && targetTabPane) {
+                // Quitar active de todos
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+                // Activar la correcta
+                targetTabBtn.classList.add('active');
+                targetTabPane.classList.add('active');
+            }
+        @endif
+    });
+</script>
 @endsection

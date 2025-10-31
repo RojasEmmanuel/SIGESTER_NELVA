@@ -233,7 +233,7 @@ class AdminFraccionamientoController extends Controller
 
             $infoFraccionamiento->fill($data)->save();
 
-            return redirect()->back()->with('success_info', 'Información adicional actualizada correctamente.');
+            return redirect()->back()->with('success_info', 'Información adicional actualizada correctamente.')->with('active_tab', 'basic-info');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error("Error de validación al actualizar info fraccionamiento: " . json_encode($e->errors()));
@@ -255,14 +255,14 @@ class AdminFraccionamientoController extends Controller
 
             AmenidadFraccionamiento::create(array_merge($data, ['id_fraccionamiento' => $id]));
 
-            return redirect()->back()->with('success_amenidad', 'Amenidad agregada correctamente.');
+            return redirect()->back()->with('success_amenidad', 'Amenidad agregada correctamente.')->with('active_tab', 'amenities');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error("Error de validación al agregar amenidad: " . json_encode($e->errors()));
-            return redirect()->back()->withErrors($e->errors())->withInput()->with('error_amenidad', 'Error en la validación de la amenidad.');
+            return redirect()->back()->withErrors($e->errors())->withInput()->with('error_amenidad', 'Error en la validación de la amenidad.')->with('active_tab', 'amenities');
         } catch (\Exception $e) {
             Log::error("Error al agregar amenidad: " . $e->getMessage());
-            return redirect()->back()->with('error_amenidad', 'Error al agregar la amenidad: ' . $e->getMessage());
+            return redirect()->back()->with('error_amenidad', 'Error al agregar la amenidad: ' . $e->getMessage())->with('active_tab', 'amenities');
         }
     }
 
@@ -274,11 +274,11 @@ class AdminFraccionamientoController extends Controller
                 ->firstOrFail();
             $amenidad->delete();
 
-            return redirect()->back()->with('success_amenidad', 'Amenidad eliminada correctamente.');
+            return redirect()->back()->with('success_amenidad', 'Amenidad eliminada correctamente.')->with('active_tab', 'amenities');
 
         } catch (\Exception $e) {
             Log::error("Error al eliminar amenidad: " . $e->getMessage());
-            return redirect()->back()->with('error_amenidad', 'Error al eliminar la amenidad: ' . $e->getMessage());
+            return redirect()->back()->with('error_amenidad', 'Error al eliminar la amenidad: ' . $e->getMessage())->with('active_tab', 'amenities');
         }
     }
 
@@ -311,13 +311,13 @@ class AdminFraccionamientoController extends Controller
                 'fecha_subida' => now(),
             ]);
 
-            return redirect()->back()->with('success_foto', 'Foto agregada correctamente.');
+            return redirect()->back()->with('success_foto', 'Foto agregada correctamente.')->with('active_tab', 'gallery');
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error("Error de validación al agregar foto: " . json_encode($e->errors()));
-            return redirect()->back()->withErrors($e->errors())->withInput()->with('error_foto', 'Error en la validación de la foto.');
+            return redirect()->back()->withErrors($e->errors())->withInput()->with('error_foto', 'Error en la validación de la foto.')->with('active_tab', 'gallery');
         } catch (\Exception $e) {
             Log::error("Error al agregar foto: " . $e->getMessage());
-            return redirect()->back()->with('error_foto', 'Error al agregar la foto: ' . $e->getMessage());
+            return redirect()->back()->with('error_foto', 'Error al agregar la foto: ' . $e->getMessage())->with('active_tab', 'gallery');
         }
     }
 
@@ -334,11 +334,11 @@ class AdminFraccionamientoController extends Controller
 
             $foto->delete();
 
-            return redirect()->back()->with('success_foto', 'Foto eliminada correctamente.');
+            return redirect()->back()->with('success_foto', 'Foto eliminada correctamente.')->with('active_tab', 'gallery');
 
         } catch (\Exception $e) {
             Log::error("Error al eliminar foto: " . $e->getMessage());
-            return redirect()->back()->with('error_foto', 'Error al eliminar la foto: ' . $e->getMessage());
+            return redirect()->back()->with('error_foto', 'Error al eliminar la foto: ' . $e->getMessage())->with('active_tab', 'gallery');
         }
     }
 
@@ -358,14 +358,14 @@ class AdminFraccionamientoController extends Controller
                 'fecha_subida' => now(),
             ]);
 
-            return redirect()->back()->with('success_archivo', 'Archivo agregado correctamente.');
+            return redirect()->back()->with('success_archivo', 'Archivo agregado correctamente.')->with('active_tab', 'files');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error("Error de validación al agregar archivo: " . json_encode($e->errors()));
-            return redirect()->back()->withErrors($e->errors())->withInput()->with('error_archivo', 'Error en la validación del archivo.');
+            return redirect()->back()->withErrors($e->errors())->withInput()->with('error_archivo', 'Error en la validación del archivo.')->with('active_tab', 'files');
         } catch (\Exception $e) {
             Log::error("Error al agregar archivo: " . $e->getMessage());
-            return redirect()->back()->with('error_archivo', 'Error al agregar el archivo: ' . $e->getMessage());
+            return redirect()->back()->with('error_archivo', 'Error al agregar el archivo: ' . $e->getMessage())->with('active_tab', 'files');
         }
     }
 
@@ -382,11 +382,11 @@ class AdminFraccionamientoController extends Controller
 
             $archivo->delete();
 
-            return redirect()->back()->with('success_archivo', 'Archivo eliminado correctamente.');
+            return redirect()->back()->with('success_archivo', 'Archivo eliminado correctamente.')->with('active_tab', 'files');
 
         } catch (\Exception $e) {
             Log::error("Error al eliminar archivo: " . $e->getMessage());
-            return redirect()->back()->with('error_archivo', 'Error al eliminar el archivo: ' . $e->getMessage());
+            return redirect()->back()->with('error_archivo', 'Error al eliminar el archivo: ' . $e->getMessage())->with('active_tab', 'files');
         }
     }
 
