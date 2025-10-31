@@ -518,7 +518,7 @@
                                 </div>
                                 
                                 <div class="profile-photo-hint">Haz clic en la foto o usa el botón</div>
-                                <div class="profile-photo-hint">JPG, PNG, GIF • Máx. 2MB</div>
+                                <div class="profile-photo-hint">JPG, PNG, GIF</div>
                                 
                                 <!-- Botón personalizado para seleccionar archivo -->
                                 <button type="button" class="profile-file-btn" id="profileFileButton">

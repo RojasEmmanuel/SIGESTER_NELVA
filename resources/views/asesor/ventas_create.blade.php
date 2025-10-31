@@ -242,7 +242,7 @@
                     <div class="form-group">
                         <label for="cliente_ine_frente">Foto de Identificación Oficial (Frente) <span class="required">*</span></label>
                         <input type="file" name="cliente[ine_frente]" id="cliente_ine_frente" class="form-control" accept=".jpg,.png" required>
-                        <div class="helper-text">Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB</div>
+                        <div class="helper-text">Formatos aceptados: JPG, PNG.</div>
                         @error('cliente.ine_frente')
                             <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                         @enderror
@@ -250,7 +250,7 @@
                     <div class="form-group">
                         <label for="cliente_ine_reverso">Foto de Identificación Oficial (Reverso) <span class="required">*</span></label>
                         <input type="file" name="cliente[ine_reverso]" id="cliente_ine_reverso" class="form-control" accept=".jpg,.png" required>
-                        <div class="helper-text">Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB</div>
+                        <div class="helper-text">Formatos aceptados: JPG, PNG.</div>
                         @error('cliente.ine_reverso')
                             <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                         @enderror

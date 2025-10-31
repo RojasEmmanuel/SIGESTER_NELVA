@@ -423,12 +423,12 @@
                     @error('cliente.clave_elector') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                 </div>
                 <div class="form-group">
-                    <label for="cliente_ine_frente">INE Frente <span class="required">*</span></label>
+                    <label for="cliente_ine_frente">Foto de Identificación Oficial (Frente) <span class="required">*</span></label>
                     <input type="file" name="cliente[ine_frente]" id="cliente_ine_frente" class="form-control" accept=".jpg,.png" required>
                     @error('cliente.ine_frente') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                 </div>
                 <div class="form-group">
-                    <label for="cliente_ine_reverso">INE Reverso <span class="required">*</span></label>
+                    <label for="cliente_ine_reverso">Foto de Identificación Oficial (Reverso) <span class="required">*</span></label>
                     <input type="file" name="cliente[ine_reverso]" id="cliente_ine_reverso" class="form-control" accept=".jpg,.png" required>
                     @error('cliente.ine_reverso') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                 </div>
@@ -505,11 +505,11 @@
                     <input type="tel" name="beneficiario[telefono]" id="beneficiario_telefono" class="form-control" pattern="[0-9]{10}">
                 </div>
                 <div class="form-group">
-                    <label for="beneficiario_ine_frente">INE Frente</label>
+                    <label for="beneficiario_ine_frente">Foto de Identificación Oficial (Frente)</label>
                     <input type="file" name="beneficiario[ine_frente]" id="beneficiario_ine_frente" class="form-control" accept=".jpg,.png">
                 </div>
                 <div class="form-group">
-                    <label for="beneficiario_ine_reverso">INE Reverso</label>
+                    <label for="beneficiario_ine_reverso">Foto de Identificación Oficial (Reverso)</label>
                     <input type="file" name="beneficiario[ine_reverso]" id="beneficiario_ine_reverso" class="form-control" accept=".jpg,.png">
                 </div>
             </div>
