@@ -11,11 +11,14 @@ use App\Models\ClienteContacto;
 use App\Models\ClienteDireccion;
 use App\Models\BeneficiarioClienteVenta;
 use App\Models\Credito;
+use App\Models\Fraccionamiento;
+use App\Models\Lote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ventasController extends Controller
 {
@@ -338,8 +341,7 @@ class ventasController extends Controller
     {
         $userId = Auth::user()->id_usuario;
 
-        // Cargar fraccionamientos con lotes disponibles
-        $fraccionamientos = \App\Models\Fraccionamiento::with(['lotes' => function ($query) {
+        $fraccionamientos = Fraccionamiento::with(['lotes' => function ($query) {
             $query->where('estatus', 'disponible');
         }])->get();
 
@@ -348,12 +350,13 @@ class ventasController extends Controller
 
     public function storeDirect(Request $request)
     {
-        $validated = $request->validate([
+        $tipoPago = $request->input('tipo_pago', 'contado');
+
+       $rules = [
             'lotes' => 'required|array|min:1',
             'lotes.*' => 'exists:lotes,id_lote',
             'ticket_path' => 'required|file|mimes:pdf,jpg,png|max:5120',
-            'enganche' => 'required|numeric|min:0',
-            'total' => 'required|numeric|min:0',
+            'total' => 'required|numeric|min:0.01',
             'cliente.nombres' => 'required|string|max:255',
             'cliente.apellidos' => 'required|string|max:255',
             'cliente.edad' => 'required|integer|min:18',
@@ -374,131 +377,158 @@ class ventasController extends Controller
             'beneficiario.telefono' => 'nullable|string|max:20',
             'beneficiario.ine_frente' => 'nullable|file|mimes:jpg,png|max:5120',
             'beneficiario.ine_reverso' => 'nullable|file|mimes:jpg,png|max:5120',
-            'credito.fecha_inicio' => 'nullable|date',
-            'credito.observaciones' => 'nullable|string',
-            'credito.plazo_financiamiento' => 'nullable|in:12 meses,24 meses,36 meses,48 meses,otro',
-            'credito.otro_plazo' => 'required_if:credito.plazo_financiamiento,otro|nullable|integer|min:1',
-            'credito.modalidad_pago' => 'nullable|in:mensual,bimestral,trimestral,semestral,anual',
-            'credito.formas_pago' => 'nullable|in:efectivo,transferencia,cheque,tarjeta credito/debito,otro',
-            'credito.dia_pago' => 'nullable|integer|min:1|max:31',
-        ]);
+        ];
 
-        return DB::transaction(function () use ($request, $validated) {
-            $userId = Auth::user()->id_usuario;
+        // === CRÉDITO: solo si es crédito ===
+        if ($tipoPago === 'credito') {
+            $rules += [
+                'enganche' => 'required|numeric|min:0.01|lt:total',
+                'credito.fecha_inicio' => 'required|date',
+                'credito.plazo_financiamiento' => 'required|in:12 meses,24 meses,36 meses,48 meses,otro',
+                'credito.otro_plazo' => 'required_if:credito.plazo_financiamiento,otro|nullable|integer|min:1',
+                'credito.modalidad_pago' => 'required|in:mensual,bimestral,trimestral,semestral,anual',
+                'credito.formas_pago' => 'required|in:efectivo,transferencia,cheque,tarjeta credito/debito,otro',
+                'credito.dia_pago' => 'required|integer|min:1|max:31',
+                'credito.observaciones' => 'nullable|string',
+            ];
+        } else {
+            $rules['enganche'] = 'required|numeric|same:total';
+            // Crédito: todos nullable (como en store())
+            $rules += [
+                'credito.fecha_inicio' => 'nullable|date',
+                'credito.observaciones' => 'nullable|string',
+                'credito.plazo_financiamiento' => 'nullable|in:12 meses,24 meses,36 meses,48 meses,otro',
+                'credito.otro_plazo' => 'nullable|integer|min:1',
+                'credito.modalidad_pago' => 'nullable|in:mensual,bimestral,trimestral,semestral,anual',
+                'credito.formas_pago' => 'nullable|in:efectivo,transferencia,cheque,tarjeta credito/debito,otro',
+                'credito.dia_pago' => 'nullable|integer|min:1|max:31',
+            ];
+        }
 
-            // Verificar que todos los lotes estén disponibles
-            $lotes = \App\Models\Lote::whereIn('id_lote', $validated['lotes'])
-                ->where('estatus', 'disponible')
-                ->get();
+        $validated = $request->validate($rules);
 
-            if ($lotes->count() !== count($validated['lotes'])) {
-                return back()->withErrors(['lotes' => 'Uno o más lotes seleccionados ya no están disponibles.']);
-            }
+        try {
+            return DB::transaction(function () use ($request, $validated, $tipoPago) {
+                $userId = Auth::user()->id_usuario;
 
-            // Crear apartado temporal (interno) para vincular venta
-            $apartado = \App\Models\Apartado::create([
-                'fechaApartado' => now(),
-                'fechaVencimiento' => now()->addDays(1), // Vence mañana (solo interno)
-                'tipoApartado' => 'palabra',
-                'estatus' => 'venta',
-                'cliente_nombre' => $validated['cliente']['nombres'],
-                'cliente_apellidos' => $validated['cliente']['apellidos'],
-                'id_usuario' => $userId,
-            ]);
+                // === 1. Verificar lotes disponibles ===
+                $lotes = Lote::whereIn('id_lote', $validated['lotes'])
+                    ->where('estatus', 'disponible')
+                    ->get();
 
-            // Asociar lotes al apartado
-            foreach ($lotes as $lote) {
-                \App\Models\LoteApartado::create([
+                if ($lotes->count() !== count($validated['lotes'])) {
+                    throw new \Exception('Uno o más lotes ya no están disponibles.');
+                }
+
+                // === 2. Apartado temporal ===
+                $apartado = Apartado::create([
+                    'fechaApartado' => now(),
+                    'fechaVencimiento' => now()->addDay(),
+                    'tipoApartado' => 'palabra',
+                    'estatus' => 'venta',
+                    'cliente_nombre' => $validated['cliente']['nombres'],
+                    'cliente_apellidos' => $validated['cliente']['apellidos'],
+                    'id_usuario' => $userId,
+                ]);
+
+                foreach ($lotes as $lote) {
+                    LoteApartado::create([
+                        'id_apartado' => $apartado->id_apartado,
+                        'id_lote' => $lote->id_lote,
+                    ]);
+                    $lote->update(['estatus' => 'vendido']);
+                }
+
+                // === 3. Ticket ===
+                $ticketPath = $request->file('ticket_path')->store('tickets', 'public');
+
+                // === 4. Venta ===
+                $venta = Venta::create([
+                    'fechaSolicitud' => now(),
+                    'estatus' => 'solicitud',
+                    'ticket_path' => $ticketPath,
+                    'ticket_estatus' => 'solicitud',
+                    'enganche' => $validated['enganche'],
+                    'total' => $validated['total'],
                     'id_apartado' => $apartado->id_apartado,
-                    'id_lote' => $lote->id_lote,
                 ]);
-                $lote->update(['estatus' => 'vendido']);
-            }
 
-            // Guardar ticket
-            $ticketPath = $request->file('ticket_path')->store('tickets', 'public');
+                // === 5. Cliente ===
+                $ineFrentePath = $request->file('cliente.ine_frente')->store('ine_photos', 'public');
+                $ineReversoPath = $request->file('cliente.ine_reverso')->store('ine_photos', 'public');
 
-            // Crear venta
-            $venta = Venta::create([
-                'fechaSolicitud' => now(),
-                'estatus' => 'solicitud',
-                'ticket_path' => $ticketPath,
-                'ticket_estatus' => 'solicitud',
-                'enganche' => $validated['enganche'],
-                'total' => $validated['total'],
-                'id_apartado' => $apartado->id_apartado,
-            ]);
-
-            // Cliente
-            $ineFrentePath = $request->file('cliente.ine_frente')->store('ine_photos', 'public');
-            $ineReversoPath = $request->file('cliente.ine_reverso')->store('ine_photos', 'public');
-
-            $cliente = ClienteVenta::create([
-                'nombres' => $validated['cliente']['nombres'],
-                'apellidos' => $validated['cliente']['apellidos'],
-                'edad' => $validated['cliente']['edad'],
-                'estado_civil' => $validated['cliente']['estado_civil'],
-                'lugar_origen' => $validated['cliente']['lugar_origen'],
-                'ocupacion' => $validated['cliente']['ocupacion'],
-                'clave_elector' => $validated['cliente']['clave_elector'] ?? null,
-                'ine_frente' => $ineFrentePath,
-                'ine_reverso' => $ineReversoPath,
-                'id_venta' => $venta->id_venta,
-            ]);
-
-            ClienteContacto::create([
-                'telefono' => $validated['contacto']['telefono'],
-                'email' => $validated['contacto']['email'],
-                'id_cliente' => $cliente->id_cliente,
-            ]);
-
-            ClienteDireccion::create([
-                'nacionalidad' => $validated['direccion']['nacionalidad'],
-                'estado' => $validated['direccion']['estado'],
-                'municipio' => $validated['direccion']['municipio'],
-                'localidad' => $validated['direccion']['localidad'],
-                'id_cliente' => $cliente->id_cliente,
-            ]);
-
-            // Beneficiario
-            if (!empty($validated['beneficiario']['nombres']) && !empty($validated['beneficiario']['apellidos'])) {
-                $beneficiarioData = [
-                    'nombres' => $validated['beneficiario']['nombres'],
-                    'apellidos' => $validated['beneficiario']['apellidos'],
-                    'telefono' => $validated['beneficiario']['telefono'] ?? null,
+                $cliente = ClienteVenta::create([
+                    'nombres' => $validated['cliente']['nombres'],
+                    'apellidos' => $validated['cliente']['apellidos'],
+                    'edad' => $validated['cliente']['edad'],
+                    'estado_civil' => $validated['cliente']['estado_civil'],
+                    'lugar_origen' => $validated['cliente']['lugar_origen'],
+                    'ocupacion' => $validated['cliente']['ocupacion'],
+                    'clave_elector' => $validated['cliente']['clave_elector'] ?? null,
+                    'ine_frente' => $ineFrentePath,
+                    'ine_reverso' => $ineReversoPath,
                     'id_venta' => $venta->id_venta,
+                ]);
+
+                ClienteContacto::create([
+                    'telefono' => $validated['contacto']['telefono'],
+                    'email' => $validated['contacto']['email'],
                     'id_cliente' => $cliente->id_cliente,
-                ];
-
-                if ($request->hasFile('beneficiario.ine_frente')) {
-                    $beneficiarioData['ine_frente'] = $request->file('beneficiario.ine_frente')->store('ine_photos', 'public');
-                }
-                if ($request->hasFile('beneficiario.ine_reverso')) {
-                    $beneficiarioData['ine_reverso'] = $request->file('beneficiario.ine_reverso')->store('ine_photos', 'public');
-                }
-
-                BeneficiarioClienteVenta::create($beneficiarioData);
-            }
-
-            // Crédito
-            if (!empty($validated['credito']['fecha_inicio'])) {
-                $plazo = $validated['credito']['plazo_financiamiento'] === 'otro'
-                    ? $validated['credito']['otro_plazo']
-                    : $validated['credito']['plazo_financiamiento'];
-
-                Credito::create([
-                    'fecha_inicio' => $validated['credito']['fecha_inicio'],
-                    'observaciones' => $validated['credito']['observaciones'] ?? null,
-                    'plazo_financiamiento' => $validated['credito']['plazo_financiamiento'],
-                    'otro_plazo' => $plazo === $validated['credito']['otro_plazo'] ? $plazo : null,
-                    'modalidad_pago' => $validated['credito']['modalidad_pago'] ?? null,
-                    'formas_pago' => $validated['credito']['formas_pago'] ?? null,
-                    'dia_pago' => $validated['credito']['dia_pago'] ?? null,
-                    'id_venta' => $venta->id_venta,
                 ]);
-            }
 
-            return redirect()->route('ventas.index')->with('success', 'Venta directa creada exitosamente.');
-        });
+                ClienteDireccion::create([
+                    'nacionalidad' => $validated['direccion']['nacionalidad'],
+                    'estado' => $validated['direccion']['estado'],
+                    'municipio' => $validated['direccion']['municipio'],
+                    'localidad' => $validated['direccion']['localidad'],
+                    'id_cliente' => $cliente->id_cliente,
+                ]);
+
+                // === 6. Beneficiario (opcional) ===
+                if (!empty($validated['beneficiario']['nombres']) && !empty($validated['beneficiario']['apellidos'])) {
+                    $beneficiarioData = [
+                        'nombres' => $validated['beneficiario']['nombres'],
+                        'apellidos' => $validated['beneficiario']['apellidos'],
+                        'telefono' => $validated['beneficiario']['telefono'] ?? null,
+                        'id_venta' => $venta->id_venta,
+                        'id_cliente' => $cliente->id_cliente,
+                    ];
+
+                    if ($request->hasFile('beneficiario.ine_frente')) {
+                        $beneficiarioData['ine_frente'] = $request->file('beneficiario.ine_frente')->store('ine_photos', 'public');
+                    }
+                    if ($request->hasFile('beneficiario.ine_reverso')) {
+                        $beneficiarioData['ine_reverso'] = $request->file('beneficiario.ine_reverso')->store('ine_photos', 'public');
+                    }
+
+                    BeneficiarioClienteVenta::create($beneficiarioData);
+                }
+
+                // === 7. Crédito (solo si es crédito) ===
+               if ($tipoPago === 'credito' && !empty($validated['credito']['fecha_inicio'])) {
+                    $plazo = $validated['credito']['plazo_financiamiento'];
+                    $otroPlazo = ($plazo === 'otro') ? $validated['credito']['otro_plazo'] : null;
+
+                    if (in_array($plazo, ['12 meses', '24 meses', '36 meses', '48 meses'])) {
+                        $otroPlazo = (int) str_replace(' meses', '', $plazo);
+                    }
+
+                    Credito::create([
+                        'fecha_inicio' => $validated['credito']['fecha_inicio'],
+                        'observaciones' => $validated['credito']['observaciones'] ?? null,
+                        'plazo_financiamiento' => $plazo,
+                        'otro_plazo' => $otroPlazo,
+                        'modalidad_pago' => $validated['credito']['modalidad_pago'],
+                        'formas_pago' => $validated['credito']['formas_pago'],
+                        'dia_pago' => (string) $validated['credito']['dia_pago'], // ← STRING por varchar(2)
+                        'id_venta' => $venta->id_venta,
+                    ]);
+                }
+                return redirect()->route('ventas.index')->with('success', 'Venta creada exitosamente.');
+            });
+        } catch (\Exception $e) {
+            Log::error('Error en venta directa: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Error al crear la venta: ' . $e->getMessage()]);
+        }
     }
 }
