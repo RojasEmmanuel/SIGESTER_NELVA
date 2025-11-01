@@ -18,13 +18,35 @@ class InicioClientController extends Controller
             ->get()
             ->groupBy('zona');
 
+        // Obtener promociones activas de los fraccionamientos basadas en fechas
+        $promocionesActivas = Fraccionamiento::where('estatus', 1)
+            ->whereHas('promociones', function($query) {
+                $query->where('fecha_inicio', '<=', now())
+                    ->where(function($q) {
+                        $q->where('fecha_fin', '>=', now())
+                            ->orWhere('fecha_fin', null);
+                    });
+            })
+            ->with(['promociones' => function($query) {
+                $query->where('fecha_inicio', '<=', now())
+                    ->where(function($q) {
+                        $q->where('fecha_fin', '>=', now())
+                            ->orWhere('fecha_fin', null);
+                    })
+                    ->select('id_promocion', 'id_fraccionamiento', 'titulo', 'descripcion', 'imagen_path', 'fecha_inicio', 'fecha_fin');
+            }])
+            ->get()
+            ->filter(function($fraccionamiento) {
+                return $fraccionamiento->promociones->count() > 0;
+            });
+
         // Pasar los datos a la vista
         return view('pagina.inicio', [
             'fraccionamientos' => $fraccionamientos,
+            'promocionesActivas' => $promocionesActivas,
             'title' => 'Nelva Bienes Raíces'
         ]);
-    }
-    
+    }    
     public function Atractivos()
     {
         return view('pagina.atractivos', [

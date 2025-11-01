@@ -18,6 +18,11 @@ class Promocion extends Model
         'id_fraccionamiento',
     ];
 
+    protected $casts = [
+        'fecha_inicio' => 'datetime',
+        'fecha_fin' => 'datetime',
+    ];
+    
     public function fraccionamiento()
     {
         return $this->belongsTo(Fraccionamiento::class, 'id_fraccionamiento', 'id_fraccionamiento');

@@ -1944,3 +1944,399 @@ body {
         transform: translateY(0);
     }
 }
+
+
+
+
+/* ==================== SECCIÓN PROMOCIONES MEJORADA ==================== */
+.oceanica-promociones-section {
+    margin-top: 2.5rem;
+    padding: 1.5rem;
+    background: var(--white);
+    border-radius: var(--rounded);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--medium-gray);
+}
+
+.oceanica-promociones-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--accent-color);
+}
+
+.oceanica-promociones-title i {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.oceanica-promociones-title h3 {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.oceanica-promociones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.oceanica-promo-card {
+    background: var(--white);
+    border-radius: var(--rounded);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--medium-gray);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+}
+
+.oceanica-promo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+}
+
+.oceanica-promo-image-container {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--light-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+    max-height: 400px;
+}
+
+.oceanica-promo-image {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+/* Estilos para imágenes verticales */
+.oceanica-promo-image.vertical {
+    max-height: 350px;
+    width: auto;
+}
+
+/* Estilos para imágenes horizontales */
+.oceanica-promo-image.horizontal {
+    max-width: 100%;
+    height: auto;
+}
+
+.oceanica-promo-card:hover .oceanica-promo-image {
+    transform: scale(1.02);
+}
+
+.oceanica-promo-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(30, 71, 138, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.oceanica-promo-image-container:hover .oceanica-promo-overlay {
+    opacity: 1;
+}
+
+.oceanica-download-btn {
+    background: var(--white);
+    color: var(--primary-color);
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--rounded-sm);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.oceanica-download-btn:hover {
+    background: var(--accent-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.oceanica-promo-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--success-color);
+    color: var(--white);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: var(--shadow);
+    z-index: 2;
+}
+
+.oceanica-flyer-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--warning-color);
+    color: var(--white);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: var(--shadow);
+    z-index: 2;
+}
+
+.oceanica-promo-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.oceanica-promo-title {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    line-height: 1.3;
+}
+
+.oceanica-promo-description {
+    color: var(--text-color);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0 0 1.5rem 0;
+    flex-grow: 1;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+.oceanica-promo-description-with-scroll {
+    max-height: 120px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+/* Scrollbar personalizado para descripción */
+.oceanica-promo-description-with-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+
+.oceanica-promo-description-with-scroll::-webkit-scrollbar-track {
+    background: var(--light-gray);
+    border-radius: 2px;
+}
+
+.oceanica-promo-description-with-scroll::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 2px;
+}
+
+.oceanica-promo-description-with-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+.oceanica-promo-dates {
+    
+    padding: 1rem;
+    border-radius: var(--rounded-sm);
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+
+.oceanica-date-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    
+}
+
+.oceanica-date-item:last-child {
+    margin-bottom: 0;
+}
+
+.oceanica-date-icon {
+    color: var(--primary-color);
+    width: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.oceanica-date-content {
+    flex: 1;
+    display: flex;
+}
+
+.oceanica-date-label {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.85rem;
+    margin-bottom: 2px;
+}
+
+.oceanica-date-value {
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.oceanica-indefinida {
+    color: var(--success-color) !important;
+    font-weight: 700;
+}
+
+/* Estados vacíos y loading */
+.oceanica-promociones-empty {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-light);
+}
+
+.oceanica-promociones-empty i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.oceanica-promociones-empty h4 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .oceanica-promociones-section {
+        margin-top: 2rem;
+        padding: 1rem;
+    }
+
+    .oceanica-promociones-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .oceanica-promo-image-container {
+        min-height: 200px;
+        max-height: 300px;
+    }
+
+    .oceanica-promo-image.vertical {
+        max-height: 280px;
+    }
+
+    .oceanica-promo-content {
+        padding: 1.25rem;
+    }
+
+    .oceanica-promo-title {
+        font-size: 1.1rem;
+    }
+
+    .oceanica-promo-description {
+        font-size: 0.9rem;
+    }
+
+    .oceanica-date-item {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .oceanica-download-btn {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .oceanica-promociones-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .oceanica-promociones-title h3 {
+        font-size: 1.2rem;
+    }
+
+    .oceanica-promo-dates {
+        padding: 0.75rem;
+    }
+
+    .oceanica-promo-image-container {
+        min-height: 180px;
+        max-height: 250px;
+    }
+
+    .oceanica-promo-image.vertical {
+        max-height: 220px;
+    }
+}
+
+/* Animaciones */
+@keyframes oceanicaPromoFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.oceanica-promo-card {
+    animation: oceanicaPromoFadeIn 0.5s ease-out;
+}
+
+/* Indicador de carga para imágenes */
+.oceanica-image-loading {
+    background: linear-gradient(90deg, var(--light-gray) 25%, var(--medium-gray) 50%, var(--light-gray) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}

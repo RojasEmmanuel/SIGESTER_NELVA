@@ -321,47 +321,113 @@
     </div>
 </section>
 
-<!-- Sección de Promociones -->
-<section class="promo-section">
+<!-- Sección de Promociones Dinámicas -->
+<section class="nelva-promos-section">
     <div class="container">
-        <h2 class="text-center">Promociones Especiales</h2>
-        <p class="text-center">Aprovecha nuestras ofertas exclusivas para invertir en tu próximo proyecto</p>
-        
-        <div class="promo-grid">
-            <div class="promo-card">
-                <img src="{{ asset('storage/images/inicio/oceanicaFlyer.png') }}" alt="Promoción 2">
-                <div class="promo-card-content">
-                    <h3>Promociones de septiembre 2025✨</h3>
-                    <p>Hasta 48 meses sin intereses</p>
-                </div>
-            </div>
-
-            <div class="promo-card">
-                <img src="{{ asset('storage/images/inicio/andromedaFlyer.png') }}" alt="Promoción 2">
-                <div class="promo-card-content">
-                    <h3>Promociones de septiembre 2025✨</h3>
-                    <p>Hasta 48 meses sin intereses</p>
-                </div>
-            </div>
-
-            <div class="promo-card">
-                <img src="{{ asset('storage/images/inicio/realCampestreFlyer.png') }}" alt="Promoción 2">
-                <div class="promo-card-content">
-                    <h3>Promociones de septiembre 2025✨</h3>
-                    <p>Hasta 48 meses sin intereses</p>
-                </div>
-            </div>
-
-            <div class="promo-card">
-                <img src="{{ asset('storage/images/inicio/jicaroFlyer.jpg') }}" alt="Promoción 2">
-                <div class="promo-card-content">
-                    <h3>Promociones de septiembre 2025✨</h3>
-                    <p>Hasta 48 meses sin intereses</p>
-                </div>
-            </div>
+        <div class="nelva-promos-header">
+            <h2>Promociones Especiales</h2>
+            <p>Aprovecha nuestras ofertas exclusivas en los mejores fraccionamientos</p>
         </div>
+        
+        @if($promocionesActivas->count() > 0)
+        <div class="nelva-promos-grid">
+            @foreach($promocionesActivas as $fraccionamiento)
+                @foreach($fraccionamiento->promociones as $promocion)
+                @php
+                    // Detectar orientación de imagen
+                    $esVertical = false;
+                    if ($promocion->imagen_path) {
+                        try {
+                            $rutaImagen = storage_path('app/public/' . $promocion->imagen_path);
+                            if (file_exists($rutaImagen)) {
+                                list($ancho, $alto) = getimagesize($rutaImagen);
+                                $esVertical = $alto > $ancho;
+                            }
+                        } catch (Exception $e) {
+                            $esVertical = false;
+                        }
+                    }
+                    
+                    // Calcular días restantes
+                    $diasRestantes = null;
+                    if ($promocion->fecha_fin) {
+                        $fechaFin = \Carbon\Carbon::parse($promocion->fecha_fin);
+                        $diasRestantes = now()->diffInDays($fechaFin, false);
+                    }
+                @endphp
+                
+                <div class="nelva-promo-card">
+                    <div class="nelva-promo-image-wrapper {{ $esVertical ? 'vertical' : 'horizontal' }}">
+                        <img src="{{ asset('storage/' . $promocion->imagen_path) }}" 
+                             alt="{{ $promocion->titulo }}"
+                             class="nelva-promo-img"
+                             loading="lazy">
+                        
+                        <div class="nelva-promo-overlay">
+                            <div class="nelva-promo-actions">
+                                <a href="{{ route('pagina.fraccionamiento.show', $fraccionamiento->id_fraccionamiento) }}" 
+                                   class="nelva-action-btn">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ asset('storage/' . $promocion->imagen_path) }}" 
+                                   class="nelva-action-btn"
+                                   download="promocion-{{ Str::slug($promocion->titulo) }}.jpg">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        @if($diasRestantes !== null && $diasRestantes <= 15)
+                        <div class="nelva-time-badge">
+                            <i class="fas fa-clock"></i>
+                            {{ $diasRestantes > 0 ? $diasRestantes . ' días' : 'Último día' }}
+                        </div>
+                        @endif
+                    </div>
+                    
+                    <div class="nelva-promo-info">
+                        <div class="nelva-promo-badge">Promoción Activa</div>
+                        
+                        <h3 class="nelva-promo-title">{{ $promocion->titulo }}</h3>
+                        
+                        <div class="nelva-fracc-info">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ $fraccionamiento->nombre }}</span>
+                        </div>
+                        
+                        <div class="nelva-promo-dates">
+                            <div class="nelva-date-item">
+                                <span class="nelva-date-label">Válido hasta:</span>
+                                <span class="nelva-date-value">
+                                    @if($promocion->fecha_fin)
+                                        {{ \Carbon\Carbon::parse($promocion->fecha_fin)->format('d/m/Y') }}
+                                    @else
+                                        <span class="nelva-indefinite">Indefinido</span>
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <a href="{{ route('pagina.fraccionamiento.show', $fraccionamiento->id_fraccionamiento) }}" 
+                           class="nelva-cta-btn">
+                            <i class="fas fa-arrow-right"></i>
+                            Ver fraccionamiento
+                        </a>
+                    </div>
+                </div>
+                @endforeach
+            @endforeach
+        </div>
+        @else
+        <div class="nelva-no-promos">
+            <i class="fas fa-gift"></i>
+            <h3>Próximamente nuevas promociones</h3>
+            <p>Estamos preparando ofertas especiales para ti</p>
+        </div>
+        @endif
     </div>
 </section>
+
 
 <!-- Incrustar el footer -->
 <?= view('templates/footer') ?>

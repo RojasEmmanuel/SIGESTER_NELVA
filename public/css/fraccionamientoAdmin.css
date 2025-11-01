@@ -1093,3 +1093,442 @@ textarea.form-control {
     padding-top: 0;
     padding-bottom: 0;
 }
+
+    /* ==================== PROMOCIONES STYLES ==================== */
+    .promociones-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .promo-card {
+        background: var(--white);
+        border-radius: var(--rounded);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        transition: var(--transition);
+        border: 1px solid var(--medium-gray);
+    }
+
+    .promo-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .promo-image {
+        position: relative;
+        height: 160px;
+        overflow: hidden;
+    }
+
+    .promo-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .promo-card:hover .promo-image img {
+        transform: scale(1.05);
+    }
+
+    .promo-status {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: var(--shadow);
+    }
+
+    .promo-status.active { 
+        background: var(--success-color); 
+    }
+    .promo-status.inactive { 
+        background: var(--danger-color); 
+    }
+
+    .promo-info {
+        padding: 16px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .promo-info h5 {
+        margin: 0 0 8px;
+        font-size: 1.1rem;
+        color: var(--primary-color);
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    .promo-desc {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        margin: 4px 0 12px;
+        line-height: 1.4;
+        flex-grow: 1;
+    }
+
+    .promo-dates {
+        font-size: 0.8rem;
+        color: var(--dark-gray);
+        margin: 8px 0 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .promo-actions {
+        padding: 12px 16px;
+        display: flex;
+        gap: 8px;
+        border-top: 1px solid var(--medium-gray);
+        background: var(--light-gray);
+    }
+
+    .promo-actions .btn {
+        flex: 1;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        border-radius: var(--rounded-sm);
+        font-weight: 500;
+        transition: var(--transition);
+        cursor: pointer;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .promo-actions .btn-outline {
+        background: var(--white);
+        color: var(--text-light);
+        border: 1px solid var(--dark-gray);
+    }
+
+    .promo-actions .btn-outline:hover {
+        background: var(--medium-gray);
+        border-color: var(--text-light);
+    }
+
+    .promo-actions .btn-danger {
+        background: var(--danger-color);
+        color: var(--white);
+    }
+
+    .promo-actions .btn-danger:hover {
+        background: #dc2626;
+        box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+    }
+
+    /* ==================== MODAL DE EDICIÓN DE PROMOCIONES ==================== */
+    #editPromoModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.2s ease;
+    }
+
+    #editPromoModal.active {
+        display: flex;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .promo-modal-content {
+        background: var(--white);
+        border-radius: var(--rounded);
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow-lg);
+        animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+        from { 
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .promo-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px 16px;
+        border-bottom: 1px solid var(--medium-gray);
+    }
+
+    .promo-modal-header h3 {
+        margin: 0;
+        color: var(--primary-color);
+        font-size: 1.4rem;
+        font-weight: 600;
+    }
+
+    .promo-modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--text-light);
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+    }
+
+    .promo-modal-close:hover {
+        background: var(--light-gray);
+        color: var(--text-color);
+    }
+
+    .promo-modal-body {
+        padding: 24px;
+    }
+
+    .promo-form-group {
+        margin-bottom: 20px;
+    }
+
+    .promo-form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .promo-form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-color);
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .promo-form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid var(--medium-gray);
+        border-radius: var(--rounded-sm);
+        font-size: 1rem;
+        transition: var(--transition);
+        background: var(--white);
+        box-sizing: border-box;
+    }
+
+    .promo-form-control:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    textarea.promo-form-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    /* File Upload Styles para modal de promociones */
+    .promo-file-upload-container {
+        position: relative;
+    }
+
+    .promo-file-input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .promo-file-upload-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        background: var(--light-gray);
+        border: 1px dashed var(--dark-gray);
+        border-radius: var(--rounded-sm);
+        cursor: pointer;
+        transition: var(--transition);
+        color: var(--text-light);
+    }
+
+    .promo-file-upload-label:hover {
+        background: var(--accent-color);
+        border-color: var(--primary-light);
+        color: var(--primary-color);
+    }
+
+    .promo-file-name {
+        display: block;
+        margin-top: 8px;
+        color: var(--text-light);
+        font-size: 0.85rem;
+    }
+
+    .promo-gallery-preview-container {
+        margin-top: 12px;
+    }
+
+    .promo-gallery-preview {
+        position: relative;
+        display: inline-block;
+    }
+
+    .promo-current-image {
+        margin-top: 16px;
+        padding: 12px;
+        background: var(--light-gray);
+        border-radius: var(--rounded-sm);
+    }
+
+    .promo-current-image p {
+        margin: 0 0 8px;
+        color: var(--text-color);
+        font-size: 0.9rem;
+    }
+
+    .promo-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 16px 24px;
+        border-top: 1px solid var(--medium-gray);
+        background: var(--light-gray);
+    }
+
+    .promo-modal-footer .btn {
+        padding: 10px 20px;
+        border-radius: var(--rounded-sm);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .promo-modal-footer .btn-outline {
+        background: var(--white);
+        color: var(--text-light);
+        border: 1px solid var(--dark-gray);
+    }
+
+    .promo-modal-footer .btn-outline:hover {
+        background: var(--medium-gray);
+        border-color: var(--text-light);
+    }
+
+    .promo-modal-footer .btn-primary {
+        background: var(--primary-color);
+        color: var(--white);
+    }
+
+    .promo-modal-footer .btn-primary:hover {
+        background: var(--secondary-color);
+        box-shadow: 0 2px 8px rgba(30, 71, 138, 0.3);
+    }
+
+    /* Vista previa de imagen en formulario de promociones */
+    #promoPreviewContainer {
+        margin-top: 10px;
+        position: relative;
+        display: inline-block;
+    }
+
+    #promoPreviewImage {
+        max-height: 150px;
+        border-radius: var(--rounded-sm);
+        box-shadow: var(--shadow);
+    }
+
+    .btn-remove-promo-preview {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: var(--danger-color);
+        color: white;
+        border: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        font-size: 0.8rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+    }
+
+    .btn-remove-promo-preview:hover {
+        background: #dc2626;
+        transform: scale(1.1);
+    }
+
+    /* Responsive para promociones y modal */
+    @media (max-width: 768px) {
+        .promociones-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .promo-modal-content {
+            width: 95%;
+            margin: 20px;
+        }
+        
+        .promo-modal-body {
+            padding: 16px;
+        }
+        
+        .promo-modal-footer {
+            padding: 12px 16px;
+            flex-direction: column;
+        }
+        
+        .promo-modal-footer .btn {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .promo-actions {
+            flex-direction: column;
+        }
+        
+        .promo-modal-header {
+            padding: 16px;
+        }
+        
+        .promo-modal-header h3 {
+            font-size: 1.2rem;
+        }
+    }

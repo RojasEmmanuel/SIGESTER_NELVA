@@ -338,6 +338,128 @@
             </div>
         </div>
 
+        <!-- SECCIÓN DE PROMOCIONES (OPCIONAL) -->
+        @if($promocionesActivas->count() > 0)
+        <div class="oceanica-promociones-section">
+            <div class="oceanica-promociones-title">
+                <i class="fas fa-gift"></i>
+                <h3>Promociones Activas</h3>
+            </div>
+            
+            <div class="oceanica-promociones-grid">
+                @foreach($promocionesActivas as $promo)
+                @php
+                    // Detectar si la imagen es vertical u horizontal
+                    $esVertical = false;
+                    if ($promo['imagen_path']) {
+                        try {
+                            $rutaImagen = storage_path('app/public/' . $promo['imagen_path']);
+                            if (file_exists($rutaImagen)) {
+                                list($ancho, $alto) = getimagesize($rutaImagen);
+                                $esVertical = $alto > $ancho;
+                            }
+                        } catch (Exception $e) {
+                            // En caso de error, asumir horizontal
+                            $esVertical = false;
+                        }
+                    }
+                    
+                    // Formatear fechas en formato simple dd/mm/yyyy
+                    $fechaInicioFormateada = \Carbon\Carbon::parse($promo['fecha_inicio'])->format('d/m/Y');
+                    
+                    if ($promo['fecha_fin'] !== 'Indefinida') {
+                        $fechaFinFormateada = \Carbon\Carbon::parse($promo['fecha_fin'])->format('d/m/Y');
+                    } else {
+                        $fechaFinFormateada = 'Indefinida';
+                    }
+                @endphp
+                
+                <div class="oceanica-promo-card">
+                    @if($promo['imagen_path'])
+                    <div class="oceanica-promo-image-container">
+                        <img src="{{ asset('storage/' . $promo['imagen_path']) }}" 
+                            alt="{{ $promo['titulo'] }}"
+                            title="Haz clic para ver en tamaño completo"
+                            class="oceanica-promo-image {{ $esVertical ? 'vertical' : 'horizontal' }}"
+                            onload="this.classList.remove('oceanica-image-loading')"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        
+                        <!-- Fallback si la imagen no carga -->
+                        <div class="oceanica-promo-image-container" style="display: none; background: var(--accent-color);">
+                            <i class="fas fa-image" style="font-size: 3rem; color: var(--primary-color);"></i>
+                        </div>
+                        
+                        <div class="oceanica-promo-overlay">
+                            <a href="{{ asset('storage/' . $promo['imagen_path']) }}" 
+                            download="promocion-{{ Str::slug($promo['titulo']) }}.jpg" 
+                            class="oceanica-download-btn">
+                                <i class="fas fa-download"></i>
+                                Descargar Flyer
+                            </a>
+                        </div>
+                        
+                        <div class="oceanica-promo-badge">Activa</div>
+                        <div class="oceanica-flyer-tag">Flyer</div>
+                    </div>
+                    @else
+                    <div class="oceanica-promo-image-container" style="background: var(--accent-color);">
+                        <i class="fas fa-gift" style="font-size: 3rem; color: var(--primary-color);"></i>
+                        <div class="oceanica-promo-badge">Activa</div>
+                    </div>
+                    @endif
+                    
+                    <div class="oceanica-promo-content">
+                        <h4 class="oceanica-promo-title">{{ $promo['titulo'] }}</h4>
+                        
+                        @if($promo['descripcion'])
+                        <div class="oceanica-promo-description 
+                            {{ strlen($promo['descripcion']) > 200 ? 'oceanica-promo-description-with-scroll' : '' }}">
+                            {!! nl2br(e($promo['descripcion'])) !!}
+                        </div>
+                        @endif
+                        
+                        <div class="oceanica-promo-dates">
+                            <div class="oceanica-date-item">
+                                <i class="fas fa-play-circle oceanica-date-icon"></i>
+                                <div class="oceanica-date-content">
+                                    <div class="oceanica-date-label">Inicia: </div>
+                                    <div class="oceanica-date-value">
+                                        {{ $fechaInicioFormateada }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="oceanica-date-item">
+                                <i class="fas fa-flag-checkered oceanica-date-icon"></i>
+                                <div class="oceanica-date-content">
+                                    <div class="oceanica-date-label">Finaliza: </div>
+                                    <div class="oceanica-date-value 
+                                        {{ $fechaFinFormateada === 'Indefinida' ? 'oceanica-indefinida' : '' }}">
+                                        @if($fechaFinFormateada !== 'Indefinida')
+                                            {{ $fechaFinFormateada }}
+                                        @else
+                                            <span class="oceanica-indefinida">Indefinida</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @else
+        <!-- Estado vacío opcional -->
+        <div class="oceanica-promociones-section">
+            <div class="oceanica-promociones-empty">
+                <i class="fas fa-gift"></i>
+                <h4>No hay promociones activas</h4>
+                <p>Actualmente no contamos con promociones vigentes.</p>
+            </div>
+        </div>
+        @endif
+
         <!-- Development Map -->
         @if(isset($datosFraccionamiento['ubicacionMaps']) && !empty($datosFraccionamiento['ubicacionMaps']))
         <div class="development-map">
@@ -558,6 +680,9 @@
             </form>
         </div>
     </div>
+
+    
+
 
     @include('app_config')
 

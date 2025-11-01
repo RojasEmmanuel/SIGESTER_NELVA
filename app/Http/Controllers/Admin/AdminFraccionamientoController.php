@@ -98,6 +98,7 @@ class AdminFraccionamientoController extends Controller
         }
     }
 
+    
     public function show($id)
     {
         try {
@@ -106,9 +107,11 @@ class AdminFraccionamientoController extends Controller
                 'amenidadesFraccionamiento',
                 'galeria',
                 'archivosFraccionamiento',
-                'lotes'
+                'lotes',
+                'promociones' // ← Nueva relación cargada
             ])->findOrFail($id);
 
+            // === Datos básicos del fraccionamiento ===
             $datosFraccionamiento = [
                 'id' => $fraccionamiento->id_fraccionamiento,
                 'nombre' => $fraccionamiento->nombre,
@@ -123,6 +126,7 @@ class AdminFraccionamientoController extends Controller
                 'ubicacionMaps' => $fraccionamiento->infoFraccionamiento->ubicacionMaps ?? null,
             ];
 
+            // === Amenidades ===
             $amenidades = $fraccionamiento->amenidadesFraccionamiento->map(function($amenidad) {
                 return [
                     'id' => $amenidad->id_amenidad,
@@ -132,6 +136,7 @@ class AdminFraccionamientoController extends Controller
                 ];
             });
 
+            // === Galería ===
             $galeria = $fraccionamiento->galeria->map(function($foto) {
                 return [
                     'id' => $foto->id_foto,
@@ -141,6 +146,7 @@ class AdminFraccionamientoController extends Controller
                 ];
             });
 
+            // === Archivos ===
             $archivos = $fraccionamiento->archivosFraccionamiento->map(function($archivo) {
                 return [
                     'id' => $archivo->id_archivo,
@@ -150,11 +156,30 @@ class AdminFraccionamientoController extends Controller
                 ];
             });
 
+            // === Estadísticas de lotes ===
             $totalLotes = $fraccionamiento->lotes->count();
             $lotesDisponibles = $fraccionamiento->lotes->where('estatus', 'disponible')->count();
             $lotesApartados = $fraccionamiento->lotes->whereIn('estatus', ['apartadoPalabra', 'apartadoDeposito'])->count();
             $lotesVendidos = $fraccionamiento->lotes->where('estatus', 'vendido')->count();
 
+            // === PROMOCIONES (nueva sección) ===
+            $promociones = $fraccionamiento->promociones->map(function($promo) {
+                $hoy = \Carbon\Carbon::now();
+                $activa = $promo->fecha_inicio <= $hoy && ($promo->fecha_fin === null || $promo->fecha_fin >= $hoy);
+
+                return [
+                    'id_promocion' => $promo->id_promocion,
+                    'titulo' => $promo->titulo,
+                    'descripcion' => $promo->descripcion,
+                    'imagen_path' => $promo->imagen_path,
+                    'fecha_inicio' => $promo->fecha_inicio,
+                    'fecha_fin' => $promo->fecha_fin,
+                    'activa' => $activa,
+                    'estado_texto' => $activa ? 'ACTIVA' : 'INACTIVA',
+                ];
+            })->sortByDesc('fecha_inicio'); // Más recientes primero
+
+            // === Retornar vista con todos los datos ===
             return view('admin.fraccionamiento', compact(
                 'datosFraccionamiento',
                 'amenidades',
@@ -163,12 +188,14 @@ class AdminFraccionamientoController extends Controller
                 'totalLotes',
                 'lotesDisponibles',
                 'lotesApartados',
-                'lotesVendidos'
+                'lotesVendidos',
+                'promociones' // ← Variable clave
             ));
 
         } catch (\Exception $e) {
-            Log::error("Error al cargar fraccionamiento: " . $e->getMessage());
-            return redirect()->back()->with('error', 'Error al cargar el fraccionamiento: ' . $e->getMessage());
+            Log::error("Error al cargar fraccionamiento ID {$id}: " . $e->getMessage());
+            return redirect()->route('admin.inicio')
+                ->with('error', 'No se pudo cargar el fraccionamiento. Intenta de nuevo.');
         }
     }
 

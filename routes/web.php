@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\AdminVentasController;
 use App\Http\Controllers\Cobranza\CobranzaVentaController;
 use App\Http\Controllers\pagina\InicioClientController;
 use App\Http\Controllers\pagina\fraccClientController;
+use App\Http\Controllers\Admin\AdminPromocionController;
 
 // Rutas de autenticación
 Route::get('/', [InicioClientController::class, 'index'])->name('inicio');
@@ -142,5 +143,29 @@ Route::middleware('auth')->group(function () {
         Route::get('/ventas/{id_venta}/ticket', [AdminVentasController::class, 'ticket'])->name('ventas.ticket');
         Route::put('/ventas/{id_venta}/ticket-estatus', [AdminVentasController::class, 'updateTicketEstatus'])->name('ventas.update-ticket-estatus');
         Route::put('/ventas/{id_venta}/venta-estatus', [AdminVentasController::class, 'updateVentaEstatus'])->name('ventas.update-venta-estatus');
+
+        // === PROMOCIONES ===
+        Route::prefix('promociones')->name('promociones.')->group(function () {
+
+            // Listar todas las promociones (opcional, si usas index global)
+            Route::get('/', [AdminPromocionController::class, 'index'])
+                ->name('index');
+
+            // Crear nueva promoción (POST) - desde el tab del fraccionamiento
+            Route::post('/', [AdminPromocionController::class, 'store'])
+                ->name('store');
+
+            // Actualizar promoción (PUT) - desde el modal
+            Route::put('/{promocion}', [AdminPromocionController::class, 'update'])
+                ->name('update');
+
+            // Eliminar promoción (DELETE) - desde el modal
+            Route::delete('/{promocion}', [AdminPromocionController::class, 'destroy'])
+                ->name('destroy');
+
+            // Opcional: ver detalle (no lo usas, pero si quieres)
+            Route::get('/{promocion}', [AdminPromocionController::class, 'show'])
+                ->name('show');
+        });
     });
 });
