@@ -322,107 +322,110 @@
 </section>
 
 <!-- Sección de Promociones Dinámicas -->
-<section class="nelva-promos-section">
+<!-- SECCIÓN DE PROMOCIONES NELVA - DISEÑO PREMIUM -->
+<section class="nelva-promos-premium">
     <div class="container">
-        <div class="nelva-promos-header">
-            <h2>Promociones Especiales</h2>
-            <p>Aprovecha nuestras ofertas exclusivas en los mejores fraccionamientos</p>
+        <div class="promos-header">
+            <div class="promos-badge">
+                <i class="fas fa-fire"></i> OFERTAS ESPECIALES
+            </div>
+            <h2>¡No te pierdas estas promociones!</h2>
+            <p>Descuentos exclusivos en los mejores terrenos de Oaxaca</p>
         </div>
-        
+
         @if($promocionesActivas->count() > 0)
-        <div class="nelva-promos-grid">
+        <div class="promos-grid">
             @foreach($promocionesActivas as $fraccionamiento)
                 @foreach($fraccionamiento->promociones as $promocion)
                 @php
-                    // Detectar orientación de imagen
                     $esVertical = false;
                     if ($promocion->imagen_path) {
                         try {
-                            $rutaImagen = storage_path('app/public/' . $promocion->imagen_path);
-                            if (file_exists($rutaImagen)) {
-                                list($ancho, $alto) = getimagesize($rutaImagen);
+                            $ruta = storage_path('app/public/' . $promocion->imagen_path);
+                            if (file_exists($ruta)) {
+                                [$ancho, $alto] = getimagesize($ruta);
                                 $esVertical = $alto > $ancho;
                             }
-                        } catch (Exception $e) {
-                            $esVertical = false;
-                        }
+                        } catch (Exception $e) {}
                     }
-                    
-                    // Calcular días restantes
-                    $diasRestantes = null;
-                    if ($promocion->fecha_fin) {
-                        $fechaFin = \Carbon\Carbon::parse($promocion->fecha_fin);
-                        $diasRestantes = now()->diffInDays($fechaFin, false);
-                    }
+                    $fechaFin = $promocion->fecha_fin ? \Carbon\Carbon::parse($promocion->fecha_fin) : null;
+                    $diasRestantes = $fechaFin ? now()->diffInDays($fechaFin, false) : null;
                 @endphp
-                
-                <div class="nelva-promo-card">
-                    <div class="nelva-promo-image-wrapper {{ $esVertical ? 'vertical' : 'horizontal' }}">
+
+                <article class="promo-card {{ $esVertical ? 'vertical' : 'horizontal' }} {{ $diasRestantes !== null && $diasRestantes <= 7 ? 'urgente' : '' }}">
+                    <div class="promo-image">
                         <img src="{{ asset('storage/' . $promocion->imagen_path) }}" 
-                             alt="{{ $promocion->titulo }}"
-                             class="nelva-promo-img"
+                             alt="{{ $promocion->titulo }}" 
                              loading="lazy">
                         
-                        <div class="nelva-promo-overlay">
-                            <div class="nelva-promo-actions">
-                                <a href="{{ route('pagina.fraccionamiento.show', $fraccionamiento->id_fraccionamiento) }}" 
-                                   class="nelva-action-btn">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ asset('storage/' . $promocion->imagen_path) }}" 
-                                   class="nelva-action-btn"
-                                   download="promocion-{{ Str::slug($promocion->titulo) }}.jpg">
-                                    <i class="fas fa-download"></i>
-                                </a>
-                            </div>
-                        </div>
-                        
                         @if($diasRestantes !== null && $diasRestantes <= 15)
-                        <div class="nelva-time-badge">
+                        <div class="countdown-badge">
                             <i class="fas fa-clock"></i>
-                            {{ $diasRestantes > 0 ? $diasRestantes . ' días' : 'Último día' }}
+                            <span>{{ $diasRestantes > 0 ? "$diasRestantes días" : "¡HOY!" }}</span>
                         </div>
                         @endif
-                    </div>
-                    
-                    <div class="nelva-promo-info">
-                        <div class="nelva-promo-badge">Promoción Activa</div>
-                        
-                        <h3 class="nelva-promo-title">{{ $promocion->titulo }}</h3>
-                        
-                        <div class="nelva-fracc-info">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>{{ $fraccionamiento->nombre }}</span>
+
+                        <div class="promo-actions">
+                            <a href="{{ route('pagina.fraccionamiento.show', $fraccionamiento->id_fraccionamiento) }}" 
+                               class="action-btn view" title="Ver fraccionamiento">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ asset('storage/' . $promocion->imagen_path) }}" 
+                               download class="action-btn download" title="Descargar imagen">
+                                <i class="fas fa-download"></i>
+                            </a>
                         </div>
-                        
-                        <div class="nelva-promo-dates">
-                            <div class="nelva-date-item">
-                                <span class="nelva-date-label">Válido hasta:</span>
-                                <span class="nelva-date-value">
-                                    @if($promocion->fecha_fin)
-                                        {{ \Carbon\Carbon::parse($promocion->fecha_fin)->format('d/m/Y') }}
-                                    @else
-                                        <span class="nelva-indefinite">Indefinido</span>
-                                    @endif
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <a href="{{ route('pagina.fraccionamiento.show', $fraccionamiento->id_fraccionamiento) }}" 
-                           class="nelva-cta-btn">
-                            <i class="fas fa-arrow-right"></i>
-                            Ver fraccionamiento
-                        </a>
                     </div>
-                </div>
+
+                    <div class="promo-content">
+    <div class="promo-tag">PROMOCIÓN</div>
+    <h3>{{ $promocion->titulo }}</h3>
+    <div class="promo-location">
+        <i class="fas fa-map-marker-alt"></i>
+        {{ $fraccionamiento->nombre }}
+    </div>
+
+    <!-- DESCRIPCIÓN CON "VER MÁS" -->
+    <div class="promo-description">
+        <p class="description-text">
+            {{ Str::limit($promocion->descripcion, 200, '...') }}
+        </p>
+        @if(strlen($promocion->descripcion) > 200)
+        <button class="read-more-btn" onclick="toggleDescription(this)">
+            <span class="read-more-text">Ver más</span>
+            <span class="read-less-text" style="display:none;">Ver menos</span>
+            <i class="fas fa-chevron-down read-more-icon"></i>
+        </button>
+        @endif
+    </div>
+
+    <div class="promo-date">
+        <strong>Válida hasta:</strong>
+        @if($fechaFin)
+            <time>{{ $fechaFin->format('d/m/Y') }}</time>
+        @else
+            <span class="indefinido">Indefinida</span>
+        @endif
+    </div>
+
+    <a href="{{ route('pagina.fraccionamiento.show', $fraccionamiento->id_fraccionamiento) }}" 
+       class="promo-cta">
+        <span>Ver Fraccionamiento</span>
+        <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+                </article>
                 @endforeach
             @endforeach
         </div>
         @else
-        <div class="nelva-no-promos">
-            <i class="fas fa-gift"></i>
-            <h3>Próximamente nuevas promociones</h3>
-            <p>Estamos preparando ofertas especiales para ti</p>
+        <div class="promos-empty">
+            <div class="empty-icon">
+                <i class="fas fa-gift"></i>
+            </div>
+            <h3>¡Pronto nuevas promociones!</h3>
+            <p>Estamos preparando ofertas increíbles para ti</p>
+            <a href="/contacto" class="btn-outline">Avísame cuando haya ofertas</a>
         </div>
         @endif
     </div>
@@ -456,4 +459,31 @@
             });
         });
     });
+
+    
+</script>
+
+<script>
+function toggleDescription(button) {
+    const card = button.closest('.promo-card');
+    const description = card.querySelector('.promo-description');
+    const fullText = card.querySelector('.description-text');
+    const originalText = fullText.getAttribute('data-full') || fullText.textContent;
+
+    if (!fullText.hasAttribute('data-full')) {
+        fullText.setAttribute('data-full', originalText);
+    }
+
+    if (description.classList.contains('expanded')) {
+        // Colapsar
+        fullText.textContent = originalText.length > 120 ? originalText.substring(0, 120) + '...' : originalText;
+        description.classList.remove('expanded');
+        button.classList.remove('expanded');
+    } else {
+        // Expandir
+        fullText.textContent = originalText;
+        description.classList.add('expanded');
+        button.classList.add('expanded');
+    }
+}
 </script>

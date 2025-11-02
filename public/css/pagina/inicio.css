@@ -952,170 +952,215 @@ p {
 }
 
 
+/* ========================================
+   PROMOCIONES NELVA - DISEÑO PREMIUM 2025
+   ======================================== */
 
-/* ==================== PROMOCIONES COMPACTAS NELVA ==================== */
-.nelva-promos-section {
-    padding: 60px 0;
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-}
-
-.nelva-promos-header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.nelva-promos-header h2 {
-    font-size: 2.2rem;
-    color: var(--primary);
-    margin-bottom: 8px;
-    font-weight: 700;
-}
-
-.nelva-promos-header p {
-    font-size: 1rem;
-    color: var(--gray);
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-/* GRID COMPACTO */
-.nelva-promos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* CARD PRINCIPAL - COMPACTO */
-.nelva-promo-card {
-    background: white;
-    border-radius: 12px;
+.nelva-promos-premium {
+    padding: 90px 0;
+    background: linear-gradient(135deg, #f8fdfc 0%, #f0f7ff 100%);
+    position: relative;
     overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    border: 1px solid #e8ecef;
-    height: 380px; /* Altura fija compacta */
+}
+
+.nelva-promos-premium::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,30 L100,100 L0,100 Z" fill="%23e3f2fd" opacity="0.3"/></svg>') no-repeat;
+    background-size: cover;
+    z-index: 0;
+}
+
+.nelva-promos-premium > .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* HEADER */
+.promos-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.promos-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.promos-header h2 {
+    font-size: 2.8rem;
+    color: #02304a;
+    margin: 0 0 12px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #02304a, #3a7bd5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.promos-header p {
+    font-size: 1.1rem;
+    color: #555;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* GRID */
+.promos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 28px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* CARD */
+.promo-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid #e3f2fd;
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
-.nelva-promo-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    border-color: var(--primary);
+.promo-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 50px rgba(58, 123, 213, 0.2);
+    border-color: #3a7bd5;
 }
 
-/* CONTENEDOR DE IMAGEN - MÁS GRANDE */
-.nelva-promo-image-wrapper {
+.promo-card.urgente {
+    border: 2px solid #ff6b6b !important;
+    box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+}
+
+/* IMAGEN */
+.promo-image {
     position: relative;
-    height: 220px; /* Más espacio para la imagen */
+    height: 220px;
     overflow: hidden;
-    background: #f8f9fa;
+    background: #f0f7ff;
 }
 
-.nelva-promo-image-wrapper.vertical {
-    height: 240px; /* Un poco más para vertical */
-}
-
-.nelva-promo-img {
+.promo-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform 0.6s ease;
 }
 
-.nelva-promo-card:hover .nelva-promo-img {
-    transform: scale(1.05);
+.promo-card:hover .promo-image img {
+    transform: scale(1.08);
 }
 
-/* OVERLAY DE ACCIONES */
-.nelva-promo-overlay {
+/* BADGE TIEMPO */
+.countdown-badge {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(10, 58, 33, 0.9);
+    top: 12px;
+    left: 12px;
+    background: #ff6b6b;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    z-index: 2;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 5px;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* ACCIONES */
+.promo-actions {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 12px;
     opacity: 0;
     transition: all 0.3s ease;
 }
 
-.nelva-promo-card:hover .nelva-promo-overlay {
+.promo-card:hover .promo-actions {
     opacity: 1;
 }
 
-.nelva-promo-actions {
-    display: flex;
-    gap: 12px;
-}
-
-.nelva-action-btn {
-    width: 44px;
-    height: 44px;
-    background: var(--secondary);
-    color: var(--dark);
+.action-btn {
+    width: 50px;
+    height: 50px;
+    background: white;
+    color: #02304a;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-decoration: none;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
-    font-size: 1rem;
+    backdrop-filter: blur(10px);
 }
 
-.nelva-action-btn:hover {
-    background: var(--secondary-light);
-    transform: scale(1.1);
-}
-
-/* BADGE DE TIEMPO */
-.nelva-time-badge {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    background: var(--mexico-red);
+.action-btn:hover {
+    background: #3a7bd5;
     color: white;
-    padding: 6px 10px;
-    border-radius: 16px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    z-index: 2;
+    transform: scale(1.15);
 }
 
-/* INFORMACIÓN - COMPACTA */
-.nelva-promo-info {
-    padding: 16px;
+/* CONTENIDO */
+.promo-content {
+    padding: 20px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    position: relative;
 }
 
-.nelva-promo-badge {
-    position: absolute;
-    top: -10px;
-    right: 16px;
-    background: var(--primary);
+.promo-tag {
+    align-self: flex-start;
+    background: linear-gradient(45deg, #3a7bd5, #00d2ff);
     color: white;
-    padding: 4px 10px;
-    border-radius: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-bottom: 12px;
 }
 
-.nelva-promo-title {
-    font-size: 1rem;
-    color: var(--primary);
-    margin: 0 0 8px 0;
+.promo-content h3 {
+    font-size: 1.25rem;
+    color: #02304a;
+    margin: 0 0 10px;
     font-weight: 700;
     line-height: 1.3;
     display: -webkit-box;
@@ -1124,168 +1169,208 @@ p {
     overflow: hidden;
 }
 
-.nelva-fracc-info {
+.promo-location {
     display: flex;
     align-items: center;
-    gap: 6px;
-    color: var(--secondary);
-    font-size: 0.85rem;
+    gap: 8px;
+    color: #3a7bd5;
+    font-size: 0.9rem;
     font-weight: 600;
     margin-bottom: 12px;
 }
 
-.nelva-fracc-info i {
-    font-size: 0.8rem;
-}
-
-/* FECHAS COMPACTAS */
-.nelva-promo-dates {
-    background: rgba(10, 58, 33, 0.05);
+.promo-date {
+    background: #f8f9fa;
     padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 12px;
-    border: 1px solid rgba(10, 58, 33, 0.1);
-}
-
-.nelva-date-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.nelva-date-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--primary);
-}
-
-.nelva-date-value {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--dark);
-}
-
-.nelva-indefinite {
-    color: #28a745 !important;
-}
-
-/* BOTÓN CTA */
-.nelva-cta-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 16px;
-    background: var(--primary);
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
+    border-radius: 10px;
+    margin-bottom: 16px;
     font-size: 0.85rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    justify-content: center;
-    margin-top: auto;
+    border-left: 4px solid #3a7bd5;
 }
 
-.nelva-cta-btn:hover {
-    background: var(--primary-light);
+.promo-date strong {
+    color: #02304a;
+}
+
+.promo-date time {
+    color: #3a7bd5;
+    font-weight: 600;
+}
+
+.indefinido {
+    color: #28a745;
+    font-weight: 700;
+}
+
+/* CTA */
+.promo-cta {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(45deg, #02304a, #3a7bd5);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(58, 123, 213, 0.3);
+}
+
+.promo-cta:hover {
+    background: linear-gradient(45deg, #3a7bd5, #00d2ff);
     transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(58, 123, 213, 0.4);
 }
 
 /* ESTADO VACÍO */
-.nelva-no-promos {
+.promos-empty {
     text-align: center;
-    padding: 60px 20px;
-    color: var(--gray);
+    padding: 80px 20px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+    margin: 40px auto;
+    max-width: 600px;
 }
 
-.nelva-no-promos i {
-    font-size: 3rem;
-    margin-bottom: 16px;
-    opacity: 0.5;
+.empty-icon {
+    font-size: 4rem;
+    color: #3a7bd5;
+    margin-bottom: 20px;
+    opacity: 0.8;
 }
 
-.nelva-no-promos h3 {
-    font-size: 1.3rem;
-    color: var(--primary);
-    margin-bottom: 8px;
+.promos-empty h3 {
+    font-size: 1.8rem;
+    color: #02304a;
+    margin-bottom: 12px;
 }
 
-.nelva-no-promos p {
-    font-size: 0.95rem;
+.promos-empty p {
+    color: #666;
+    margin-bottom: 24px;
+}
+
+.btn-outline {
+    display: inline-block;
+    padding: 12px 30px;
+    border: 2px solid #3a7bd5;
+    color: #3a7bd5;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+    background: #3a7bd5;
+    color: white;
+    transform: translateY(-3px);
 }
 
 /* RESPONSIVE */
+@media (max-width: 992px) {
+    .promos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 24px;
+    }
+    .promos-header h2 {
+        font-size: 2.4rem;
+    }
+}
+
 @media (max-width: 768px) {
-    .nelva-promos-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 16px;
+    .nelva-promos-premium {
+        padding: 70px 0;
     }
-    
-    .nelva-promos-header h2 {
-        font-size: 1.8rem;
+    .promos-header {
+        margin-bottom: 40px;
     }
-    
-    .nelva-promo-card {
-        height: 360px;
+    .promos-header h2 {
+        font-size: 2.1rem;
     }
-    
-    .nelva-promo-image-wrapper {
+    .promo-image {
         height: 200px;
-    }
-    
-    .nelva-promo-image-wrapper.vertical {
-        height: 220px;
     }
 }
 
 @media (max-width: 480px) {
-    .nelva-promos-section {
-        padding: 40px 0;
-    }
-    
-    .nelva-promos-grid {
+    .promos-grid {
         grid-template-columns: 1fr;
     }
-    
-    .nelva-promos-header {
-        margin-bottom: 30px;
+    .promo-card {
+        margin: 0 10px;
     }
-    
-    .nelva-promos-header h2 {
-        font-size: 1.6rem;
+    .promos-header h2 {
+        font-size: 1.9rem;
     }
-    
-    .nelva-promo-info {
-        padding: 14px;
-    }
-    
-    .nelva-date-item {
-        flex-direction: column;
-        gap: 4px;
-        align-items: flex-start;
-    }
-    
-    .nelva-date-label, .nelva-date-value {
-        font-size: 0.8rem;
+    .countdown-badge {
+        font-size: 0.7rem;
+        padding: 5px 8px;
     }
 }
 
-/* ANIMACIONES SUAVES */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+
+/* DESCRIPCIÓN CON VER MÁS */
+.promo-description {
+    margin: 12px 0 16px;
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.5;
 }
 
-.nelva-promo-card {
-    animation: fadeInUp 0.5s ease-out;
+.description-text {
+    margin: 0;
+    display: block;
 }
 
-.nelva-promo-card:nth-child(2) { animation-delay: 0.1s; }
-.nelva-promo-card:nth-child(3) { animation-delay: 0.2s; }
-.nelva-promo-card:nth-child(4) { animation-delay: 0.3s; }
+.read-more-btn {
+    background: none;
+    border: none;
+    color: #3a7bd5;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 0;
+    transition: all 0.3s ease;
+}
+
+.read-more-btn:hover {
+    color: #02304a;
+}
+
+.read-more-icon {
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+}
+
+.read-more-btn.expanded .read-more-icon {
+    transform: rotate(180deg);
+}
+
+.read-more-btn .read-less-text {
+    display: none;
+}
+
+.read-more-btn.expanded .read-more-text {
+    display: none;
+}
+
+.read-more-btn.expanded .read-less-text {
+    display: inline;
+}
+
+/* Estado expandido: mostrar descripción completa */
+.promo-description.expanded .description-text {
+    white-space: normal;
+    overflow: visible;
+    display: block;
+}
