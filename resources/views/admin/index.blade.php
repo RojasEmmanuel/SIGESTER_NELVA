@@ -17,6 +17,7 @@
                 <i class="fas fa-handshake"></i>
                 <span>Vender</span>
             </a>
+            
         </div>
         
         <!-- Stats Overview -->
@@ -81,7 +82,7 @@
             
             <div class="section-actions">
                 <!-- Botón Registrar Fraccionamiento -->
-                <a href="{{ route('admin.fraccionamiento.create') }}" class="btn btn-registrar">
+                <a href="{{ route('admin.fraccionamiento.create') }}" class="btn btn-vender">
                     <i class="fas fa-plus-circle"></i>
                     <span>Nuevo Fraccionamiento</span>
                 </a>
