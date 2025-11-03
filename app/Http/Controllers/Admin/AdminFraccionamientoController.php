@@ -102,16 +102,17 @@ class AdminFraccionamientoController extends Controller
     public function show($id)
     {
         try {
+            // === CARGAR TODAS LAS RELACIONES ===
             $fraccionamiento = Fraccionamiento::with([
                 'infoFraccionamiento',
                 'amenidadesFraccionamiento',
                 'galeria',
                 'archivosFraccionamiento',
                 'lotes',
-                'promociones' // ← Nueva relación cargada
+                'promociones.fraccionamientos' // ← Carga fraccionamientos asociados a cada promoción
             ])->findOrFail($id);
 
-            // === Datos básicos del fraccionamiento ===
+            // === DATOS BÁSICOS DEL FRACCIONAMIENTO ===
             $datosFraccionamiento = [
                 'id' => $fraccionamiento->id_fraccionamiento,
                 'nombre' => $fraccionamiento->nombre,
@@ -119,67 +120,59 @@ class AdminFraccionamientoController extends Controller
                 'path_imagen' => $fraccionamiento->path_imagen,
                 'estatus' => $fraccionamiento->estatus,
                 'zona' => $fraccionamiento->zona,
-                'descripcion' => $fraccionamiento->infoFraccionamiento->descripcion ?? null,
-                'precio_metro_cuadrado' => $fraccionamiento->infoFraccionamiento->precio_metro_cuadrado ?? null,
-                'tipo_propiedad' => $fraccionamiento->infoFraccionamiento->tipo_propiedad ?? null,
-                'precioGeneral' => $fraccionamiento->infoFraccionamiento->precioGeneral ?? null,
-                'ubicacionMaps' => $fraccionamiento->infoFraccionamiento->ubicacionMaps ?? null,
+                'descripcion' => $fraccionamiento->infoFraccionamiento?->descripcion,
+                'precio_metro_cuadrado' => $fraccionamiento->infoFraccionamiento?->precio_metro_cuadrado,
+                'tipo_propiedad' => $fraccionamiento->infoFraccionamiento?->tipo_propiedad,
+                'precioGeneral' => $fraccionamiento->infoFraccionamiento?->precioGeneral,
+                'ubicacionMaps' => $fraccionamiento->infoFraccionamiento?->ubicacionMaps,
             ];
 
-            // === Amenidades ===
-            $amenidades = $fraccionamiento->amenidadesFraccionamiento->map(function($amenidad) {
-                return [
-                    'id' => $amenidad->id_amenidad,
-                    'nombre' => $amenidad->nombre,
-                    'descripcion' => $amenidad->descripcion,
-                    'tipo' => $amenidad->tipo,
-                ];
-            });
+            // === AMENIDADES ===
+            $amenidades = $fraccionamiento->amenidadesFraccionamiento->map(fn($a) => [
+                'id' => $a->id_amenidad,
+                'nombre' => $a->nombre,
+                'descripcion' => $a->descripcion,
+                'tipo' => $a->tipo,
+            ]);
 
-            // === Galería ===
-            $galeria = $fraccionamiento->galeria->map(function($foto) {
-                return [
-                    'id' => $foto->id_foto,
-                    'nombre' => $foto->nombre,
-                    'fotografia_path' => $foto->fotografia_path,
-                    'fecha_subida' => $foto->fecha_subida->toDateTimeString(),
-                ];
-            });
+            // === GALERÍA ===
+            $galeria = $fraccionamiento->galeria->map(fn($f) => [
+                'id' => $f->id_foto,
+                'nombre' => $f->nombre,
+                'fotografia_path' => $f->fotografia_path,
+                'fecha_subida' => $f->fecha_subida->toDateTimeString(),
+            ]);
 
-            // === Archivos ===
-            $archivos = $fraccionamiento->archivosFraccionamiento->map(function($archivo) {
-                return [
-                    'id' => $archivo->id_archivo,
-                    'nombre_archivo' => $archivo->nombre_archivo,
-                    'archivo_path' => $archivo->archivo_path,
-                    'fecha_subida' => $archivo->fecha_subida->toDateTimeString(),
-                ];
-            });
+            // === ARCHIVOS ===
+            $archivos = $fraccionamiento->archivosFraccionamiento->map(fn($a) => [
+                'id' => $a->id_archivo,
+                'nombre_archivo' => $a->nombre_archivo,
+                'archivo_path' => $a->archivo_path,
+                'fecha_subida' => $a->fecha_subida->toDateTimeString(),
+            ]);
 
-            // === Estadísticas de lotes ===
-            $totalLotes = $fraccionamiento->lotes->count();
-            $lotesDisponibles = $fraccionamiento->lotes->where('estatus', 'disponible')->count();
-            $lotesApartados = $fraccionamiento->lotes->whereIn('estatus', ['apartadoPalabra', 'apartadoDeposito'])->count();
-            $lotesVendidos = $fraccionamiento->lotes->where('estatus', 'vendido')->count();
+            // === ESTADÍSTICAS DE LOTES ===
+            $lotes = $fraccionamiento->lotes;
+            $totalLotes = $lotes->count();
+            $lotesDisponibles = $lotes->where('estatus', 'disponible')->count();
+            $lotesApartados = $lotes->whereIn('estatus', ['apartadoPalabra', 'apartadoDeposito'])->count();
+            $lotesVendidos = $lotes->where('estatus', 'vendido')->count();
 
-            // === PROMOCIONES (nueva sección) ===
-            $promociones = $fraccionamiento->promociones->map(function($promo) {
-                $hoy = \Carbon\Carbon::now();
-                $activa = $promo->fecha_inicio <= $hoy && ($promo->fecha_fin === null || $promo->fecha_fin >= $hoy);
+            // === PROMOCIONES (SIN MAP → USA ELOQUENT) ===
+           // === PROMOCIONES (CORREGIDO) ===
+            $hoy = \Carbon\Carbon::now();
 
-                return [
-                    'id_promocion' => $promo->id_promocion,
-                    'titulo' => $promo->titulo,
-                    'descripcion' => $promo->descripcion,
-                    'imagen_path' => $promo->imagen_path,
-                    'fecha_inicio' => $promo->fecha_inicio,
-                    'fecha_fin' => $promo->fecha_fin,
-                    'activa' => $activa,
-                    'estado_texto' => $activa ? 'ACTIVA' : 'INACTIVA',
-                ];
-            })->sortByDesc('fecha_inicio'); // Más recientes primero
+            $promociones = $fraccionamiento->promociones()
+                ->with('fraccionamientos') // ← Carga fraccionamientos
+                ->orderBy('fecha_inicio', 'desc')
+                ->get()
+                ->filter(function ($promo) use ($hoy) {
+                    return $promo->fecha_inicio <= $hoy &&
+                        ($promo->fecha_fin === null || $promo->fecha_fin >= $hoy);
+                })
+                ->values(); // ← ¡IMPORTANTE! Reindexa la colección
 
-            // === Retornar vista con todos los datos ===
+            // === RETORNAR VISTA ===
             return view('admin.fraccionamiento', compact(
                 'datosFraccionamiento',
                 'amenidades',
@@ -189,7 +182,7 @@ class AdminFraccionamientoController extends Controller
                 'lotesDisponibles',
                 'lotesApartados',
                 'lotesVendidos',
-                'promociones' // ← Variable clave
+                'promociones'
             ));
 
         } catch (\Exception $e) {

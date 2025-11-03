@@ -464,7 +464,7 @@
                                 </div>
                             @endif
                         </form>
-                    </div>
+                    </div> 
                     
                     @if($galeria->count() > 0)
                     <div class="gallery-container">
@@ -513,131 +513,67 @@
                         </h3>
                         <div class="section-indicator">
                             <span class="indicator-dot"></span>
-                            {{ $promociones->count() }} promociones registradas
+                            {{ $promociones->count() }} promociones asociadas
                         </div>
                     </div>
 
-                    <!-- Add Promoción Form -->
+                    <!-- Botón para abrir modal de creación -->
                     <div class="add-form-container">
-                        <h4 class="form-subtitle">Agregar Nueva Promoción</h4>
-                        <form action="{{ route('admin.promociones.store') }}" method="POST" enctype="multipart/form-data" class="form-grid compact">
-                            @csrf
-
-                            <div class="form-group">
-                                <label for="promo_titulo" class="form-label">Título *</label>
-                                <input type="text" id="promo_titulo" name="titulo" class="form-control" placeholder="Ej. 10% de descuento en enganche" value="{{ old('titulo') }}" required>
-                                @error('titulo')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group full-width">
-                                <label for="promo_descripcion" class="form-label">Descripción</label>
-                                <textarea id="promo_descripcion" name="descripcion" class="form-control" rows="2" placeholder="Detalles de la promoción...">{{ old('descripcion') }}</textarea>
-                                @error('descripcion')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="promo_fecha_inicio" class="form-label">Fecha Inicio *</label>
-                                <input type="datetime-local" id="promo_fecha_inicio" name="fecha_inicio" class="form-control" value="{{ old('fecha_inicio') }}" required>
-                                @error('fecha_inicio')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="promo_fecha_fin" class="form-label">Fecha Fin</label>
-                                <input type="datetime-local" id="promo_fecha_fin" name="fecha_fin" class="form-control" value="{{ old('fecha_fin') }}">
-                                @error('fecha_fin')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group full-width">
-                                <label for="promo_imagen" class="form-label">Imagen de la Promoción</label>
-                                <div class="file-upload-container">
-                                    <input type="file" id="promo_imagen" name="imagen" class="file-input" accept="image/*" onchange="previewPromoImage(this)">
-                                    <label for="promo_imagen" class="file-upload-label" id="promoImageLabel">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                        <span>Seleccionar imagen</span>
-                                    </label>
-                                    <small class="file-name" id="promoFileName"></small>
-                                </div>
-                                <div class="gallery-preview-container" id="promoPreviewContainer" style="display:none; margin-top:10px;">
-                                    <div class="gallery-preview">
-                                        <img id="promoPreviewImage" src="" alt="Vista previa" style="max-height:150px;">
-                                        <button type="button" class="btn-remove-preview" onclick="removePromoPreview()">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                @error('imagen')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <input type="hidden" name="id_fraccionamiento" value="{{ $datosFraccionamiento['id'] }}">
-
-                            <div class="form-group full-width">
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-plus"></i>
-                                    Agregar Promoción
-                                </button>
-                            </div>
-
-                            @if(session('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-check-circle"></i> {{ session('success') }}
-                                    <button type="button" class="close" data-dismiss="alert">×</button>
-                                </div>
-                            @endif
-                        </form>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="openCreateModal()">
+                            <i class="fas fa-plus"></i> Agregar Promoción
+                        </button>
                     </div>
 
-                    <!-- Promociones List -->
+                    <!-- Lista de promociones -->
                     @if($promociones->count() > 0)
-                    <div class="promociones-list">
-                        <h4 class="form-subtitle">Promociones Registradas</h4>
+                    <div class="promociones-list mt-3">
                         <div class="promociones-grid">
                             @foreach($promociones as $promo)
                             @php
                                 $hoy = \Carbon\Carbon::now();
-                                $inicio = \Carbon\Carbon::parse($promo['fecha_inicio']);
-                                $fin = $promo['fecha_fin'] ? \Carbon\Carbon::parse($promo['fecha_fin']) : null;
+                                $inicio = \Carbon\Carbon::parse($promo->fecha_inicio);
+                                $fin = $promo->fecha_fin ? \Carbon\Carbon::parse($promo->fecha_fin) : null;
                                 $activa = $inicio <= $hoy && ($fin === null || $fin >= $hoy);
                             @endphp
+
                             <div class="promo-card">
                                 <div class="promo-image">
-                                    <img src="{{ asset('storage/' . $promo['imagen_path']) }}" alt="{{ $promo['titulo'] }}">
+                                    <img src="{{ asset('storage/' . $promo->imagen_path) }}" alt="{{ $promo->titulo }}">
                                     <div class="promo-status {{ $activa ? 'active' : 'inactive' }}">
                                         {{ $activa ? 'ACTIVA' : 'INACTIVA' }}
                                     </div>
                                 </div>
                                 <div class="promo-info">
-                                    <h5>{{ $promo['titulo'] }}</h5>
-                                    @if($promo['descripcion'])
-                                        <p class="promo-desc">{{ Str::limit($promo['descripcion'], 80) }}</p>
+                                    <h5>{{ $promo->titulo }}</h5>
+                                    @if($promo->descripcion)
+                                        <p class="promo-desc">{{ Str::limit($promo->descripcion, 80) }}</p>
                                     @endif
                                     <p class="promo-dates">
                                         <i class="fas fa-calendar-alt"></i>
                                         {{ $inicio->format('d/m/Y H:i') }}
-                                        @if($fin)
-                                            → {{ $fin->format('d/m/Y H:i') }}
-                                        @else
-                                            → Indefinida
-                                        @endif
+                                        @if($fin) → {{ $fin->format('d/m/Y H:i') }} @else → Indefinida @endif
                                     </p>
+                                    <small class="text-muted">
+                                        Aplica en: {{ $promo->fraccionamientos->pluck('nombre')->join(', ') }}
+                                    </small>
                                 </div>
                                 <div class="promo-actions">
-                                   
-                                    <a href="javascript:void(0)" 
-                                    class="btn btn-sm btn-outline" 
-                                    onclick="openEditModal({{ $promo['id_promocion'] }}, {{ json_encode($promo) }})">
+                                    <!-- BOTÓN EDITAR (COMPLETO) -->
+                                    <button type="button" class="btn btn-sm btn-outline"
+                                            onclick="openEditModal(
+                                                {{ $promo->id_promocion }},
+                                                '{{ addslashes($promo->titulo) }}',
+                                                '{{ addslashes($promo->descripcion ?? '') }}',
+                                                '{{ $promo->fecha_inicio }}',
+                                                '{{ $promo->fecha_fin }}',
+                                                '{{ $promo->imagen_path }}',
+                                                @json($promo->fraccionamientos->pluck('id_fraccionamiento')->toArray())
+                                            )">
                                         <i class="fas fa-edit"></i>
-                                    </a>
-                                    <button type="button" class="btn btn-sm btn-danger" onclick="showDeleteModal('promocion', {{ $promo['id_promocion'] }}, '{{ addslashes($promo['titulo']) }}')">
+                                    </button>
+
+                                    <button type="button" class="btn btn-sm btn-danger" 
+                                            onclick="showDeleteModal('promocion', {{ $promo->id_promocion }}, '{{ addslashes($promo->titulo) }}')">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -648,8 +584,8 @@
                     @else
                     <div class="empty-state">
                         <i class="fas fa-gift"></i>
-                        <h4>No hay promociones registradas</h4>
-                        <p>Agrega una promoción para atraer más clientes</p>
+                        <h4>No hay promociones asociadas</h4>
+                        <p>Agrega una promoción para este fraccionamiento</p>
                     </div>
                     @endif
                 </div>
@@ -804,62 +740,126 @@
         </div>
     </div>
 
-   <!-- Edit Promotion Modal -->
-<div id="editPromoModal" class="modal">
+
+<!-- Create Promotion Modal -->
+<div id="createPromoModal" class="modal">
     <div class="promo-modal-content">
         <div class="promo-modal-header">
-            <h3 id="modalTitle">Editar Promoción</h3>
+            <h3>Nueva Promoción</h3>
+            <button type="button" class="promo-modal-close" onclick="closeCreateModal()">×</button>
+        </div>
+        <form id="createPromoForm" action="{{ route('admin.promociones.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+
+            <!-- ID del fraccionamiento actual (para redirección) -->
+            <input type="hidden" name="current_fraccionamiento" value="{{ $datosFraccionamiento['id'] }}">
+
+            <div class="promo-modal-body">
+                <div class="promo-form-group">
+                    <label class="promo-form-label">Título *</label>
+                    <input type="text" name="titulo" class="promo-form-control" required>
+                </div>
+                <div class="promo-form-group full-width">
+                    <label class="promo-form-label">Descripción</label>
+                    <textarea name="descripcion" class="promo-form-control" rows="2"></textarea>
+                </div>
+                <div class="promo-form-group">
+                    <label class="promo-form-label">Fecha Inicio *</label>
+                    <input type="datetime-local" name="fecha_inicio" class="promo-form-control" required>
+                </div>
+                <div class="promo-form-group">
+                    <label class="promo-form-label">Fecha Fin</label>
+                    <input type="datetime-local" name="fecha_fin" class="promo-form-control">
+                </div>
+                <div class="promo-form-group full-width">
+                    <label class="promo-form-label">Fraccionamientos *</label>
+                    <div style="max-height:150px; overflow-y:auto; border:1px solid #ddd; padding:8px; border-radius:4px;">
+                        @foreach(\App\Models\Fraccionamiento::where('estatus', 1)->get() as $frac)
+                        <label style="display:block; margin:4px 0;">
+                            <input type="checkbox" name="fraccionamientos[]" value="{{ $frac->id_fraccionamiento }}"
+                                {{ $frac->id_fraccionamiento == $datosFraccionamiento['id'] ? 'checked' : '' }}>
+                            {{ $frac->nombre }}
+                            @if($frac->id_fraccionamiento == $datosFraccionamiento['id'])
+                                <small class="text-muted">(este)</small>
+                            @endif
+                        </label>
+                        @endforeach
+                    </div>
+                    <small class="text-muted">El fraccionamiento actual está preseleccionado</small>
+                </div>
+                <div class="promo-form-group full-width">
+                    <label class="promo-form-label">Imagen *</label>
+                    <input type="file" name="imagen" accept="image/*" required onchange="previewCreateImage(this)">
+                    <div id="createPreviewContainer" style="display:none; margin-top:10px;">
+                        <img id="createPreviewImage" src="" style="max-height:120px; border-radius:4px;">
+                    </div>
+                </div>
+            </div>
+            <div class="promo-modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeCreateModal()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Crear Promoción
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Promotion Modal -->
+<div id="editPromoModal" class="modal" style="display: none;">
+    <div class="promo-modal-content">
+        <div class="promo-modal-header">
+            <h3>Editar Promoción</h3>
             <button type="button" class="promo-modal-close" onclick="closeEditModal()">×</button>
         </div>
         <form id="editPromoForm" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-            <div class="promo-modal-body">
-                <input type="hidden" name="id_promocion" id="edit_id_promocion">
+            @csrf @method('PUT')
 
+            <input type="hidden" name="current_fraccionamiento" value="{{ $datosFraccionamiento['id'] }}">
+            <input type="hidden" name="id_promocion" id="edit_id_promocion">
+
+            <div class="promo-modal-body">
                 <div class="promo-form-group">
-                    <label for="edit_titulo" class="promo-form-label">Título *</label>
+                    <label class="promo-form-label">Título *</label>
                     <input type="text" id="edit_titulo" name="titulo" class="promo-form-control" required>
                 </div>
-
                 <div class="promo-form-group full-width">
-                    <label for="edit_descripcion" class="promo-form-label">Descripción</label>
+                    <label class="promo-form-label">Descripción</label>
                     <textarea id="edit_descripcion" name="descripcion" class="promo-form-control" rows="2"></textarea>
                 </div>
-
                 <div class="promo-form-group">
-                    <label for="edit_fecha_inicio" class="promo-form-label">Fecha Inicio *</label>
+                    <label class="promo-form-label">Fecha Inicio *</label>
                     <input type="datetime-local" id="edit_fecha_inicio" name="fecha_inicio" class="promo-form-control" required>
                 </div>
-
                 <div class="promo-form-group">
-                    <label for="edit_fecha_fin" class="promo-form-label">Fecha Fin</label>
+                    <label class="promo-form-label">Fecha Fin</label>
                     <input type="datetime-local" id="edit_fecha_fin" name="fecha_fin" class="promo-form-control">
                 </div>
-
                 <div class="promo-form-group full-width">
-                    <label for="edit_imagen" class="promo-form-label">Imagen (dejar vacío para mantener actual)</label>
-                    <div class="promo-file-upload-container">
-                        <input type="file" id="edit_imagen" name="imagen" class="promo-file-input" accept="image/*" onchange="previewEditImage(this)">
-                        <label for="edit_imagen" class="promo-file-upload-label" id="editImageLabel">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Seleccionar imagen</span>
+                    <label class="promo-form-label">Fraccionamientos *</label>
+                    <div style="max-height:150px; overflow-y:auto; border:1px solid #ddd; padding:8px; border-radius:4px;">
+                        @foreach(\App\Models\Fraccionamiento::where('estatus', 1)->get() as $frac)
+                        <label style="display:block; margin:4px 0;">
+                            <input type="checkbox" name="fraccionamientos[]" value="{{ $frac->id_fraccionamiento }}"
+                                   id="frac-{{ $frac->id_fraccionamiento }}">
+                            {{ $frac->nombre }}
+                            @if($frac->id_fraccionamiento == $datosFraccionamiento['id'])
+                                <small class="text-muted">(este)</small>
+                            @endif
                         </label>
-                        <small class="promo-file-name" id="editFileName"></small>
-                    </div>
-                    <div class="promo-gallery-preview-container" id="editPreviewContainer" style="display:none; margin-top:10px;">
-                        <div class="promo-gallery-preview">
-                            <img id="editPreviewImage" src="" alt="Vista previa" style="max-height:150px;">
-                            <button type="button" class="btn-remove-promo-preview" onclick="removeEditPreview()">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
-
-                <div class="promo-current-image" id="currentImageContainer" style="margin-top:10px; display:none;">
-                    <p><strong>Imagen actual:</strong></p>
-                    <img id="currentImagePreview" src="" alt="Actual" style="max-height:100px; border-radius:8px;">
+                <div class="promo-form-group full-width">
+                    <label class="promo-form-label">Imagen (dejar vacío para mantener)</label>
+                    <input type="file" id="edit_imagen" name="imagen" accept="image/*" onchange="previewEditImage(this)">
+                    <div id="editPreviewContainer" style="display:none; margin-top:10px;">
+                        <img id="editPreviewImage" src="" style="max-height:120px; border-radius:4px;">
+                    </div>
+                    <div id="currentImageContainer" style="margin-top:10px; display:none;">
+                        <p><strong>Imagen actual:</strong></p>
+                        <img id="currentImagePreview" src="" style="max-height:100px; border-radius:4px;">
+                    </div>
                 </div>
             </div>
             <div class="promo-modal-footer">
@@ -873,208 +873,50 @@
 </div>
 
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // === TAB NAVIGATION ===
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabPanes = document.querySelectorAll('.tab-pane');
 
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const target = this.dataset.tab;
 
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabPanes.forEach(p => p.classList.remove('active'));
 
-    <script>
-        // Tab Navigation
-        document.addEventListener('DOMContentLoaded', function() {
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const tabPanes = document.querySelectorAll('.tab-pane');
-            
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const targetTab = this.getAttribute('data-tab');
-                    tabBtns.forEach(b => b.classList.remove('active'));
-                    tabPanes.forEach(p => p.classList.remove('active'));
-                    this.classList.add('active');
-                    document.getElementById(targetTab).classList.add('active');
-                });
-            });
-            
-            // Image Preview
-            window.previewImage = function(input) {
-                const preview = document.getElementById('imagePreview');
-                const previewImage = document.getElementById('previewImage');
-                if (input.files && input.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        if (!previewImage) {
-                            const img = document.createElement('img');
-                            img.id = 'previewImage';
-                            img.src = e.target.result;
-                            img.alt = 'Vista previa';
-                            preview.innerHTML = '';
-                            preview.appendChild(img);
-                        } else {
-                            previewImage.src = e.target.result;
-                        }
-                    };
-                    reader.readAsDataURL(input.files[0]);
-                }
-            };
-
-            // Dismiss alerts
-            document.querySelectorAll('.alert .close').forEach(button => {
-                button.addEventListener('click', function() {
-                    this.parentElement.style.display = 'none';
-                });
+                this.classList.add('active');
+                document.getElementById(target)?.classList.add('active');
             });
         });
 
-        // Modal Functions
-        function showDeleteModal(type, id, name) {
-            const modal = document.getElementById('deleteModal');
-            const modalMessage = document.getElementById('modalMessage');
-            const deleteForm = document.getElementById('deleteForm');
-            
-            let message = '';
-            let actionUrl = '';
-            
-            if (type === 'amenidad') {
-                message = `¿Estás seguro de que deseas eliminar la amenidad "${name}"?`;
-                actionUrl = "{{ route('admin.fraccionamiento.delete-amenidad', [$datosFraccionamiento['id'], 'ID']) }}".replace('ID', id);
-            } else if (type === 'foto') {
-                message = `¿Estás seguro de que deseas eliminar la foto "${name}"?`;
-                actionUrl = "{{ route('admin.fraccionamiento.delete-foto', [$datosFraccionamiento['id'], 'ID']) }}".replace('ID', id);
-            } else if (type === 'archivo') {
-                message = `¿Estás seguro de que deseas eliminar el archivo "${name}"?`;
-                actionUrl = "{{ route('admin.fraccionamiento.delete-archivo', [$datosFraccionamiento['id'], 'ID']) }}".replace('ID', id);
-            } else if (type === 'promocion') {
-                message = `¿Estás seguro de que deseas eliminar la promoción "${name}"?`;
-                actionUrl = "{{ route('admin.promociones.destroy', 'ID') }}".replace('ID', id);
-            }
-            
-            modalMessage.textContent = message;
-            deleteForm.action = actionUrl;
-            modal.style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('deleteModal').style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('deleteModal');
-            if (event.target === modal) closeModal();
-        }
-
-        // Gallery Image Preview
-        window.previewGalleryImage = function(input) {
-            const previewContainer = document.getElementById('galleryPreviewContainer');
-            const previewImage = document.getElementById('galleryPreviewImage');
-            const fileNameDisplay = document.getElementById('fileNameDisplay');
-            const fileUploadLabel = document.getElementById('fileUploadLabel');
-
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    previewContainer.style.display = 'block';
-                    fileNameDisplay.textContent = file.name;
-                    fileUploadLabel.innerHTML = '<i class="fas fa-check"></i> <span>Archivo seleccionado</span>';
-                    fileUploadLabel.style.backgroundColor = 'var(--success-color)';
-                    fileUploadLabel.style.color = 'white';
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        window.removeGalleryPreview = function() {
-            document.getElementById('fotografia_path').value = '';
-            document.getElementById('galleryPreviewContainer').style.display = 'none';
-            document.getElementById('fileNameDisplay').textContent = '';
-            const label = document.getElementById('fileUploadLabel');
-            label.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> <span>Seleccionar archivo</span>';
-            label.style.backgroundColor = ''; label.style.color = '';
-        };
-
-        // PDF Preview
-        window.previewPdf = function(input) {
-            const container = document.getElementById('pdfPreviewContainer');
-            const iframe = document.getElementById('pdfPreviewIframe');
-            const fileNameEl = document.getElementById('pdfFileName');
-            const label = document.getElementById('pdfUploadLabel');
-
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                if (file.type !== 'application/pdf') {
-                    alert('Solo se permiten archivos PDF');
-                    input.value = ''; return;
-                }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    iframe.src = e.target.result;
-                    container.style.display = 'block';
-                    fileNameEl.textContent = file.name;
-                    label.innerHTML = '<i class="fas fa-check"></i> <span>PDF seleccionado</span>';
-                    label.style.backgroundColor = 'var(--success-color)';
-                    label.style.color = 'white';
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        window.removePdfPreview = function() {
-            document.getElementById('archivo_path').value = '';
-            document.getElementById('pdfPreviewContainer').style.display = 'none';
-            document.getElementById('pdfFileName').textContent = '';
-            const label = document.getElementById('pdfUploadLabel');
-            label.innerHTML = '<i class="fas fa-file-pdf"></i> <span>Seleccionar archivo PDF</span>';
-            label.style.backgroundColor = ''; label.style.color = '';
-        };
-
-        // Promo Image Preview
-        window.previewPromoImage = function(input) {
-            const previewContainer = document.getElementById('promoPreviewContainer');
-            const previewImage = document.getElementById('promoPreviewImage');
-            const fileName = document.getElementById('promoFileName');
-            const label = document.getElementById('promoImageLabel');
-
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    previewContainer.style.display = 'block';
-                    fileName.textContent = file.name;
-                    label.innerHTML = '<i class="fas fa-check"></i> <span>Imagen seleccionada</span>';
-                    label.style.backgroundColor = 'var(--success-color)';
-                    label.style.color = 'white';
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        window.removePromoPreview = function() {
-            document.getElementById('promo_imagen').value = '';
-            document.getElementById('promoPreviewContainer').style.display = 'none';
-            document.getElementById('promoFileName').textContent = '';
-            const label = document.getElementById('promoImageLabel');
-            label.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> <span>Seleccionar imagen</span>';
-            label.style.backgroundColor = ''; label.style.color = '';
-        };
-
-        // Mantener pestaña activa después de envío
+        // === MANTENER TAB ACTIVO DESPUÉS DE REDIRECCIÓN ===
         @if(session('active_tab'))
-            const tabToActivate = "{{ session('active_tab') }}";
-            const targetTabBtn = document.querySelector(`.tab-btn[data-tab="${tabToActivate}"]`);
-            const targetTabPane = document.getElementById(tabToActivate);
-            if (targetTabBtn && targetTabPane) {
-                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-                targetTabBtn.classList.add('active');
-                targetTabPane.classList.add('active');
+            const activeTab = "{{ session('active_tab') }}";
+            const targetBtn = document.querySelector(`.tab-btn[data-tab="${activeTab}"]`);
+            const targetPane = document.getElementById(activeTab);
+            if (targetBtn && targetPane) {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                targetBtn.classList.add('active');
+                targetPane.classList.add('active');
             }
         @endif
 
-        // Ocultar descripción si es "Característica"
-        document.addEventListener('DOMContentLoaded', function () {
-            const tipoSelect = document.getElementById('amenidad_tipo');
-            const descripcionGroup = document.getElementById('descripcion-group');
-            const descripcionField = document.getElementById('amenidad_descripcion');
+        // === DISMISS ALERTS ===
+        document.querySelectorAll('.alert .close').forEach(btn => {
+            btn.addEventListener('click', function () {
+                this.parentElement.style.display = 'none';
+            });
+        });
 
+        // === OCULTAR DESCRIPCIÓN SI ES "CARACTERÍSTICA" ===
+        const tipoSelect = document.getElementById('amenidad_tipo');
+        const descripcionGroup = document.getElementById('descripcion-group');
+        const descripcionField = document.getElementById('amenidad_descripcion');
+
+        if (tipoSelect && descripcionGroup && descripcionField) {
             function toggleDescripcion() {
                 if (tipoSelect.value === 'Característica') {
                     descripcionGroup.classList.add('collapsed');
@@ -1087,113 +929,230 @@
                     }
                 }
             }
-
             toggleDescripcion();
             tipoSelect.addEventListener('change', toggleDescripcion);
+        }
+    });
+
+    // === MODAL ELIMINAR (amenidad, foto, archivo, promoción) ===
+    function showDeleteModal(type, id, name) {
+        const modal = document.getElementById('deleteModal');
+        const messageEl = document.getElementById('modalMessage');
+        const form = document.getElementById('deleteForm');
+
+        let message = '';
+        let action = '';
+
+        if (type === 'amenidad') {
+            message = `¿Eliminar la amenidad "${name}"?`;
+            action = `{{ route('admin.fraccionamiento.delete-amenidad', [$datosFraccionamiento['id'], 'ID']) }}`.replace('ID', id);
+        } else if (type === 'foto') {
+            message = `¿Eliminar la foto "${name}"?`;
+            action = `{{ route('admin.fraccionamiento.delete-foto', [$datosFraccionamiento['id'], 'ID']) }}`.replace('ID', id);
+        } else if (type === 'archivo') {
+            message = `¿Eliminar el archivo "${name}"?`;
+            action = `{{ route('admin.fraccionamiento.delete-archivo', [$datosFraccionamiento['id'], 'ID']) }}`.replace('ID', id);
+        } else if (type === 'promocion') {
+            message = `¿Eliminar la promoción "${name}"?`;
+            action = `{{ route('admin.promociones.destroy', 'ID') }}`.replace('ID', id);
+        }
+
+        messageEl.textContent = message;
+        form.action = action;
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    window.addEventListener('click', function (e) {
+        const modal = document.getElementById('deleteModal');
+        if (e.target === modal) closeModal();
+    });
+
+    // === PREVIEW DE IMAGEN GENERAL (fraccionamiento) ===
+    window.previewImage = function (input) {
+        const preview = document.getElementById('imagePreview');
+        const img = document.getElementById('previewImage') || document.createElement('img');
+        img.id = 'previewImage';
+        if (input.files?.[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                img.src = e.target.result;
+                if (!document.getElementById('previewImage')) preview.appendChild(img);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    // === PREVIEW DE GALERÍA ===
+    window.previewGalleryImage = function (input) {
+        const container = document.getElementById('galleryPreviewContainer');
+        const img = document.getElementById('galleryPreviewImage');
+        const nameEl = document.getElementById('fileNameDisplay');
+        const label = document.getElementById('fileUploadLabel');
+
+        if (input.files?.[0]) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onload = e => {
+                img.src = e.target.result;
+                container.style.display = 'block';
+                nameEl.textContent = file.name;
+                label.innerHTML = '<i class="fas fa-check"></i> <span>Seleccionado</span>';
+                label.style.backgroundColor = 'var(--success-color)';
+                label.style.color = 'white';
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    window.removeGalleryPreview = function () {
+        document.getElementById('fotografia_path').value = '';
+        document.getElementById('galleryPreviewContainer').style.display = 'none';
+        document.getElementById('fileNameDisplay').textContent = '';
+        const label = document.getElementById('fileUploadLabel');
+        label.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> <span>Seleccionar archivo</span>';
+        label.style.backgroundColor = ''; label.style.color = '';
+    };
+
+    // === PREVIEW DE PDF ===
+    window.previewPdf = function (input) {
+        const container = document.getElementById('pdfPreviewContainer');
+        const iframe = document.getElementById('pdfPreviewIframe');
+        const nameEl = document.getElementById('pdfFileName');
+        const label = document.getElementById('pdfUploadLabel');
+
+        if (input.files?.[0]) {
+            const file = input.files[0];
+            if (file.type !== 'application/pdf') {
+                alert('Solo PDF'); input.value = ''; return;
+            }
+            const reader = new FileReader();
+            reader.onload = e => {
+                iframe.src = e.target.result;
+                container.style.display = 'block';
+                nameEl.textContent = file.name;
+                label.innerHTML = '<i class="fas fa-check"></i> <span>PDF seleccionado</span>';
+                label.style.backgroundColor = 'var(--success-color)';
+                label.style.color = 'white';
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    window.removePdfPreview = function () {
+        document.getElementById('archivo_path').value = '';
+        document.getElementById('pdfPreviewContainer').style.display = 'none';
+        document.getElementById('pdfFileName').textContent = '';
+        const label = document.getElementById('pdfUploadLabel');
+        label.innerHTML = '<i class="fas fa-file-pdf"></i> <span>Seleccionar PDF</span>';
+        label.style.backgroundColor = ''; label.style.color = '';
+    };
+
+    // === MODALES DE PROMOCIÓN ===
+
+    // Crear
+    function openCreateModal() {
+        const modal = document.getElementById('createPromoModal');
+        modal.style.display = 'flex';
+        // Preseleccionar fraccionamiento actual
+        const checkbox = document.querySelector(`#createPromoForm input[value="{{ $datosFraccionamiento['id'] }}"]`);
+        if (checkbox) checkbox.checked = true;
+    }
+
+    function closeCreateModal() {
+        document.getElementById('createPromoModal').style.display = 'none';
+        document.getElementById('createPromoForm').reset();
+        document.getElementById('createPreviewContainer').style.display = 'none';
+    }
+
+    function previewCreateImage(input) {
+        const preview = document.getElementById('createPreviewImage');
+        const container = document.getElementById('createPreviewContainer');
+        if (input.files?.[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.src = e.target.result;
+                container.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // === MODALES DE PROMOCIÓN: EDITAR ===
+    function openEditModal(id, titulo, descripcion, fecha_inicio, fecha_fin, imagen_path, fraccionamientos_ids) {
+        // Configurar formulario
+        const form = document.getElementById('editPromoForm');
+        form.action = `/admin/promociones/${id}`;
+
+        // Llenar campos
+        document.getElementById('edit_id_promocion').value = id;
+        document.getElementById('edit_titulo').value = titulo;
+        document.getElementById('edit_descripcion').value = descripcion;
+
+        // Convertir fechas: "2025-04-05 14:30:00" → "2025-04-05T14:30"
+        document.getElementById('edit_fecha_inicio').value = fecha_inicio ? fecha_inicio.replace(' ', 'T').substring(0, 16) : '';
+        document.getElementById('edit_fecha_fin').value = fecha_fin ? fecha_fin.replace(' ', 'T').substring(0, 16) : '';
+
+        // Marcar fraccionamientos
+        document.querySelectorAll('#editPromoForm input[name="fraccionamientos[]"]').forEach(cb => cb.checked = false);
+        fraccionamientos_ids.forEach(fid => {
+            const cb = document.getElementById('frac-' + fid);
+            if (cb) cb.checked = true;
         });
 
-
-
-       // === MODAL DE EDICIÓN DE PROMOCIÓN ===
-        function openEditModal(id, promo) {
-            try {
-                console.log('Abriendo modal para promoción:', id, promo); // DEBUG
-
-                const modal = document.getElementById('editPromoModal');
-                const form = document.getElementById('editPromoForm');
-
-                if (!modal || !form) {
-                    alert('Error: No se encontró el modal o formulario');
-                    return;
-                }
-
-                // Configurar acción del formulario
-                form.action = `/admin/promociones/${id}`;
-
-                // Llenar campos
-                document.getElementById('edit_id_promocion').value = id;
-                document.getElementById('edit_titulo').value = promo.titulo || '';
-                document.getElementById('edit_descripcion').value = promo.descripcion || '';
-                
-                // Fechas: convertir a formato datetime-local
-                document.getElementById('edit_fecha_inicio').value = promo.fecha_inicio ? 
-                    promo.fecha_inicio.replace(' ', 'T').slice(0, 16) : '';
-                document.getElementById('edit_fecha_fin').value = promo.fecha_fin ? 
-                    promo.fecha_fin.replace(' ', 'T').slice(0, 16) : '';
-
-                // Imagen actual
-                const currentImg = document.getElementById('currentImagePreview');
-                const currentContainer = document.getElementById('currentImageContainer');
-                if (promo.imagen_path) {
-                    currentImg.src = `/storage/${promo.imagen_path}`;
-                    currentContainer.style.display = 'block';
-                } else {
-                    currentContainer.style.display = 'none';
-                }
-
-                // Limpiar vista previa nueva
-                const previewContainer = document.getElementById('editPreviewContainer');
-                const fileName = document.getElementById('editFileName');
-                const label = document.getElementById('editImageLabel');
-                previewContainer.style.display = 'none';
-                fileName.textContent = '';
-                label.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> <span>Seleccionar imagen</span>';
-                label.style.backgroundColor = ''; 
-                label.style.color = '';
-
-                // Mostrar modal
-                modal.style.display = 'flex';
-                modal.style.justifyContent = 'center';
-                modal.style.alignItems = 'center';
-
-            } catch (error) {
-                console.error('Error al abrir modal:', error);
-                alert('Error al cargar la promoción. Revisa la consola.');
-            }
+        // Mostrar imagen actual
+        const currentImg = document.getElementById('currentImagePreview');
+        const currentContainer = document.getElementById('currentImageContainer');
+        if (imagen_path) {
+            currentImg.src = '/storage/' + imagen_path;
+            currentContainer.style.display = 'block';
+        } else {
+            currentContainer.style.display = 'none';
         }
 
-        function closeEditModal() {
-            document.getElementById('editPromoModal').style.display = 'none';
+        // Limpiar preview nueva
+        document.getElementById('editPreviewContainer').style.display = 'none';
+
+        // ABRIR MODAL
+        document.getElementById('editPromoModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editPromoModal').style.display = 'none';
+        document.getElementById('editPreviewContainer').style.display = 'none';
+    }
+
+    function previewEditImage(input) {
+        const preview = document.getElementById('editPreviewImage');
+        const container = document.getElementById('editPreviewContainer');
+        if (input.files?.[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.src = e.target.result;
+                container.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
         }
+    }
 
-        // Vista previa de nueva imagen
-        function previewEditImage(input) {
-            const previewContainer = document.getElementById('editPreviewContainer');
-            const previewImage = document.getElementById('editPreviewImage');
-            const fileName = document.getElementById('editFileName');
-            const label = document.getElementById('editImageLabel');
+    // Cerrar modal al hacer clic fuera
+    document.getElementById('editPromoModal').addEventListener('click', function(e) {
+        if (e.target === this) closeEditModal();
+    });
 
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    previewContainer.style.display = 'block';
-                    fileName.textContent = file.name;
-                    label.innerHTML = '<i class="fas fa-check"></i> <span>Imagen seleccionada</span>';
-                    label.style.backgroundColor = 'var(--success-color)';
-                    label.style.color = 'white';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function removeEditPreview() {
-            document.getElementById('edit_imagen').value = '';
-            document.getElementById('editPreviewContainer').style.display = 'none';
-            document.getElementById('editFileName').textContent = '';
-            const label = document.getElementById('editImageLabel');
-            label.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> <span>Seleccionar imagen</span>';
-            label.style.backgroundColor = ''; 
-            label.style.color = '';
-        }
-
-        // Cerrar al hacer clic fuera
-        window.addEventListener('click', function(e) {
-            const modal = document.getElementById('editPromoModal');
+    // Cerrar modales al hacer clic fuera
+    ['createPromoModal', 'editPromoModal'].forEach(id => {
+        const modal = document.getElementById(id);
+        window.addEventListener('click', e => {
             if (e.target === modal) {
-                closeEditModal();
+                if (id === 'createPromoModal') closeCreateModal();
+                if (id === 'editPromoModal') closeEditModal();
             }
         });
-    </script>
+    });
+</script>
+
 @endsection

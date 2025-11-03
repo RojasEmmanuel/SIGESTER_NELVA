@@ -321,8 +321,8 @@
     </div>
 </section>
 
+
 <!-- Sección de Promociones Dinámicas -->
-<!-- SECCIÓN DE PROMOCIONES NELVA - DISEÑO PREMIUM -->
 <section class="nelva-promos-premium">
     <div class="container">
         <div class="promos-header">
@@ -333,89 +333,92 @@
             <p>Descuentos exclusivos en los mejores terrenos de Oaxaca</p>
         </div>
 
-        @if($promocionesActivas->count() > 0)
+        @if($promocionesVigentes->count() > 0)
         <div class="promos-grid">
-            @foreach($promocionesActivas as $fraccionamiento)
-                @foreach($fraccionamiento->promociones as $promocion)
-                @php
-                    $esVertical = false;
-                    if ($promocion->imagen_path) {
-                        try {
-                            $ruta = storage_path('app/public/' . $promocion->imagen_path);
-                            if (file_exists($ruta)) {
-                                [$ancho, $alto] = getimagesize($ruta);
-                                $esVertical = $alto > $ancho;
-                            }
-                        } catch (Exception $e) {}
-                    }
-                    $fechaFin = $promocion->fecha_fin ? \Carbon\Carbon::parse($promocion->fecha_fin) : null;
-                    $diasRestantes = $fechaFin ? now()->diffInDays($fechaFin, false) : null;
-                @endphp
+            @foreach($promocionesVigentes as $promocion)
+            @php
+                $esVertical = false;
+                if ($promocion->imagen_path) {
+                    try {
+                        $ruta = storage_path('app/public/' . $promocion->imagen_path);
+                        if (file_exists($ruta)) {
+                            [$ancho, $alto] = getimagesize($ruta);
+                            $esVertical = $alto > $ancho;
+                        }
+                    } catch (Exception $e) {}
+                }
 
-                <article class="promo-card {{ $esVertical ? 'vertical' : 'horizontal' }} {{ $diasRestantes !== null && $diasRestantes <= 7 ? 'urgente' : '' }}">
-                    <div class="promo-image">
-                        <img src="{{ asset('storage/' . $promocion->imagen_path) }}" 
-                             alt="{{ $promocion->titulo }}" 
-                             loading="lazy">
-                        
-                        @if($diasRestantes !== null && $diasRestantes <= 15)
-                        <div class="countdown-badge">
-                            <i class="fas fa-clock"></i>
-                            <span>{{ $diasRestantes > 0 ? "$diasRestantes días" : "¡HOY!" }}</span>
-                        </div>
-                        @endif
+                $fechaFin = $promocion->fecha_fin ? \Carbon\Carbon::parse($promocion->fecha_fin) : null;
+                $fraccionamientos = $promocion->fraccionamientos; // Colección completa
+                $nombresFracc = $fraccionamientos->pluck('nombre')->implode(', ');
+                $esMultiple = $fraccionamientos->count() > 1;
+                $primerFracc = $fraccionamientos->first();
+            @endphp
 
-                        <div class="promo-actions">
-                            <a href="{{ route('pagina.fraccionamiento.show', $fraccionamiento->id_fraccionamiento) }}" 
-                               class="action-btn view" title="Ver fraccionamiento">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ asset('storage/' . $promocion->imagen_path) }}" 
-                               download class="action-btn download" title="Descargar imagen">
-                                <i class="fas fa-download"></i>
-                            </a>
-                        </div>
+            <article class="promo-card {{ $esVertical ? 'vertical' : 'horizontal' }}">
+                <div class="promo-image">
+                    <img src="{{ asset('storage/' . $promocion->imagen_path) }}" 
+                         alt="{{ $promocion->titulo }}" 
+                         loading="lazy">
+
+                    <div class="promo-actions">
+                        <a href="{{ route('pagina.fraccionamiento.show', $primerFracc->id_fraccionamiento) }}" 
+                           class="action-btn view" title="Ver fraccionamiento">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ asset('storage/' . $promocion->imagen_path) }}" 
+                           download class="action-btn download" title="Descargar imagen">
+                            <i class="fas fa-download"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="promo-content">
+                    <div class="promo-tag">PROMOCIÓN</div>
+                    <h3>{{ $promocion->titulo }}</h3>
+                    <div class="promo-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <strong>Aplica en:</strong> {{ $nombresFracc }}
                     </div>
 
-                    <div class="promo-content">
-    <div class="promo-tag">PROMOCIÓN</div>
-    <h3>{{ $promocion->titulo }}</h3>
-    <div class="promo-location">
-        <i class="fas fa-map-marker-alt"></i>
-        {{ $fraccionamiento->nombre }}
-    </div>
+                    <!-- DESCRIPCIÓN CON "VER MÁS" -->
+                    <div class="promo-description">
+                        <p class="description-text">
+                            {{ Str::limit($promocion->descripcion, 200, '...') }}
+                        </p>
+                        @if(strlen($promocion->descripcion) > 200)
+                        <button class="read-more-btn" onclick="toggleDescription(this)">
+                            <span class="read-more-text">Ver más</span>
+                            <span class="read-less-text" style="display:none;">Ver menos</span>
+                            <i class="fas fa-chevron-down read-more-icon"></i>
+                        </button>
+                        @endif
+                    </div>
 
-    <!-- DESCRIPCIÓN CON "VER MÁS" -->
-    <div class="promo-description">
-        <p class="description-text">
-            {{ Str::limit($promocion->descripcion, 200, '...') }}
-        </p>
-        @if(strlen($promocion->descripcion) > 200)
-        <button class="read-more-btn" onclick="toggleDescription(this)">
-            <span class="read-more-text">Ver más</span>
-            <span class="read-less-text" style="display:none;">Ver menos</span>
-            <i class="fas fa-chevron-down read-more-icon"></i>
-        </button>
-        @endif
-    </div>
+                    <div class="promo-date">
+                        <strong>Válida hasta:</strong>
+                        @if($fechaFin)
+                            <time>{{ $fechaFin->format('d/m/Y') }}</time>
+                        @else
+                            <span class="indefinido">Indefinida</span>
+                        @endif
+                    </div>
 
-    <div class="promo-date">
-        <strong>Válida hasta:</strong>
-        @if($fechaFin)
-            <time>{{ $fechaFin->format('d/m/Y') }}</time>
-        @else
-            <span class="indefinido">Indefinida</span>
-        @endif
-    </div>
-
-    <a href="{{ route('pagina.fraccionamiento.show', $fraccionamiento->id_fraccionamiento) }}" 
-       class="promo-cta">
-        <span>Ver Fraccionamiento</span>
-        <i class="fas fa-arrow-right"></i>
-    </a>
-</div>
-                </article>
-                @endforeach
+                    <!-- BOTÓN CONDICIONAL -->
+                    @if($esMultiple)
+                        <a href="/asesores" class="promo-cta multiple">
+                            <span>Contacta un asesor</span>
+                            <i class="fas fa-headset"></i>
+                        </a>
+                    @else
+                        <a href="{{ route('pagina.fraccionamiento.show', $primerFracc->id_fraccionamiento) }}" 
+                           class="promo-cta">
+                            <span>Ver Fraccionamiento</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    @endif
+                </div>
+            </article>
             @endforeach
         </div>
         @else
@@ -430,7 +433,6 @@
         @endif
     </div>
 </section>
-
 
 <!-- Incrustar el footer -->
 <?= view('templates/footer') ?>

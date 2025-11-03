@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\pagina;
 
 use App\Models\Fraccionamiento;
+use App\Models\Promocion;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -12,41 +13,39 @@ class InicioClientController extends Controller
 {
     public function index()
     {
-        // Obtener fraccionamientos activos agrupados por zona
+        // 1. Fraccionamientos activos agrupados por zona
         $fraccionamientos = Fraccionamiento::where('estatus', 1)
             ->select('id_fraccionamiento', 'nombre', 'ubicacion', 'path_imagen', 'zona')
             ->get()
             ->groupBy('zona');
 
-        // Obtener promociones activas de los fraccionamientos basadas en fechas
-        $promocionesActivas = Fraccionamiento::where('estatus', 1)
-            ->whereHas('promociones', function($query) {
-                $query->where('fecha_inicio', '<=', now())
-                    ->where(function($q) {
-                        $q->where('fecha_fin', '>=', now())
-                            ->orWhere('fecha_fin', null);
-                    });
+        // 2. Promociones vigentes con fraccionamientos activos
+        $promocionesVigentes = Promocion::where('fecha_inicio', '<=', now())
+            ->where(function ($query) {
+                $query->where('fecha_fin', '>=', now())
+                    ->orWhereNull('fecha_fin');
             })
-            ->with(['promociones' => function($query) {
-                $query->where('fecha_inicio', '<=', now())
-                    ->where(function($q) {
-                        $q->where('fecha_fin', '>=', now())
-                            ->orWhere('fecha_fin', null);
-                    })
-                    ->select('id_promocion', 'id_fraccionamiento', 'titulo', 'descripcion', 'imagen_path', 'fecha_inicio', 'fecha_fin');
+            ->with(['fraccionamientos' => function ($query) {
+                $query->where('fraccionamientos.estatus', 1)
+                    ->select(
+                        'fraccionamientos.id_fraccionamiento',
+                        'fraccionamientos.nombre',
+                        'fraccionamientos.ubicacion',
+                        'fraccionamientos.zona'
+                    );
             }])
+            ->select('id_promocion', 'titulo', 'descripcion', 'imagen_path', 'fecha_inicio', 'fecha_fin')
+            ->orderBy('fecha_inicio', 'desc')
             ->get()
-            ->filter(function($fraccionamiento) {
-                return $fraccionamiento->promociones->count() > 0;
-            });
+            ->filter(fn($p) => $p->fraccionamientos->isNotEmpty());
 
-        // Pasar los datos a la vista
         return view('pagina.inicio', [
             'fraccionamientos' => $fraccionamientos,
-            'promocionesActivas' => $promocionesActivas,
+            'promocionesVigentes' => $promocionesVigentes,
             'title' => 'Nelva Bienes Raíces'
         ]);
-    }    
+    } 
+        
     public function Atractivos()
     {
         return view('pagina.atractivos', [

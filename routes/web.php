@@ -147,25 +147,17 @@ Route::middleware('auth')->group(function () {
         // === PROMOCIONES ===
         Route::prefix('promociones')->name('promociones.')->group(function () {
 
-            // Listar todas las promociones (opcional, si usas index global)
-            Route::get('/', [AdminPromocionController::class, 'index'])
-                ->name('index');
-
-            // Crear nueva promoción (POST) - desde el tab del fraccionamiento
+            // Crear desde el tab del fraccionamiento
             Route::post('/', [AdminPromocionController::class, 'store'])
                 ->name('store');
 
-            // Actualizar promoción (PUT) - desde el modal
+            // Actualizar (PUT desde modal)
             Route::put('/{promocion}', [AdminPromocionController::class, 'update'])
                 ->name('update');
 
-            // Eliminar promoción (DELETE) - desde el modal
+            // Eliminar (DELETE desde modal)
             Route::delete('/{promocion}', [AdminPromocionController::class, 'destroy'])
                 ->name('destroy');
-
-            // Opcional: ver detalle (no lo usas, pero si quieres)
-            Route::get('/{promocion}', [AdminPromocionController::class, 'show'])
-                ->name('show');
-        });
+                }); 
     });
 });
