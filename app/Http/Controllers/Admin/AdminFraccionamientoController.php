@@ -166,10 +166,7 @@ class AdminFraccionamientoController extends Controller
                 ->with('fraccionamientos') // ← Carga fraccionamientos
                 ->orderBy('fecha_inicio', 'desc')
                 ->get()
-                ->filter(function ($promo) use ($hoy) {
-                    return $promo->fecha_inicio <= $hoy &&
-                        ($promo->fecha_fin === null || $promo->fecha_fin >= $hoy);
-                })
+                
                 ->values(); // ← ¡IMPORTANTE! Reindexa la colección
 
             // === RETORNAR VISTA ===
