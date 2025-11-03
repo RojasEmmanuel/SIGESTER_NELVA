@@ -186,8 +186,8 @@
             <i class="fas fa-home"></i>
             <span>Venta Directa</span>
         </h1>
-        <a href="{{ route('ventas.index') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Volver al listado
+        <a href="{{ route('admin.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver
         </a>
     </div>
 
