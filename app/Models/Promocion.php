@@ -15,7 +15,6 @@ class Promocion extends Model
         'imagen_path',
         'fecha_inicio',
         'fecha_fin',
-        'id_fraccionamiento',
     ];
 
     protected $casts = [
@@ -23,9 +22,13 @@ class Promocion extends Model
         'fecha_fin' => 'datetime',
     ];
     
-    public function fraccionamiento()
+    public function fraccionamientos()
     {
-        return $this->belongsTo(Fraccionamiento::class, 'id_fraccionamiento', 'id_fraccionamiento');
+        return $this->belongsToMany(
+            Fraccionamiento::class,
+            'fraccionamiento_promocion',
+            'id_promocion',
+            'id_fraccionamiento'
+        )->withTimestamps();
     }
-    
 }

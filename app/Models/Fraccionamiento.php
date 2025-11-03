@@ -58,9 +58,14 @@ class Fraccionamiento extends Model
         return $this->hasMany(ArchivosFraccionamiento::class, 'id_fraccionamiento', 'id_fraccionamiento');
     }
 
-    // Relación con Promocion (uno a muchos)
+    // Relación con Promocion (muchos a muchos)
     public function promociones()
     {
-        return $this->hasMany(Promocion::class, 'id_fraccionamiento', 'id_fraccionamiento');
+        return $this->belongsToMany(
+            Promocion::class,
+            'fraccionamiento_promocion',
+            'id_fraccionamiento',
+            'id_promocion'
+        )->withTimestamps();
     }
 }
