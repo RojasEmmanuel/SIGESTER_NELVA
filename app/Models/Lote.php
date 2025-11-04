@@ -38,4 +38,16 @@ class Lote extends Model
         return $this->hasOne(LoteMedida::class, 'id_lote', 'id_lote');
     }
 
+
+    // ─────── NUEVO: RELACIÓN CON ZONA ───────
+    public function zonaRelacion()
+    {
+        return $this->hasOne(LoteZona::class, 'id_lote', 'id_lote');
+    }
+
+    // Magia: $lote->precio_m2
+    public function getPrecioM2Attribute()
+    {
+        return $this->zonaRelacion?->zona?->precio_m2 ?? 0;
+    }
 }

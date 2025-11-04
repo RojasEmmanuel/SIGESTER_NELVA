@@ -29,6 +29,7 @@ class InfoFraccionamiento extends Model
     protected $casts = [
         'precio_metro_cuadrado' => 'double',
         'precioGeneral' => 'double',
+        'descripcion' => 'string',
     ];
 
     // Relación con Fraccionamiento (muchos a uno)

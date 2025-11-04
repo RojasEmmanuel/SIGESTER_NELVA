@@ -10,6 +10,7 @@ use App\Models\AmenidadFraccionamiento;
 use App\Models\Galeria;
 use App\Models\ArchivosFraccionamiento;
 use App\Models\Lote;
+use App\Models\Zona;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -78,6 +79,29 @@ class AdminFraccionamientoController extends Controller
                 'precioGeneral' => $data['precioGeneral'],
                 'ubicacionMaps' => $data['ubicacionMaps'],
             ]);
+
+            // ==================== NUEVO: CREAR ZONAS ====================
+            if ($request->filled('agregar_zonas') && $request->agregar_zonas == '1' && $request->has('zonas')) {
+                $request->validate([
+                    'zonas.*.nombre'     => 'required|string|max:100',
+                    'zonas.*.precio_m2'  => 'required|numeric|min:0',
+                ]);
+
+                Log::info('Creando zonas para fraccionamiento', [
+                    'id_fraccionamiento' => $fraccionamiento->id_fraccionamiento,
+                    'cantidad_zonas' => count($request->zonas)
+                ]);
+
+                foreach ($request->zonas as $index => $zonaData) {
+                    Zona::create([
+                        'nombre'             => $zonaData['nombre'],
+                        'precio_m2'          => $zonaData['precio_m2'],
+                        'id_fraccionamiento' => $fraccionamiento->id_fraccionamiento,
+                    ]);
+                }
+
+                Log::info('Zonas creadas exitosamente', ['total' => count($request->zonas)]);
+            }
 
             DB::commit();
 
