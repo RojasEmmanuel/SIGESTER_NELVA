@@ -163,7 +163,7 @@
                         </form>
                     </div>
 
-                    <!-- Additional Information Section -->
+                    <!-- Additional Information Section (MANTENER EN SU LUGAR ORIGINAL) -->
                     <div class="form-section">
                         <div class="section-header">
                             <h3 class="section-title">
@@ -256,6 +256,42 @@
                         </form>
                     </div>
 
+                    <!-- Zonas del Fraccionamiento Section (SOLO SI EXISTEN ZONAS) -->
+                    @if($zonas && $zonas->count() > 0)
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Zonas del Fraccionamiento
+                            </h3>
+                            <div class="section-indicator">
+                                <span class="indicator-dot"></span>
+                                {{ $zonas->count() }} zonas registradas
+                            </div>
+                        </div>
+                        
+                        <div class="zonas-list">
+                            <div class="zonas-grid">
+                                @foreach($zonas as $zona)
+                                <div class="zona-card">
+                                    <div class="zona-header">
+                                        <h5 class="zona-name">{{ $zona['nombre'] }}</h5>
+                                        <span class="zona-price">${{ number_format($zona['precio_m2'], 2) }} /m²</span>
+                                    </div>
+                                    <div class="zona-actions">
+                                        <!-- Edit Zone Button -->
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="openEditZonaModal({{ $zona['id'] }}, '{{ addslashes($zona['nombre']) }}', {{ $zona['precio_m2'] }})">
+                                            <i class="fas fa-edit"></i>
+                                            Editar
+                                        </button>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
                     <!-- Statistics Section -->
                     <div class="stats-section">
                         <div class="section-header">
@@ -288,6 +324,37 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Edit Zone Modal -->
+            <div id="editZonaModal" class="modal">
+                <div class="modal-content compact-modal">
+                    <div class="modal-header">
+                        <h3>Editar Zona</h3>
+                        <button type="button" class="close" onclick="closeEditZonaModal()">×</button>
+                    </div>
+                    <form id="editZonaForm" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="edit_zona_nombre" class="form-label">Nombre de la Zona</label>
+                                <input type="text" id="edit_zona_nombre" name="nombre" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_zona_precio_m2" class="form-label">Precio por m² (MXN)</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <input type="number" id="edit_zona_precio_m2" name="precio_m2" step="0.01" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline" onclick="closeEditZonaModal()">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -1152,6 +1219,31 @@
                 if (id === 'editPromoModal') closeEditModal();
             }
         });
+    });
+
+
+
+    // === GESTIÓN DE ZONAS ===
+
+    // Abrir modal de edición de zona
+    function openEditZonaModal(id, nombre, precio_m2) {
+        const form = document.getElementById('editZonaForm');
+        form.action = `{{ route('admin.fraccionamiento.update-zona', [$datosFraccionamiento['id'], 'ID']) }}`.replace('ID', id);
+        
+        document.getElementById('edit_zona_nombre').value = nombre;
+        document.getElementById('edit_zona_precio_m2').value = precio_m2;
+        
+        document.getElementById('editZonaModal').style.display = 'flex';
+    }
+
+    // Cerrar modal de edición de zona
+    function closeEditZonaModal() {
+        document.getElementById('editZonaModal').style.display = 'none';
+    }
+
+    // Cerrar modal de zona al hacer clic fuera
+    document.getElementById('editZonaModal').addEventListener('click', function(e) {
+        if (e.target === this) closeEditZonaModal();
     });
 </script>
 

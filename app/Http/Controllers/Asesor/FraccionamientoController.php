@@ -107,6 +107,15 @@ class FraccionamientoController extends Controller
                 ])
                 ->values();
 
+            // ZONAS DEL FRACCIONAMIENTO
+            $zonas = $fraccionamiento->zonas->map(fn($z) =>
+                [
+                    'id' => $z->id_zona,
+                    'nombre' => $z->nombre,
+                    'precio_m2' => $z->precio_m2,
+                ]
+            );
+
             return view('asesor.fraccionamiento', compact(
                 'datosFraccionamiento',
                 'planos',
@@ -120,6 +129,7 @@ class FraccionamientoController extends Controller
                 'lotesApartadosDeposito',
                 'lotesVendidos',
                 'promocionesActivas' // ← NUEVA VARIABLE
+                ,'zonas'
             ));
 
         } catch (\Exception $e) {

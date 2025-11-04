@@ -236,6 +236,27 @@
             </div>
             @endif
 
+            @if($zonas->count() > 0)
+            <div class="info-section">
+                <h3 class="info-title">
+                    <i class="fas fa-map-marked-alt"></i>  
+                    <span>Zonas del Fraccionamiento</span>
+                </h3>
+                <div class="info-grid"
+">
+                    @foreach($zonas as $zona)
+                    <div class="info-item">
+                        <div class="info-label">{{ $zona['nombre'] }}</div>
+                        <div class="info-value highlight
+                            ">Precio por m²: ${{ number_format($zona['precio_m2'], 2) }} MXN
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+
+            </div>
+            @endif
+
             <!-- GALERÍA SIMPLIFICADA -->
             <div class="info-section gallery-section">
                 <div class="gallery-header">

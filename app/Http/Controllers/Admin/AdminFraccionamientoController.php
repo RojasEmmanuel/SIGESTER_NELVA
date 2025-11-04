@@ -175,6 +175,15 @@ class AdminFraccionamientoController extends Controller
                 'fecha_subida' => $a->fecha_subida->toDateTimeString(),
             ]);
 
+            // ZONAS DEL FRACCIONAMIENTO
+            $zonas = $fraccionamiento->zonas->map(fn($z) =>
+                [
+                    'id' => $z->id_zona,
+                    'nombre' => $z->nombre,
+                    'precio_m2' => $z->precio_m2,
+                ]
+            );
+
             // === ESTADÍSTICAS DE LOTES ===
             $lotes = $fraccionamiento->lotes;
             $totalLotes = $lotes->count();
@@ -204,6 +213,7 @@ class AdminFraccionamientoController extends Controller
                 'lotesApartados',
                 'lotesVendidos',
                 'promociones'
+                ,'zonas'
             ));
 
         } catch (\Exception $e) {
@@ -558,6 +568,64 @@ class AdminFraccionamientoController extends Controller
         } catch (\Exception $e) {
             // Manejar error de manera más elegante
             return redirect()->back()->with('error', 'Error al cargar el fraccionamiento: ' . $e->getMessage());
+        }
+    }
+
+
+    /**
+     * Actualizar una zona existente
+     */
+    public function updateZona(Request $request, $id, $zonaId)
+    {
+        try {
+            DB::beginTransaction();
+
+            $data = $request->validate([
+                'nombre' => 'required|string|max:255',
+                'precio_m2' => 'required|numeric|min:0',
+            ]);
+
+            Log::info('Actualizando zona del fraccionamiento', [
+                'id_fraccionamiento' => $id,
+                'id_zona' => $zonaId,
+                'nombre' => $data['nombre'],
+                'precio_m2' => $data['precio_m2']
+            ]);
+
+            // Buscar y actualizar la zona
+            $zona = Zona::where('id_zona', $zonaId)
+                        ->where('id_fraccionamiento', $id)
+                        ->firstOrFail();
+
+            $zona->update([
+                'nombre' => $data['nombre'],
+                'precio_m2' => $data['precio_m2'],
+            ]);
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.fraccionamiento.show', $id)
+                ->with('success', 'Zona actualizada correctamente')
+                ->with('active_tab', 'basic-info');
+
+                
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::error("Error de validación al actualizar zona: " . json_encode($e->errors()));
+            return redirect()
+                ->route('admin.fraccionamiento.show', $id)
+                ->withErrors($e->validator)
+                ->with('active_tab', 'basic-info')
+                ->withInput();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Error al actualizar zona: " . $e->getMessage());
+            return redirect()
+                ->route('admin.fraccionamiento.show', $id)
+                ->with('error_zona', 'Error al actualizar la zona: ' . $e->getMessage())
+                ->with('active_tab', 'basic-info');
         }
     }
 }

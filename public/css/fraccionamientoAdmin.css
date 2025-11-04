@@ -1532,3 +1532,175 @@ textarea.form-control {
             font-size: 1.2rem;
         }
     }
+
+
+
+    /* Estilos compactos para zonas */
+.zonas-list {
+    margin-top: 0.5rem;
+}
+
+.zonas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.5rem;
+}
+
+.zona-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.75rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.zona-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.zona-name {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2d3748;
+    line-height: 1.2;
+}
+
+.zona-price {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.zona-actions {
+    margin-top: 0.5rem;
+}
+
+/* Botón de editar que abarca todo el ancho */
+.zona-actions .btn {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    text-align: center;
+    justify-content: center;
+}
+
+/* Modal ultra compacto */
+#editZonaModal .modal-content {
+    max-width: 340px;
+    margin: 0.5rem auto;
+}
+
+#editZonaModal .modal-header {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+#editZonaModal .modal-header h3 {
+    font-size: 0.95rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+#editZonaModal .modal-body {
+    padding: 0.8rem;
+}
+
+#editZonaModal .modal-footer {
+    padding: 0.6rem 0.8rem;
+    gap: 0.4rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* Formularios ultra compactos en modal */
+#editZonaModal .form-group {
+    margin-bottom: 0.6rem;
+}
+
+#editZonaModal .form-label {
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+#editZonaModal .form-control {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.8rem;
+    border-radius: 3px;
+    border: 1px solid #cbd5e0;
+    height: auto;
+}
+
+#editZonaModal .form-control:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+}
+
+/* Input con icono compacto */
+#editZonaModal .input-with-icon {
+    position: relative;
+}
+
+#editZonaModal .input-with-icon i {
+    position: absolute;
+    left: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    color: #718096;
+}
+
+#editZonaModal .input-with-icon .form-control {
+    padding-left: 1.6rem;
+}
+
+/* Botones compactos en modal */
+#editZonaModal .btn {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+    border-radius: 3px;
+}
+
+/* Responsive para móviles */
+@media (max-width: 640px) {
+    .zonas-grid {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+    }
+    
+    .zona-card {
+        padding: 0.6rem;
+    }
+    
+    #editZonaModal .modal-content {
+        margin: 0.25rem;
+        max-width: calc(100% - 0.5rem);
+    }
+    
+    .zona-header {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .zona-price {
+        align-self: flex-start;
+    }
+}
+
+/* Estados hover */
+.zona-card:hover {
+    border-color: #cbd5e0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.zona-actions .btn-outline:hover {
+    background: #3498db;
+    color: white;
+}

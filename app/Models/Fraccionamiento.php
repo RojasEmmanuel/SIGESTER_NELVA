@@ -68,4 +68,11 @@ class Fraccionamiento extends Model
             'id_promocion'
         )->withTimestamps();
     }
+
+
+    // app/Models/Fraccionamiento.php
+    public function zonas()
+    {
+        return $this->hasMany(Zona::class, 'id_fraccionamiento', 'id_fraccionamiento');
+    }
 }

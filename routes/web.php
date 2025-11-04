@@ -97,6 +97,8 @@ Route::middleware('auth')->group(function () {
 
 
 
+
+
    Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/inicio', [inicioAdminController::class, 'index'])->name('index');
@@ -158,6 +160,11 @@ Route::middleware('auth')->group(function () {
             // Eliminar (DELETE desde modal)
             Route::delete('/{promocion}', [AdminPromocionController::class, 'destroy'])
                 ->name('destroy');
-                }); 
+        }); 
+        
+
+        // Ruta solo para actualizar zonas (no crear ni eliminar)
+        Route::put('/fraccionamiento/{id}/zona/{zonaId}', [AdminFraccionamientoController::class, 'updateZona'])->name('fraccionamiento.update-zona');
+
     });
 });
