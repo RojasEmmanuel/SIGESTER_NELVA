@@ -46,7 +46,7 @@
                     <i class="fas fa-edit"></i> Editar
                 </button>
                 @endif
-                <button class="btn btn-outline" onclick="window.location.href='/asesor/inicio'">
+                <button class="btn btn-outline" onclick="window.history.back()">
                     <i class="fas fa-arrow-left"></i> Volver
                 </button>
             </div>
