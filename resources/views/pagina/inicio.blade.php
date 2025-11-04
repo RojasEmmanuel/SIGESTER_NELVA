@@ -381,16 +381,25 @@
                         <strong>Aplica en:</strong> {{ $nombresFracc }}
                     </div>
 
-                    <!-- DESCRIPCIÓN CON "VER MÁS" -->
+                    <!-- DESCRIPCIÓN CON "VER MÁS" (150 caracteres) -->
                     <div class="promo-description">
-                        <p class="description-text">
-                            {{ Str::limit($promocion->descripcion, 200, '...') }}
+                        @php
+                            $descripcion = $promocion->descripcion;
+                            $longitud = strlen($descripcion);
+                            $mostrarCompleta = $longitud <= 150;
+                            $textoMostrado = $mostrarCompleta ? $descripcion : Str::limit($descripcion, 150, '...');
+                        @endphp
+
+                        <p class="description-text" data-full="{{ $descripcion }}">
+                            {{ $textoMostrado }}
                         </p>
-                        @if(strlen($promocion->descripcion) > 200)
+
+                        @if(!$mostrarCompleta)
                         <button class="read-more-btn" onclick="toggleDescription(this)">
                             <span class="read-more-text">Ver más</span>
                             <span class="read-less-text" style="display:none;">Ver menos</span>
                             <i class="fas fa-chevron-down read-more-icon"></i>
+                            <i class="fas fa-chevron-up read-less-icon" style="display:none;"></i>
                         </button>
                         @endif
                     </div>
@@ -467,25 +476,36 @@
 
 <script>
 function toggleDescription(button) {
-    const card = button.closest('.promo-card');
-    const description = card.querySelector('.promo-description');
-    const fullText = card.querySelector('.description-text');
-    const originalText = fullText.getAttribute('data-full') || fullText.textContent;
+    const description = button.closest('.promo-description');
+    const textElement = description.querySelector('.description-text');
+    const fullText = textElement.getAttribute('data-full');
+    const isExpanded = description.classList.contains('expanded');
 
-    if (!fullText.hasAttribute('data-full')) {
-        fullText.setAttribute('data-full', originalText);
-    }
-
-    if (description.classList.contains('expanded')) {
-        // Colapsar
-        fullText.textContent = originalText.length > 120 ? originalText.substring(0, 120) + '...' : originalText;
+    if (isExpanded) {
+        // Colapsar: mostrar solo 150 caracteres
+        const truncated = fullText.length > 150 
+            ? fullText.substring(0, 150) + '...' 
+            : fullText;
+        textElement.textContent = truncated;
         description.classList.remove('expanded');
         button.classList.remove('expanded');
+
+        // Actualizar textos e iconos
+        button.querySelector('.read-more-text').style.display = 'inline';
+        button.querySelector('.read-less-text').style.display = 'none';
+        button.querySelector('.read-more-icon').style.display = 'inline';
+        button.querySelector('.read-less-icon').style.display = 'none';
     } else {
-        // Expandir
-        fullText.textContent = originalText;
+        // Expandir: mostrar texto completo
+        textElement.textContent = fullText;
         description.classList.add('expanded');
         button.classList.add('expanded');
+
+        // Actualizar textos e iconos
+        button.querySelector('.read-more-text').style.display = 'none';
+        button.querySelector('.read-less-text').style.display = 'inline';
+        button.querySelector('.read-more-icon').style.display = 'none';
+        button.querySelector('.read-less-icon').style.display = 'inline';
     }
 }
 </script>
