@@ -11,6 +11,7 @@ use App\Models\Galeria;
 use App\Models\ArchivosFraccionamiento;
 use App\Models\Lote;
 use App\Models\Zona;
+use App\Models\LoteZona;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -184,6 +185,17 @@ class AdminFraccionamientoController extends Controller
                 ]
             );
 
+
+            // En tu método show() o en un nuevo método adminShow()
+            $lotesSinZona = Lote::where('id_fraccionamiento', $id)
+                ->whereDoesntHave('loteZona') // ← Lotes que NO tienen zona asignada
+                ->get()
+                ->map(fn($l) => [
+                    'id' => $l->id_lote,
+                    'numero' => $l->numero_lote ?? "Lote #{$l->id_lote}",
+            ]);
+
+
             // === ESTADÍSTICAS DE LOTES ===
             $lotes = $fraccionamiento->lotes;
             $totalLotes = $lotes->count();
@@ -212,8 +224,9 @@ class AdminFraccionamientoController extends Controller
                 'lotesDisponibles',
                 'lotesApartados',
                 'lotesVendidos',
-                'promociones'
-                ,'zonas'
+                'promociones',
+                'zonas',
+                'lotesSinZona'
             ));
 
         } catch (\Exception $e) {
@@ -627,5 +640,28 @@ class AdminFraccionamientoController extends Controller
                 ->with('error_zona', 'Error al actualizar la zona: ' . $e->getMessage())
                 ->with('active_tab', 'basic-info');
         }
+    }
+
+
+
+
+    public function asignarLotesAZona(Request $request, $id)
+    {
+        $request->validate([
+            'id_zona' => 'required|exists:zonas,id_zona',
+            'lotes'   => 'required|array',
+            'lotes.*' => 'exists:lotes,id_lote'
+        ]);
+
+        $asignados = 0;
+        foreach ($request->lotes as $id_lote) {
+            LoteZona::create([
+                'id_lote' => $id_lote,
+                'id_zona' => $request->id_zona,
+            ]);
+            $asignados++;
+        }
+
+        return back()->with('success', "¡$asignados lote(s) asignados correctamente a la zona!");
     }
 }

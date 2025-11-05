@@ -26,7 +26,7 @@
             </div>
             <div class="page-actions">
                 <button class="btn btn-outline" onclick="window.location.href='/asesor/fraccionamiento/{{ $datosFraccionamiento['id'] }}'">
-                    <i class="fas fa-arrow-left"></i> Volver al Panel
+                    <i class="fas fa-arrow-left"></i> Volver
                 </button>
             </div>
         </div>
@@ -58,6 +58,14 @@
                     <span>Archivos</span>
                     <span class="badge">{{ $archivos->count() }}</span>
                 </button>
+
+                @if($zonas && $zonas->count() > 0)
+                <button class="tab-btn" data-tab="asignar-lotes">
+                    <i class="fas fa-map-pin"></i>
+                    <span>Asignar Lotes</span>
+                    <span class="badge">{{ $lotesSinZona->count() }}</span>
+                </button>
+                @endif
             </div>
         </div>
 
@@ -782,6 +790,91 @@
                     @endif
                 </div>
             </div>
+
+
+
+
+            <!-- TAB: ASIGNAR LOTES A ZONAS -->
+            <div id="asignar-lotes" class="tab-pane">
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <i class="fas fa-map-pin"></i>
+                            Asignar Lotes a Zonas
+                        </h3>
+                        <div class="section-indicator">
+                            <span class="indicator-dot"></span>
+                            {{ $lotesSinZona->count() }} lotes sin zona
+                        </div>
+                    </div>
+
+                    @if($lotesSinZona->isEmpty())
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> ¡Todos los lotes ya tienen zona asignada!
+                        </div>
+                    @else
+                        <form id="formAsignarLotes" action="{{ route('admin.fraccionamiento.asignar-lotes-zona', $datosFraccionamiento['id']) }}" method="POST" class="form-grid">
+                            @csrf
+
+                            <div class="form-group">
+                                <label class="form-label">Seleccionar Zona *</label>
+                                <select name="id_zona" class="form-control" required>
+                                    <option value="">-- Elegir zona --</option>
+                                    @foreach($zonas as $zona)
+                                        <option value="{{ $zona['id'] }}">
+                                            {{ $zona['nombre'] }} (${{ number_format($zona['precio_m2'], 2) }}/m²)
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label class="form-label">Lotes Disponibles *</label>
+                                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                    <table class="table table-striped table-hover align-middle mb-0">
+                                        <thead class="table-primary sticky-top">
+                                            <tr>
+                                                <th width="60">
+                                                    <input type="checkbox" id="selectAllLotes" class="form-check-input">
+                                                </th>
+                                                <th>Número de Lote</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse($lotesSinZona as $lote)
+                                                @php
+                                                    $numeroLimpio = preg_replace('/^Lote\s*#?\s*/i', '', $lote['numero']);
+                                                @endphp
+                                                <tr>
+                                                    <td>
+                                                        <input type="checkbox" name="lotes[]" value="{{ $lote['id'] }}" class="form-check-input lote-checkbox">
+                                                    </td>
+                                                    <td><strong>{{ $numeroLimpio }}</strong></td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="2" class="text-center text-muted py-4">
+                                                        <i class="fas fa-check-circle"></i> No hay lotes sin zona
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <small class="text-muted d-block mt-2">
+                                    <i class="fas fa-info-circle"></i> Usa el checkbox superior para seleccionar todos
+                                </small>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <button type="submit" class="btn btn-primary btn-lg" style="width: auto;">
+                                    <i class="fas fa-link"></i> Asignar Lotes
+                                </button>
+                            </div>
+                        </form>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 
@@ -869,6 +962,30 @@
                 </button>
             </div>
         </form>
+    </div>
+</div>
+
+
+
+<!-- MODAL CONFIRMACIÓN ASIGNAR LOTES -->
+<div id="confirmarAsignacionModal" class="modal" style="display: none;">
+    <div class="modal-content compact-modal">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle text-warning"></i> Confirmar Asignación</h3>
+            <button type="button" class="close" onclick="cerrarModalConfirmar()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Se asignarán los siguientes lotes a la zona:</p>
+            <div id="resumenZona" class="alert alert-info mb-3"></div>
+            <ul id="listaLotesSeleccionados" class="list-group"></ul>
+            <p class="mt-3"><strong>¿Deseas continuar?</strong></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" onclick="cerrarModalConfirmar()">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="btnConfirmarAsignacion">
+                <i class="fas fa-check"></i> Sí, asignar
+            </button>
+        </div>
     </div>
 </div>
 
@@ -1245,6 +1362,104 @@
     document.getElementById('editZonaModal').addEventListener('click', function(e) {
         if (e.target === this) closeEditZonaModal();
     });
+
+
+
+    // === ASIGNAR LOTES A ZONAS: MODAL + CHECKBOXES ===
+    let formAsignarLotes = null;
+    let datosAsignacion = {};
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('formAsignarLotes');
+        if (!form) return;
+
+        formAsignarLotes = form;
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const zonaSelect = form.querySelector('select[name="id_zona"]');
+            const lotesCheckboxes = form.querySelectorAll('input[name="lotes[]"]:checked');
+
+            if (!zonaSelect.value || lotesCheckboxes.length === 0) {
+                alert('Selecciona una zona y al menos un lote.');
+                return;
+            }
+
+            const zonaTexto = zonaSelect.options[zonaSelect.selectedIndex].text;
+
+            // Resumen zona
+            document.getElementById('resumenZona').innerHTML = `<strong>Zona:</strong> ${zonaTexto}`;
+
+            // Lista de lotes
+            const lista = document.getElementById('listaLotesSeleccionados');
+            lista.innerHTML = '';
+            lotesCheckboxes.forEach(cb => {
+                const numero = cb.closest('tr').querySelector('td:last-child').textContent.trim();
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.textContent = numero;
+                lista.appendChild(li);
+            });
+
+            // Guardar datos
+            datosAsignacion = {
+                id_zona: zonaSelect.value,
+                lotes: Array.from(lotesCheckboxes).map(cb => cb.value)
+            };
+
+            // Mostrar modal
+            document.getElementById('confirmarAsignacionModal').style.display = 'flex';
+        });
+
+        // Confirmar asignación
+        document.getElementById('btnConfirmarAsignacion').onclick = function () {
+            const tempForm = document.createElement('form');
+            tempForm.method = 'POST';
+            tempForm.action = formAsignarLotes.action;
+            tempForm.style.display = 'none';
+
+            // CSRF
+            const csrf = document.createElement('input');
+            csrf.name = '_token';
+            csrf.value = document.querySelector('meta[name="csrf-token"]').content;
+            tempForm.appendChild(csrf);
+
+            // Zona
+            const inputZona = document.createElement('input');
+            inputZona.name = 'id_zona';
+            inputZona.value = datosAsignacion.id_zona;
+            tempForm.appendChild(inputZona);
+
+            // Lotes
+            datosAsignacion.lotes.forEach(id => {
+                const input = document.createElement('input');
+                input.name = 'lotes[]';
+                input.value = id;
+                tempForm.appendChild(input);
+            });
+
+            document.body.appendChild(tempForm);
+            tempForm.submit();
+        };
+    });
+
+    function cerrarModalConfirmar() {
+        document.getElementById('confirmarAsignacionModal').style.display = 'none';
+    }
+
+    // Cerrar al hacer clic fuera
+    document.getElementById('confirmarAsignacionModal').addEventListener('click', function (e) {
+        if (e.target === this) cerrarModalConfirmar();
+    });
+
+    // === SELECCIONAR TODOS LOS LOTES ===
+    document.getElementById('selectAllLotes')?.addEventListener('change', function () {
+        document.querySelectorAll('.lote-checkbox').forEach(cb => {
+            cb.checked = this.checked;
+        });
+    });
+
 </script>
 
 @endsection

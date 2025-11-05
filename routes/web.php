@@ -165,6 +165,7 @@ Route::middleware('auth')->group(function () {
 
         // Ruta solo para actualizar zonas (no crear ni eliminar)
         Route::put('/fraccionamiento/{id}/zona/{zonaId}', [AdminFraccionamientoController::class, 'updateZona'])->name('fraccionamiento.update-zona');
+        Route::post('/admin/fraccionamiento/{id}/asignar-lotes-zona', [AdminFraccionamientoController::class, 'asignarLotesAZona'])->name('fraccionamiento.asignar-lotes-zona');
 
     });
 });
