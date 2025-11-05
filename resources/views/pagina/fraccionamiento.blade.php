@@ -197,6 +197,44 @@
     </div>
 </section>
 
+<!-- ZONAS DEL FRACCIONAMIENTO - ESTILO COMPACTO -->
+@if($zonas && $zonas->count() > 0)
+<div class="zonas-section-compact">
+    <div class="section-header-compact">
+        <h2 class="section-title-compact">Zonas del Fraccionamiento</h2>
+        <div class="section-divider-compact"></div>
+    </div>
+    
+    <div class="zonas-container-compact">
+        <div class="zonas-grid-compact">
+            @foreach($zonas as $index => $zona)
+            <div class="zona-card-compact" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+                <div class="card-header-compact">
+                    <div class="zona-badge-compact">Zona {{ $index + 1 }}</div>
+                    <div class="price-tag-compact">
+                        <span class="price-icon">$</span>
+                    </div>
+                </div>
+                
+                <div class="card-body-compact">
+                    <h3 class="zona-name-compact">{{ $zona['nombre'] }}</h3>
+                    <div class="price-display-compact">
+                        <span class="price-amount">${{ number_format($zona['precio_m2'], 2) }}</span>
+                        <span class="price-label">por m²</span>
+                    </div>
+                </div>
+                
+                <div class="card-decoration-compact">
+                    <div class="decoration-dot dot-1"></div>
+                    <div class="decoration-dot dot-2"></div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Servicios y Amenidades Mejorada -->
 @if($amenidades->count() > 0)
 <section class="section amenidades-section" id="amenidades">
@@ -931,4 +969,13 @@
             }, 300);
         }
     });
+
+
+    // Inicializar AOS si está disponible
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    }
 </script>

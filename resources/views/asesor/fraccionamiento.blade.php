@@ -43,7 +43,7 @@
             <div class="page-actions">
                 @if($esAdministrador)
                 <button class="btn btn-primary" onclick="window.location.href='{{ route('admin.fraccionamiento.show', $datosFraccionamiento['id']) }}'">
-                    <i class="fas fa-edit"></i> Editar
+                    <i class="fas fa-edit"></i> Administrar
                 </button>
                 @endif
                 <button class="btn btn-outline" onclick="window.history.back()">
@@ -242,10 +242,9 @@
                     <i class="fas fa-map-marked-alt"></i>  
                     <span>Zonas del Fraccionamiento</span>
                 </h3>
-                <div class="info-grid"
-">
+                <div class="info-grid">
                     @foreach($zonas as $zona)
-                    <div class="info-item">
+                    <div class="info-item" style="margin-top: 20px">
                         <div class="info-label">{{ $zona['nombre'] }}</div>
                         <div class="info-value highlight
                             ">Precio por m²: ${{ number_format($zona['precio_m2'], 2) }} MXN

@@ -1,11 +1,11 @@
 :root {
-    --primary: #0a3a21;
-    --primary-light: #1a5c3a;
+    --primary: #1e5dab;
+    --primary-light: #3a7bd5;
     --primary-dark: #062113;
-    --secondary: #d4af37;
+    --secondary: #FEB818;
     --secondary-light: #e8c874;
     --secondary-dark: #b38d2c;
-    --mexico-green: #006847;
+    --mexico-green: #feb818;
     --mexico-white: #FFFFFF;
     --mexico-red: #CE1126;
     --light: #f8f9fa;
@@ -147,7 +147,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(10, 58, 33, 0.9), rgba(26, 92, 58, 0.85));
+    background: linear-gradient(135deg, rgba(10, 58, 33, 0.9), rgba(26, 92, 58, 0.45));
     z-index: 1;
 }
 
@@ -2758,4 +2758,387 @@ body {
 
 .modal-compact .modal-content-fraccionamiento::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+}
+
+/* ESTILOS COMPACTOS PARA ZONAS */
+.zonas-section-compact {
+    padding: 60px 0;
+    position: relative;
+}
+
+.zonas-container-compact {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-header-compact {
+    text-align: center;
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.section-title-compact {
+    color: var(--primary);
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+}
+
+.section-title-compact::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--secondary), var(--secondary-light));
+    border-radius: 2px;
+}
+
+.section-divider-compact {
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gray), transparent);
+    margin: 25px auto 0;
+}
+
+.zonas-grid-compact {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    position: relative;
+    z-index: 2;
+}
+
+.zona-card-compact {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(10, 58, 33, 0.08);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 180px;
+}
+
+.zona-card-compact::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--secondary), var(--secondary-light), var(--primary));
+    background-size: 200% 100%;
+    animation: gradientShift 3s ease infinite;
+}
+
+.zona-card-compact:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(10, 58, 33, 0.15);
+}
+
+.zona-card-compact:hover .card-decoration-compact .decoration-dot {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.card-header-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.zona-badge-compact {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 3px 8px rgba(10, 58, 33, 0.2);
+}
+
+.price-tag-compact {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-dark);
+    font-weight: 700;
+    box-shadow: 0 3px 8px rgba(212, 175, 55, 0.25);
+    transition: transform 0.3s ease;
+}
+
+.zona-card-compact:hover .price-tag-compact {
+    transform: rotate(15deg) scale(1.1);
+}
+
+.price-icon {
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.card-body-compact {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.zona-name-compact {
+    color: var(--primary);
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.3;
+    position: relative;
+}
+
+.zona-name-compact::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 35px;
+    height: 2px;
+    background: var(--secondary);
+    border-radius: 1px;
+}
+
+.price-display-compact {
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    padding: 20px 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(10, 58, 33, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.price-display-compact::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(10, 58, 33, 0.02), rgba(26, 92, 58, 0.01));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.zona-card-compact:hover .price-display-compact::before {
+    opacity: 1;
+}
+
+.price-amount {
+    display: block;
+    color: var(--primary);
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+}
+
+.price-label {
+    display: block;
+    color: var(--gray);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Elementos decorativos compactos */
+.card-decoration-compact {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.decoration-dot {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--secondary-light) 0%, transparent 70%);
+    transition: all 0.4s ease;
+    transform: scale(0);
+    opacity: 0;
+}
+
+.dot-1 {
+    width: 60px;
+    height: 60px;
+    top: -15px;
+    right: -15px;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 70%);
+    transition-delay: 0.1s;
+}
+
+.dot-2 {
+    width: 40px;
+    height: 40px;
+    bottom: 20px;
+    left: -10px;
+    background: radial-gradient(circle, rgba(10, 58, 33, 0.08) 0%, transparent 70%);
+    transition-delay: 0.2s;
+}
+
+/* Animaciones */
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* RESPONSIVE DESIGN MEJORADO */
+@media (max-width: 1200px) {
+    .zonas-grid-compact {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+    
+    .zonas-container-compact {
+        padding: 0 30px;
+    }
+}
+
+@media (max-width: 992px) {
+    .zonas-section-compact {
+        padding: 50px 0;
+    }
+    
+    .section-title-compact {
+        font-size: 2rem;
+    }
+    
+    .zonas-grid-compact {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .zonas-container-compact {
+        padding: 0 20px;
+    }
+    
+    .section-header-compact {
+        margin-bottom: 40px;
+    }
+    
+    .section-title-compact {
+        font-size: 1.8rem;
+    }
+    
+    .zonas-grid-compact {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .zona-card-compact {
+        padding: 22px;
+        min-height: 170px;
+    }
+    
+    .price-amount {
+        font-size: 1.6rem;
+    }
+    
+    .zona-name-compact {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .zonas-section-compact {
+        padding: 40px 0;
+    }
+    
+    .zonas-container-compact {
+        padding: 0 15px;
+    }
+    
+    .section-title-compact {
+        font-size: 1.6rem;
+    }
+    
+    .zona-card-compact {
+        padding: 20px;
+        min-height: 160px;
+    }
+    
+    .zona-name-compact {
+        font-size: 1.2rem;
+        margin-bottom: 18px;
+    }
+    
+    .price-display-compact {
+        padding: 18px 12px;
+    }
+    
+    .price-amount {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .zonas-container-compact {
+        padding: 0 12px;
+    }
+    
+    .zona-card-compact {
+        padding: 18px;
+    }
+    
+    .price-amount {
+        font-size: 1.4rem;
+    }
+}
+
+/* Estados de accesibilidad */
+.zona-card-compact:focus-within {
+    outline: 2px solid var(--secondary);
+    outline-offset: 2px;
+}
+
+/* Efectos de reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+    .zona-card-compact,
+    .price-tag-compact {
+        transition: none;
+        animation: none;
+    }
+    
+    .zona-card-compact:hover {
+        transform: none;
+    }
 }

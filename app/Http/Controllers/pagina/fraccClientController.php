@@ -94,6 +94,15 @@ public function show($id)
             ];
         });
 
+        // ZONAS DEL FRACCIONAMIENTO
+        $zonas = $fraccionamiento->zonas->map(fn($z) =>
+            [
+                'id' => $z->id_zona,
+                'nombre' => $z->nombre,
+                'precio_m2' => $z->precio_m2,
+            ]
+        );
+
         // Obtener estadísticas de lotes
         $totalLotes = $fraccionamiento->lotes->count();
         $lotesDisponibles = $fraccionamiento->lotes->where('estatus', 'disponible')->count();
@@ -114,7 +123,8 @@ public function show($id)
             'lotesApartados',
             'lotesApartadosPalabra',
             'lotesApartadosVendido',
-            'lotesVendidos'
+            'lotesVendidos',
+            'zonas'
         ));
 
     } catch (\Exception $e) {
