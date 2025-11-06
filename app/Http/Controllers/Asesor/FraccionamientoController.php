@@ -9,7 +9,9 @@ use App\Models\InfoFraccionamiento;
 use App\Models\PlanoFraccionamiento;
 use App\Models\AmenidadFraccionamiento;
 use App\Models\Lote;
+use App\Models\Zona;
 use App\Models\LoteMedida;
+use App\Models\LoteZona; // ← Asegúrate de importar
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,10 +27,12 @@ class FraccionamientoController extends Controller
                 'infoFraccionamiento',
                 'planosFraccionamiento',
                 'amenidadesFraccionamiento',
-                'lotes',
+                'lotes.loteMedida',
+                'lotes.loteZona.zona', // ← NUEVA RELACIÓN CARGADA
                 'galeria',
                 'archivosFraccionamiento',
-                'promociones' // ← NUEVA RELACIÓN
+                'promociones',
+                'zonas'
             ])->findOrFail($id);
 
             // === Información básica ===
@@ -108,13 +112,11 @@ class FraccionamientoController extends Controller
                 ->values();
 
             // ZONAS DEL FRACCIONAMIENTO
-            $zonas = $fraccionamiento->zonas->map(fn($z) =>
-                [
-                    'id' => $z->id_zona,
-                    'nombre' => $z->nombre,
-                    'precio_m2' => $z->precio_m2,
-                ]
-            );
+            $zonas = $fraccionamiento->zonas->map(fn($z) => [
+                'id' => $z->id_zona,
+                'nombre' => $z->nombre,
+                'precio_m2' => $z->precio_m2,
+            ]);
 
             return view('asesor.fraccionamiento', compact(
                 'datosFraccionamiento',
@@ -128,8 +130,8 @@ class FraccionamientoController extends Controller
                 'lotesApartadosPalabra',
                 'lotesApartadosDeposito',
                 'lotesVendidos',
-                'promocionesActivas' // ← NUEVA VARIABLE
-                ,'zonas'
+                'promocionesActivas',
+                'zonas'
             ));
 
         } catch (\Exception $e) {
@@ -141,9 +143,8 @@ class FraccionamientoController extends Controller
     public function getLoteDetails($idFraccionamiento, $numeroLote)
     {
         try {
-            Log::info("🔍 Buscando lote - Fraccionamiento: $idFraccionamiento, Número: $numeroLote");
+            Log::info("Buscando lote - Fraccionamiento: $idFraccionamiento, Número: $numeroLote");
 
-            // Validar que el número de lote no esté vacío
             if (empty($numeroLote)) {
                 return response()->json([
                     'success' => false,
@@ -151,12 +152,11 @@ class FraccionamientoController extends Controller
                 ], 400);
             }
 
-            // ✅ CORRECTO: La columna se llama 'numeroLote' en la BD
-            $lote = Lote::where('id_fraccionamiento', $idFraccionamiento)
-                        ->where('numeroLote', $numeroLote)  // ← ESTO ESTÁ BIEN
-                        ->first();
-
-            Log::info("📊 Resultado de búsqueda de lote:", [$lote ? $lote->toArray() : 'NO ENCONTRADO']);
+            // Cargar lote con medidas y zona
+            $lote = Lote::with(['loteMedida', 'loteZona.zona'])
+                ->where('id_fraccionamiento', $idFraccionamiento)
+                ->where('numeroLote', $numeroLote)
+                ->first();
 
             if (!$lote) {
                 return response()->json([
@@ -165,11 +165,7 @@ class FraccionamientoController extends Controller
                 ], 404);
             }
 
-            // ✅ Usar la relación definida en el modelo
             $medidas = $lote->loteMedida;
-
-            Log::info("📐 Medidas encontradas:", [$medidas ? $medidas->toArray() : 'NO ENCONTRADAS']);
-
             if (!$medidas) {
                 return response()->json([
                     'success' => false,
@@ -177,32 +173,30 @@ class FraccionamientoController extends Controller
                 ], 404);
             }
 
-            // Obtener el precio por m² del fraccionamiento
-            $fraccionamiento = Fraccionamiento::with('infoFraccionamiento')
-                                            ->find($idFraccionamiento);
-            
-            if (!$fraccionamiento || !$fraccionamiento->infoFraccionamiento) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No se encontró información de precios del fraccionamiento'
-                ], 404);
-            }
-
-            $precioM2 = $fraccionamiento->infoFraccionamiento->precio_metro_cuadrado ?? 0;
+            // Usar el accesor del modelo: $lote->precio_m2
+            $precioM2 = $lote->precio_m2; // ← Viene de zona o 0
             $areaMetros = $medidas->area_metros ?? 0;
             $costoTotal = $precioM2 * $areaMetros;
 
-            // Preparar respuesta
+            // Opcional: obtener precio del fraccionamiento como fallback (no necesario ya que el accesor lo maneja)
+            $fraccionamiento = Fraccionamiento::with('infoFraccionamiento')->find($idFraccionamiento);
+            $precioGeneralM2 = $fraccionamiento?->infoFraccionamiento?->precio_metro_cuadrado ?? 0;
+
             $response = [
                 'success' => true,
                 'lote' => [
                     'id' => $lote->id_lote,
-                    'numero_lote' => $lote->numeroLote,  // ← Propiedad del modelo
+                    'numero_lote' => $lote->numeroLote,
                     'manzana' => $medidas->manzana ?? 'N/A',
                     'area_total' => (float) $areaMetros,
                     'precio_m2' => (float) $precioM2,
-                    'estatus' => $lote->estatus,
                     'costo_total' => (float) $costoTotal,
+                    'estatus' => $lote->estatus,
+                    'zona' => $lote->loteZona?->zona ? [
+                        'id' => $lote->loteZona->zona->id_zona,
+                        'nombre' => $lote->loteZona->zona->nombre,
+                        'precio_m2' => (float) $lote->loteZona->zona->precio_m2,
+                    ] : null,
                     'medidas' => [
                         'norte' => (float) $medidas->norte,
                         'sur' => (float) $medidas->sur,
@@ -210,90 +204,132 @@ class FraccionamientoController extends Controller
                         'poniente' => (float) $medidas->poniente,
                         'area_metros' => (float) $areaMetros,
                     ]
+                ],
+                'debug' => [
+                    'precio_zona' => $lote->loteZona?->zona?->precio_m2,
+                    'precio_general' => $precioGeneralM2,
+                    'usado' => $precioM2 > 0 ? 'zona' : 'general (o 0)'
                 ]
             ];
 
-            Log::info("✅ Respuesta final:", $response);
+            Log::info("Respuesta getLoteDetails:", $response);
 
             return response()->json($response);
 
         } catch (\Exception $e) {
-            Log::error("❌ Error en getLoteDetails: " . $e->getMessage());
+            Log::error("Error en getLoteDetails: " . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Error interno del servidor: ' . $e->getMessage()
+                'message' => 'Error interno del servidor'
             ], 500);
         }
     }
 
     public function downloadPlano($id, $planoId)
     {
-        // Buscar el plano en la base de datos
         $plano = PlanoFraccionamiento::where('id_fraccionamiento', $id)
                     ->where('id_plano', $planoId)
                     ->firstOrFail();
 
-        // Ruta correcta al archivo dentro de storage/app/public/planos/
-        $ruta = storage_path('app\public\planos\'' . $plano->archivo);
+        $ruta = storage_path('app/public/planos/' . $plano->archivo); // ← Corregido: usar / no \
 
-        // Verificar que el archivo exista
         if (!file_exists($ruta)) {
             abort(404, 'El archivo no existe.');
         }
 
-        // Descargar el archivo con su nombre original
         return response()->download($ruta, $plano->archivo);
     }
 
-    public function getLotes($idFraccionamiento)
+   public function getLotes($idFraccionamiento)
     {
         try {
-            $lotes = Lote::with('loteMedida')
+            $lotes = Lote::with(['loteMedida', 'loteZona.zona', 'fraccionamiento.infoFraccionamiento'])
                 ->where('id_fraccionamiento', $idFraccionamiento)
                 ->get()
                 ->map(function($lote) {
+                    $area = (float) ($lote->loteMedida->area_metros ?? 0);
+                    $precioM2 = $lote->precio_m2; // ← Usa el accesor
+                    $costoTotal = $area > 0 ? $precioM2 * $area : 0;
+
                     return [
                         'id_lote' => $lote->id_lote,
                         'numeroLote' => $lote->numeroLote,
                         'estatus' => $lote->estatus,
                         'manzana' => $lote->loteMedida->manzana ?? 'N/A',
-                        'area_total' => $lote->loteMedida->area_metros ?? 0,
+                        'area_total' => $area,
+                        'precio_m2' => $precioM2,
+                        'costo_total' => $costoTotal,
+                        'zona' => $lote->loteZona?->zona ? [
+                            'id' => $lote->loteZona->zona->id_zona,
+                            'nombre' => $lote->loteZona->zona->nombre,
+                            'precio_m2' => (float) $lote->loteZona->zona->precio_m2,
+                        ] : null,
                         'medidas' => $lote->loteMedida ? [
-                            'norte' => $lote->loteMedida->norte,
-                            'sur' => $lote->loteMedida->sur,
-                            'oriente' => $lote->loteMedida->oriente,
-                            'poniente' => $lote->loteMedida->poniente,
-                            'area_metros' => $lote->loteMedida->area_metros
+                            'norte' => (float) $lote->loteMedida->norte,
+                            'sur' => (float) $lote->loteMedida->sur,
+                            'oriente' => (float) $lote->loteMedida->oriente,
+                            'poniente' => (float) $lote->loteMedida->poniente,
+                            'area_metros' => $area,
                         ] : null
                     ];
                 });
 
             return response()->json([
                 'success' => true,
-                'lotes' => $lotes
+                'lotes' => $lotes,
+                'info' => [
+                    'precio_m2_base' => (float) Fraccionamiento::find($idFraccionamiento)?->infoFraccionamiento?->precio_metro_cuadrado ?? 0
+                ]
             ]);
 
         } catch (\Exception $e) {
+            Log::error("Error getLotes: " . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Error al cargar los lotes: ' . $e->getMessage()
+                'message' => 'Error al cargar lotes'
             ], 500);
         }
     }
 
     public function getGeoJsonConEstatus($idFraccionamiento)
     {
-        $path = storage_path('app/public/geojson/lotes.geojson'); // tu GeoJSON base
+        $path = storage_path('app/public/geojson/lotes.geojson');
         $geojson = json_decode(file_get_contents($path), true);
 
-        $estatus = Lote::where('id_fraccionamiento', $idFraccionamiento)
-                    ->pluck('estatus', 'numero_lote');
+        $lotes = Lote::where('id_fraccionamiento', $idFraccionamiento)
+                    ->with('loteZona.zona')
+                    ->get()
+                    ->keyBy('numeroLote');
 
         foreach ($geojson['features'] as &$feature) {
             $loteNumero = $feature['properties']['lote'];
-            $feature['properties']['estatus'] = $estatus[$loteNumero] ?? 'desconocido';
+            $lote = $lotes->get($loteNumero);
+
+            $feature['properties']['estatus'] = $lote?->estatus ?? 'desconocido';
+            $feature['properties']['precio_m2'] = $lote?->precio_m2 ?? 0;
+            $feature['properties']['zona'] = $lote?->loteZona?->zona?->nombre ?? null;
         }
 
         return response()->json($geojson);
+    }
+
+
+    public function getZonas($idFraccionamiento)
+    {
+        try {
+            $zonas = Zona::where('id_fraccionamiento', $idFraccionamiento)
+                ->select('id_zona', 'nombre', 'precio_m2')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'zonas' => $zonas
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cargar zonas'
+            ], 500);
+        }
     }
 }

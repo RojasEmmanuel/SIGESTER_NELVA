@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/perfil', [PerfilController::class, 'update'])->name('asesor.perfil.update');
     Route::post('/asesor/apartados/{id}/upload-ticket', [ApartadoController::class, 'uploadTicket'])->name('asesor.apartados.upload-ticket');
     Route::get('/asesor/fraccionamiento/{idFraccionamiento}/archivo/{idArchivo}/download', [AdminFraccionamientoController::class, 'downloadArchivo'])->name('asesor.fraccionamiento.download-archivo');
-  
+    Route::get('/asesor/fraccionamiento/{id}/zonas', [FraccionamientoController::class, 'getZonas']);
 
     // Ventas directas (sin apartado)
     Route::get('/ventas/directa/crear', [ventasController::class, 'createDirect'])->name('ventas.directa.crear');

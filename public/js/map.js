@@ -1,43 +1,23 @@
 document.addEventListener('DOMContentLoaded', function () {
-    /* ===========================
-       VERIFICACIÓN INICIAL DEL CONTENEDOR
-       =========================== */
     const mapContainer = document.getElementById('mapPlano');
-    
-    if (!mapContainer) {
-        return;
-    }
+    if (!mapContainer) return;
 
-    /* ===========================
-       VALIDAR AppConfig
-       =========================== */
-    if (!window.AppConfig || window.AppConfig.fraccionamientoId === null || !window.AppConfig.fraccionamientoNombre) {
-        initializeMap();
-        addLotesToMap(generateSampleData());
-        return;
-    }
-
-    /* ===========================
-       VARIABLES GLOBALES DEL MAPA
-       =========================== */
     let map = null;
     let currentFilter = 'all';
     let lotesData = null;
-    let fraccionamientoFeature = null; // Nuevo: para el perímetro del fraccionamiento
+    let fraccionamientoFeature = null;
     let is3DMode = false;
     let mapLayersLoaded = false;
+    let styleChanging = false;
+
     const mapStyles = {
         'satellite-streets': 'mapbox://styles/mapbox/satellite-streets-v12',
         'streets': 'mapbox://styles/mapbox/streets-v12',
         'light': 'mapbox://styles/mapbox/light-v11',
         'dark': 'mapbox://styles/mapbox/dark-v11',
-        'standard': 'mapbox://styles/mapbox/standard-v1',
-        'tourist': 'mapbox://styles/your-username/custom-tourist-style' // Reemplaza con tu ID de estilo personalizado
+        'standard': 'mapbox://styles/mapbox/standard-v1'
     };
 
-    /* ===========================
-       UTIL / MAPA - STATUS MAPS
-       =========================== */
     const STATUS_CLASS_MAP = {
         'disponible': 'status-disponible',
         'apartadoPalabra': 'status-apartado',
@@ -47,10 +27,352 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const STATUS_LABEL_MAP = {
         'disponible': 'Disponible',
-        'apartadoPalabra': 'Apartado (Palabra)',
-        'apartadoDeposito': 'Apartado (Depósito)',
+        'apartadoPalabra': 'Apartado',
+        'apartadoDeposito': 'Apartado',
         'vendido': 'Vendido'
     };
+
+    const ZONA_STYLES = {
+        'zona oro': { 
+            color: '#ffd700', 
+            dash: ['literal', [6, 3]], 
+            name: 'Oro',
+            gradient: 'linear-gradient(135deg, #fff9c4, #ffd700)',
+            icon: '👑'
+        },
+        'zona plata': { 
+            color: '#c0c0c0', 
+            dash: ['literal', [4, 4]], 
+            name: 'Plata',
+            gradient: 'linear-gradient(135deg, #f5f5f5, #c0c0c0)',
+            icon: '⚪'
+        },
+        'zona bronce': { 
+            color: '#cd7f32', 
+            dash: ['literal', [8, 2, 2, 2]], 
+            name: 'Bronce',
+            gradient: 'linear-gradient(135deg, #ffe0b2, #cd7f32)',
+            icon: '🟤'
+        },
+        'zona premium': { 
+            color: '#9c27b0', 
+            dash: ['literal', [10, 3]], 
+            name: 'Premium',
+            gradient: 'linear-gradient(135deg, #e1bee7, #9c27b0)',
+            icon: '💎'
+        },
+        'zona estandar': { 
+            color: '#757575', 
+            dash: ['literal', [3, 3]], 
+            name: 'Estándar',
+            gradient: 'linear-gradient(135deg, #f5f5f5, #757575)',
+            icon: '🏠'
+        }
+    };
+
+    // Añadir estilos CSS dinámicamente
+    const style = document.createElement('style');
+    style.textContent = `
+        .modern-lote-popup {
+            max-width: 300px !important;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            border: none;
+            overflow: hidden;
+        }
+
+        .popup-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .popup-header {
+            padding: 14px 14px 10px;
+            background: linear-gradient(135deg, #185cdd 0%, #4facfe 50%, #90ceff 100%);
+            color: white;
+            position: relative;
+        }
+
+        .popup-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+            color: white;
+        }
+
+        .lote-number {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .status-disponible { background: rgba(76, 175, 80, 0.9) !important; }
+        .status-apartado { background: rgba(255, 152, 0, 0.9) !important; }
+        .status-vendido { background: rgba(244, 67, 54, 0.9) !important; }
+
+        .popup-zona {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            margin: 6px 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .zona-icon {
+            font-size: 10px;
+        }
+
+        .popup-subtitle {
+            font-size: 11px;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .popup-content {
+            padding: 12px;
+        }
+
+        .popup-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .info-item.compact {
+            grid-column: 1 / -1;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 6px;
+            border-left: 3px solid #2196f3;
+        }
+
+        .info-item .icon {
+            font-size: 10px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-item strong {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .info-item.compact strong {
+            color: #1976d2;
+            font-size: 14px;
+        }
+
+        .measures-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+        .measure {
+            padding: 4px 6px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+            text-align: center;
+            color: #555;
+        }
+
+        .reserve-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+        }
+
+        .reserve-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+        }
+
+        .reserve-btn:active {
+            transform: translateY(0);
+        }
+
+        .sold-notice {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px 12px;
+            background: #ffebee;
+            color: #c62828;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #ffcdd2;
+        }
+
+        /* Map controls en centro-derecha */
+        .map-controls {
+            position: absolute;
+            top: 50%;
+            right: 16px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 2;
+        }
+
+        .ctrl-btn {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .ctrl-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: #f8f9fa;
+        }
+
+        .ctrl-btn:active {
+            transform: translateY(0);
+        }
+
+        .toggle-3d.active {
+            background: #2196f3;
+            color: white;
+        }
+
+        /* Responsive para móviles */
+        @media (max-width: 768px) {
+            .modern-lote-popup {
+                max-width: 260px !important;
+            }
+
+            .popup-header {
+                padding: 12px 12px 8px;
+            }
+
+            .lote-number {
+                font-size: 16px;
+            }
+
+            .popup-grid {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+
+            .map-controls {
+                right: 12px;
+                gap: 5px;
+            }
+
+            .ctrl-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 12px;
+                border-radius: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modern-lote-popup {
+                max-width: 240px !important;
+            }
+
+            .popup-card {
+                border-radius: 10px;
+            }
+
+            .measures-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reserve-btn,
+            .sold-notice {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .map-controls {
+                right: 8px;
+            }
+
+            .ctrl-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 11px;
+            }
+        }
+
+        /* Estados de los botones de control */
+        .ctrl-btn.zoom-in:active,
+        .ctrl-btn.zoom-out:active,
+        .ctrl-btn.compass:active,
+        .ctrl-btn.rotate-left:active,
+        .ctrl-btn.rotate-right:active {
+            background: #e3f2fd;
+            color: #2196f3;
+        }
+    `;
+    document.head.appendChild(style);
+
+    function getZonaBorderStyle(zonaNombre) {
+        if (!zonaNombre) return null;
+        const key = zonaNombre.toLowerCase().trim();
+        return ZONA_STYLES[key] || null;
+    }
 
     function getStatusClass(status) {
         return STATUS_CLASS_MAP[status] || 'status-no-disponible';
@@ -60,798 +382,509 @@ document.addEventListener('DOMContentLoaded', function () {
         return STATUS_LABEL_MAP[status] || status || 'No Disponible';
     }
 
+    function isLoteAvailable(status) {
+        return status === 'disponible';
+    }
+
     /* ===========================
-       BOTONES DE FILTRO
+       FILTROS
        =========================== */
     function initFilterButtons() {
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        
-        filterButtons.forEach(btn => {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', function () {
-                
-                filterButtons.forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-
                 currentFilter = this.getAttribute('data-filter');
-                
                 filterLotesByStatus(currentFilter);
             });
         });
     }
 
     function filterLotesByStatus(status) {
-        if (!map || !mapLayersLoaded) {
-            return;
-        }
-
-        console.log('🎯 Filtrando lotes por estado:', status);
+        if (!map || !mapLayersLoaded || styleChanging) return;
 
         try {
             if (status === 'all') {
-                map.setFilter('lotes-fill', null);
-                map.setFilter('lotes-borders', null);
-                map.setFilter('lotes-labels', null);
+                ['lotes-fill', 'lotes-borders', 'lotes-labels'].forEach(l => {
+                    if (map.getLayer(l)) map.setFilter(l, null);
+                });
             } else if (status === 'apartado-palabra-deposito') {
-                const filter = [
-                    'any',
-                    ['==', ['get', 'estatus'], 'apartadoPalabra'],
-                    ['==', ['get', 'estatus'], 'apartadoDeposito']
-                ];
-                map.setFilter('lotes-fill', filter);
-                map.setFilter('lotes-borders', filter);
-                map.setFilter('lotes-labels', filter);
+                const filter = ['any', ['==', ['get', 'estatus'], 'apartadoPalabra'], ['==', ['get', 'estatus'], 'apartadoDeposito']];
+                ['lotes-fill', 'lotes-borders', 'lotes-labels'].forEach(l => {
+                    if (map.getLayer(l)) map.setFilter(l, filter);
+                });
             } else {
                 const filter = ['==', ['get', 'estatus'], status];
-                map.setFilter('lotes-fill', filter);
-                map.setFilter('lotes-borders', filter);
-                map.setFilter('lotes-labels', filter);
+                ['lotes-fill', 'lotes-borders', 'lotes-labels'].forEach(l => {
+                    if (map.getLayer(l)) map.setFilter(l, filter);
+                });
             }
-        } catch (error) {
+        } catch (e) {
+            console.warn('Error filtering lots:', e);
         }
     }
 
     /* ===========================
-       BOTONES DE ESTILO DE MAPA
+       ESTILO DEL MAPA
        =========================== */
     function initStyleButtons() {
-        const styleButtons = document.querySelectorAll('.style-btn');
-        
-        styleButtons.forEach(btn => {
+        document.querySelectorAll('.style-btn').forEach(btn => {
             btn.addEventListener('click', function () {
-                
-                styleButtons.forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-
-                const style = this.getAttribute('data-style');
-                
-                changeMapStyle(style);
+                changeMapStyle(this.getAttribute('data-style'));
             });
         });
     }
 
-    function changeMapStyle(style) {
-        if (!map) {
-            return;
-        }
+    function changeMapStyle(styleKey) {
+        if (!map || !mapStyles[styleKey] || styleChanging) return;
+        styleChanging = true;
 
-        if (!mapStyles[style]) {
-            return;
-        }
+        const currentLotesData = lotesData;
+        const currentFraccionamiento = fraccionamientoFeature;
+        const currentFilterState = currentFilter;
 
+        map.setStyle(mapStyles[styleKey]);
 
-        try {
-            map.setStyle(mapStyles[style]);
-
-            map.once('style.load', () => {
-                
-                // Restaurar perímetro del fraccionamiento si existe (agregar sin before, se moverá después)
-                if (fraccionamientoFeature) {
-                    setTimeout(() => {
-                        addFraccionamientoPerimeter(fraccionamientoFeature);
-                    }, 500);
-                }
-                
-                if (lotesData) {
-                    setTimeout(() => {
-                        addLotesToMap(lotesData);
-                    }, 500);
-                }
-                
-                if (currentFilter && mapLayersLoaded) {
-                    setTimeout(() => {
-                        filterLotesByStatus(currentFilter);
-                    }, 1000);
-                }
-            });
-
-        } catch (error) {
-            console.error('❌ Error cambiando estilo del mapa:', error);
-        }
+        map.once('style.load', () => {
+            if (!map.getLayer('lotes-labels')) {
+                map.once('idle', () => {
+                    if (currentFraccionamiento) {
+                        addFraccionamientoPerimeter(currentFraccionamiento);
+                    }
+                    if (currentLotesData) {
+                        setTimeout(() => {
+                            addLotesToMap(currentLotesData);
+                            setTimeout(() => filterLotesByStatus(currentFilterState), 500);
+                        }, 200);
+                    }
+                    styleChanging = false;
+                });
+            } else {
+                styleChanging = false;
+            }
+        });
     }
 
     /* ===========================
-       BOTÓN PANTALLA COMPLETA
+       PANTALLA COMPLETA
        =========================== */
     function initFullscreenButton() {
-        const fullscreenBtn = document.getElementById('fullscreenBtn');
-        
-        if (!fullscreenBtn) {
-            return;
-        }
-
-        fullscreenBtn.addEventListener('click', toggleFullscreenMap);
+        const btn = document.getElementById('fullscreenBtn');
+        if (!btn) return;
+        btn.addEventListener('click', toggleFullscreenMap);
     }
 
     function toggleFullscreenMap() {
         const container = document.getElementById('planContainer');
-        const fullscreenBtn = document.getElementById('fullscreenBtn');
-        
-        if (!container) {
-            return;
-        }
-
+        const btn = document.getElementById('fullscreenBtn');
+        if (!container || !btn) return;
 
         if (!document.fullscreenElement) {
-            if (container.requestFullscreen) {
-                container.requestFullscreen().catch(err => {
-                });
-            } else if (container.webkitRequestFullscreen) {
-                container.webkitRequestFullscreen();
-            } else if (container.msRequestFullscreen) {
-                container.msRequestFullscreen();
-            }
-            
-            if (fullscreenBtn) {
-                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i> Salir de Pantalla Completa';
-            }
+            container.requestFullscreen?.() || container.webkitRequestFullscreen?.() || container.msRequestFullscreen?.();
+            btn.innerHTML = '<i class="fas fa-compress"></i>';
         } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-            
-            if (fullscreenBtn) {
-                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i> Pantalla Completa';
-            }
+            document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.();
+            btn.innerHTML = '<i class="fas fa-expand"></i>';
         }
     }
 
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('msfullscreenchange', handleFullscreenChange);
-
-    function handleFullscreenChange() {
-        const fullscreenBtn = document.getElementById('fullscreenBtn');
-        if (!fullscreenBtn) return;
-        
-        if (document.fullscreenElement) {
-            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i> Salir de Pantalla Completa';
-            
-            setTimeout(() => {
-                if (map) {
-                    map.resize();
-                }
-            }, 300);
-        } else {
-            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i> Pantalla Completa';
-            
-            setTimeout(() => {
-                if (map) {
-                    map.resize();
-                }
-            }, 300);
-        }
-    }
+    ['fullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'].forEach(ev => {
+        document.addEventListener(ev, () => {
+            const btn = document.getElementById('fullscreenBtn');
+            if (!btn) return;
+            btn.innerHTML = document.fullscreenElement
+                ? '<i class="fas fa-compress"></i>'
+                : '<i class="fas fa-expand"></i>';
+            setTimeout(() => map?.resize(), 300);
+        });
+    });
 
     /* ===========================
-       INICIALIZACIÓN DEL MAPA
+       INICIALIZAR MAPA
        =========================== */
     function initializeMap() {
-        if (typeof mapboxgl === 'undefined') {
-            return;
-        }
+        if (typeof mapboxgl === 'undefined' || !mapContainer.offsetParent) return;
 
-        if (!mapContainer || mapContainer.offsetParent === null) {
-            return;
-        }
+        mapboxgl.accessToken = 'pk.eyJ1Ijoicm9qYXNkZXYiLCJhIjoiY21leDF4N2JtMTI0NTJrcHlsdjBiN2Y3YiJ9.RB87H34djrYH3WrRa-12Pg';
 
-        try {
-            mapboxgl.accessToken = 'pk.eyJ1Ijoicm9qYXNkZXYiLCJhIjoiY21leDF4N2JtMTI0NTJrcHlsdjBiN2Y3YiJ9.RB87H34djrYH3WrRa-12Pg';
-        } catch (err) {
-            return;
-        }
+        map = new mapboxgl.Map({
+            container: 'mapPlano',
+            style: 'mapbox://styles/mapbox/satellite-streets-v12',
+            center: [-96.778, 15.7345],
+            zoom: 18,
+            pitch: 0,
+            bearing: 0,
+            antialias: true
+        });
 
-        try {
-            map = new mapboxgl.Map({
-                container: 'mapPlano',
-                style: 'mapbox://styles/mapbox/satellite-streets-v12',
-                center: [-96.778, 15.7345], // Centro ajustado aproximado al área del GeoJSON proporcionado
-                zoom: 18, // Zoom más cercano para ver detalles de lotes pequeños
-                pitch: 0,
-                bearing: 0,
-                antialias: true
-            });
-
-            map.on('load', () => {
-                initMapControls();
-                initFilterButtons();
-                initStyleButtons();
-                initFullscreenButton();
-                loadGeoJSONFromPublic(); // Ahora usa el GeoJSON hardcodeado o fallback
-            });
-
-            map.on('error', (e) => {
-            });
-
-        } catch (error) {
-        }
+        map.on('load', () => {
+            initMapControls();
+            initFilterButtons();
+            initStyleButtons();
+            initFullscreenButton();
+            loadGeoJSONFromPublic();
+        });
     }
 
     /* ===========================
-       CARGAR GEOJSON DESDE CARPETA PÚBLICA (MODIFICADO PARA HARDcode SI FALLA)
+       CARGAR GEOJSON
        =========================== */
     async function loadGeoJSONFromPublic() {
-        if (!map) {
-            return;
-        }
-
+        if (!map) return;
         let geoJsonData = null;
 
-        // Intentar cargar desde servidor
-        if (window.AppConfig && window.AppConfig.fraccionamientoNombre) {
+        if (window.AppConfig?.fraccionamientoNombre) {
             try {
-                const fraccionamientoNombre = window.AppConfig.fraccionamientoNombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '_');
-                const geoJsonUrl = `/geojson/${fraccionamientoNombre}.geojson`;
-                
-                
-                const response = await fetch(geoJsonUrl);
-                if (response.ok) {
-                    geoJsonData = await response.json();
-                }
-            } catch (error) {
+                const name = window.AppConfig.fraccionamientoNombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '_');
+                const res = await fetch(`/geojson/${name}.geojson`);
+                if (res.ok) geoJsonData = await res.json();
+            } catch (e) {
+                console.warn('Error loading GeoJSON:', e);
             }
         }
 
-        // Si no se cargó, usar el proporcionado hardcodeado
-        
-        
-        processGeoJSONData(geoJsonData);
+        processGeoJSONData(geoJsonData || { type: "FeatureCollection", features: [] });
     }
 
     function processGeoJSONData(geoJsonData) {
-        if (!geoJsonData || !geoJsonData.features || !Array.isArray(geoJsonData.features)) {
-            throw new Error('Formato de GeoJSON inválido');
-        }
+        if (!geoJsonData?.features?.length) return;
 
-        
-        // Separar el perímetro del fraccionamiento (primer feature con lote: "Fraccionamiento")
         fraccionamientoFeature = geoJsonData.features[0];
-        if (fraccionamientoFeature.properties.lote === "Fraccionamiento") {
+        if (fraccionamientoFeature?.properties?.lote === "Fraccionamiento") {
             addFraccionamientoPerimeter(fraccionamientoFeature);
-            geoJsonData.features.shift(); // Remover del array principal
+            geoJsonData.features.shift();
         }
 
-        const lotesFeatures = geoJsonData.features; // Los restantes son lotes
-
-        console.log('🏠 Lotes a mostrar:', lotesFeatures.length);
-
-        enrichGeoJSONWithServerData({
-            ...geoJsonData,
-            features: lotesFeatures
-        });
+        enrichGeoJSONWithServerData({ ...geoJsonData, features: geoJsonData.features });
     }
 
-    // Nueva función para agregar el perímetro (agregar sin before para evitar errores, se moverá después)
     function addFraccionamientoPerimeter(feature) {
         if (!map || !feature) return;
+        const sid = 'fraccionamiento-source', fid = 'fraccionamiento-fill', bid = 'fraccionamiento-border';
 
-        const sourceId = 'fraccionamiento-source';
-        const fillLayerId = 'fraccionamiento-fill';
-        const borderLayerId = 'fraccionamiento-border';
+        [fid, bid].forEach(l => map.getLayer(l) && map.removeLayer(l));
+        map.getSource(sid) && map.removeSource(sid);
 
-        // Remover si existe
-        if (map.getLayer(fillLayerId)) map.removeLayer(fillLayerId);
-        if (map.getLayer(borderLayerId)) map.removeLayer(borderLayerId);
-        if (map.getSource(sourceId)) map.removeSource(sourceId);
-
-        map.addSource(sourceId, {
-            type: 'geojson',
-            data: feature
+        map.addSource(sid, { type: 'geojson', data: feature });
+        map.addLayer({ 
+            id: fid, 
+            type: 'fill', 
+            source: sid, 
+            paint: { 
+                'fill-color': '#1f2937', 
+                'fill-opacity': 0.85 
+            } 
         });
-
-        // Fondo con opacidad para ver el satélite debajo
-        map.addLayer({
-            id: fillLayerId,
-            type: 'fill',
-            source: sourceId,
-            paint: {
-                'fill-color': 'rgb(91,91,91)', // Gris suave para fondo
-                'fill-opacity': 0.9 // Baja opacidad para ver el fondo
-            }
+        map.addLayer({ 
+            id: bid, 
+            type: 'line', 
+            source: sid, 
+            paint: { 
+                'line-color': '#ffffff', 
+                'line-width': 2.5, 
+                'line-opacity': 0.9 
+            } 
         });
-
-        // Borde destacado
-        map.addLayer({
-            id: borderLayerId,
-            type: 'line',
-            source: sourceId,
-            paint: {
-                'line-color': 'rgb(255,255,255)',
-                'line-width': 1,
-                'line-opacity': 1
-            }
-        });
-
     }
 
+    /* ===========================
+       ENRIQUECER DATOS
+       =========================== */
     async function enrichGeoJSONWithServerData(filteredGeoJsonData) {
         try {
-            const fraccionamientoId = window.AppConfig.fraccionamientoId;
-            const response = await fetch(`/asesor/fraccionamiento/${fraccionamientoId}/lotes`);
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const serverData = await response.json();
-            
-            if (serverData.success && serverData.lotes) {
-                const lotesMap = {};
-                serverData.lotes.forEach(lote => {
-                    lotesMap[lote.numeroLote] = lote;
-                });
+            const id = window.AppConfig.fraccionamientoId;
+            const lotesRes = await fetch(`/asesor/fraccionamiento/${id}/lotes`);
+            if (!lotesRes.ok) throw new Error();
 
-                filteredGeoJsonData.features.forEach(feature => {
-                    const loteNumber = feature.properties.lote;
-                    const serverLote = lotesMap[loteNumber];
-                    
-                    if (serverLote) {
-                        feature.properties = {
-                            ...feature.properties,
-                            id: serverLote.id_lote,
-                            lote: serverLote.numeroLote,
-                            estatus: serverLote.estatus,
-                            manzana: serverLote.manzana || 'N/A',
-                            area: serverLote.area_total || 'N/A',
-                            norte: serverLote.medidas?.norte || 'N/A',
-                            sur: serverLote.medidas?.sur || 'N/A',
-                            oriente: serverLote.medidas?.oriente || 'N/A',
-                            poniente: serverLote.medidas?.poniente || 'N/A',
-                            area_metros: serverLote.medidas?.area_metros || 'N/A'
-                        };
-                    } else {
-                        feature.properties = {
-                            ...feature.properties,
-                            id: feature.properties.id || null,
-                            lote: loteNumber,
-                            estatus: 'disponible',
-                            manzana: feature.properties.manzana || 'N/A',
-                            area: 'N/A',
-                            norte: 'N/A',
-                            sur: 'N/A',
-                            oriente: 'N/A',
-                            poniente: 'N/A',
-                            area_metros: 'N/A'
-                        };
-                    }
-                });
+            const lotesData = await lotesRes.json();
+            if (!lotesData.success) throw new Error();
 
-                lotesData = filteredGeoJsonData;
-                addLotesToMap(filteredGeoJsonData);
-                
-            } else {
-                throw new Error(serverData.message || 'Error en los datos del servidor');
-            }
-        } catch (error) {
-            console.error('❌ Error enriqueciendo GeoJSON:', error);
-            
-            filteredGeoJsonData.features.forEach(feature => {
-                feature.properties = {
-                    ...feature.properties,
-                    id: feature.properties.id || null,
-                    lote: feature.properties.lote || 'N/A',
-                    estatus: feature.properties.estatus || 'disponible',
-                    manzana: feature.properties.manzana || 'N/A',
-                    area: 'N/A',
-                    norte: 'N/A',
-                    sur: 'N/A',
-                    oriente: 'N/A',
-                    poniente: 'N/A',
-                    area_metros: 'N/A'
+            const lotesMap = {};
+            lotesData.lotes.forEach(l => lotesMap[l.numeroLote] = l);
+
+            filteredGeoJsonData.features.forEach(f => {
+                const serverLote = lotesMap[f.properties.lote];
+                if (!serverLote) {
+                    f.properties.zona = null;
+                    f.properties.precio_m2 = '0.00';
+                    f.properties.costo_total = '0.00';
+                    return;
+                }
+
+                const zonaNombre = serverLote.zona?.nombre?.toLowerCase().trim();
+
+                f.properties = {
+                    ...f.properties,
+                    id: serverLote.id_lote,
+                    lote: serverLote.numeroLote,
+                    estatus: serverLote.estatus,
+                    manzana: serverLote.manzana || 'N/A',
+                    norte: serverLote.medidas?.norte || 'N/A',
+                    sur: serverLote.medidas?.sur || 'N/A',
+                    oriente: serverLote.medidas?.oriente || 'N/A',
+                    poniente: serverLote.medidas?.poniente || 'N/A',
+                    area_metros: parseFloat(serverLote.medidas?.area_metros || 0).toFixed(2),
+                    zona: zonaNombre,
+                    precio_m2: parseFloat(serverLote.precio_m2).toFixed(2),
+                    costo_total: parseFloat(serverLote.costo_total).toFixed(2)
                 };
             });
-            
-            lotesData = filteredGeoJsonData;
+
+            lotesData.geojson = filteredGeoJsonData;
+            addLotesToMap(filteredGeoJsonData);
+        } catch (e) {
+            console.error('Error enriching data:', e);
+            filteredGeoJsonData.features.forEach(f => {
+                f.properties.zona = null;
+                f.properties.precio_m2 = '0.00';
+                f.properties.costo_total = '0.00';
+            });
             addLotesToMap(filteredGeoJsonData);
         }
     }
 
-    function generateSampleData() {
-        // Mantener fallback, pero ahora usa el hardcodeado arriba
-        return lotesData || {
-            type: "FeatureCollection",
-            features: [] // Vacío ya que usamos hardcode
-        };
-    }
-
     /* ===========================
-       AJUSTAR MAPA A LOS LOTES (INCLUYE PERÍMETRO SI EXISTE)
+       AÑADIR LOTES
        =========================== */
-    function fitMapToLotes(data) {
-        if (!map || !data || !data.features || data.features.length === 0) {
-            console.warn('⚠️ No hay datos para ajustar el mapa');
-            return;
-        }
+    function addLotesToMap(data) {
+        if (!map || styleChanging) return;
 
-        console.log('🗺️ Ajustando mapa a los lotes:', data.features.length, 'lotes');
+        ['lotes-fill', 'lotes-borders', 'lotes-labels'].forEach(l => {
+            if (map.getLayer(l)) map.removeLayer(l);
+        });
+        if (map.getSource('lotes')) map.removeSource('lotes');
 
-        const bounds = new mapboxgl.LngLatBounds();
+        map.addSource('lotes', { type: 'geojson', data: data });
 
-        // Extender con lotes
-        data.features.forEach(feature => {
-            if (!feature.geometry || !feature.geometry.coordinates) return;
-            
-            const coords = feature.geometry.coordinates;
-
-            if (feature.geometry.type === 'Polygon' && Array.isArray(coords[0])) {
-                coords[0].forEach(coord => {
-                    if (Array.isArray(coord) && coord.length >= 2) {
-                        bounds.extend(coord);
-                    }
-                });
-            } else if (feature.geometry.type === 'MultiPolygon') {
-                coords.forEach(polygon => {
-                    polygon[0].forEach(coord => {
-                        if (Array.isArray(coord) && coord.length >= 2) {
-                            bounds.extend(coord);
-                        }
-                    });
-                });
+        // Relleno
+        map.addLayer({
+            id: 'lotes-fill',
+            type: 'fill',
+            source: 'lotes',
+            paint: {
+                'fill-color': [
+                    'match', 
+                    ['get', 'estatus'], 
+                    'disponible', '#4caf50', 
+                    'vendido', '#f44336', 
+                    'apartadoPalabra', '#ff9800', 
+                    'apartadoDeposito', '#ff9800', 
+                    '#9e9e9e'
+                ],
+                'fill-opacity': 0.75
             }
         });
 
-        // Extender con perímetro si existe
-        if (fraccionamientoFeature && fraccionamientoFeature.geometry.coordinates) {
-            fraccionamientoFeature.geometry.coordinates[0].forEach(coord => {
-                if (Array.isArray(coord) && coord.length >= 2) {
-                    bounds.extend(coord);
-                }
-            });
-        }
-
-        if (!bounds.isEmpty()) {
-            
-            map.fitBounds(bounds, {
-                padding: { top: 50, bottom: 50, left: 50, right: 50 },
-                duration: 1500,
-                maxZoom: 20 // Aumentado para lotes pequeños
-            });
-            
-        } else {
-        }
-    }
-
-    function addLotesToMap(data) {
-        if (!map) return;
-
-        try {
-            if (map.getSource('lotes')) {
-                if (map.getLayer('lotes-labels')) map.removeLayer('lotes-labels');
-                if (map.getLayer('lotes-borders')) map.removeLayer('lotes-borders');
-                if (map.getLayer('lotes-fill')) map.removeLayer('lotes-fill');
-                map.removeSource('lotes');
+        // Bordes por zona
+        map.addLayer({
+            id: 'lotes-borders',
+            type: 'line',
+            source: 'lotes',
+            paint: {
+                'line-color': [
+                    'case',
+                    ['==', ['get', 'zona'], 'zona oro'], '#ffd700',
+                    ['==', ['get', 'zona'], 'zona plata'], '#c0c0c0',
+                    ['==', ['get', 'zona'], 'zona bronce'], '#cd7f32',
+                    ['==', ['get', 'zona'], 'zona premium'], '#9c27b0',
+                    ['==', ['get', 'zona'], 'zona estandar'], '#757575',
+                    '#ffffff'
+                ],
+                'line-width': 3,
+                'line-opacity': 1,
+                'line-dasharray': [
+                    'case',
+                    ['==', ['get', 'zona'], 'zona oro'], ZONA_STYLES['zona oro'].dash,
+                    ['==', ['get', 'zona'], 'zona plata'], ZONA_STYLES['zona plata'].dash,
+                    ['==', ['get', 'zona'], 'zona bronce'], ZONA_STYLES['zona bronce'].dash,
+                    ['==', ['get', 'zona'], 'zona premium'], ZONA_STYLES['zona premium'].dash,
+                    ['==', ['get', 'zona'], 'zona estandar'], ZONA_STYLES['zona estandar'].dash,
+                    ['literal', [1, 0]]
+                ]
             }
+        });
 
-            map.addSource('lotes', {
-                type: 'geojson',
-                data: data
-            });
-
-            // Añadir capas de lotes
-            map.addLayer({
-                id: 'lotes-fill',
-                type: 'fill',
-                source: 'lotes',
-                paint: {
-                    'fill-color': [
-                        'match',
-                        ['get', 'estatus'],
-                        'disponible', '#16a34a',
-                        'vendido', '#dc2626',
-                        'apartadoPalabra', '#ea580c',
-                        'apartadoDeposito', '#ea580c',
-                        '#6b7280'
-                    ],
-                    'fill-opacity': 0.7,
-                    'fill-outline-color': '#ffffff'
-                }
-            });
-
-            map.addLayer({
-                id: 'lotes-borders',
-                type: 'line',
-                source: 'lotes',
-                paint: {
-                    'line-color': '#ffffff',
-                    'line-width': 2,
-                    'line-opacity': 0.9
-                }
-            });
-
-            map.addLayer({
-                id: 'lotes-labels',
-                type: 'symbol',
-                source: 'lotes',
-                layout: {
-                    'text-field': ['to-string', ['get', 'lote']], // Convertir a string por si es número
-                    'text-size': 14,
-                    'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold']
-                },
-                paint: {
-                    'text-color': '#ffffff',
-                    'text-halo-color': '#000000',
-                    'text-halo-width': 1
-                }
-            });
-
-            // Mover el perímetro detrás si existe (usando moveLayer con beforeId 'lotes-fill')
-            if (map.getLayer('fraccionamiento-fill')) {
-                try {
-                    map.moveLayer('fraccionamiento-fill', 'lotes-fill');
-                    map.moveLayer('fraccionamiento-border', 'lotes-fill');
-                } catch (moveError) {
-                }
+        // Etiquetas compactas
+        map.addLayer({
+            id: 'lotes-labels',
+            type: 'symbol',
+            source: 'lotes',
+            layout: {
+                'text-field': ['to-string', ['get', 'lote']],
+                'text-size': 13,
+                'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold']
+            },
+            paint: {
+                'text-color': '#ffffff',
+                'text-halo-color': '#000000',
+                'text-halo-width': 2
             }
+        });
 
-            mapLayersLoaded = true;
-
-            setTimeout(() => {
-                fitMapToLotes(data);
-            }, 500);
-
-            setupMapInteractions();
-
-            if (currentFilter) {
-                setTimeout(() => {
-                    filterLotesByStatus(currentFilter);
-                }, 1000);
+        ['fraccionamiento-fill', 'fraccionamiento-border'].forEach(l => {
+            if (map.getLayer(l)) {
+                map.moveLayer(l, 'lotes-fill');
             }
+        });
 
-        } catch (error) {
-        }
+        mapLayersLoaded = true;
+        setTimeout(() => fitMapToLotes(data), 300);
+        setupMapInteractions();
+        if (currentFilter) setTimeout(() => filterLotesByStatus(currentFilter), 500);
     }
 
     /* ===========================
-       INTERACCIONES DEL MAPA (IGNORAR PERÍMETRO EN CLICK Y POPUP)
+       POPUP ULTRA COMPACTO
        =========================== */
     function setupMapInteractions() {
-        if (!map.getLayer('lotes-fill')) {
-            return;
-        }
-
+        if (!map.getLayer('lotes-fill')) return;
 
         const popup = new mapboxgl.Popup({
             closeButton: true,
             closeOnClick: true,
-            maxWidth: '280px',
-            className: 'lote-popup-compact'
+            maxWidth: '300px',
+            className: 'modern-lote-popup',
+            anchor: 'left'
         });
 
-        map.on('mouseenter', 'lotes-fill', () => {
-            map.getCanvas().style.cursor = 'pointer';
+        map.on('mouseenter', 'lotes-fill', () => map.getCanvas().style.cursor = 'pointer');
+        map.on('mouseleave', 'lotes-fill', () => map.getCanvas().style.cursor = '');
+
+        map.on('click', 'lotes-fill', e => {
+            const p = e.features[0].properties;
+            popup.setLngLat(e.lngLat).setHTML(createModernPopup(p)).addTo(map);
         });
-
-        map.on('mouseleave', 'lotes-fill', () => {
-            map.getCanvas().style.cursor = '';
-        });
-
-        map.on('click', 'lotes-fill', (e) => {
-            const properties = e.features[0].properties;
-            console.log('📍 Lote clickeado:', properties.lote);
-            
-            popup.remove();
-            
-            popup.setLngLat(e.lngLat)
-                 .setHTML(createCompactPopupContent(properties))
-                 .addTo(map);
-        });
-
-        // No agregar interacciones al perímetro (no cursor, no click)
-
     }
 
-    function createCompactPopupContent(properties) {
-        const statusClass = getStatusClass(properties.estatus);
-        const statusText = formatStatus(properties.estatus);
-        
+    function createModernPopup(p) {
+        const statusClass = getStatusClass(p.estatus);
+        const zonaStyle = p.zona ? getZonaBorderStyle(p.zona) : null;
+        const isAvailable = isLoteAvailable(p.estatus);
+
+        const zonaTag = zonaStyle ? `
+            <div class="popup-zona" style="background: ${zonaStyle.gradient}; color: #1f2937; border: 1px solid ${zonaStyle.color};">
+                Zona ${zonaStyle.name}
+            </div>` : '';
+
+        const reserveButton = isAvailable ? `
+            <button class="reserve-btn" onclick="window.openReservationForLote('${p.lote}')">
+                <i class="fas fa-calendar-plus"></i>
+                Reservar Lote
+            </button>` : `
+            <div class="sold-notice">
+                <i class="fas fa-info-circle"></i>
+                No disponible
+            </div>`;
+
         return `
-            <div class="popup-compact-container">
-                <div class="popup-compact-header">
-                    <div class="popup-compact-title">
-                        <span class="lote-number">Lote ${properties.lote}</span>
-                        <span class="popup-status ${statusClass}">${statusText}</span>
+            <div class="popup-card">
+                <div class="popup-header">
+                    <div class="popup-title">
+                        <span class="lote-number" style="color:white;">Lote ${p.lote}</span>
+                        <span class="status-badge ${statusClass}" style="color:white;">
+                            <i class="fas fa-${isAvailable ? 'check-circle' : 'lock'}"></i>
+                            ${formatStatus(p.estatus)}
+                        </span>
                     </div>
-                    <div class="popup-compact-subtitle">
-                        <i class="fas fa-layer-group"></i>
-                        Manzana ${properties.manzana}
-                    </div>
-                </div>
-
-                <div class="popup-compact-info">
-                    <div class="compact-info-item">
-                        <i class="fas fa-vector-square"></i>
-                        <span>${properties.area_metros} m²</span>
-                    </div>
-                </div>
-
-                <div class="popup-compact-measures">
-                    <div class="compact-measure-row">
-                        <div class="measure-compact">
-                            <span class="measure-direction">N</span>
-                            <span class="measure-value">${properties.norte}m</span>
-                        </div>
-                        <div class="measure-compact">
-                            <span class="measure-direction">S</span>
-                            <span class="measure-value">${properties.sur}m</span>
-                        </div>
-                    </div>
-                    <div class="compact-measure-row">
-                        <div class="measure-compact">
-                            <span class="measure-direction">E</span>
-                            <span class="measure-value">${properties.oriente}m</span>
-                        </div>
-                        <div class="measure-compact">
-                            <span class="measure-direction">O</span>
-                            <span class="measure-value">${properties.poniente}m</span>
+                    
+                    <div class="zonaManzana" style="display: flex; gap:6px;">
+                        ${zonaTag}
+                        <div class="popup-subtitle">
+                            <i class="fas fa-layer-group"></i>
+                            Manzana ${p.manzana}
                         </div>
                     </div>
                 </div>
 
-                <div class="popup-compact-actions">
-                    <button class="btn-compact btn-calculate" onclick="window.openCalculationForLote('${properties.lote}')">
-                        <i class="fas fa-calculator"></i>
-                    </button>
-                    <button class="btn-compact btn-reserve" onclick="window.openReservationForLote('${properties.lote}')">
-                        <i class="fas fa-handshake"></i>
-                    </button>
+                <div class="popup-content">
+                    <div class="popup-grid">
+                        <div class="info-item">
+                            <span class="icon">Área</span>
+                            <strong>${p.area_metros} m²</strong>
+                        </div>
+                        <div class="info-item">
+                            <span class="icon"> Precio m²</span>
+                            <strong>$${p.precio_m2}</strong>
+                        </div>
+                        <div class="info-item compact">
+                            <span class="icon"> Total</span>
+                            <strong>$${parseFloat(p.costo_total).toLocaleString('es-MX')}</strong>
+                        </div>
+                    </div>
+
+                    <div class="measures-grid">
+                        <div class="measure north">N ${p.norte}m</div>
+                        <div class="measure south">S ${p.sur}m</div>
+                        <div class="measure east">E ${p.oriente}m</div>
+                        <div class="measure west">O ${p.poniente}m</div>
+                    </div>
+
+                    ${reserveButton}
                 </div>
             </div>
         `;
     }
 
     /* ===========================
-       CONTROLES DEL MAPA
+       CONTROLES EN CENTRO-DERECHA
        =========================== */
     function initMapControls() {
-        const customControls = document.createElement('div');
-        customControls.className = 'custom-map-controls';
-        customControls.style.position = 'absolute';
-        customControls.style.top = '50%';
-        customControls.style.right = '20px';
-        customControls.style.transform = 'translateY(-50%)';
-        customControls.style.zIndex = '10';
-        customControls.style.display = 'flex';
-        customControls.style.flexDirection = 'column';
-        customControls.style.gap = '10px';
-
-        const navControl = document.createElement('div');
-        navControl.className = 'custom-nav-control';
-        navControl.innerHTML = `
-            <button class="custom-control-btn zoom-in" title="Acercar">
-                <i class="fas fa-plus"></i>
-            </button>
-            <button class="custom-control-btn zoom-out" title="Alejar">
-                <i class="fas fa-minus"></i>
-            </button>
-            <button class="custom-control-btn compass" title="Restablecer norte">
-                <i class="fas fa-compass"></i>
-            </button>
+        const controls = document.createElement('div');
+        controls.className = 'map-controls';
+        controls.innerHTML = `
+            <button class="ctrl-btn zoom-in" title="Acercar"><i class="fas fa-plus"></i></button>
+            <button class="ctrl-btn zoom-out" title="Alejar"><i class="fas fa-minus"></i></button>
+            <button class="ctrl-btn compass" title="Norte"><i class="fas fa-compass"></i></button>
+            <button class="ctrl-btn toggle-3d" title="3D"><i class="fas fa-cube"></i></button>
+            <button class="ctrl-btn rotate-left" title="Izquierda"><i class="fas fa-undo"></i></button>
+            <button class="ctrl-btn rotate-right" title="Derecha"><i class="fas fa-redo"></i></button>
         `;
 
-        const toggle3DButton = document.createElement('button');
-        toggle3DButton.className = 'custom-control-btn toggle-3d';
-        toggle3DButton.title = 'Activar/Desactivar Vista 3D';
-        toggle3DButton.innerHTML = '<i class="fas fa-cube"></i>';
-
-        const rotateControl = document.createElement('div');
-        rotateControl.className = 'custom-rotate-control';
-        rotateControl.innerHTML = `
-            <button class="custom-control-btn rotate-left" title="Rotar izquierda">
-                <i class="fas fa-undo"></i>
-            </button>
-            <button class="custom-control-btn rotate-right" title="Rotar derecha">
-                <i class="fas fa-redo"></i>
-            </button>
-        `;
-
-        customControls.appendChild(navControl);
-        customControls.appendChild(toggle3DButton);
-        customControls.appendChild(rotateControl);
-
-        mapContainer.appendChild(customControls);
-
-        setupCustomControls(customControls);
+        mapContainer.appendChild(controls);
+        setupCustomControls(controls);
     }
 
-    function setupCustomControls(controlsContainer) {
-        controlsContainer.querySelector('.zoom-in').addEventListener('click', () => {
-            map.zoomIn();
-        });
-
-        controlsContainer.querySelector('.zoom-out').addEventListener('click', () => {
-            map.zoomOut();
-        });
-
-        controlsContainer.querySelector('.compass').addEventListener('click', () => {
-            map.easeTo({
-                bearing: 0,
-                pitch: 0,
-                duration: 1000
-            });
-        });
-
-        controlsContainer.querySelector('.toggle-3d').addEventListener('click', toggle3DMode);
-
-        controlsContainer.querySelector('.rotate-left').addEventListener('click', () => {
-            map.easeTo({
-                bearing: map.getBearing() - 45,
-                duration: 500
-            });
-        });
-
-        controlsContainer.querySelector('.rotate-right').addEventListener('click', () => {
-            map.easeTo({
-                bearing: map.getBearing() + 45,
-                duration: 500
-            });
-        });
+    function setupCustomControls(container) {
+        container.querySelector('.zoom-in').onclick = () => map.zoomIn();
+        container.querySelector('.zoom-out').onclick = () => map.zoomOut();
+        container.querySelector('.compass').onclick = () => map.easeTo({ bearing: 0, pitch: 0, duration: 1000 });
+        container.querySelector('.toggle-3d').onclick = toggle3DMode;
+        container.querySelector('.rotate-left').onclick = () => map.easeTo({ bearing: map.getBearing() - 45, duration: 500 });
+        container.querySelector('.rotate-right').onclick = () => map.easeTo({ bearing: map.getBearing() + 45, duration: 500 });
     }
 
     function toggle3DMode() {
         is3DMode = !is3DMode;
-        const toggle3DButton = document.querySelector('.toggle-3d');
-        
+        const btn = document.querySelector('.toggle-3d');
         if (is3DMode) {
             if (!map.getSource('mapbox-dem')) {
-                map.addSource('mapbox-dem', {
-                    'type': 'raster-dem',
-                    'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-                    'tileSize': 512,
-                    'maxzoom': 14
-                });
+                map.addSource('mapbox-dem', { type: 'raster-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1' });
             }
-            
-            map.once('idle', () => {
-                map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
-            });
-            
-            map.easeTo({
-                pitch: 60,
-                bearing: -17,
-                duration: 1000
-            });
-            
-            toggle3DButton.innerHTML = '<i class="fas fa-cube" style="color: #3b82f6;"></i>';
-            toggle3DButton.style.background = '#e0f2fe';
+            map.once('idle', () => map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 }));
+            map.easeTo({ pitch: 60, bearing: -17, duration: 1000 });
+            btn.classList.add('active');
         } else {
             map.setTerrain(null);
-            
-            map.easeTo({
-                pitch: 0,
-                bearing: 0,
-                duration: 1000
-            });
-            
-            toggle3DButton.innerHTML = '<i class="fas fa-cube"></i>';
-            toggle3DButton.style.background = '';
+            map.easeTo({ pitch: 0, bearing: 0, duration: 1000 });
+            btn.classList.remove('active');
         }
     }
 
-    /* ===========================
-       INICIALIZACIÓN FINAL
-       =========================== */
-    setTimeout(() => {
-        initializeMap();
-    }, 100);
+    function fitMapToLotes(data) {
+        if (!map || !data?.features?.length) return;
+        const bounds = new mapboxgl.LngLatBounds();
+        data.features.forEach(f => {
+            if (f.geometry?.coordinates) {
+                const coords = f.geometry.type === 'Polygon' ? f.geometry.coordinates[0] : f.geometry.coordinates.flat(2);
+                coords.forEach(c => c.length >= 2 && bounds.extend(c));
+            }
+        });
+        if (!bounds.isEmpty()) {
+            map.fitBounds(bounds, { padding: 40, duration: 1500, maxZoom: 20 });
+        }
+    }
 
+    setTimeout(initializeMap, 100);
 });

@@ -41,15 +41,23 @@ class Lote extends Model
 
     // ─────── NUEVO: RELACIÓN CON ZONA ───────
    
-    // Magia: $lote->precio_m2
-    public function getPrecioM2Attribute()
-    {
-        return $this->zonaRelacion?->zona?->precio_m2 ?? 0;
-    }
-
+    
     // app/Models/Lote.php
     public function loteZona()
     {
         return $this->hasOne(LoteZona::class, 'id_lote', 'id_lote');
+    }
+
+
+    // app/Models/Lote.php
+    public function getPrecioM2Attribute()
+    {
+        // Si tiene zona → usa precio_m2 de la zona
+        if ($this->loteZona?->zona?->precio_m2) {
+            return (float) $this->loteZona->zona->precio_m2;
+        }
+
+        // Si no, usa el precio general del fraccionamiento
+        return (float) $this->fraccionamiento?->infoFraccionamiento?->precio_metro_cuadrado ?? 0;
     }
 }
