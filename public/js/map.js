@@ -896,5 +896,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+
+    
     setTimeout(initializeMap, 100);
 });
