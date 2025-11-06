@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
         'streets': 'mapbox://styles/mapbox/streets-v12',
         'light': 'mapbox://styles/mapbox/light-v11',
         'dark': 'mapbox://styles/mapbox/dark-v11',
-        'standard': 'mapbox://styles/mapbox/standard-v1'
+        'standard': 'mapbox://styles/mapbox/navigation-day-v1',
+        'tourist': 'mapbox://styles/mapbox/navigation-night-v1'
     };
 
     const STATUS_CLASS_MAP = {
@@ -430,9 +431,14 @@ document.addEventListener('DOMContentLoaded', function () {
     function initStyleButtons() {
         document.querySelectorAll('.style-btn').forEach(btn => {
             btn.addEventListener('click', function () {
+                const newStyle = this.getAttribute('data-style');
+                // Si el botón ya está activo, no hacer nada
+                if (this.classList.contains('active')) {
+                    return;
+                }
                 document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                changeMapStyle(this.getAttribute('data-style'));
+                changeMapStyle(newStyle);
             });
         });
     }
@@ -441,29 +447,32 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!map || !mapStyles[styleKey] || styleChanging) return;
         styleChanging = true;
 
-        const currentLotesData = lotesData;
+        const currentLotesData = window.lotesData;
         const currentFraccionamiento = fraccionamientoFeature;
         const currentFilterState = currentFilter;
 
         map.setStyle(mapStyles[styleKey]);
 
         map.once('style.load', () => {
-            if (!map.getLayer('lotes-labels')) {
-                map.once('idle', () => {
-                    if (currentFraccionamiento) {
-                        addFraccionamientoPerimeter(currentFraccionamiento);
-                    }
-                    if (currentLotesData) {
-                        setTimeout(() => {
-                            addLotesToMap(currentLotesData);
-                            setTimeout(() => filterLotesByStatus(currentFilterState), 500);
-                        }, 200);
-                    }
-                    styleChanging = false;
-                });
-            } else {
+            // Asegurarse de que las fuentes estén cargadas
+            map.once('sourcedata', () => {
+                // Primero agregar el perímetro del fraccionamiento
+                if (currentFraccionamiento) {
+                    addFraccionamientoPerimeter(currentFraccionamiento);
+                }
+                
+                // Luego agregar los lotes
+                if (currentLotesData) {
+                    addLotesToMap(currentLotesData);
+                }
+                
+                // Finalmente aplicar los filtros si existen
+                if (currentFilterState && currentFilterState !== 'all') {
+                    filterLotesByStatus(currentFilterState);
+                }
+                
                 styleChanging = false;
-            }
+            });
         });
     }
 
@@ -632,7 +641,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 };
             });
 
-            lotesData.geojson = filteredGeoJsonData;
+            window.lotesData = filteredGeoJsonData;
             addLotesToMap(filteredGeoJsonData);
         } catch (e) {
             console.error('Error enriching data:', e);
@@ -641,6 +650,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 f.properties.precio_m2 = '0.00';
                 f.properties.costo_total = '0.00';
             });
+            window.lotesData = filteredGeoJsonData;
             addLotesToMap(filteredGeoJsonData);
         }
     }
@@ -649,7 +659,7 @@ document.addEventListener('DOMContentLoaded', function () {
        AÑADIR LOTES
        =========================== */
     function addLotesToMap(data) {
-        if (!map || styleChanging) return;
+        if (!map || !data) return;
 
         ['lotes-fill', 'lotes-borders', 'lotes-labels'].forEach(l => {
             if (map.getLayer(l)) map.removeLayer(l);
