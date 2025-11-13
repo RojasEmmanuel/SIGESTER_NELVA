@@ -16,7 +16,7 @@ class AdminVentasController extends Controller
     /**
      * Mostrar lista de todas las ventas
      */
-    public function index(Request $request)
+   public function index(Request $request)
     {
         $query = Venta::with([
             'apartado.lotesApartados.lote.fraccionamiento',
@@ -41,11 +41,11 @@ class AdminVentasController extends Controller
             $query->where(function($q) use ($search) {
                 $q->whereHas('clienteVenta', function($clientQuery) use ($search) {
                     $clientQuery->where('nombres', 'like', "%{$search}%")
-                               ->orWhere('apellidos', 'like', "%{$search}%");
+                            ->orWhere('apellidos', 'like', "%{$search}%");
                 })
                 ->orWhereHas('apartado.usuario', function($userQuery) use ($search) {
                     $userQuery->where('nombre', 'like', "%{$search}%")
-                              ->orWhere('apellidos', 'like', "%{$search}%");
+                            ->orWhere('apellidos', 'like', "%{$search}%");
                 });
             });
         }
@@ -61,12 +61,17 @@ class AdminVentasController extends Controller
             ->groupBy('ticket_estatus')
             ->pluck('total', 'ticket_estatus');
 
+        // === NUEVO: Contar lotes en ventas con estatus 'retraso' ===
+       // === CORREGIDO: Contar VENTAS en estatus 'retraso' ===
+        $ventasEnRetraso = Venta::where('estatus', 'retraso')->count();
+
         return view('admin.ventas.index', compact(
             'ventas',
             'totalVentas',
             'porEstatus',
             'ticketEstatus',
-            'request'
+            'request',
+            'ventasEnRetraso' // <-- Enviar a la vista
         ));
     }
 

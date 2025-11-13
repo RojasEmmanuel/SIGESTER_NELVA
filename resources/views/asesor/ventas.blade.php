@@ -45,43 +45,51 @@
             </a>
         </div>
 
-        <!-- Stats Overview -->
-        <div class="stats-container">
-            <div class="stat-card total">
+        <!-- ESTADÍSTICAS PRINCIPALES: ENFOCADAS EN PAGOS, LIQUIDADAS Y RETRASADAS -->
+        <div class="stats-container primary-stats">
+            <!-- EN PAGOS (PRIORIDAD 1) -->
+            <div class="stat-card pending highlight">
+                <h3 class="stat-card-title">
+                    <i class="fas fa-clock"></i>
+                    <span>En Pagos</span>
+                </h3>
+                <p class="stat-card-value large">{{ $enPagos }}</p>
+            </div>
+
+            
+
+            <!-- RETRASADAS (PRIORIDAD 3) -->
+            <div class="stat-card delayed highlight">
+                <h3 class="stat-card-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Retrasadas</span>
+                </h3>
+                <p class="stat-card-value large">{{ $retrasadas }}</p>
+                
+            </div>
+
+            <!-- LIQUIDADAS (PRIORIDAD 2) -->
+            <div class="stat-card completed highlight">
+                <h3 class="stat-card-title">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Liquidadas</span>
+                </h3>
+                <p class="stat-card-value large">{{ $liquidadas }}</p>
+            </div>
+
+            <!-- TOTAL VENTAS (SECUNDARIO, COMO CONTEXTO) -->
+            <div class="stat-card total secondary">
                 <h3 class="stat-card-title">
                     <i class="fas fa-chart-bar"></i>
                     <span>Total Ventas</span>
                 </h3>
                 <p class="stat-card-value">{{ $totalVentas }}</p>
-                <p class="stat-card-description">Transacciones</p>
-            </div>
-            <div class="stat-card completed">
-                <h3 class="stat-card-title">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Liquidados</span>
-                </h3>
-                <p class="stat-card-value">{{ $liquidadas }}</p>
-                <p class="stat-card-description">{{ $porcentajeLiquidadas }}% del total</p>
-            </div>
-            <div class="stat-card pending">
-                <h3 class="stat-card-title">
-                    <i class="fas fa-clock"></i>
-                    <span>En Pagos</span>
-                </h3>
-                <p class="stat-card-value">{{ $enPagos }}</p>
-                <p class="stat-card-description">{{ $porcentajeEnPagos }}% del total</p>
-            </div>
-            <div class="stat-card cancelled">
-                <h3 class="stat-card-title">
-                    <i class="fas fa-times-circle"></i>
-                    <span>Cancelados</span>
-                </h3>
-                <p class="stat-card-value">{{ $canceladas }}</p>
-                <p class="stat-card-description">{{ $porcentajeCanceladas }}% del total</p>
             </div>
         </div>
 
-        <!-- Sales Grid -->
+       
+
+        <!-- Sales Grid (sin cambios, solo se muestra debajo) -->
         <div class="sales-grid">
             @foreach ($ventas as $venta)
                 <div class="sale-card">
@@ -99,13 +107,15 @@
                     <div class="sale-body">
                         <div class="sale-details">
                             <div class="detail-group">
-                                <span class="detail-label">Asesor</span>
-                                <span class="detail-value highlight">{{ $venta->apartado->usuario ? $venta->apartado->usuario->nombre : 'N/A' }}</span>
-                            </div>
-                            <div class="detail-group">
                                 <span class="detail-label">Cliente</span>
-                                <span class="detail-value">{{ $venta->clienteVenta->nombres ?? 'N/A' }} {{ $venta->clienteVenta->apellidos ?? '' }}</span>
+                                <span class="detail-value highlight">{{ $venta->clienteVenta->nombres ?? 'N/A' }} {{ $venta->clienteVenta->apellidos ?? '' }}</span>
                             </div>
+                            
+                            <div class="detail-group">
+                                <span class="detail-label">Asesor</span>
+                                <span class="detail-value">{{ $venta->apartado->usuario?->nombre ?? 'N/A' }}</span>
+                            </div>
+                            
                             <div class="detail-group">
                                 <span class="detail-label">Precio</span>
                                 <span class="detail-value">${{ number_format($venta->total, 2) }} MXN</span>
@@ -136,22 +146,41 @@
 
         <!-- Paginación -->
         <div class="pagination">
-            {{ $ventas->links() }}
+            @if ($ventas->onFirstPage())
+                <span class="prev-btn disabled">
+                    <i class="fas fa-chevron-left"></i> Anterior
+                </span>
+            @else
+                <a href="{{ $ventas->previousPageUrl() }}" class="prev-btn">
+                    <i class="fas fa-chevron-left"></i> Anterior
+                </a>
+            @endif
+
+            @if ($ventas->hasMorePages())
+                <a href="{{ $ventas->nextPageUrl() }}" class="next-btn">
+                    Siguiente <i class="fas fa-chevron-right"></i>
+                </a>
+            @else
+                <span class="next-btn disabled">
+                    Siguiente <i class="fas fa-chevron-right"></i>
+                </span>
+            @endif
         </div>
     </div>
 
+    <!-- Script de filtrado (opcional: puedes mejorarlo para incluir "retrasadas") -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const filterSelects = document.querySelectorAll('.filter-select');
             
             filterSelects.forEach(select => {
                 select.addEventListener('change', function() {
-                    const status = this.value;
+                    const status = this.value.toLowerCase();
                     const cards = document.querySelectorAll('.sale-card');
                     
                     cards.forEach(card => {
-                        const cardStatus = card.querySelector('.sale-status').textContent.toLowerCase();
-                        if (status === '' || cardStatus === status) {
+                        const cardStatus = card.querySelector('.sale-status').textContent.trim().toLowerCase();
+                        if (status === '' || cardStatus === status || (status === 'retrasadas' && cardStatus === 'retrasada')) {
                             card.style.display = 'block';
                         } else {
                             card.style.display = 'none';
@@ -161,5 +190,4 @@
             });
         });
     </script>
-
 @endsection

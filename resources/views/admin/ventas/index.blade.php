@@ -25,16 +25,18 @@
                 <i class="fas fa-shopping-cart stat-icon"></i>
             </div>
             
-            <div class="stat-card warning">
-                <span class="stat-number">{{ $porEstatus['solicitud'] ?? 0 }}</span>
-                <span class="stat-label">Tickets Pendientes</span>
-                <i class="fas fa-clock stat-icon"></i>
-            </div>
+           
             
             <div class="stat-card success">
                 <span class="stat-number">{{ $porEstatus['pagos'] ?? 0 }}</span>
                 <span class="stat-label">En Pagos</span>
                 <i class="fas fa-money-bill-wave stat-icon"></i>
+            </div>
+
+            <div class="stat-card warning">
+                <span class="stat-number">{{ $ventasEnRetraso }}</span>
+                <span class="stat-label">En Retraso</span>
+                <i class="fas fa-exclamation-triangle stat-icon"></i>
             </div>
             
             <div class="stat-card info">

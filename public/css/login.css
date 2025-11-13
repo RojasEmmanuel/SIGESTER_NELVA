@@ -98,7 +98,6 @@ body::before {
     margin-bottom: 24px;
     padding: 10px;
     border-radius: 12px;
-    background: rgba(37, 99, 235, 0.05);
     display: inline-block;
 }
 
