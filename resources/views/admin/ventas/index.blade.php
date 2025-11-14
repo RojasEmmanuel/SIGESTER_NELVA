@@ -25,8 +25,6 @@
                 <i class="fas fa-shopping-cart stat-icon"></i>
             </div>
             
-           
-            
             <div class="stat-card success">
                 <span class="stat-number">{{ $porEstatus['pagos'] ?? 0 }}</span>
                 <span class="stat-label">En Pagos</span>
@@ -206,41 +204,60 @@
 
 <!-- Modal para Cambiar Estatus de Venta -->
 <div class="ventas-modal-overlay" id="statusModal">
-    <div class="ventas-modal-content">
-        <div class="ventas-modal-header">
-            <h5 class="ventas-modal-title">Cambiar Estatus de Venta</h5>
-            <button type="button" class="ventas-modal-close">&times;</button>
+    <div class="ventas-modal-content modern-modal">
+        <div class="modern-modal-header">
+            <div class="modern-modal-icon">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            <div class="modern-modal-title">
+                <h5>Cambiar Estatus de Venta</h5>
+                <p>Actualiza el estado de la venta seleccionada</p>
+            </div>
+            <button type="button" class="modern-modal-close">&times;</button>
         </div>
-        <div class="ventas-modal-body">
+        <div class="modern-modal-body">
             <form id="statusForm">
                 @csrf
                 <input type="hidden" id="ventaId" name="venta_id">
                 
                 <div class="form-group">
                     <label class="form-label">Estatus Actual:</label>
-                    <p id="currentStatus" class="current-status-text"></p>
+                    <div class="current-status-badge">
+                        <span id="currentStatus" class="status-badge"></span>
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="newStatus" class="form-label">Nuevo Estatus:</label>
-                    <select class="form-select" id="newStatus" name="estatus" required>
-                        <option value="">Seleccionar estatus...</option>
-                        <option value="pagos">Pagos</option>
-                        <option value="retraso">Retraso</option>
-                        <option value="liquidado">Liquidado</option>
-                        <option value="cancelado">Cancelado</option>
-                    </select>
+                    <div class="modern-select-wrapper">
+                        <select class="modern-form-select" id="newStatus" name="estatus" required>
+                            <option value="">Seleccionar estatus...</option>
+                            <option value="pagos">Pagos</option>
+                            <option value="retraso">Retraso</option>
+                            <option value="liquidado">Liquidado</option>
+                            <option value="cancelado">Cancelado</option>
+                        </select>
+                        <i class="fas fa-chevron-down modern-select-arrow"></i>
+                    </div>
                 </div>
 
-                <div id="cancelWarning" class="alert alert-warning cancel-warning-alert hidden">
+                <div id="cancelWarning" class="modern-alert modern-alert-warning hidden">
                     <i class="fas fa-exclamation-triangle"></i> 
-                    Al cancelar la venta, los lotes asociados serán liberados y marcados como disponibles.
+                    <div>
+                        <strong>Advertencia:</strong> Al cancelar la venta, los lotes asociados serán liberados y marcados como disponibles.
+                    </div>
                 </div>
             </form>
         </div>
-        <div class="ventas-modal-footer">
-            <button type="button" class="btn btn-secondary modal-cancel">Cancelar</button>
-            <button type="button" class="btn btn-primary" id="saveStatus">Guardar Cambios</button>
+        <div class="modern-modal-footer">
+            <button type="button" class="btn btn-outline modal-cancel">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="saveStatus">
+                <span class="btn-text">Guardar Cambios</span>
+                <div class="btn-loading hidden">
+                    <div class="loading-spinner"></div>
+                    <span>Procesando...</span>
+                </div>
+            </button>
         </div>
     </div>
 </div>
@@ -256,6 +273,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const clearSearch = document.getElementById('clearSearch');
     const rows = tableBody.querySelectorAll('tr[data-cliente]');
     const totalRows = rows.length;
+    
+    // Filtros automáticos
+    const estatusFilter = document.getElementById('estatusFilter');
+    const ticketFilter = document.getElementById('ticketFilter');
+    const filterForm = document.getElementById('filterForm');
+    let filterTimeout;
+
+    // Función para aplicar filtros automáticamente
+    function applyFilters() {
+        clearTimeout(filterTimeout);
+        filterTimeout = setTimeout(() => {
+            filterForm.submit();
+        }, 800);
+    }
+
+    // Event listeners para filtros automáticos
+    estatusFilter.addEventListener('change', applyFilters);
+    ticketFilter.addEventListener('change', applyFilters);
 
     // Función para filtrar la tabla
     function filterTable() {
@@ -325,18 +360,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
     clearSearch.addEventListener('click', clearSearchHandler);
 
-    // Manejar cambio de estatus (código existente)
+    // Manejar cambio de estatus
     document.querySelectorAll('.change-status-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const ventaId = this.dataset.ventaId;
             const currentStatus = this.dataset.currentStatus;
             
             document.getElementById('ventaId').value = ventaId;
-            document.getElementById('currentStatus').textContent = 
-                currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+            
+            // Actualizar badge de estatus actual
+            const currentStatusElement = document.getElementById('currentStatus');
+            currentStatusElement.textContent = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+            currentStatusElement.className = 'status-badge status-' + currentStatus;
+            
+            // Resetear el formulario
             document.getElementById('newStatus').value = '';
             document.getElementById('cancelWarning').classList.add('hidden');
             
+            // Resetear estado del botón
+            const saveBtn = document.getElementById('saveStatus');
+            const btnText = saveBtn.querySelector('.btn-text');
+            const btnLoading = saveBtn.querySelector('.btn-loading');
+            
+            btnText.classList.remove('hidden');
+            btnLoading.classList.add('hidden');
+            saveBtn.disabled = false;
+            
+            // Mostrar modal
             document.getElementById('statusModal').classList.add('active');
         });
     });
@@ -355,11 +405,19 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('saveStatus').addEventListener('click', function() {
         const ventaId = document.getElementById('ventaId').value;
         const newStatus = document.getElementById('newStatus').value;
+        const saveBtn = this;
+        const btnText = saveBtn.querySelector('.btn-text');
+        const btnLoading = saveBtn.querySelector('.btn-loading');
         
         if (!newStatus) {
             showNotification('error', 'Por favor selecciona un estatus');
             return;
         }
+
+        // Mostrar estado de carga
+        btnText.classList.add('hidden');
+        btnLoading.classList.remove('hidden');
+        saveBtn.disabled = true;
 
         fetch(`/admin/ventas/${ventaId}/venta-estatus`, {
             method: 'PUT',
@@ -373,24 +431,38 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                document.getElementById('statusModal').classList.remove('active');
                 showNotification('success', data.message);
                 
+                // Cerrar modal después de un breve delay
                 setTimeout(() => {
-                    window.location.reload();
+                    document.getElementById('statusModal').classList.remove('active');
+                    // Recargar la página después de cerrar el modal
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500);
                 }, 1500);
             } else {
                 showNotification('error', data.message);
+                // Restaurar botón
+                resetSaveButton();
             }
         })
         .catch(error => {
             console.error('Error:', error);
             showNotification('error', 'Error al actualizar el estatus');
+            // Restaurar botón
+            resetSaveButton();
         });
+        
+        function resetSaveButton() {
+            btnText.classList.remove('hidden');
+            btnLoading.classList.add('hidden');
+            saveBtn.disabled = false;
+        }
     });
 
     // Cerrar modal
-    document.querySelector('.ventas-modal-close').addEventListener('click', function() {
+    document.querySelector('.modern-modal-close').addEventListener('click', function() {
         document.getElementById('statusModal').classList.remove('active');
     });
     
@@ -454,3 +526,285 @@ function clearSearchHandler() {
 }
 </script>
 @endpush
+
+<style>
+/* Estilos adicionales para mejoras visuales */
+
+/* Filtros automáticos con indicador de carga */
+.filter-grid {
+    position: relative;
+}
+
+.filter-loading {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.filter-loading.active {
+    opacity: 1;
+}
+
+/* Modal moderno sin marco blanco */
+.modern-modal {
+    max-width: 480px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+    border: none;
+}
+
+.modern-modal-header {
+    display: flex;
+    align-items: flex-start;
+    padding: 1.5rem 1.5rem 1rem;
+    background: linear-gradient(135deg, #1e478a 0%, #3d86df 100%);
+    color: white;
+    position: relative;
+}
+
+.modern-modal-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.modern-modal-icon i {
+    font-size: 1.25rem;
+}
+
+.modern-modal-title h5 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.modern-modal-title p {
+    margin: 0;
+    opacity: 0.8;
+    font-size: 0.875rem;
+}
+
+.modern-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.25rem;
+}
+
+.modern-modal-close:hover {
+    background: rgba(255,255,255,0.3);
+    transform: rotate(90deg);
+}
+
+.modern-modal-body {
+    padding: 1.5rem;
+}
+
+.modern-modal-footer {
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* Badges de estatus mejorados */
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+.status-solicitud {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.status-pagos {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-retraso {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.status-liquidado {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-cancelado {
+    background: rgba(100, 116, 139, 0.1);
+    color: #64748b;
+    border: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+/* Select moderno */
+.modern-select-wrapper {
+    position: relative;
+}
+
+.modern-form-select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    color: #374151;
+    font-size: 0.875rem;
+    appearance: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.modern-form-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.modern-select-arrow {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    pointer-events: none;
+}
+
+/* Alertas modernas */
+.modern-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+}
+
+.modern-alert-warning {
+    background: rgba(245, 158, 11, 0.05);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    color: #92400e;
+}
+
+.modern-alert-warning i {
+    color: #f59e0b;
+    margin-top: 0.125rem;
+}
+
+.modern-alert strong {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+/* Botón con estado de carga - SOLO se muestra cuando es necesario */
+.btn-loading {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-loading.hidden {
+    display: none;
+}
+
+.btn-loading:not(.hidden) {
+    display: flex;
+}
+
+.loading-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Transiciones suaves para filtros */
+.form-select, .form-input {
+    transition: all 0.3s ease;
+}
+
+.form-select:focus, .form-input:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+/* Mejoras responsive */
+@media (max-width: 640px) {
+    .modern-modal {
+        margin: 1rem;
+        max-width: calc(100% - 2rem);
+    }
+    
+    .modern-modal-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .modern-modal-icon {
+        margin: 0 auto 1rem;
+    }
+    
+    .modern-modal-footer {
+        flex-direction: column-reverse;
+    }
+    
+    .modern-modal-footer .btn {
+        width: 100%;
+    }
+}
+
+/* Mejora visual para el overlay del modal */
+.ventas-modal-overlay {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+/* Estado del botón cuando está deshabilitado */
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+</style>
