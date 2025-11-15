@@ -16,6 +16,7 @@ use App\Http\Controllers\Cobranza\CobranzaVentaController;
 use App\Http\Controllers\pagina\InicioClientController;
 use App\Http\Controllers\pagina\fraccClientController;
 use App\Http\Controllers\Admin\AdminPromocionController;
+use App\Http\Controllers\Ingeniero\IngInicioController;
 
 // Rutas de autenticación
 Route::get('/', [InicioClientController::class, 'index'])->name('inicio');
@@ -53,10 +54,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Rutas protegidas por el middleware 'auth'
 Route::middleware('auth')->group(function () {
-    Route::get('/ingeniero/dashboard', function () {
-        return view('ingeniero.dashboard');
-    })->name('ingeniero.dashboard');
-    
+   
  
     Route::get('/asesor/inicio', [InicioController::class, 'index'])->name('asesor.dashboard');
     // Rutas de fraccionamiento
@@ -167,5 +165,10 @@ Route::middleware('auth')->group(function () {
         Route::put('/fraccionamiento/{id}/zona/{zonaId}', [AdminFraccionamientoController::class, 'updateZona'])->name('fraccionamiento.update-zona');
         Route::post('/admin/fraccionamiento/{id}/asignar-lotes-zona', [AdminFraccionamientoController::class, 'asignarLotesAZona'])->name('fraccionamiento.asignar-lotes-zona');
 
+    });
+
+
+    Route::prefix('ing')->group(function () {
+        Route::get('/inicio', [IngInicioController::class, 'index'])->name('ingeniero.inicio');
     });
 });

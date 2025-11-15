@@ -78,7 +78,7 @@ class LoginController extends Controller
             case 3:
                 return redirect()->route('asesor.dashboard')->with('tipo_usuario', $user->tipo_usuario);
             case 4:
-                return redirect()->route('ingeniero.dashboard')->with('tipo_usuario', $user->tipo_usuario);
+                return redirect()->route('ingeniero.inicio')->with('tipo_usuario', $user->tipo_usuario);
             default:
                 return redirect('/dashboard')->with('tipo_usuario', $user->tipo_usuario);
         }
