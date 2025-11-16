@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use App\Mail\VentaTicketStatusUpdated;
+use App\Mail\VentaTicketStatusUpdatedCliente;
 use App\Mail\VentaStatusUpdated;
+use App\Mail\VentaStatusUpdatedCliente;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 
@@ -184,7 +186,7 @@ public function updateTicketEstatus(Request $request, $id_venta)
 
                 if ($clienteEmail) {
                     try {
-                        Mail::to($clienteEmail)->send(new VentaTicketStatusUpdated($venta, $request->ticket_estatus));
+                        Mail::to($clienteEmail)->send(new VentaTicketStatusUpdatedCliente($venta, $request->ticket_estatus));
                         $emailsEnviados[] = $clienteEmail;
                         Log::info('Email enviado al cliente: ' . $clienteEmail);
                     } catch (\Exception $e) {
@@ -290,7 +292,7 @@ public function updateTicketEstatus(Request $request, $id_venta)
 
                     if ($clienteEmail) {
                         try {
-                            Mail::to($clienteEmail)->send(new VentaStatusUpdated($venta, $newEstatus));
+                            Mail::to($clienteEmail)->send(new VentaStatusUpdatedCliente($venta, $newEstatus));
                             $emailsEnviados[] = $clienteEmail;
                             Log::info('Email enviado al cliente: ' . $clienteEmail);
                         } catch (\Exception $e) {

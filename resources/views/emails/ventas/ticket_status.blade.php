@@ -14,7 +14,7 @@
                             📋 Notificación - Ticket de Enganche
                         </h2>
                         <p style="margin: 0; font-size: 14px; color: #e2e8f0; font-weight: 400;">
-                            Venta #{{ $venta->id }}
+                            Venta #{{ $venta->id_venta }}
                         </p>
                     </td>
                 </tr>
