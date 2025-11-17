@@ -143,9 +143,7 @@
                                         @endif
                                     </div>
                                     <input type="file" id="path_imagen" name="path_imagen" class="form-control" accept="image/jpeg,image/png,image/jpg,image/gif" onchange="previewImage(this)">
-                                    @error('path_imagen')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
+                                   
                                 </div>
                             </div>
                             
@@ -156,18 +154,7 @@
                                 </button>
                             </div>
 
-                            @if(session('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-check-circle"></i> {{ session('success') }}
-                                    <button type="button" class="close" data-dismiss="alert">×</button>
-                                </div>
-                            @endif
-                            @if(session('error'))
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-                                    <button type="button" class="close" data-dismiss="alert">×</button>
-                                </div>
-                            @endif
+                            
                         </form>
                     </div>
 
@@ -215,9 +202,7 @@
                                     <option value="Ejidal" {{ old('tipo_propiedad', $datosFraccionamiento['tipo_propiedad'] ?? '') == 'Ejidal' ? 'selected' : '' }}>Ejidal</option>
                                     <option value="Privada" {{ old('tipo_propiedad', $datosFraccionamiento['tipo_propiedad'] ?? '') == 'Privada' ? 'selected' : '' }}>Privada</option>
                                 </select>
-                                @error('tipo_propiedad')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
+                               
                             </div>
                             
                             <div class="form-group">
@@ -226,9 +211,7 @@
                                     <i class="fas fa-dollar-sign"></i>
                                     <input type="number" id="precioGeneral" name="precioGeneral" step="0.01" class="form-control" value="{{ old('precioGeneral', $datosFraccionamiento['precioGeneral'] ?? '') }}" placeholder="0.00">
                                 </div>
-                                @error('precioGeneral')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
+                                
                             </div>
                             
                             <div class="form-group full-width">
@@ -249,18 +232,7 @@
                                 </button>
                             </div>
 
-                            @if(session('success_info'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-check-circle"></i> {{ session('success_info') }}
-                                    <button type="button" class="close" data-dismiss="alert">×</button>
-                                </div>
-                            @endif
-                            @if(session('error_info'))
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-exclamation-circle"></i> {{ session('error_info') }}
-                                    <button type="button" class="close" data-dismiss="alert">×</button>
-                                </div>
-                            @endif
+                           
                         </form>
                     </div>
 
@@ -420,18 +392,7 @@
                                 </button>
                             </div>
 
-                            @if(session('success_amenidad'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-check-circle"></i> {{ session('success_amenidad') }}
-                                    <button type="button" class="close" data-dismiss="alert">×</button>
-                                </div>
-                            @endif
-                            @if(session('error_amenidad'))
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-exclamation-circle"></i> {{ session('error_amenidad') }}
-                                    <button type="button" class="close" data-dismiss="alert">×</button>
-                                </div>
-                            @endif
+                            
                         </form>
                     </div>
                     
@@ -526,18 +487,7 @@
                                 </button>
                             </div>
 
-                            @if(session('success_foto'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-check-circle"></i> {{ session('success_foto') }}
-                                    <button type="button" class="close" data-dismiss="alert">×</button>
-                                </div>
-                            @endif
-                            @if(session('error_foto'))
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-exclamation-circle"></i> {{ session('error_foto') }}
-                                    <button type="button" class="close" data-dismiss="alert">×</button>
-                                </div>
-                            @endif
+                            
                         </form>
                     </div> 
                     
@@ -739,18 +689,7 @@
                                 </button>
                             </div>
 
-                            @if(session('success_archivo'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-check-circle"></i> {{ session('success_archivo') }}
-                                    <button type="button" class="close" data-dismiss="alert">×</button>
-                                </div>
-                            @endif
-                            @if(session('error_archivo'))
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-exclamation-circle"></i> {{ session('error_archivo') }}
-                                    <button type="button" class="close" data-dismiss="alert">×</button>
-                                </div>
-                            @endif
+                            
                         </form>
                     </div>
                     
@@ -790,9 +729,6 @@
                     @endif
                 </div>
             </div>
-
-
-
 
             <!-- TAB: ASIGNAR LOTES A ZONAS -->
             <div id="asignar-lotes" class="tab-pane">
@@ -1459,6 +1395,160 @@
             cb.checked = this.checked;
         });
     });
+
+
+
+    // === SISTEMA DE NOTIFICACIONES RÁPIDAS - SIMPLE ===
+    class NotificationSystem {
+        constructor() {
+            this.container = null;
+            this.init();
+        }
+
+        init() {
+            // Crear contenedor de notificaciones si no existe
+            if (!document.getElementById('notification-container')) {
+                this.container = document.createElement('div');
+                this.container.id = 'notification-container';
+                this.container.className = 'notification-container';
+                document.body.appendChild(this.container);
+            } else {
+                this.container = document.getElementById('notification-container');
+            }
+        }
+
+        show(message, title = 'Éxito', type = 'success', duration = 4000) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const icon = this.getIcon(type);
+            
+            notification.innerHTML = `
+                <div class="notification-icon">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-message">${message}</div>
+                </div>
+                <button class="notification-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            this.container.appendChild(notification);
+
+            // Animación de entrada
+            setTimeout(() => notification.classList.add('show'), 10);
+
+            // Auto-remover después de la duración
+            if (duration > 0) {
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.classList.add('hide');
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, duration);
+            }
+
+            return notification;
+        }
+
+        getIcon(type) {
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            return icons[type] || 'fa-info-circle';
+        }
+
+        // Métodos rápidos
+        success(message, title = 'Éxito', duration = 4000) {
+            return this.show(message, title, 'success', duration);
+        }
+
+        error(message, title = 'Error', duration = 5000) {
+            return this.show(message, title, 'error', duration);
+        }
+
+        warning(message, title = 'Advertencia', duration = 5000) {
+            return this.show(message, title, 'warning', duration);
+        }
+
+        info(message, title = 'Información', duration = 4000) {
+            return this.show(message, title, 'info', duration);
+        }
+    }
+
+    // Inicializar sistema de notificaciones
+    const notifications = new NotificationSystem();
+
+    // Función global para usar en el blade
+    window.showNotification = function(message, title = 'Éxito', type = 'success', duration = 4000) {
+        return notifications.show(message, title, type, duration);
+    };
+
+    // Reemplazar las alertas de sesión de Laravel
+    document.addEventListener('DOMContentLoaded', function() {
+        // Manejar mensajes de éxito
+        @if(session('success'))
+            showNotification('{{ session('success') }}', 'Éxito', 'success');
+        @endif
+
+        @if(session('success_info'))
+            showNotification('{{ session('success_info') }}', 'Éxito', 'success');
+        @endif
+
+        @if(session('success_amenidad'))
+            showNotification('{{ session('success_amenidad') }}', 'Amenidad', 'success');
+        @endif
+
+        @if(session('success_foto'))
+            showNotification('{{ session('success_foto') }}', 'Galería', 'success');
+        @endif
+
+        @if(session('success_archivo'))
+            showNotification('{{ session('success_archivo') }}', 'Archivo', 'success');
+        @endif
+
+        // Manejar mensajes de error
+        @if(session('error'))
+            showNotification('{{ session('error') }}', 'Error', 'error');
+        @endif
+
+        @if(session('error_info'))
+            showNotification('{{ session('error_info') }}', 'Error', 'error');
+        @endif
+
+        @if(session('error_amenidad'))
+            showNotification('{{ session('error_amenidad') }}', 'Amenidad', 'error');
+        @endif
+
+        @if(session('error_foto'))
+            showNotification('{{ session('error_foto') }}', 'Galería', 'error');
+        @endif
+
+        @if(session('error_archivo'))
+            showNotification('{{ session('error_archivo') }}', 'Archivo', 'error');
+        @endif
+
+        // Manejar errores de validación
+        @if($errors->any())
+            @foreach($errors->all() as $error)
+                showNotification('{{ $error }}', 'Error de validación', 'error');
+            @endforeach
+        @endif
+    });
+
+    // Función para mostrar notificación desde cualquier lugar
+    window.notify = {
+        success: (msg, title = 'Éxito') => showNotification(msg, title, 'success'),
+        error: (msg, title = 'Error') => showNotification(msg, title, 'error'),
+        warning: (msg, title = 'Advertencia') => showNotification(msg, title, 'warning'),
+        info: (msg, title = 'Información') => showNotification(msg, title, 'info')
+    };
 
 </script>
 
