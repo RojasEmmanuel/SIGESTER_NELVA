@@ -15,8 +15,10 @@
             <span class="material-icons">map</span> Lotes de {{ $fraccionamiento->nombre }}
         </h2>
         <div class="lotes-actions">
-            <button class="btn btn-outline" onclick="openModal('modalCoordenadas')">
-                <span class="material-icons">add_location_alt</span> Coordenadas
+            <button class="btn btn-outline ripple d-inline-flex align-items-center gap-2" 
+                    onclick="openModal('modalImportarLotes')">
+                <span class="material-icons">upload_file</span>
+                Importar CSV
             </button>
             <button class="btn btn-primary" onclick="openModal('modalCrearLote')">
                 <span class="material-icons">add_box</span> Nuevo Lote
@@ -130,6 +132,7 @@
 @include('ingeniero.lotes.editar')
 @include('ingeniero.lotes.coordenadas')
 @include('ingeniero.lotes.confirm')
+@include('ingeniero.lotes.importar')
 
 @endsection
 
@@ -495,5 +498,79 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 }); // end DOMContentLoaded
+
+// === IMPORTAR LOTES CSV (SIN LIBRERÍAS) ===
+document.getElementById('formImportarLotes')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const fileInput = document.getElementById('csvFile');
+    const btn = document.getElementById('btnImportarCsv');
+    const btnIcon = document.getElementById('btnIcon');
+    const btnText = document.getElementById('btnText');
+
+    if (!fileInput.files[0]) {
+        showToast('Error', 'Selecciona un archivo CSV.', 'danger');
+        return;
+    }
+
+    const file = fileInput.files[0];
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+        showToast('Error', 'Solo archivos .csv', 'danger');
+        return;
+    }
+
+    // Loading
+    btn.disabled = true;
+    btnIcon.textContent = 'hourglass_top';
+    btnText.textContent = 'Procesando...';
+
+    const formData = new FormData(this);
+
+    fetch(this.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData
+    })
+    .then(r => {
+        if (!r.ok) throw r;
+        return r.json();
+    })
+    .then(data => {
+        if (data.success) {
+            closeModal('modalImportarLotes');
+            showToast('Éxito', data.message, 'success');
+            setTimeout(() => location.reload(), 1200);
+        } else {
+            let msg = data.message || 'Error al importar.';
+            if (data.errores) {
+                msg += '<br><ul style="margin:8px 0;padding-left:20px;">';
+                data.errores.forEach(e => msg += `<li>${e}</li>`);
+                msg += '</ul>';
+            }
+            showToast('Error', msg, 'danger');
+        }
+    })
+    .catch(async err => {
+        let msg = 'Error de conexión.';
+        try {
+            const json = await err.json();
+            msg = json.message || msg;
+            if (json.errores) {
+                msg += '<br><ul><li>' + json.errores.join('</li><li>') + '</li></ul>';
+            }
+        } catch {}
+        showToast('Error', msg, 'danger');
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btnIcon.textContent = 'upload';
+        btnText.textContent = 'Importar CSV';
+        fileInput.value = '';
+        document.getElementById('fileDisplay').textContent = 'Ningún archivo seleccionado';
+    });
+});
 </script>
 @endpush

@@ -173,15 +173,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/inicio', [IngInicioController::class, 'index'])->name('ingeniero.inicio');
     });
 
+    // routes/web.php
     Route::prefix('ing/fraccionamientos/{id_fraccionamiento}/lotes')
     ->name('ing.lotes.')
     ->controller(LoteController::class)
     ->group(function () {
 
-        Route::get('/', 'index')->name('index');                    // ing/fraccionamientos/1/lotes
-        Route::post('/', 'store')->name('store');                   // POST crear lote
-        Route::put('/{id_lote}', 'update')->name('update');         // PUT actualizar medidas
-        Route::delete('/{id_lote}', 'destroy')->name('destroy');    // DELETE uno
-        Route::post('/bulk-delete', 'bulkDelete')->name('bulkDelete'); // POST eliminar varios
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
+        Route::put('/{id_lote}', 'update')->name('update');
+        Route::delete('/{id_lote}', 'destroy')->name('destroy');
+        Route::post('/bulk-delete', 'bulkDelete')->name('bulkDelete');
+
+        // NUEVAS - SIN LIBRERÍAS
+        Route::post('/importar', 'importarCsv')->name('importar');
+        Route::get('/csv-ejemplo', 'csvEjemplo')->name('csv.example');
     });
 });
