@@ -600,10 +600,12 @@
                 
                 <div class="bank-details">
                     <h4 class="bank-details-title">Datos Bancarios</h4>
-                    <p><strong>Banco:</strong> BBVA</p>
-                    <p><strong>Nombre:</strong> Nelva Bienes Raíces S.A. de C.V.</p>
-                    <p><strong>Cuenta:</strong> 0123 4567 8910 1112</p>
-                    <p><strong>CLABE:</strong> 012 320 0123 4567 8910 11</p>
+                    <p><strong>Banco:</strong> HSBC</p>
+                    <p><strong>Nombre:</strong> DESARROLLADORA NELVA BIENES RAICES S. DE R.L DE C.V</p>
+                    <P><strong>DE BANCO A BANCO</strong></P>
+                    <p><strong>Cuenta</strong>4070721014</p>
+                    <p><strong>DE OTROS BANCOS</strong></p>
+                    <p><strong>Clabe:</strong>021624040707210149</p>
                 </div>
                 
                 <div class="text-center">
@@ -700,8 +702,6 @@
             </form>
         </div>
     </div>
-
-    
 
 
     @include('app_config')

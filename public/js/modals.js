@@ -429,7 +429,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     if (referenceNumber) referenceNumber.textContent = randomRef;
 
-                    const depositMessage = `Hola ${firstName}, para apartar el lote(s) ${lotNumbers.join(', ')} en ${fraccionamientoNombre} realiza un depósito de $${amount} MXN a la cuenta BBVA. Referencia: ${fraccionamientoNombre.substring(0, 3)}-${randomRef}`;
+                    const depositMessage = `Hola ${firstName}, para apartar el lote(s) ${lotNumbers.join(', ')} en ${fraccionamientoNombre} realiza un depósito de $${amount} MXN a la cuenta HSBC a nombre de DESARROLLADORA NELVA BIENES RAICES S. DE R.L DE C.V. la cuenta para transferenencia desde el mismo banco es 4070721014, si planeas hacerlo desde otro banco, usa la clabe 021624040707210149. Tienes hasta el ${deadlineDateObj.toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' })} para completar el pago.`;
                     if (whatsappShare) whatsappShare.href = `https://wa.me/?text=${encodeURIComponent(depositMessage)}`;
 
                     reservationForm.style.display = 'none';

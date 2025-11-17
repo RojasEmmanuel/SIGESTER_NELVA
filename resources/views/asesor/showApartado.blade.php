@@ -29,16 +29,18 @@
 @section('content')
 <div class="container">
     <!-- Encabezado de página -->
-    <div class="page-header">
-        <a href="{{ route('asesor.apartados.index') }}" class="btn-back">
-            <i class="fas fa-arrow-left"></i>
-            Volver a la lista de apartados
+    <div class="page-header" style="display:flex; justify-content: space-between; margin-bottom: 10px">
+        
+        
+        <div class="headerLeft">
+            <h1 class="page-title">
+                Detalles del Apartado
+            </h1>
+            <p class="page-subtitle">Información completa del apartado y sus detalles</p>
+        </div>
+        <a href="{{ route('asesor.apartados.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver al Listado
         </a>
-        <h1 class="page-title">
-            <i class="fas fa-file-contract"></i>
-            Detalles del Apartado
-        </h1>
-        <p class="page-subtitle">Información completa del apartado y sus detalles</p>
     </div>
 
     <!-- Cálculo del tiempo restante -->
@@ -70,12 +72,12 @@
 
                 $partes = [];
                 if ($diasRestantes > 0) {
-                    $partes[] = $diasRestantes . 'd';
+                    $partes[] = $diasRestantes . 'día(s)';
                 }
                 if ($horasRestantes > 0 || $diasRestantes > 0) {
-                    $partes[] = $horasRestantes . 'h';
+                    $partes[] = $horasRestantes . 'hora(s)';
                 }
-                $partes[] = $minutosRestantes . 'm';
+                $partes[] = $minutosRestantes . 'minuto(s)';
 
                 $tiempoRestante = implode(' ', $partes);
                 if (empty($tiempoRestante)) {
