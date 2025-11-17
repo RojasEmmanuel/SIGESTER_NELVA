@@ -25,6 +25,7 @@
                 <a href="{{ route('asesor.perfil.index') }}" class="{{ Request::routeIs('asesor.perfil*') ? 'active' : '' }}">
                     <i class="fas fa-user"></i> Perfil
                 </a>
+                
                 <a href="#" id="logout-btn-desktop" class="logout-link">
                     <i class="fas fa-sign-out-alt"></i> Salir
                 </a>

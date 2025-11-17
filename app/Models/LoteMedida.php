@@ -24,7 +24,7 @@ class LoteMedida extends Model
     ];
 
     protected $casts = [
-        'manzana' => 'integer',
+        'manzana' => 'string',
         'norte' => 'double',
         'sur' => 'double',
         'poniente' => 'double',

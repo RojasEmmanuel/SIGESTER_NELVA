@@ -116,7 +116,7 @@
                     </div>
                 </div>
                 <div class="fraccionamiento-actions">
-                    <a href="#" 
+                    <a href="{{ route('ing.lotes.index', $fraccionamiento->id_fraccionamiento) }}" 
                         class="btn btn-primary ver-detalles">
                         <i class="fas fa-eye"></i>
                         <span>Ver Detalles</span>

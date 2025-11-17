@@ -17,6 +17,7 @@ use App\Http\Controllers\pagina\InicioClientController;
 use App\Http\Controllers\pagina\fraccClientController;
 use App\Http\Controllers\Admin\AdminPromocionController;
 use App\Http\Controllers\Ingeniero\IngInicioController;
+use App\Http\Controllers\Ingeniero\LoteController;
 
 // Rutas de autenticación
 Route::get('/', [InicioClientController::class, 'index'])->name('inicio');
@@ -170,5 +171,17 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('ing')->group(function () {
         Route::get('/inicio', [IngInicioController::class, 'index'])->name('ingeniero.inicio');
+    });
+
+    Route::prefix('ing/fraccionamientos/{id_fraccionamiento}/lotes')
+    ->name('ing.lotes.')
+    ->controller(LoteController::class)
+    ->group(function () {
+
+        Route::get('/', 'index')->name('index');                    // ing/fraccionamientos/1/lotes
+        Route::post('/', 'store')->name('store');                   // POST crear lote
+        Route::put('/{id_lote}', 'update')->name('update');         // PUT actualizar medidas
+        Route::delete('/{id_lote}', 'destroy')->name('destroy');    // DELETE uno
+        Route::post('/bulk-delete', 'bulkDelete')->name('bulkDelete'); // POST eliminar varios
     });
 });

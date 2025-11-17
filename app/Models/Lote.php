@@ -11,12 +11,12 @@ class Lote extends Model
     
     protected $table = 'lotes';
     protected $primaryKey = 'id_lote';
-    public $incrementing = false; // si tu id_lote es string (ej. OCEANICA-1-1)
-    protected $keyType = 'string'; // igual si es string
+    public $incrementing = false; 
+    protected $keyType = 'string'; 
 
-    // ✅ CORREGIDO: Usar el nombre real de la columna en la BD
     protected $fillable = [
-        'numeroLote',  // ← CAMBIAR de 'numero_lote' a 'numeroLote'
+        'id_lote',        // ← SOLUCIÓN AL BUG 10.2
+        'numeroLote',
         'estatus',
         'id_fraccionamiento',
     ];
