@@ -5,15 +5,29 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/lotes.css') }}">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 @endpush
 
 @section('content')
 <div class="lotes-container">
-    <!-- Header -->
     <div class="lotes-header">
-        <h2 class="lotes-title">
-            <span class="material-icons">map</span> Lotes de {{ $fraccionamiento->nombre }}
+        <h2 >
+            <span class="material-icons">map</span> 
+            Lotes de {{ $fraccionamiento->nombre }}
         </h2>
+        
+        <div class="location-info">
+            <span class="material-icons">place</span> 
+            {{ $fraccionamiento->ubicacion }}
+        </div>
+
+        <div class="containerHeader">
+            <div class="infoHeader">
+                <span class="material-icons">info</span>
+                <p>En esta sección puedes gestionar los lotes del fraccionamiento. Puedes crear nuevos lotes, importar desde un archivo CSV o editar los existentes.</p>
+            </div>
+        </div>
+
         <div class="lotes-actions">
             <button class="btn btn-outline ripple d-inline-flex align-items-center gap-2" 
                     onclick="openModal('modalImportarLotes')">
@@ -21,7 +35,8 @@
                 Importar CSV
             </button>
             <button class="btn btn-primary" onclick="openModal('modalCrearLote')">
-                <span class="material-icons">add_box</span> Nuevo Lote
+                <span class="material-icons">add_box</span> 
+                Nuevo Lote
             </button>
         </div>
     </div>

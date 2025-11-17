@@ -1263,3 +1263,68 @@ input:focus, select:focus {
     border-radius: 3px;
     font-weight: 500;
 }
+
+
+ .lotes-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--primary-dark);
+}
+
+.lotes-title .material-icons {
+    color: var(--primary-color);
+    font-size: 28px;
+}
+
+.location-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.location-info .material-icons {
+    font-size: 20px;
+}
+
+.containerHeader {
+    background-color: rgba(63, 81, 181, 0.05);
+    border-left: 4px solid var(--primary-color);
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.infoHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.infoHeader .material-icons {
+    color: var(--primary-color);
+    font-size: 20px;
+    margin-top: 2px;
+}
+
+.infoHeader p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.lotes-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
