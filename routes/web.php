@@ -18,6 +18,7 @@ use App\Http\Controllers\pagina\fraccClientController;
 use App\Http\Controllers\Admin\AdminPromocionController;
 use App\Http\Controllers\Ingeniero\IngInicioController;
 use App\Http\Controllers\Ingeniero\LoteController;
+use App\Http\Controllers\Ingeniero\MapasController;
 
 // Rutas de autenticación
 Route::get('/', [InicioClientController::class, 'index'])->name('inicio');
@@ -188,5 +189,16 @@ Route::middleware('auth')->group(function () {
         // NUEVAS - SIN LIBRERÍAS
         Route::post('/importar', 'importarCsv')->name('importar');
         Route::get('/csv-ejemplo', 'csvEjemplo')->name('csv.example');
+    });
+
+    Route::prefix('ing')->name('ing.')->group(function () {
+
+        // Lista todos los fraccionamientos (para el select)
+        Route::get('/mapa-fraccionamientos', [MapasController::class, 'index'])
+            ->name('mapa-fraccionamientos');
+
+        // Carga los datos del fraccionamiento seleccionado (JSON para JS)
+        Route::get('/fraccionamiento/{id_fraccionamiento}/geojson-data', [MapasController::class, 'geojsonData'])
+            ->name('fraccionamiento.geojson-data');
     });
 });

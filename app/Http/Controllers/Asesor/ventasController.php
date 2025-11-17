@@ -335,8 +335,6 @@ class ventasController extends Controller
         });
     }
 
-
-
     public function createDirect()
     {
         $userId = Auth::user()->id_usuario;
