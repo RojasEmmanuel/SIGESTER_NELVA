@@ -1,7 +1,7 @@
 {{-- resources/views/ing/mapa-fraccionamientos.blade.php --}}
 @extends('ingeniero.navbar')
 
-@section('title', 'Mapa Interactivo de Fraccionamientos')
+@section('title', 'Mapa de Fraccionamientos')
 
 @section('content')
 <div class="container-fluid py-4">
@@ -9,7 +9,7 @@
         <div class="col-12">
             <div class="card shadow-lg">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i> Mapa Interactivo de Fraccionamientos</h4>
+                    <h4 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i> Mapa de Fraccionamientos</h4>
                 </div>
 
                 <div class="card-body p-0">

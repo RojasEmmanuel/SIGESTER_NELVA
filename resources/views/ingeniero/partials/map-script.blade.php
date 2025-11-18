@@ -8,12 +8,12 @@ const mapContainer = document.getElementById('mapPlano');
 mapboxgl.accessToken = 'pk.eyJ1Ijoicm9qYXNkZXYiLCJhIjoiY21leDF4N2JtMTI0NTJrcHlsdjBiN2Y3YiJ9.RB87H34djrYH3WrRa-12Pg';
 
 // ===========================================
-// ESTILOS COMPLETOS (actualizados para vértices)
+// ESTILOS COMPLETOS (mejorados)
 // ===========================================
 const style = document.createElement('style');
 style.textContent = `
     .modern-lote-popup {max-width:300px!important;font-family:'Roboto',sans-serif;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.2);border:none;overflow:hidden}
-    .popup-card {background:white;border-radius:12px;overflow:hidden}
+    .popup-card {background:white;border-radius:2px;overflow:hidden}
     .popup-header {padding:14px 14px 10px;background:linear-gradient(135deg,#185cdd 0%,#4facfe 50%,#90ceff 100%);color:white;position:relative}
     .lote-number {font-size:18px;font-weight:700;letter-spacing:-0.5px}
     .status-badge {padding:3px 8px;border-radius:10px;font-size:9px;font-weight:600;text-transform:uppercase;backdrop-filter:blur(10px);background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3)}
@@ -41,42 +41,94 @@ style.textContent = `
     .toggle-3d.active {background:#2196f3;color:white}
     .toggle-vertices.active {background:#4caf50;color:white}
     @media (max-width:768px) {.modern-lote-popup{max-width:260px!important}.popup-grid{grid-template-columns:1fr}}
+    
+    /* Nuevos estilos para mejorar apariencia de lotes */
+    .lote-fill-disponible {background:rgba(76,175,80,0.15)!important}
+    .lote-fill-apartado {background:rgba(255,152,0,0.15)!important}
+    .lote-fill-vendido {background:rgba(244,67,54,0.15)!important}
+    .lote-hover {background:rgb(245,245,245)!important}
+    .legend {position:absolute;bottom:20px;left:20px;background:white;border-radius:12px;padding:15px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:1;font-family:'Roboto',sans-serif;max-width:220px}
+    .legend-title {font-size:14px;font-weight:600;margin-bottom:10px;color:#333;display:flex;align-items:center;gap:6px}
+    .legend-item {display:flex;align-items:center;margin-bottom:8px;font-size:12px}
+    .legend-color {width:16px;height:16px;border-radius:4px;margin-right:8px;border:1px solid rgba(0,0,0,0.1)}
+    .legend-zona {display:flex;align-items:center;margin-bottom:6px;font-size:11px}
+    .legend-line {width:20px;height:3px;margin-right:8px;border-radius:2px}
 `;
 document.head.appendChild(style);
 
 // ===========================================
-// CONSTANTES DE ZONAS (con iconos)
+// CONSTANTES DE ZONAS (mejoradas)
 // ===========================================
 const ZONA_STYLES = {
-    'zona oro':     { color: '#ffd700', dash: [6,3],   name: 'Oro',     gradient: 'linear-gradient(135deg,#fff9c4,#ffd700)', icon: '' },
-    'zona plata':   { color: '#c0c0c0', dash: [4,4],   name: 'Plata',   gradient: 'linear-gradient(135deg,#f5f5f5,#c0c0c0)', icon: ' ' },
-    'zona bronce':  { color: '#cd7f32', dash: [8,2,2,2], name: 'Bronce', gradient: 'linear-gradient(135deg,#ffe0b2,#cd7f32)', icon: ' ' },
-    'zona premium': { color: '#9c27b0', dash: [10,3],  name: 'Premium', gradient: 'linear-gradient(135deg,#e1bee7,#9c27b0)', icon: '' },
-    'zona estandar':{ color: '#757575', dash: [3,3],   name: 'Estándar',gradient: 'linear-gradient(135deg,#f5f5f5,#757575)', icon: '' }
+    'zona oro':     { color: '#ffd700', dash: [6,3],   name: 'Oro',     gradient: 'linear-gradient(135deg,#fff9c4,#ffd700)', icon: '★', fill: 'rgba(255, 215, 0, 0.1)' },
+    'zona plata':   { color: '#c0c0c0', dash: [4,4],   name: 'Plata',   gradient: 'linear-gradient(135deg,#f5f5f5,#c0c0c0)', icon: '✦', fill: 'rgba(192, 192, 192, 0.1)' },
+    'zona bronce':  { color: '#cd7f32', dash: [8,2,2,2], name: 'Bronce', gradient: 'linear-gradient(135deg,#ffe0b2,#cd7f32)', icon: '◆', fill: 'rgba(205, 127, 50, 0.1)' },
+    'zona premium': { color: '#9c27b0', dash: [10,3],  name: 'Premium', gradient: 'linear-gradient(135deg,#e1bee7,#9c27b0)', icon: '♛', fill: 'rgba(156, 39, 176, 0.1)' },
+    'zona estandar':{ color: '#757575', dash: [3,3],   name: 'Estándar',gradient: 'linear-gradient(135deg,#f5f5f5,#757575)', icon: '■', fill: 'rgba(117, 117, 117, 0.1)' }
 };
 
 // ===========================================
-// INICIALIZAR MAPA
+// INICIALIZAR MAPA (con estilo mejorado)
 // ===========================================
 window.initializeMap = function() {
     if (map) map.remove();
     map = new mapboxgl.Map({
         container: 'mapPlano',
-        style: 'mapbox://styles/mapbox/satellite-streets-v12',
+        style: 'mapbox://styles/mapbox/light-v11', // Estilo más claro para mejor contraste
         center: [-96.778, 15.7345],
         zoom: 18,
         pitch: 0,
         bearing: 0,
-        antialias: true
+        antialias: true,
+        maxZoom: 22,
+        minZoom: 15
     });
 
     map.on('load', () => {
         map.resize();
         initMapControls();
+        addLegend();
     });
 
     map.on('style.load', () => map.resize());
 };
+
+// ===========================================
+// AÑADIR LEYENDA
+// ===========================================
+function addLegend() {
+    const legend = document.createElement('div');
+    legend.className = 'legend';
+    legend.innerHTML = `
+        <div class="legend-title">
+            <span class="material-icons" style="font-size:16px">legend_toggle</span>
+            Estado de Lotes
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background:rgba(76,175,80,0.15);border-color:rgba(76,175,80,0.7)"></div>
+            <span>Disponible</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background:rgba(255,152,0,0.15);border-color:rgba(255,152,0,0.7)"></div>
+            <span>Apartado</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background:rgba(244,67,54,0.15);border-color:rgba(244,67,54,0.7)"></div>
+            <span>Vendido</span>
+        </div>
+        <div class="legend-title" style="margin-top:15px">
+            <span class="material-icons" style="font-size:16px">layers</span>
+            Zonas
+        </div>
+        ${Object.entries(ZONA_STYLES).map(([key, zona]) => `
+            <div class="legend-zona">
+                <div class="legend-line" style="background:${zona.color}; border:1px solid ${zona.color}80"></div>
+                <span>${zona.name}</span>
+            </div>
+        `).join('')}
+    `;
+    mapContainer.appendChild(legend);
+}
 
 // ===========================================
 // PROCESAR GEOJSON + ENRIQUECER + DIBUJAR LOTES
@@ -90,8 +142,26 @@ window.processGeoJSONData = function(geoJsonData) {
     if (features[0]?.properties?.lote === "Fraccionamiento") {
         const perimetro = features.shift();
         map.addSource('frac-source', {type:'geojson', data: perimetro});
-        map.addLayer({id:'frac-fill',type:'fill',source:'frac-source',paint:{'fill-color':'#1f2937','fill-opacity':0.85}});
-        map.addLayer({id:'frac-border',type:'line',source:'frac-source',paint:{'line-color':'#fff','line-width':3}});
+        map.addLayer({
+            id:'frac-fill',
+            type:'fill',
+            source:'frac-source',
+            paint:{
+                'fill-color':'#1f2937',
+                'fill-opacity':0.85,
+                'fill-outline-color':'#fff'
+            }
+        });
+        map.addLayer({
+            id:'frac-border',
+            type:'line',
+            source:'frac-source',
+            paint:{
+                'line-color':'#fff',
+                'line-width':3,
+                'line-opacity':0.8
+            }
+        });
     }
 
     // Enriquecer con datos del servidor
@@ -124,33 +194,51 @@ window.processGeoJSONData = function(geoJsonData) {
 };
 
 // ===========================================
-// AÑADIR LOTES AL MAPA (con vértices en lugar de relleno)
+// AÑADIR LOTES AL MAPA (apariencia mejorada)
 // ===========================================
 function addLotesToMap(data) {
     if (!map) return;
 
     // Limpiar capas anteriores
-    ['lotes-vertices','lotes-borders','lotes-labels','lotes-centers'].forEach(id => {
+    ['lotes-fill','lotes-vertices','lotes-borders','lotes-labels','lotes-centers'].forEach(id => {
         if (map.getLayer(id)) map.removeLayer(id);
     });
     if (map.getSource('lotes')) map.removeSource('lotes');
 
     map.addSource('lotes', {type:'geojson', data});
 
-    // Crear capa de vértices (puntos en las esquinas de los lotes)
+    // Capa de relleno con colores según estado
+    map.addLayer({
+        id: 'lotes-fill',
+        type: 'fill',
+        source: 'lotes',
+        paint: {
+            'fill-color': [
+                'case',
+                ['==', ['get', 'estatus'], 'disponible'], 'rgba(76, 175, 80, 0.15)',
+                ['==', ['get', 'estatus'], 'apartado'], 'rgba(255, 152, 0, 0.15)',
+                ['==', ['get', 'estatus'], 'vendido'], 'rgba(244, 67, 54, 0.15)',
+                'rgba(200, 200, 200, 0.1)'
+            ],
+            'fill-outline-color': 'transparent'
+        }
+    });
+
+    // Capa de vértices (puntos en las esquinas de los lotes)
     map.addLayer({
         id: 'lotes-vertices',
         type: 'circle',
         source: 'lotes',
         paint: {
-            'circle-radius': 6,
+            'circle-radius': 5,
             'circle-color': '#ff6b35',
             'circle-stroke-width': 2,
-            'circle-stroke-color': '#ffffff'
+            'circle-stroke-color': '#ffffff',
+            'circle-opacity': 0.8
         }
     });
 
-    // Bordes por zona (con dasharray personalizado)
+    // Bordes por zona (con dasharray personalizado y mejor visibilidad)
     map.addLayer({
         id: 'lotes-borders',
         type: 'line',
@@ -162,9 +250,10 @@ function addLotesToMap(data) {
                 ['==',['get','zona'],'zona bronce'],'#cd7f32',
                 ['==',['get','zona'],'zona premium'],'#9c27b0',
                 ['==',['get','zona'],'zona estandar'],'#757575',
-                '#ffffff'
+                '#4a5568'
             ],
-            'line-width': 3.5,
+            'line-width': 4,
+            'line-opacity': 0.9,
             'line-dasharray': ['case',
                 ['==',['get','zona'],'zona oro'],     ['literal', ZONA_STYLES['zona oro'].dash],
                 ['==',['get','zona'],'zona plata'],   ['literal', ZONA_STYLES['zona plata'].dash],
@@ -176,25 +265,27 @@ function addLotesToMap(data) {
         }
     });
 
-    // Etiquetas en el centro de cada lote
+    // Etiquetas en el centro de cada lote (mejoradas)
     map.addLayer({
         id: 'lotes-labels',
         type: 'symbol',
         source: 'lotes',
         layout: {
             'text-field':['get','lote'],
-            'text-size':14,
+            'text-size': 14,
             'text-font':['Open Sans Bold','Arial Unicode MS Bold'],
-            'text-allow-overlap': true
+            'text-allow-overlap': false,
+            'text-ignore-placement': false
         },
         paint: {
-            'text-color':'#fff',
-            'text-halo-color':'#000',
-            'text-halo-width':2
+            'text-color':'#1a202c',
+            'text-halo-color':'rgba(255,255,255,0.8)',
+            'text-halo-width':2,
+            'text-opacity':0.9
         }
     });
 
-    // Punto central de cada lote (opcional, para mejor interacción)
+    // Punto central de cada lote (para interacción)
     map.addLayer({
         id: 'lotes-centers',
         type: 'circle',
@@ -207,34 +298,66 @@ function addLotesToMap(data) {
 
     mapLayersLoaded = true;
 
-    // Zoom automático
+    // Efectos de hover para mejor interactividad
+    map.on('mouseenter', 'lotes-fill', () => {
+        map.getCanvas().style.cursor = 'pointer';
+        map.setPaintProperty('lotes-fill', 'fill-color', [
+            'case',
+            ['==', ['get', 'estatus'], 'disponible'], 'rgba(76, 175, 80, 0.25)',
+            ['==', ['get', 'estatus'], 'apartado'], 'rgba(255, 152, 0, 0.25)',
+            ['==', ['get', 'estatus'], 'vendido'], 'rgba(244, 67, 54, 0.25)',
+            'rgba(200, 200, 200, 0.2)'
+        ]);
+    });
+
+    map.on('mouseleave', 'lotes-fill', () => {
+        map.getCanvas().style.cursor = '';
+        map.setPaintProperty('lotes-fill', 'fill-color', [
+            'case',
+            ['==', ['get', 'estatus'], 'disponible'], 'rgba(76, 175, 80, 0.15)',
+            ['==', ['get', 'estatus'], 'apartado'], 'rgba(255, 152, 0, 0.15)',
+            ['==', ['get', 'estatus'], 'vendido'], 'rgba(244, 67, 54, 0.15)',
+            'rgba(200, 200, 200, 0.1)'
+        ]);
+    });
+
+    // Zoom automático mejorado
     const bounds = new mapboxgl.LngLatBounds();
     data.features.forEach(f => {
-        // Para polígonos, usar todas las coordenadas
         if (f.geometry.type === 'Polygon') {
             f.geometry.coordinates[0].forEach(c => bounds.extend(c));
-        }
-        // Para MultiPolygon, usar todas las coordenadas de todos los polígonos
-        else if (f.geometry.type === 'MultiPolygon') {
+        } else if (f.geometry.type === 'MultiPolygon') {
             f.geometry.coordinates.forEach(polygon => {
                 polygon[0].forEach(c => bounds.extend(c));
             });
         }
     });
-    map.fitBounds(bounds, {padding:60, duration:1500, maxZoom:20});
-
-    // Popup mejorado con información de vértices
-    const popup = new mapboxgl.Popup({closeButton:true, closeOnClick:false, className:'modern-lote-popup', anchor:'left'});
     
-    // Click en el área central del lote
-    map.on('click', 'lotes-centers', e => {
+    // Ajustar el zoom con márgenes adecuados
+    map.fitBounds(bounds, {
+        padding: {top: 60, bottom: 60, left: 60, right: 100},
+        duration: 1500,
+        maxZoom: 19
+    });
+
+    // Popup mejorado
+    const popup = new mapboxgl.Popup({
+        closeButton: true, 
+        closeOnClick: false, 
+        className: 'modern-lote-popup', 
+        anchor: 'left',
+        maxWidth: '300px'
+    });
+    
+    // Click en el área del lote
+    map.on('click', 'lotes-fill', e => {
         const p = e.features[0].properties;
         const geometry = e.features[0].geometry;
         
         // Extraer coordenadas de vértices
         let vertices = [];
         if (geometry.type === 'Polygon') {
-            vertices = geometry.coordinates[0].slice(0, -1); // Excluir el último punto (igual al primero)
+            vertices = geometry.coordinates[0].slice(0, -1);
         } else if (geometry.type === 'MultiPolygon') {
             vertices = geometry.coordinates[0][0].slice(0, -1);
         }
@@ -259,14 +382,11 @@ function addLotesToMap(data) {
                             ${p.estatus==='disponible'?'Disponible':p.estatus==='vendido'?'Vendido':'Apartado'}
                         </span>
                     </div>
-                    ${zonaTag}
                     <div class="popup-subtitle">Manzana ${p.manzana}</div>
                 </div>
                 <div class="popup-content">
                     <div class="popup-grid">
-                        <div class="info-item"><span class="icon">Área</span><strong>${p.area_metros} m²</strong></div>
-                        <div class="info-item"><span class="icon">Precio m²</span><strong>$${p.precio_m2}</strong></div>
-                        <div class="info-item compact"><strong>$${parseFloat(p.costo_total).toLocaleString('es-MX')}</strong><span class="icon">Total</span></div>
+                        <div class="info-item"><span class="icon"></span><strong>Área: ${p.area_metros} m²</strong></div>
                     </div>
                     <div class="measures-grid">
                         <div class="measure north">N ${p.norte}m</div>
@@ -306,12 +426,12 @@ function addLotesToMap(data) {
         `).addTo(map);
     });
 
-    map.on('mouseenter', ['lotes-centers', 'lotes-vertices'], () => map.getCanvas().style.cursor = 'pointer');
-    map.on('mouseleave', ['lotes-centers', 'lotes-vertices'], () => map.getCanvas().style.cursor = '');
+    map.on('mouseenter', ['lotes-fill', 'lotes-vertices'], () => map.getCanvas().style.cursor = 'pointer');
+    map.on('mouseleave', ['lotes-fill', 'lotes-vertices'], () => map.getCanvas().style.cursor = '');
 }
 
 // ===========================================
-// CONTROLES FLOTANTES (3D, zoom, vértices)
+// CONTROLES FLOTANTES (mejorados)
 // ===========================================
 function initMapControls() {
     const controls = document.createElement('div');
@@ -332,6 +452,9 @@ function initMapControls() {
         <button class="ctrl-btn toggle-vertices" title="Mostrar/ocultar vértices">
             <span class="material-icons">location_on</span>
         </button>
+        <button class="ctrl-btn toggle-labels" title="Mostrar/ocultar etiquetas">
+            <span class="material-icons">label</span>
+        </button>
     `;
     mapContainer.appendChild(controls);
 
@@ -339,6 +462,7 @@ function initMapControls() {
     controls.querySelector('.zoom-out').onclick = () => map.zoomOut();
     controls.querySelector('.compass').onclick = () => map.easeTo({bearing:0,pitch:0,duration:1000});
     
+    // Control para vista 3D
     controls.querySelector('.toggle-3d').onclick = () => {
         const btn = controls.querySelector('.toggle-3d');
         if (btn.querySelector('span').textContent === '3d_rotation') {
@@ -367,6 +491,20 @@ function initMapControls() {
             btn.classList.remove('active');
         } else {
             map.setLayoutProperty('lotes-vertices', 'visibility', 'visible');
+            btn.classList.add('active');
+        }
+    };
+
+    // Control para mostrar/ocultar etiquetas
+    controls.querySelector('.toggle-labels').onclick = () => {
+        const btn = controls.querySelector('.toggle-labels');
+        const isVisible = map.getLayoutProperty('lotes-labels', 'visibility') !== 'none';
+        
+        if (isVisible) {
+            map.setLayoutProperty('lotes-labels', 'visibility', 'none');
+            btn.classList.remove('active');
+        } else {
+            map.setLayoutProperty('lotes-labels', 'visibility', 'visible');
             btn.classList.add('active');
         }
     };

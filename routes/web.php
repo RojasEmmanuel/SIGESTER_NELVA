@@ -194,7 +194,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('ing')->name('ing.')->group(function () {
 
         // Lista todos los fraccionamientos (para el select)
-        Route::get('/mapa-fraccionamientos', [MapasController::class, 'index'])
+        Route::get('/mapas-fraccionamientos', [MapasController::class, 'index'])
             ->name('mapa-fraccionamientos');
 
         // Carga los datos del fraccionamiento seleccionado (JSON para JS)

@@ -318,7 +318,7 @@ class FraccionamientoController extends Controller
     {
         try {
             $zonas = Zona::where('id_fraccionamiento', $idFraccionamiento)
-                ->select('id_zona', 'nombre', 'precio_m2')
+                ->select('id_zona', 'nombre', 'precio_m2','color')
                 ->get();
 
             return response()->json([

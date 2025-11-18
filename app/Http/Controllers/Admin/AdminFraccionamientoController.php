@@ -86,6 +86,7 @@ class AdminFraccionamientoController extends Controller
                 $request->validate([
                     'zonas.*.nombre'     => 'required|string|max:100',
                     'zonas.*.precio_m2'  => 'required|numeric|min:0',
+                    'zonas.*.color'      => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/', // valida #RRGGBB
                 ]);
 
                 Log::info('Creando zonas para fraccionamiento', [
@@ -97,6 +98,7 @@ class AdminFraccionamientoController extends Controller
                     Zona::create([
                         'nombre'             => $zonaData['nombre'],
                         'precio_m2'          => $zonaData['precio_m2'],
+                        'color'              => strtoupper($zonaData['color']), // opcional: guardar en mayúsculas
                         'id_fraccionamiento' => $fraccionamiento->id_fraccionamiento,
                     ]);
                 }

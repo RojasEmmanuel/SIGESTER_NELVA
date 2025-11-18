@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let is3DMode = false;
     let mapLayersLoaded = false;
     let styleChanging = false;
+    let zonasData = {}; // Objeto para almacenar los datos de zonas
 
     const mapStyles = {
         'satellite-streets': 'mapbox://styles/mapbox/satellite-streets-v12',
@@ -33,42 +34,12 @@ document.addEventListener('DOMContentLoaded', function () {
         'vendido': 'Vendido'
     };
 
-    const ZONA_STYLES = {
-        'zona oro': { 
-            color: '#ffd700', 
-            dash: ['literal', [6, 3]], 
-            name: 'Oro',
-            gradient: 'linear-gradient(135deg, #fff9c4, #ffd700)',
-            icon: '👑'
-        },
-        'zona plata': { 
-            color: '#c0c0c0', 
-            dash: ['literal', [4, 4]], 
-            name: 'Plata',
-            gradient: 'linear-gradient(135deg, #f5f5f5, #c0c0c0)',
-            icon: '⚪'
-        },
-        'zona bronce': { 
-            color: '#cd7f32', 
-            dash: ['literal', [8, 2, 2, 2]], 
-            name: 'Bronce',
-            gradient: 'linear-gradient(135deg, #ffe0b2, #cd7f32)',
-            icon: '🟤'
-        },
-        'zona premium': { 
-            color: '#9c27b0', 
-            dash: ['literal', [10, 3]], 
-            name: 'Premium',
-            gradient: 'linear-gradient(135deg, #e1bee7, #9c27b0)',
-            icon: '💎'
-        },
-        'zona estandar': { 
-            color: '#757575', 
-            dash: ['literal', [3, 3]], 
-            name: 'Estándar',
-            gradient: 'linear-gradient(135deg, #f5f5f5, #757575)',
-            icon: '🏠'
-        }
+    const ZONA_DASH_PATTERNS = {
+        'zona oro': ['literal', [6, 3]],
+        'zona plata': ['literal', [4, 4]],
+        'zona bronce': ['literal', [8, 2, 2, 2]],
+        'zona premium': ['literal', [10, 3]],
+        'zona estandar': ['literal', [3, 3]]
     };
 
     // Añadir estilos CSS dinámicamente
@@ -136,10 +107,8 @@ document.addEventListener('DOMContentLoaded', function () {
             align-items: center;
             gap: 4px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-
-        .zona-icon {
-            font-size: 10px;
+            color: #1f2937;
+            border: 1px solid;
         }
 
         .popup-subtitle {
@@ -369,10 +338,16 @@ document.addEventListener('DOMContentLoaded', function () {
     `;
     document.head.appendChild(style);
 
-    function getZonaBorderStyle(zonaNombre) {
-        if (!zonaNombre) return null;
-        const key = zonaNombre.toLowerCase().trim();
-        return ZONA_STYLES[key] || null;
+    function getZonaStyle(zonaNombre) {
+        if (!zonaNombre || !zonasData[zonaNombre] || !zonasData[zonaNombre].color) return null;
+        return {
+            color: zonasData[zonaNombre].color,
+            name: zonasData[zonaNombre].nombre,
+            gradient: `linear-gradient(135deg, ${zonasData[zonaNombre].color}20, ${zonasData[zonaNombre].color})`
+        };
+    }
+    function getZonaDashPattern(zonaNombre) {
+        return ZONA_DASH_PATTERNS[zonaNombre] || ['literal', [1, 0]];
     }
 
     function getStatusClass(status) {
@@ -610,6 +585,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const lotesData = await lotesRes.json();
             if (!lotesData.success) throw new Error();
 
+            // Cargar datos de zonas
+            await loadZonasData(id);
+
             const lotesMap = {};
             lotesData.lotes.forEach(l => lotesMap[l.numeroLote] = l);
 
@@ -655,9 +633,43 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+   /* ===========================
+   CARGAR DATOS DE ZONAS
+   =========================== */
+    async function loadZonasData(fraccionamientoId) {
+        try {
+            const zonasRes = await fetch(`/asesor/fraccionamiento/${fraccionamientoId}/zonas`);
+            if (zonasRes.ok) {
+                const zonasResponse = await zonasRes.json();
+                if (zonasResponse.success && zonasResponse.zonas) {
+                    // Limpiar y cargar datos de zonas
+                    zonasData = {};
+                    zonasResponse.zonas.forEach(zona => {
+                        const key = zona.nombre.toLowerCase().trim();
+                        // Validar que el color exista y sea válido
+                        if (zona.color && zona.color !== 'undefined' && zona.color !== 'null') {
+                            zonasData[key] = {
+                                nombre: zona.nombre,
+                                color: zona.color
+                            };
+                        } else {
+                            console.warn(`Zona "${zona.nombre}" no tiene color válido:`, zona.color);
+                        }
+                    });
+                    console.log('Zonas cargadas:', zonasData);
+                }
+            }
+        } catch (e) {
+            console.error('Error loading zones data:', e);
+        }
+    }
+
     /* ===========================
        AÑADIR LOTES
        =========================== */
+    /* ===========================
+   AÑADIR LOTES
+   =========================== */
     function addLotesToMap(data) {
         if (!map || !data) return;
 
@@ -687,30 +699,56 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Bordes por zona
+        // Construir la expresión de color para bordes dinámicamente
+        const zonasKeys = Object.keys(zonasData);
+        let lineColorExpression;
+        
+        if (zonasKeys.length > 0) {
+            // Si hay zonas cargadas, crear expresión case
+            // Filtrar zonas que tengan color definido
+            const caseExpressions = zonasKeys.flatMap(key => {
+                const color = zonasData[key].color;
+                // Solo incluir si el color está definido y no es null/undefined
+                if (color && color !== 'undefined' && color !== 'null') {
+                    return [
+                        ['==', ['get', 'zona'], key],
+                        color
+                    ];
+                }
+                return []; // Excluir zonas sin color
+            }).filter(expr => expr.length > 0); // Filtrar arrays vacíos
+            
+            // Si hay expresiones válidas, crear el case, sino usar color por defecto
+            if (caseExpressions.length > 0) {
+                lineColorExpression = [
+                    'case',
+                    ...caseExpressions,
+                    '#ffffff' // Color por defecto si no coincide con ninguna zona
+                ];
+            } else {
+                lineColorExpression = '#ffffff';
+            }
+        } else {
+            // Si no hay zonas, usar color blanco por defecto
+            lineColorExpression = '#ffffff';
+        }
+
+        // Bordes por zona - usando colores de la BD
         map.addLayer({
             id: 'lotes-borders',
             type: 'line',
             source: 'lotes',
             paint: {
-                'line-color': [
-                    'case',
-                    ['==', ['get', 'zona'], 'zona oro'], '#ffd700',
-                    ['==', ['get', 'zona'], 'zona plata'], '#c0c0c0',
-                    ['==', ['get', 'zona'], 'zona bronce'], '#cd7f32',
-                    ['==', ['get', 'zona'], 'zona premium'], '#9c27b0',
-                    ['==', ['get', 'zona'], 'zona estandar'], '#757575',
-                    '#ffffff'
-                ],
+                'line-color': lineColorExpression,
                 'line-width': 3,
                 'line-opacity': 1,
                 'line-dasharray': [
                     'case',
-                    ['==', ['get', 'zona'], 'zona oro'], ZONA_STYLES['zona oro'].dash,
-                    ['==', ['get', 'zona'], 'zona plata'], ZONA_STYLES['zona plata'].dash,
-                    ['==', ['get', 'zona'], 'zona bronce'], ZONA_STYLES['zona bronce'].dash,
-                    ['==', ['get', 'zona'], 'zona premium'], ZONA_STYLES['zona premium'].dash,
-                    ['==', ['get', 'zona'], 'zona estandar'], ZONA_STYLES['zona estandar'].dash,
+                    ['==', ['get', 'zona'], 'zona oro'], ['literal', [6, 3]],
+                    ['==', ['get', 'zona'], 'zona plata'], ['literal', [4, 4]],
+                    ['==', ['get', 'zona'], 'zona bronce'], ['literal', [8, 2, 2, 2]],
+                    ['==', ['get', 'zona'], 'zona premium'], ['literal', [10, 3]],
+                    ['==', ['get', 'zona'], 'zona estandar'], ['literal', [3, 3]],
                     ['literal', [1, 0]]
                 ]
             }
@@ -770,11 +808,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function createModernPopup(p) {
         const statusClass = getStatusClass(p.estatus);
-        const zonaStyle = p.zona ? getZonaBorderStyle(p.zona) : null;
+        const zonaStyle = p.zona ? getZonaStyle(p.zona) : null;
         const isAvailable = isLoteAvailable(p.estatus);
 
         const zonaTag = zonaStyle ? `
-            <div class="popup-zona" style="background: ${zonaStyle.gradient}; color: #1f2937; border: 1px solid ${zonaStyle.color};">
+            <div class="popup-zona" style="background: ${zonaStyle.color}; border-color: ${zonaStyle.color}80;">
                 Zona ${zonaStyle.name}
             </div>` : '';
 
@@ -896,7 +934,5 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-
-    
     setTimeout(initializeMap, 100);
 });

@@ -567,6 +567,8 @@ select.form-control {
     display: flex;
     align-items: center;
     justify-content: center;
+    color: white;
+    width: 20px;
 }
 
 .zona-row .btn-danger:hover {

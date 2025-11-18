@@ -22,7 +22,7 @@
                 <a href="{{ url('ing/inicio') }}" class="{{ Request::is('ing/inicio*') ? 'active' : '' }}">
                     <i class="fas fa-home"></i> Panel
                 </a>
-                <a href="{{url('ing/mapa-fraccionamientos')}}" class="{{Request::is('ing/mapa-fraccionamientos') ? 'active':''}}"> <i class="fas fa-map"></i>Mapas</a>
+                <a href="{{url('ing/mapas-fraccionamientos')}}" class="{{Request::is('ing/mapa-fraccionamientos') ? 'active':''}}"> <i class="fas fa-map"></i>Mapas</a>
                 <a href="{{ route('asesor.perfil.index') }}" class="{{ Request::routeIs('asesor.perfil*') ? 'active' : '' }}">
                     <i class="fas fa-user"></i> Perfil
                 </a>
@@ -58,7 +58,7 @@
                         <i class="fas fa-home"></i> <span>Panel</span>
                     </a>
 
-                    <a href="{{url('ing/mapa-fraccionamientos')}}" class="nav-item {{Request::is('ing/mapa-fraccionamientos') ? 'active':''}}">
+                    <a href="{{url('ing/mapas-fraccionamientos')}}" class="nav-item {{Request::is('ing/mapa-fraccionamientos') ? 'active':''}}">
                         <i class="fas fa-map"></i> <span>Mapas</span>
                     </a>
                     

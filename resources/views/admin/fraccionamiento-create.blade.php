@@ -205,24 +205,26 @@
                 </div>
             </div>
 
-            <!-- ==================== PASO 3: ZONAS DINÁMICAS ==================== -->
-            <div id="paso3" class="step form-section"> <!-- Agregar form-section -->
+            <!-- ==================== PASO 3: ZONAS DINÁMICAS CON COLOR ==================== -->
+            <div id="paso3" class="step form-section">
                 <div class="section-header mb-4">
                     <h3 class="section-title">
-                        <i class="fas fa-layer-group"></i> Zonas del Fraccionamiento
+                        Zonas del Fraccionamiento
                     </h3>
+                    <p class="text-muted">Cada zona puede tener su propio precio por m² y color para el mapa.</p>
                 </div>
 
                 <div id="contenedorZonas" class="mb-4">
-                    <!-- Primera zona (clonable) -->
-                    <div class="zona-row card border-primary mb-3">
+                    <!-- Primera zona (ya con color) -->
+                    <div class="zona-row card border-primary mb-3 position-relative">
                         <div class="card-body">
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label class="form-label">Nombre de la zona *</label>
                                     <input type="text" name="zonas[0][nombre]" 
-                                        class="form-control" placeholder="Ej. Oro, Plata, Bronce" required>
+                                        class="form-control" placeholder="Ej. Oro, Premium, Residencial" required>
                                 </div>
+
                                 <div class="form-group">
                                     <label class="form-label">Precio por m² *</label>
                                     <div class="input-with-icon">
@@ -231,8 +233,24 @@
                                             class="form-control" placeholder="2500.00" required>
                                     </div>
                                 </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Color de la zona *</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <input type="color" name="zonas[0][color]" 
+                                            class="form-control form-control-color" 
+                                            value="#4361ee" style="width: 70px; height: 45px;" required>
+                                        <input type="text" class="form-control" 
+                                            style="max-width: 120px;" 
+                                            value="#4361ee" 
+                                            readonly 
+                                            id="colorText0">
+                                    </div>
+                                    <small class="text-muted">Se usará en mapas y leyendas</small>
+                                </div>
+
                                 <div class="form-group d-flex align-items-end">
-                                    <button type="button" class="btn btn-danger" style="color: white"
+                                    <button type="button" class="btn btn-danger" 
                                             onclick="this.closest('.zona-row').remove()">
                                         <i class="fas fa-trash"></i>
                                     </button>
@@ -243,16 +261,16 @@
                 </div>
 
                 <div class="text-center mb-4">
-                    <button type="button" class="btn btn-primary" onclick="agregarZona()" style="margin-top: 20px">
+                    <button type="button" class="btn btn-success" onclick="agregarZona()" style="margin-top: 20px">
                         <i class="fas fa-plus"></i> Agregar otra zona
                     </button>
                 </div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Registrar Zonas
+                <div class="form-actions text-center">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                        <i class="fas fa-save"></i> Guardar Fraccionamiento y Zonas
                     </button>
-                    <button type="button" class="btn btn-outline" onclick="volverPaso2()"> <!-- Quitar ml-3 -->
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="volverPaso2()">
                         <i class="fas fa-arrow-left"></i> Volver
                     </button>
                 </div>
@@ -263,66 +281,122 @@
     </form>
 </div>
 
+
 <script>
-    // TU JS ORIGINAL (previewImage) se mantiene
-    function previewImage(input) {
-        const preview = document.getElementById('imagePreview');
-        const fileLabel = document.querySelector('.file-upload-label');
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.innerHTML = `<img src="${e.target.result}" alt="Vista previa" style="max-height:200px;">`;
-                fileLabel.innerHTML = '<i class="fas fa-check"></i> Archivo Seleccionado';
-                fileLabel.style.background = '#28a745';
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
+    // ===== VARIABLES GLOBALES (solo declaradas una vez) =====
+    let indiceZona = 1;  // Cambié el nombre para evitar conflictos
+
+    // ===== FUNCIONES DE NAVEGACIÓN ENTRE PASOS =====
+    function irAZonas() {
+        cambiarPaso('paso2');
     }
 
-    // NUEVO JS: pasos + zonas dinámicas
-    let indiceZona = 1;
-    function irAZonas() { cambiarPaso('paso2'); }
-    function volverPaso2() { cambiarPaso('paso2'); }
+    function volverPaso2() {
+        cambiarPaso('paso2');
+    }
+
     function cambiarPaso(id) {
-        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
 
     function mostrarZonas(si) {
         document.getElementById('agregar_zonas').value = si ? '1' : '0';
-        if (!si) return document.getElementById('formPrincipal').submit();
-        cambiarPaso('paso3');
+        if (!si) {
+            document.getElementById('formPrincipal').submit();
+        } else {
+            cambiarPaso('paso3');
+        }
     }
-    let indice = 1;
+
+    // ===== FUNCIÓN PARA AGREGAR ZONAS (con color picker sincronizado) =====
     function agregarZona() {
+        const coloresBonitos = ['#4361ee', '#3f37c9', '#4895ef', '#4cc9f0', '#7209b7', '#f72585', '#06d6a0', '#118ab2', '#ffd60a', '#ff6b6b'];
+        const colorAleatorio = coloresBonitos[Math.floor(Math.random() * coloresBonitos.length)];
+
         const html = `
             <div class="zona-row card border-primary mb-3">
                 <div class="card-body">
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">Nombre de la zona *</label>
-                            <input type="text" name="zonas[${indice}][nombre]" 
-                                class="form-control" placeholder="Ej. Oro, Plata, Bronce" required>
+                            <input type="text" name="zonas[${indiceZona}][nombre]" class="form-control" placeholder="Ej. Premium, Residencial" required>
                         </div>
+
                         <div class="form-group">
                             <label class="form-label">Precio por m² *</label>
                             <div class="input-with-icon">
                                 <i class="fas fa-dollar-sign"></i>
-                                <input type="number" step="0.01" name="zonas[${indice}][precio_m2]" 
-                                    class="form-control" placeholder="1800.00" required>
+                                <input type="number" step="0.01" name="zonas[${indiceZona}][precio_m2]" class="form-control" placeholder="2500.00" required>
                             </div>
                         </div>
+
+                       
+
+                        <div class="form-group">
+                            <label class="form-label">Color de la zona *</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <input type="color" name="zonas[${indiceZona}][color]" 
+                                    class="form-control form-control-color" 
+                                    value="#4361ee" style="width: 70px; height: 45px;" required>
+                                <input type="text" class="form-control" 
+                                    style="max-width: 120px;" 
+                                    value="#4361ee" 
+                                    readonly 
+                                    id="colorText0">
+                            </div>
+                            <small class="text-muted">Se usará en mapas y leyendas</small>
+                        </div>
+
+
+                        
                         <div class="form-group d-flex align-items-end">
-                            <button type="button" class="btn btn-danger" 
-                                    onclick="this.closest('.zona-row').remove()" style="color: white">
+                            <button type="button" class="btn btn-danger" onclick="this.closest('.zona-row').remove()">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>`;
+
         document.getElementById('contenedorZonas').insertAdjacentHTML('beforeend', html);
-        indice++;
+        indiceZona++;
     }
+    // ===== VISTA PREVIA DE IMAGEN (tu función original) =====
+    function previewImage(input) {
+        const preview = document.getElementById('imagePreview');
+        const fileLabel = document.querySelector('.file-upload-label');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Vista previa" style="max-height:200px; border-radius:8px;">`;
+                fileLabel.innerHTML = '<i class="fas fa-check"></i> Imagen seleccionada';
+                fileLabel.style.backgroundColor = '#28a745';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // ===== SINCRONIZAR COLOR PICKER → INPUT DE TEXTO (al cargar la página) =====
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sincronizar todos los color pickers (tanto los iniciales como los agregados dinámicamente)
+        document.addEventListener('input', function (e) {
+            if (e.target && e.target.classList.contains('color-picker')) {
+                const textoColor = e.target.closest('.form-group').querySelector('input[type="text"]');
+                if (textoColor) {
+                    textoColor.value = e.target.value;
+                }
+            }
+        });
+
+        // Sincronizar también el primer color picker que ya está en el HTML
+        const primerPicker = document.querySelector('#paso3 .color-picker');
+        if (primerPicker) {
+            const primerTexto = primerPicker.closest('.form-group').querySelector('input[type="text"]');
+            primerTexto.value = primerPicker.value;
+            primerPicker.addEventListener('input', () => primerTexto.value = primerPicker.value);
+        }
+    });
 </script>
+
 @endsection

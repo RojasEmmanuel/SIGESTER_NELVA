@@ -19,11 +19,13 @@ class Zona extends Model
     protected $fillable = [
         'nombre',
         'precio_m2',
+        'color',
         'id_fraccionamiento',
     ];
 
     protected $casts = [
         'precio_m2' => 'decimal:2',
+        'color'     => 'string',
     ];
 
     public function fraccionamiento()
