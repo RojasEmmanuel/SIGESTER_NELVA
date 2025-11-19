@@ -3,6 +3,7 @@
 let map = null;
 let currentFilter = 'all';
 let mapLayersLoaded = false;
+let currentPopup = null; // Variable global para controlar el popup actual
 
 const mapContainer = document.getElementById('mapPlano');
 mapboxgl.accessToken = 'pk.eyJ1Ijoicm9qYXNkZXYiLCJhIjoiY21leDF4N2JtMTI0NTJrcHlsdjBiN2Y3YiJ9.RB87H34djrYH3WrRa-12Pg';
@@ -46,7 +47,6 @@ style.textContent = `
     .lote-fill-disponible {background:rgba(76,175,80,0.15)!important}
     .lote-fill-apartado {background:rgba(255,152,0,0.15)!important}
     .lote-fill-vendido {background:rgba(244,67,54,0.15)!important}
-    .lote-hover {background:rgb(245,245,245)!important}
     .legend {position:absolute;bottom:20px;left:20px;background:white;border-radius:12px;padding:15px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:1;font-family:'Roboto',sans-serif;max-width:220px}
     .legend-title {font-size:14px;font-weight:600;margin-bottom:10px;color:#333;display:flex;align-items:center;gap:6px}
     .legend-item {display:flex;align-items:center;margin-bottom:8px;font-size:12px}
@@ -57,24 +57,13 @@ style.textContent = `
 document.head.appendChild(style);
 
 // ===========================================
-// CONSTANTES DE ZONAS (mejoradas)
-// ===========================================
-const ZONA_STYLES = {
-    'zona oro':     { color: '#ffd700', dash: [6,3],   name: 'Oro',     gradient: 'linear-gradient(135deg,#fff9c4,#ffd700)', icon: '★', fill: 'rgba(255, 215, 0, 0.1)' },
-    'zona plata':   { color: '#c0c0c0', dash: [4,4],   name: 'Plata',   gradient: 'linear-gradient(135deg,#f5f5f5,#c0c0c0)', icon: '✦', fill: 'rgba(192, 192, 192, 0.1)' },
-    'zona bronce':  { color: '#cd7f32', dash: [8,2,2,2], name: 'Bronce', gradient: 'linear-gradient(135deg,#ffe0b2,#cd7f32)', icon: '◆', fill: 'rgba(205, 127, 50, 0.1)' },
-    'zona premium': { color: '#9c27b0', dash: [10,3],  name: 'Premium', gradient: 'linear-gradient(135deg,#e1bee7,#9c27b0)', icon: '♛', fill: 'rgba(156, 39, 176, 0.1)' },
-    'zona estandar':{ color: '#757575', dash: [3,3],   name: 'Estándar',gradient: 'linear-gradient(135deg,#f5f5f5,#757575)', icon: '■', fill: 'rgba(117, 117, 117, 0.1)' }
-};
-
-// ===========================================
 // INICIALIZAR MAPA (con estilo mejorado)
 // ===========================================
 window.initializeMap = function() {
     if (map) map.remove();
     map = new mapboxgl.Map({
         container: 'mapPlano',
-        style: 'mapbox://styles/mapbox/light-v11', // Estilo más claro para mejor contraste
+        style: 'mapbox://styles/mapbox/streets-v12', // Estilo más claro para mejor contraste
         center: [-96.778, 15.7345],
         zoom: 18,
         pitch: 0,
@@ -105,27 +94,17 @@ function addLegend() {
             Estado de Lotes
         </div>
         <div class="legend-item">
-            <div class="legend-color" style="background:rgba(76,175,80,0.15);border-color:rgba(76,175,80,0.7)"></div>
+            <div class="legend-color" style="background:#4CAF50;border-color:#4CAF50"></div>
             <span>Disponible</span>
         </div>
         <div class="legend-item">
-            <div class="legend-color" style="background:rgba(255,152,0,0.15);border-color:rgba(255,152,0,0.7)"></div>
+            <div class="legend-color" style="background:#FF9800;border-color:#FF9800"></div>
             <span>Apartado</span>
         </div>
         <div class="legend-item">
-            <div class="legend-color" style="background:rgba(244,67,54,0.15);border-color:rgba(244,67,54,0.7)"></div>
+            <div class="legend-color" style="background:#F44336;border-color:#F44336"></div>
             <span>Vendido</span>
         </div>
-        <div class="legend-title" style="margin-top:15px">
-            <span class="material-icons" style="font-size:16px">layers</span>
-            Zonas
-        </div>
-        ${Object.entries(ZONA_STYLES).map(([key, zona]) => `
-            <div class="legend-zona">
-                <div class="legend-line" style="background:${zona.color}; border:1px solid ${zona.color}80"></div>
-                <span>${zona.name}</span>
-            </div>
-        `).join('')}
     `;
     mapContainer.appendChild(legend);
 }
@@ -138,7 +117,7 @@ window.processGeoJSONData = function(geoJsonData) {
 
     let features = [...geoJsonData.features];
 
-    // Perímetro del fraccionamiento
+    // Perímetro del fraccionamiento - COLOR SÓLIDO
     if (features[0]?.properties?.lote === "Fraccionamiento") {
         const perimetro = features.shift();
         map.addSource('frac-source', {type:'geojson', data: perimetro});
@@ -147,9 +126,9 @@ window.processGeoJSONData = function(geoJsonData) {
             type:'fill',
             source:'frac-source',
             paint:{
-                'fill-color':'#1f2937',
-                'fill-opacity':0.85,
-                'fill-outline-color':'#fff'
+                'fill-color':'#E8F5E8', // Verde claro sólido
+                'fill-opacity':1, // Color sólido
+                'fill-outline-color':'#2E7D32'
             }
         });
         map.addLayer({
@@ -157,9 +136,9 @@ window.processGeoJSONData = function(geoJsonData) {
             type:'line',
             source:'frac-source',
             paint:{
-                'line-color':'#fff',
+                'line-color':'#2E7D32',
                 'line-width':3,
-                'line-opacity':0.8
+                'line-opacity':1
             }
         });
     }
@@ -173,7 +152,6 @@ window.processGeoJSONData = function(geoJsonData) {
 
             features.forEach(f => {
                 const sl = lotesMap[f.properties.lote] || {};
-                const zona = (sl.zona?.nombre || '').toLowerCase().trim();
                 Object.assign(f.properties, {
                     estatus: sl.estatus || 'disponible',
                     manzana: sl.manzana || 'N/A',
@@ -183,8 +161,7 @@ window.processGeoJSONData = function(geoJsonData) {
                     norte: sl.medidas?.norte || 'N/A',
                     sur: sl.medidas?.sur || 'N/A',
                     oriente: sl.medidas?.oriente || 'N/A',
-                    poniente: sl.medidas?.poniente || 'N/A',
-                    zona
+                    poniente: sl.medidas?.poniente || 'N/A'
                 });
             });
 
@@ -207,7 +184,7 @@ function addLotesToMap(data) {
 
     map.addSource('lotes', {type:'geojson', data});
 
-    // Capa de relleno con colores según estado
+    // Capa de relleno con colores SÓLIDOS según estado
     map.addLayer({
         id: 'lotes-fill',
         type: 'fill',
@@ -215,53 +192,39 @@ function addLotesToMap(data) {
         paint: {
             'fill-color': [
                 'case',
-                ['==', ['get', 'estatus'], 'disponible'], 'rgba(76, 175, 80, 0.15)',
-                ['==', ['get', 'estatus'], 'apartado'], 'rgba(255, 152, 0, 0.15)',
-                ['==', ['get', 'estatus'], 'vendido'], 'rgba(244, 67, 54, 0.15)',
-                'rgba(200, 200, 200, 0.1)'
+                ['==', ['get', 'estatus'], 'disponible'], '#4CAF50', // Verde sólido
+                ['==', ['get', 'estatus'], 'apartado'], '#FF9800',   // Naranja sólido
+                ['==', ['get', 'estatus'], 'vendido'], '#F44336',    // Rojo sólido
+                '#9E9E9E' // Gris sólido
             ],
-            'fill-outline-color': 'transparent'
+            'fill-opacity': 0.8, // Ligeramente transparente para ver detalles
+            'fill-outline-color': '#1A237E'
         }
     });
 
-    // Capa de vértices (puntos en las esquinas de los lotes)
+    // Capa de vértices (puntos en las esquinas de los lotes) - RESTAURADA
     map.addLayer({
         id: 'lotes-vertices',
         type: 'circle',
         source: 'lotes',
         paint: {
-            'circle-radius': 5,
-            'circle-color': '#ff6b35',
+            'circle-radius': 6,
+            'circle-color': '#FF6D00',
             'circle-stroke-width': 2,
-            'circle-stroke-color': '#ffffff',
-            'circle-opacity': 0.8
+            'circle-stroke-color': '#FFFFFF',
+            'circle-opacity': 1
         }
     });
 
-    // Bordes por zona (con dasharray personalizado y mejor visibilidad)
+    // Bordes de los lotes
     map.addLayer({
         id: 'lotes-borders',
         type: 'line',
         source: 'lotes',
         paint: {
-            'line-color': ['case',
-                ['==',['get','zona'],'zona oro'],'#ffd700',
-                ['==',['get','zona'],'zona plata'],'#c0c0c0',
-                ['==',['get','zona'],'zona bronce'],'#cd7f32',
-                ['==',['get','zona'],'zona premium'],'#9c27b0',
-                ['==',['get','zona'],'zona estandar'],'#757575',
-                '#4a5568'
-            ],
-            'line-width': 4,
-            'line-opacity': 0.9,
-            'line-dasharray': ['case',
-                ['==',['get','zona'],'zona oro'],     ['literal', ZONA_STYLES['zona oro'].dash],
-                ['==',['get','zona'],'zona plata'],   ['literal', ZONA_STYLES['zona plata'].dash],
-                ['==',['get','zona'],'zona bronce'],  ['literal', ZONA_STYLES['zona bronce'].dash],
-                ['==',['get','zona'],'zona premium'], ['literal', ZONA_STYLES['zona premium'].dash],
-                ['==',['get','zona'],'zona estandar'],['literal', ZONA_STYLES['zona estandar'].dash],
-                ['literal',[1,0]]
-            ]
+            'line-color': '#1A237E',
+            'line-width': 2,
+            'line-opacity': 1
         }
     });
 
@@ -278,10 +241,10 @@ function addLotesToMap(data) {
             'text-ignore-placement': false
         },
         paint: {
-            'text-color':'#1a202c',
-            'text-halo-color':'rgba(255,255,255,0.8)',
+            'text-color':'#FFFFFF',
+            'text-halo-color':'#000000',
             'text-halo-width':2,
-            'text-opacity':0.9
+            'text-opacity':1
         }
     });
 
@@ -301,24 +264,12 @@ function addLotesToMap(data) {
     // Efectos de hover para mejor interactividad
     map.on('mouseenter', 'lotes-fill', () => {
         map.getCanvas().style.cursor = 'pointer';
-        map.setPaintProperty('lotes-fill', 'fill-color', [
-            'case',
-            ['==', ['get', 'estatus'], 'disponible'], 'rgba(76, 175, 80, 0.25)',
-            ['==', ['get', 'estatus'], 'apartado'], 'rgba(255, 152, 0, 0.25)',
-            ['==', ['get', 'estatus'], 'vendido'], 'rgba(244, 67, 54, 0.25)',
-            'rgba(200, 200, 200, 0.2)'
-        ]);
+        map.setPaintProperty('lotes-fill', 'fill-opacity', 1);
     });
 
     map.on('mouseleave', 'lotes-fill', () => {
         map.getCanvas().style.cursor = '';
-        map.setPaintProperty('lotes-fill', 'fill-color', [
-            'case',
-            ['==', ['get', 'estatus'], 'disponible'], 'rgba(76, 175, 80, 0.15)',
-            ['==', ['get', 'estatus'], 'apartado'], 'rgba(255, 152, 0, 0.15)',
-            ['==', ['get', 'estatus'], 'vendido'], 'rgba(244, 67, 54, 0.15)',
-            'rgba(200, 200, 200, 0.1)'
-        ]);
+        map.setPaintProperty('lotes-fill', 'fill-opacity', 0.8);
     });
 
     // Zoom automático mejorado
@@ -340,17 +291,35 @@ function addLotesToMap(data) {
         maxZoom: 19
     });
 
-    // Popup mejorado
+    // Popup mejorado - CON CIERRE AL HACER CLICK FUERA
     const popup = new mapboxgl.Popup({
         closeButton: true, 
-        closeOnClick: false, 
+        closeOnClick: true, // IMPORTANTE: Permite cerrar al hacer click fuera
         className: 'modern-lote-popup', 
         anchor: 'left',
         maxWidth: '300px'
     });
+
+    // Evento para cerrar popup al hacer click en el mapa
+    map.on('click', (e) => {
+        // Verificar si el click fue en un área sin features
+        const features = map.queryRenderedFeatures(e.point, {
+            layers: ['lotes-fill', 'lotes-vertices']
+        });
+        
+        if (features.length === 0 && currentPopup) {
+            currentPopup.remove();
+            currentPopup = null;
+        }
+    });
     
     // Click en el área del lote
     map.on('click', 'lotes-fill', e => {
+        // Cerrar popup anterior si existe
+        if (currentPopup) {
+            currentPopup.remove();
+        }
+
         const p = e.features[0].properties;
         const geometry = e.features[0].geometry;
         
@@ -361,9 +330,6 @@ function addLotesToMap(data) {
         } else if (geometry.type === 'MultiPolygon') {
             vertices = geometry.coordinates[0][0].slice(0, -1);
         }
-        
-        const zona = ZONA_STYLES[p.zona] || null;
-        const zonaTag = zona ? `<div class="popup-zona" style="background:${zona.gradient};color:#1f2937;border:1px solid ${zona.color}">${zona.icon} Zona ${zona.name}</div>` : '';
 
         // Generar lista de vértices
         const verticesList = vertices.map((vertex, index) => `
@@ -373,7 +339,15 @@ function addLotesToMap(data) {
             </div>
         `).join('');
 
-        popup.setLngLat(e.lngLat).setHTML(`
+        currentPopup = new mapboxgl.Popup({
+            closeButton: true, 
+            closeOnClick: true, // Permite cerrar al hacer click fuera
+            className: 'modern-lote-popup', 
+            anchor: 'left',
+            maxWidth: '300px'
+        })
+        .setLngLat(e.lngLat)
+        .setHTML(`
             <div class="popup-card">
                 <div class="popup-header">
                     <div style="display:flex;justify-content:space-between;align-items:flex-start">
@@ -402,15 +376,29 @@ function addLotesToMap(data) {
                     </div>
                 </div>
             </div>
-        `).addTo(map);
+        `)
+        .addTo(map);
     });
 
-    // Interacción con los vértices
+    // Interacción con los vértices - RESTAURADA
     map.on('click', 'lotes-vertices', e => {
+        // Cerrar popup anterior si existe
+        if (currentPopup) {
+            currentPopup.remove();
+        }
+
         const p = e.features[0].properties;
         const coordinates = e.lngLat;
         
-        popup.setLngLat(coordinates).setHTML(`
+        currentPopup = new mapboxgl.Popup({
+            closeButton: true, 
+            closeOnClick: true, // Permite cerrar al hacer click fuera
+            className: 'modern-lote-popup', 
+            anchor: 'left',
+            maxWidth: '300px'
+        })
+        .setLngLat(coordinates)
+        .setHTML(`
             <div class="popup-card">
                 <div class="popup-header">
                     <span class="lote-number">Vértice Lote ${p.lote}</span>
@@ -423,7 +411,8 @@ function addLotesToMap(data) {
                     </div>
                 </div>
             </div>
-        `).addTo(map);
+        `)
+        .addTo(map);
     });
 
     map.on('mouseenter', ['lotes-fill', 'lotes-vertices'], () => map.getCanvas().style.cursor = 'pointer');
@@ -446,14 +435,8 @@ function initMapControls() {
         <button class="ctrl-btn compass" title="Norte arriba">
             <span class="material-icons">explore</span>
         </button>
-        <button class="ctrl-btn toggle-3d" title="Vista 3D">
-            <span class="material-icons">3d_rotation</span>
-        </button>
         <button class="ctrl-btn toggle-vertices" title="Mostrar/ocultar vértices">
             <span class="material-icons">location_on</span>
-        </button>
-        <button class="ctrl-btn toggle-labels" title="Mostrar/ocultar etiquetas">
-            <span class="material-icons">label</span>
         </button>
     `;
     mapContainer.appendChild(controls);
@@ -461,25 +444,6 @@ function initMapControls() {
     controls.querySelector('.zoom-in').onclick = () => map.zoomIn();
     controls.querySelector('.zoom-out').onclick = () => map.zoomOut();
     controls.querySelector('.compass').onclick = () => map.easeTo({bearing:0,pitch:0,duration:1000});
-    
-    // Control para vista 3D
-    controls.querySelector('.toggle-3d').onclick = () => {
-        const btn = controls.querySelector('.toggle-3d');
-        if (btn.querySelector('span').textContent === '3d_rotation') {
-            if (!map.getSource('mapbox-dem')) {
-                map.addSource('mapbox-dem', {type:'raster-dem', url:'mapbox://mapbox.mapbox-terrain-dem-v1'});
-            }
-            map.setTerrain({source:'mapbox-dem', exaggeration:1.5});
-            map.easeTo({pitch:60, bearing:-17, duration:1200});
-            btn.querySelector('span').textContent = 'landscape';
-            btn.classList.add('active');
-        } else {
-            map.setTerrain(null);
-            map.easeTo({pitch:0, bearing:0, duration:1200});
-            btn.querySelector('span').textContent = '3d_rotation';
-            btn.classList.remove('active');
-        }
-    };
 
     // Control para mostrar/ocultar vértices
     controls.querySelector('.toggle-vertices').onclick = () => {
@@ -491,20 +455,6 @@ function initMapControls() {
             btn.classList.remove('active');
         } else {
             map.setLayoutProperty('lotes-vertices', 'visibility', 'visible');
-            btn.classList.add('active');
-        }
-    };
-
-    // Control para mostrar/ocultar etiquetas
-    controls.querySelector('.toggle-labels').onclick = () => {
-        const btn = controls.querySelector('.toggle-labels');
-        const isVisible = map.getLayoutProperty('lotes-labels', 'visibility') !== 'none';
-        
-        if (isVisible) {
-            map.setLayoutProperty('lotes-labels', 'visibility', 'none');
-            btn.classList.remove('active');
-        } else {
-            map.setLayoutProperty('lotes-labels', 'visibility', 'visible');
             btn.classList.add('active');
         }
     };

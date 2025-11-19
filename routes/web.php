@@ -197,8 +197,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/mapas-fraccionamientos', [MapasController::class, 'index'])
             ->name('mapa-fraccionamientos');
 
-        // Carga los datos del fraccionamiento seleccionado (JSON para JS)
-        Route::get('/fraccionamiento/{id_fraccionamiento}/geojson-data', [MapasController::class, 'geojsonData'])
-            ->name('fraccionamiento.geojson-data');
+        Route::get('/fraccionamiento/{id}/geojson-data', [App\Http\Controllers\Ingeniero\MapasController::class, 'getGeoJSONData'])
+         ->name('ing.fraccionamiento.geojson-data');
+
+        Route::post('/fraccionamiento/save-geojson', [App\Http\Controllers\Ingeniero\MapasController::class, 'saveGeoJSON'])
+            ->name('ing.fraccionamiento.save-geojson');
     });
 });
