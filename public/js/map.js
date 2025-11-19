@@ -45,181 +45,143 @@ document.addEventListener('DOMContentLoaded', function () {
     // Añadir estilos CSS dinámicamente
     const style = document.createElement('style');
     style.textContent = `
-        .modern-lote-popup {
-            max-width: 300px !important;
-            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            border: none;
-            overflow: hidden;
-        }
-
-        .popup-card {
+        
+        /* POPUP NELVA - 100% IGUAL A TU FOTO Y PERFECTO EN MÓVILES */
+        .popup-nelva-final {
+            width: 220px;
+            max-width: 90vw;
             background: white;
-            border-radius: 12px;
+            border-radius: 18px;
             overflow: hidden;
+            font-family: 'Roboto', system-ui, sans-serif;
         }
 
-        .popup-header {
-            padding: 14px 14px 10px;
-            background: linear-gradient(135deg, #185cdd 0%, #4facfe 50%, #90ceff 100%);
+        .header-nelva {
+            background: linear-gradient(135deg, #0066cc, #00aaff);
             color: white;
-            position: relative;
-        }
-
-        .popup-title {
+            padding: 14px 16px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 6px;
-            color: white;
+            align-items: center;
+            gap: 10px;
         }
 
-        .lote-number {
-            font-size: 18px;
+        .titulo {
+            font-size: 19px;
             font-weight: 700;
-            letter-spacing: -0.5px;
         }
 
-        .status-badge {
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 9px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            backdrop-filter: blur(10px);
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .status-disponible { background: rgba(76, 175, 80, 0.9) !important; }
-        .status-apartado { background: rgba(255, 152, 0, 0.9) !important; }
-        .status-vendido { background: rgba(244, 67, 54, 0.9) !important; }
-
-        .popup-zona {
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: 600;
-            margin: 6px 0;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            color: #1f2937;
-            border: 1px solid;
-        }
-
-        .popup-subtitle {
+        .status {
+            padding: 6px 14px;
+            border-radius: 20px;
             font-size: 11px;
-            opacity: 0.9;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
         }
 
-        .popup-content {
-            padding: 12px;
-        }
+        .status-disponible { background: #4caf50; }
+        .status-apartado   { background: #ff9800; }
+        .status-vendido    { background: #f44336; }
 
-        .popup-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .info-item {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .info-item.compact {
-            grid-column: 1 / -1;
-            background: #f8f9fa;
-            padding: 8px;
-            border-radius: 6px;
-            border-left: 3px solid #2196f3;
-        }
-
-        .info-item .icon {
-            font-size: 10px;
-            color: #666;
-            font-weight: 500;
-        }
-
-        .info-item strong {
-            font-size: 13px;
-            font-weight: 600;
+        .manzana-zona {
+            padding: 10px 16px 8px;
+            font-size: 14.5px;
             color: #333;
-        }
-
-        .info-item.compact strong {
-            color: #1976d2;
-            font-size: 14px;
-        }
-
-        .measures-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px;
-            margin-top: 8px;
-        }
-
-        .measure {
-            padding: 4px 6px;
-            background: #f5f5f5;
-            border-radius: 4px;
-            font-size: 10px;
+            background: #f8fbff;
             font-weight: 500;
-            text-align: center;
-            color: #555;
         }
 
-        .reserve-btn {
-            width: 100%;
+        .info {
+            padding: 12px 16px 10px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 9px;
+            font-size: 14.5px;
+        }
+
+        .row.total {
+            padding-top: 10px;
+            border-top: 2px solid #e3f2fd;
             margin-top: 10px;
+            font-size: 15px;
+        }
+
+        .row.total strong {
+            font-size: 21px;
+            color: #0066cc;
+            font-weight: 700;
+        }
+
+        .medidas-2x2 {
             padding: 10px 16px;
-            background: linear-gradient(135deg, #4caf50, #45a049);
+            font-size: 13px;
+            color: #000;
+            line-height: 1.5;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+
+        .medidas-2x2 div {
+            display: inline-block;
+            width: 100%;
+        }
+
+        .medidas-2x2 {
+            padding: 11px 16px;
+            background: #f5f9ff;
+            font-size: 13.2px;
+            color: #444;
+            text-align: center;
+            border-top: 1px solid #e8efff;
+            line-height: 1.6;
+        }
+
+        .medida-line {
+            margin: 3px 0;
+        }
+
+        .btn-reservar {
+            margin: 14px 16px 16px;
+            padding: 13px;
+            background: #4caf50;
             color: white;
             border: none;
-            border-radius: 6px;
-            font-size: 13px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
         }
 
-        .reserve-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
-        }
-
-        .reserve-btn:active {
-            transform: translateY(0);
-        }
-
-        .sold-notice {
-            width: 100%;
-            margin-top: 10px;
-            padding: 10px 12px;
-            background: #ffebee;
+        .no-disponible {
+            margin: 14px 16px 16px;
+            padding: 13px;
+            background: #fff5f5;
             color: #c62828;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
             border: 1px solid #ffcdd2;
         }
+
+        /* Perfecto en móviles pequeños */
+        @media (max-width: 780px) {
+            .popup-nelva-final { width: 150px; }
+            .header-nelva { padding: 12px 14px; }
+            .titulo { font-size: 14px; }
+            .row.total strong { font-size: 16px;}
+            .status { font-size: 9px; padding: 5px 12px;}
+            .manzana-zona { font-size: 11px; padding: 6px 12px 4px;}
+            .info { padding: 5px 7px 4px; }
+            .info.row.span { font-size: 9px; margin-bottom: 3px; }
+            .medidas-2x2 { font-size: 12px; padding: 4px 6px;}
+            .no-disponible, .btn-reservar { font-size: 12px; padding: 8px; margin: 5px 12px 12px;
+        }
+
 
         /* Map controls en centro-derecha */
         .map-controls {
@@ -270,18 +232,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 max-width: 260px !important;
             }
 
-            .popup-header {
-                padding: 12px 12px 8px;
-            }
-
             .lote-number {
                 font-size: 16px;
             }
 
-            .popup-grid {
-                grid-template-columns: 1fr;
-                gap: 6px;
-            }
 
             .map-controls {
                 right: 12px;
@@ -297,18 +251,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         @media (max-width: 480px) {
-            .modern-lote-popup {
-                max-width: 240px !important;
-            }
-
-            .popup-card {
-                border-radius: 10px;
-            }
-
-            .measures-grid {
-                grid-template-columns: 1fr;
-            }
-
+            
             .reserve-btn,
             .sold-notice {
                 padding: 8px 12px;
@@ -667,9 +610,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* ===========================
        AÑADIR LOTES
        =========================== */
-    /* ===========================
-   AÑADIR LOTES
-   =========================== */
+    
     function addLotesToMap(data) {
         if (!map || !data) return;
 
@@ -792,7 +733,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const popup = new mapboxgl.Popup({
             closeButton: true,
             closeOnClick: true,
-            maxWidth: '300px',
+            maxWidth: '150px',
             className: 'modern-lote-popup',
             anchor: 'left'
         });
@@ -807,74 +748,67 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function createModernPopup(p) {
-        const statusClass = getStatusClass(p.estatus);
-        const zonaStyle = p.zona ? getZonaStyle(p.zona) : null;
         const isAvailable = isLoteAvailable(p.estatus);
+        const zonaRaw = p.zona ? p.zona.replace('zona ', '') : '';
+        const zonaTexto = zonaRaw ? zonaRaw.charAt(0).toUpperCase() + zonaRaw.slice(1) : '';
 
-        const zonaTag = zonaStyle ? `
-            <div class="popup-zona" style="background: ${zonaStyle.color}; border-color: ${zonaStyle.color}80;">
-                Zona ${zonaStyle.name}
-            </div>` : '';
+        // Medidas de 2 en 2
+        let linea1 = '';
+        let linea2 = '';
 
-        const reserveButton = isAvailable ? `
-            <button class="reserve-btn" onclick="window.openReservationForLote('${p.lote}')">
-                <i class="fas fa-calendar-plus"></i>
-                Reservar Lote
-            </button>` : `
-            <div class="sold-notice">
-                <i class="fas fa-info-circle"></i>
-                No disponible
-            </div>`;
+        if (p.norte && p.norte !== 'N/A') linea1 += `N: ${p.norte}m`;
+        if (p.sur && p.sur !== 'N/A') linea1 += linea1 ? `   S: ${p.sur}m` : `S: ${p.sur}m`;
+
+        if (p.oriente && p.oriente !== 'N/A') linea2 += `E: ${p.oriente}m`;
+        if (p.poniente && p.poniente !== 'N/A') linea2 += linea2 ? `   O: ${p.poniente}m` : `O: ${p.poniente}m`;
+
+        const medidasHTML = (linea1 || linea2) ? `
+            <div class="medidas-2x2">
+                ${linea1 ? `<div class="medida-line">${linea1}</div>` : ''}
+                ${linea2 ? `<div class="medida-line">${linea2}</div>` : ''}
+            </div>
+        ` : '';
 
         return `
-            <div class="popup-card">
-                <div class="popup-header">
-                    <div class="popup-title">
-                        <span class="lote-number" style="color:white;">Lote ${p.lote}</span>
-                        <span class="status-badge ${statusClass}" style="color:white;">
-                            <i class="fas fa-${isAvailable ? 'check-circle' : 'lock'}"></i>
-                            ${formatStatus(p.estatus)}
-                        </span>
-                    </div>
-                    
-                    <div class="zonaManzana" style="display: flex; gap:6px;">
-                        ${zonaTag}
-                        <div class="popup-subtitle">
-                            <i class="fas fa-layer-group"></i>
-                            Manzana ${p.manzana}
-                        </div>
+            <div class="popup-nelva-final">
+                <div class="header-nelva">
+                    <div class="titulo">Lote ${p.lote}</div>
+                    <div class="status ${getStatusClass(p.estatus)}">
+                        ${formatStatus(p.estatus)}
                     </div>
                 </div>
 
-                <div class="popup-content">
-                    <div class="popup-grid">
-                        <div class="info-item">
-                            <span class="icon">Área</span>
-                            <strong>${p.area_metros} m²</strong>
-                        </div>
-                        <div class="info-item">
-                            <span class="icon"> Precio m²</span>
-                            <strong>$${p.precio_m2}</strong>
-                        </div>
-                        <div class="info-item compact">
-                            <span class="icon"> Total</span>
-                            <strong>$${parseFloat(p.costo_total).toLocaleString('es-MX')}</strong>
-                        </div>
-                    </div>
-
-                    <div class="measures-grid">
-                        <div class="measure north">N ${p.norte}m</div>
-                        <div class="measure south">S ${p.sur}m</div>
-                        <div class="measure east">E ${p.oriente}m</div>
-                        <div class="measure west">O ${p.poniente}m</div>
-                    </div>
-
-                    ${reserveButton}
+                <div class="manzana-zona">
+                    Manzana ${p.manzana}${zonaTexto ? ` • Zona ${zonaTexto}` : ''}
                 </div>
+
+                <div class="info">
+                    <div class="row">
+                        <span>Área</span>
+                        <strong>${p.area_metros} m²</strong>
+                    </div>
+                    <div class="row">
+                        <span>Precio m²</span>
+                        <strong>$${p.precio_m2}</strong>
+                    </div>
+                    <div class="row total">
+                        <span>Total</span>
+                        <strong>$${parseFloat(p.costo_total).toLocaleString('es-MX')}</strong>
+                    </div>
+                </div>
+
+                ${medidasHTML}
+
+                ${isAvailable ? 
+                    `<button class="btn-reservar" onclick="window.openReservationForLote('${p.lote}')">
+                        Reservar
+                    </button>` :
+                    `<div class="no-disponible">No disponible</div>`
+                }
             </div>
         `;
     }
-
+    
     /* ===========================
        CONTROLES EN CENTRO-DERECHA
        =========================== */

@@ -38,7 +38,7 @@ body {
 .container {
     max-width: 1350px;
     margin: 0 auto;
-    padding: 1.25rem 1rem;
+    padding: 1rem 1rem;
     padding-bottom: 100px;
 }
 
@@ -605,7 +605,6 @@ body {
     background: var(--white);
     border-radius: var(--rounded-sm);
     padding: 1rem;
-    box-shadow: var(--shadow);
     margin-bottom: 1rem;
     display: flex;
     flex-wrap: wrap;
@@ -724,42 +723,6 @@ body {
 }
 
 /* Estilos para el popup de Mapbox */
-.popup-content {
-    padding: 12px;
-    min-width: 220px;
-    max-width: 300px;
-}
-
-.popup-content h4 {
-    margin: 0 0 8px 0;
-    color: var(--primary-color);
-    font-size: 1.1rem;
-}
-
-.popup-status {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-.popup-details {
-    margin-bottom: 8px;
-}
-
-.popup-details p {
-    margin: 4px 0;
-    font-size: 0.9rem;
-}
-
-.popup-click-hint {
-    font-style: italic;
-    color: var(--text-light);
-    text-align: center;
-    font-size: 0.8rem;
-}
 
 /* Estilos para el panel de información del lote */
 .lote-header {
@@ -1078,274 +1041,9 @@ body {
 }
 
 /* 🎯 ESTILOS PARA POPUP COMPACTO */
-.lote-popup-compact .mapboxgl-popup-content {
-    background: white !important;
-    border-radius: 12px !important;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
-    padding: 0 !important;
-    border: 1px solid #e5e7eb;
-    max-width: 280px !important;
-}
-
-.lote-popup-compact .mapboxgl-popup-tip {
-    border-top-color: white !important;
-}
-
-.popup-compact-container {
-    padding: 16px;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-/* Header compacto */
-.popup-compact-header {
-    margin-bottom: 12px;
-}
-
-.popup-compact-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 4px;
-}
-
-.lote-number {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #1f2937;
-}
-
-.popup-status {
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.status-disponible { background: #dcfce7; color: #166534; }
-.status-apartado { background: #fef3c7; color: #92400e; }
-.status-vendido { background: #fee2e2; color: #991b1b; }
-.status-no-disponible { background: #f3f4f6; color: #6b7280; }
-
-.popup-compact-subtitle {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.8rem;
-    color: #6b7280;
-}
-
-.popup-compact-subtitle i {
-    font-size: 0.7rem;
-    color: #9ca3af;
-}
-
-/* Información esencial */
-.popup-compact-info {
-    margin-bottom: 12px;
-}
-
-.compact-info-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background: #f8fafc;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-.compact-info-item i {
-    color: #059669;
-    font-size: 0.8rem;
-}
-
-/* Medidas compactas */
-.popup-compact-measures {
-    margin-bottom: 16px;
-}
-
-.compact-measure-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-
-.measure-compact {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 10px;
-    background: #f8fafc;
-    border-radius: 6px;
-    border: 1px solid #e5e7eb;
-}
-
-.measure-direction {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #374151;
-    width: 12px;
-    text-align: center;
-}
-
-.measure-value {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-/* Botones compactos */
-.popup-compact-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.btn-compact {
-    flex: 1;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-calculate {
-    background: #3b82f6;
-    color: white;
-}
-
-.btn-calculate:hover {
-    background: #2563eb;
-    transform: translateY(-1px);
-}
-
-.btn-reserve {
-    background: #f3f4f6;
-    color: #374151;
-    border: 1px solid #d1d5db;
-}
-
-.btn-reserve:hover {
-    background: #e5e7eb;
-    transform: translateY(-1px);
-}
-
-/* ✅ CONTROLES DE MAPA COMPACTOS */
-.mapboxgl-ctrl-group {
-    background: white !important;
-    border-radius: 8px !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
-}
-
-.mapboxgl-ctrl-group button {
-    width: 30px !important;
-    height: 30px !important;
-}
-
-.mapboxgl-ctrl-group button:hover {
-    background: #f8fafc !important;
-}
-
-/* Estilos para la etiqueta del fraccionamiento (más compacta) */
-.fraccionamiento-label-popup .mapboxgl-popup-content {
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-}
-
-.fraccionamiento-label-popup .mapboxgl-popup-tip {
-    display: none !important;
-}
-
-.fraccionamiento-center-label h3 {
-    color: #1e40af;
-    font-size: 18px; /* Más pequeño */
-    font-weight: bold;
-    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.9);
-    margin: 0;
-    padding: 8px 16px; /* Más compacto */
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 8px;
-    border: 2px solid #1e40af;
-    text-align: center;
-}
 
 
-/* Estilos para controles personalizados del mapa */
-.custom-map-controls {
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
 
-.custom-nav-control, .custom-rotate-control {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-    padding: 5px;
-    border: 1px solid #e5e7eb;
-}
-
-.custom-control-btn {
-    width: 40px;
-    height: 40px;
-    border: none;
-    background: white;
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    color: #374151;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.custom-control-btn:hover {
-    background: #f8fafc;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-}
-
-.custom-control-btn:active {
-    transform: translateY(0);
-}
-
-.toggle-3d {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-    border: 1px solid #e5e7eb;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.toggle-3d:hover {
-    background: #f8fafc;
-    transform: translateY(-1px);
-}
 
 /* Estilos para los botones de filtro */
 .filter-buttons {
@@ -1948,7 +1646,7 @@ body {
 
 
 
-/* ==================== SECCIÓN PROMOCIONES MEJORADA ==================== */
+/* ==================== SECCIÓN PROMOCIONES ==================== */
 .oceanica-promociones-section {
     margin-top: 2.5rem;
     padding: 1.5rem;

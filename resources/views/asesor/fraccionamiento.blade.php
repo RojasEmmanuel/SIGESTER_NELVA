@@ -28,6 +28,7 @@
 
 @push('styles')
 <link href="{{ asset('css/fraccionamientoAsesor.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="/css/fraccionamientoAsesor.css">
 <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
 
 @endpush
@@ -100,11 +101,11 @@
             </button>
         </div>
 
-        <!-- Development Plan -->
+        <!-- Development Plan mapaa-->
         <div class="development-plan">
             <h3 class="info-title">
                 <i class="fas fa-map"></i>
-                <span>Plano Interactivo del Fraccionamiento</span>
+                <span>Plano Interactivo</span>
             </h3>
             
             <div class="plan-container" id="planContainer">
@@ -129,15 +130,8 @@
                             <button class="style-btn" data-style="light">
                                 <i class="fas fa-map"></i> Claro
                             </button>
-                            <button class="style-btn" data-style="dark">
-                                <i class="fas fa-moon"></i> Oscuro
-                            </button>
-                            <button class="style-btn" data-style="standard">
-                                <i class="fas fa-map-marked-alt"></i> Estándar
-                            </button>
-                            <button class="style-btn" data-style="tourist">
-                                <i class="fas fa-landmark"></i> Lugares Turísticos
-                            </button>
+                           
+                            
                         </div>
                     </div>
                     
@@ -708,8 +702,9 @@
 
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <script src="{{ asset('js/modals.js') }}"></script>
+    <script src="/js/map.js"></script>
     <script src="{{ asset('js/map.js') }}"></script>
-
+    <script src="/js/modals.js"></script>
     <script>
         // Efectos hover mejorados para tarjetas
         document.addEventListener('DOMContentLoaded', function() {
