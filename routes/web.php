@@ -19,12 +19,30 @@ use App\Http\Controllers\Admin\AdminPromocionController;
 use App\Http\Controllers\Ingeniero\IngInicioController;
 use App\Http\Controllers\Ingeniero\LoteController;
 use App\Http\Controllers\Ingeniero\MapasController;
+use App\Http\Controllers\Auth\PasswordResetController;
 
 // Rutas de autenticación
 Route::get('/', [InicioClientController::class, 'index'])->name('inicio');
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
+
+Route::prefix('password')->name('password.')->group(function () {
+    Route::get('/reset', [PasswordResetController::class, 'showRequestForm'])
+        ->name('request');
+        
+    Route::post('/reset/request', [PasswordResetController::class, 'sendResetCode'])
+        ->name('email')
+        ->middleware('throttle:6,1');
+
+    // Ruta para mostrar formulario de nueva contraseña
+    Route::get('/reset/{token}', [PasswordResetController::class, 'showResetForm'])
+        ->name('reset');
+
+    // Ruta para procesar el restablecimiento (con token en URL)
+    Route::post('/reset/{token}', [PasswordResetController::class, 'reset'])
+        ->name('update');
+});
 
 
 Route::get('/nosotros', [InicioClientController::class, 'Nosotros'])->name('nosotros');
