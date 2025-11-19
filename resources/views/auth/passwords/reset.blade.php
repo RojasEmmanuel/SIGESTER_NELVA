@@ -55,9 +55,6 @@
                             style="letter-spacing: 8px; font-size: 1.4rem;">
                         <label>Código de 6 dígitos</label>
                     </div>
-                    <small class="text-muted text-center d-block mt-1">
-                        Puedes pegarlo tal como llega: 123 456
-                    </small>
                 </div>
 
                 <div class="input-group">
