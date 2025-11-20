@@ -511,6 +511,13 @@
                         @enderror
                     </div>
                     <div class="form-group">
+                        <label for="pago">Monto a pagar <span class="required">*</span></label>
+                        <input type="number" name="credito[monto_Pago]" id="credito_monto_Pago" class="form-control" value="" min="1">
+                        @error('montoPago')
+                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="form-group">
                         <label for="credito_observaciones">Observaciones</label>
                         <textarea name="credito[observaciones]" id="credito_observaciones" class="form-control"></textarea>
                         @error('credito.observaciones')

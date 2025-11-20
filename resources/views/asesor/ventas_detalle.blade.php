@@ -335,6 +335,10 @@
                             <span class="detail-label">Día de Pago</span>
                             <span class="detail-value">{{ $venta->credito->dia_pago ?? 'N/A' }}</span>
                         </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Monto a pagar</span>
+                            <span class="detail value"> {{$venta->credito->pagos ?? 'N/A'}} </span>
+                        </div>
                         @if($venta->credito->observaciones)
                         <div class="detail-item">
                             <span class="detail-label">Observaciones</span>

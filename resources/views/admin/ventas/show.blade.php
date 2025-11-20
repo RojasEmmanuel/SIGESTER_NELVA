@@ -241,6 +241,10 @@
                                     <th>Día de Pago:</th>
                                     <td>{{ $venta->credito->dia_pago ?? 'N/A' }}</td>
                                 </tr>
+                                <tr>
+                                    <th>Monto de pago</th>
+                                    <td>{{$venta->credito->pagos ?? 'N/A'}} </td>
+                                </tr>
                                 @if($venta->credito->observaciones)
                                 <tr>
                                     <th>Observaciones:</th>

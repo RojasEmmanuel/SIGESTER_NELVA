@@ -366,6 +366,10 @@
                     <input type="number" name="credito[dia_pago]" id="credito_dia_pago" class="form-control" min="1" max="31">
                 </div>
                 <div class="form-group">
+                    <label for="credito_monto_pago">Monto a pagar <span class="require">*</span></label>
+                    <input type="number" name="credito[monto_Pago]" id="credito_monto_Pago" class="form-control" value="" min="1">
+                </div>
+                <div class="form-group">
                     <label for="credito_observaciones">Observaciones</label>
                     <textarea name="credito[observaciones]" id="credito_observaciones" class="form-control" rows="3"></textarea>
                 </div>

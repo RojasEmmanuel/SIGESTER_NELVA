@@ -151,6 +151,7 @@ class ventasController extends Controller
                 'credito.modalidad_pago' => 'required|in:mensual,bimestral,trimestral,semestral,anual',
                 'credito.formas_pago' => 'required|in:efectivo,transferencia,cheque,tarjeta credito/debito,otro',
                 'credito.dia_pago' => 'required|integer|min:1|max:31',
+                'credito.monto_Pago' => 'required|numeric|min:1',
                 'credito.observaciones' => 'nullable|string',
             ];
         } else {
@@ -274,6 +275,7 @@ class ventasController extends Controller
                     'modalidad_pago' => $validated['credito']['modalidad_pago'],
                     'formas_pago' => $validated['credito']['formas_pago'],
                     'dia_pago' => (string) $validated['credito']['dia_pago'],
+                    'pagos' => $validated['credito']['monto_Pago'],
                     'id_venta' => $venta->id_venta,
                 ]);
             }
@@ -414,6 +416,7 @@ class ventasController extends Controller
                 'credito.modalidad_pago' => 'required|in:mensual,bimestral,trimestral,semestral,anual',
                 'credito.formas_pago' => 'required|in:efectivo,transferencia,cheque,tarjeta credito/debito,otro',
                 'credito.dia_pago' => 'required|integer|min:1|max:31',
+                'credito.monto_Pago' => 'required|numeric|min:1',
                 'credito.observaciones' => 'nullable|string',
             ];
         } else {
@@ -545,7 +548,8 @@ class ventasController extends Controller
                         'otro_plazo' => $otroPlazo,
                         'modalidad_pago' => $validated['credito']['modalidad_pago'],
                         'formas_pago' => $validated['credito']['formas_pago'],
-                        'dia_pago' => (string) $validated['credito']['dia_pago'], // ← STRING por varchar(2)
+                        'dia_pago' => (string) $validated['credito']['dia_pago'], 
+                        'pagos' => $validated['credito']['monto_Pago'],
                         'id_venta' => $venta->id_venta,
                     ]);
                 }

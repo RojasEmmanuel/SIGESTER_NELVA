@@ -18,12 +18,14 @@ class Credito extends Model
         'modalidad_pago',
         'formas_pago',
         'dia_pago',
+        'pagos',
         'id_venta',
     ];
 
     protected $casts = [
         'fecha_inicio' => 'date',
         'dia_pago' => 'integer',
+        'pagos' => 'decimal:2',
     ];
 
     // Relación con Venta
