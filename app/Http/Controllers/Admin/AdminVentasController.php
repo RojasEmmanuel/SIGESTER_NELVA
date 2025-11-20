@@ -100,9 +100,7 @@ class AdminVentasController extends Controller
         return view('admin.ventas.show', compact('venta', 'ticketExists'));
     }
 
-    /**
-     * Vista específica para gestionar ticket de una venta
-     */
+    /*VISTA PARA MODIFICAR EL ESTATUS DEL TICKET DEL ENGANCHE*/
     public function ticket($id_venta)
     {
         $venta = Venta::with([
@@ -114,109 +112,110 @@ class AdminVentasController extends Controller
             'credito'
         ])->findOrFail($id_venta);
 
+        // Validación silenciosa: si no cumple las condiciones, se comporta como si la venta no existiera
+        if ($venta->estatus !== 'solicitud' || $venta->ticket_estatus !== 'solicitud') {
+            return redirect()
+                ->route('admin.ventas.index');
+        }
+
         $ticketExists = $venta->ticket_path && Storage::disk('public')->exists($venta->ticket_path);
 
         return view('admin.ventas.ticket', compact('venta', 'ticketExists'));
     }
+    
+ 
+    public function updateTicketEstatus(Request $request, $id_venta)
+    {
+        $request->validate([
+            'ticket_estatus' => 'required|in:solicitud,rechazado,aceptado'
+        ]);
 
-    /**
-     * Actualizar el estatus del ticket de enganche
-     */
-    /**
- * Actualizar el estatus del ticket de enganche
- */
-public function updateTicketEstatus(Request $request, $id_venta)
-{
-    $request->validate([
-        'ticket_estatus' => 'required|in:solicitud,rechazado,aceptado'
-    ]);
+        try {
+            return DB::transaction(function () use ($request, $id_venta) {
+                $venta = Venta::with([
+                    'apartado.lotesApartados.lote',
+                    'apartado.usuario',
+                    'clienteVenta.contacto'
+                ])->findOrFail($id_venta);
 
-    try {
-        return DB::transaction(function () use ($request, $id_venta) {
-            $venta = Venta::with([
-                'apartado.lotesApartados.lote',
-                'apartado.usuario',
-                'clienteVenta.contacto'
-            ])->findOrFail($id_venta);
-
-            $oldTicketEstatus = $venta->ticket_estatus;
-            $updateData = [
-                'ticket_estatus' => $request->ticket_estatus,
-                'updated_at' => Carbon::now(),
-            ];
-
-            if ($request->ticket_estatus === 'aceptado') {
-                $updateData['estatus'] = 'pagos';
-            }
-
-            $venta->update($updateData);
-
-            if ($request->ticket_estatus === 'aceptado') {
-                $venta->apartado->update(['estatus' => 'venta']);
-                foreach ($venta->apartado->lotesApartados as $loteApartado) {
-                    if ($loteApartado->lote) {
-                        $loteApartado->lote->update(['estatus' => 'vendido']);
-                    }
-                }
-            }
-
-            // === NOTIFICACIÓN POR EMAIL CON LOGGING ===
-            if ($oldTicketEstatus !== $request->ticket_estatus) {
-                $asesorEmail = $venta->apartado->usuario?->email;
-                $clienteEmail = $venta->clienteVenta?->contacto?->email;
-
-                Log::info('Intentando enviar emails de notificación de ticket', [
-                    'venta_id' => $venta->id,
+                $oldTicketEstatus = $venta->ticket_estatus;
+                $updateData = [
                     'ticket_estatus' => $request->ticket_estatus,
-                    'asesor_email' => $asesorEmail,
-                    'cliente_email' => $clienteEmail
+                    'updated_at' => Carbon::now(),
+                ];
+
+                if ($request->ticket_estatus === 'aceptado') {
+                    $updateData['estatus'] = 'pagos';
+                }
+
+                $venta->update($updateData);
+
+                if ($request->ticket_estatus === 'aceptado') {
+                    $venta->apartado->update(['estatus' => 'venta']);
+                    foreach ($venta->apartado->lotesApartados as $loteApartado) {
+                        if ($loteApartado->lote) {
+                            $loteApartado->lote->update(['estatus' => 'vendido']);
+                        }
+                    }
+                }
+
+                // === NOTIFICACIÓN POR EMAIL CON LOGGING ===
+                if ($oldTicketEstatus !== $request->ticket_estatus) {
+                    $asesorEmail = $venta->apartado->usuario?->email;
+                    $clienteEmail = $venta->clienteVenta?->contacto?->email;
+
+                    Log::info('Intentando enviar emails de notificación de ticket', [
+                        'venta_id' => $venta->id,
+                        'ticket_estatus' => $request->ticket_estatus,
+                        'asesor_email' => $asesorEmail,
+                        'cliente_email' => $clienteEmail
+                    ]);
+
+                    $emailsEnviados = [];
+
+                    if ($asesorEmail) {
+                        try {
+                            Mail::to($asesorEmail)->send(new VentaTicketStatusUpdated($venta, $request->ticket_estatus));
+                            $emailsEnviados[] = $asesorEmail;
+                            Log::info('Email enviado al asesor: ' . $asesorEmail);
+                        } catch (\Exception $e) {
+                            Log::error('Error enviando email al asesor: ' . $e->getMessage());
+                        }
+                    }
+
+                    if ($clienteEmail) {
+                        try {
+                            Mail::to($clienteEmail)->send(new VentaTicketStatusUpdatedCliente($venta, $request->ticket_estatus));
+                            $emailsEnviados[] = $clienteEmail;
+                            Log::info('Email enviado al cliente: ' . $clienteEmail);
+                        } catch (\Exception $e) {
+                            Log::error('Error enviando email al cliente: ' . $e->getMessage());
+                        }
+                    }
+
+                    Log::info('Resumen envío emails ticket: ' . count($emailsEnviados) . ' enviados', $emailsEnviados);
+                }
+
+                $newTicketStatus = $request->ticket_estatus;
+                $newVentaStatus = $venta->fresh()->estatus;
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Estatus del ticket actualizado correctamente.',
+                    'new_ticket_status' => $newTicketStatus,
+                    'new_venta_status' => $newVentaStatus,
+                    'ticket_status_class' => $this->getTicketStatusClass($newTicketStatus),
+                    'venta_status_class' => $this->getVentaStatusClass($newVentaStatus)
                 ]);
-
-                $emailsEnviados = [];
-
-                if ($asesorEmail) {
-                    try {
-                        Mail::to($asesorEmail)->send(new VentaTicketStatusUpdated($venta, $request->ticket_estatus));
-                        $emailsEnviados[] = $asesorEmail;
-                        Log::info('Email enviado al asesor: ' . $asesorEmail);
-                    } catch (\Exception $e) {
-                        Log::error('Error enviando email al asesor: ' . $e->getMessage());
-                    }
-                }
-
-                if ($clienteEmail) {
-                    try {
-                        Mail::to($clienteEmail)->send(new VentaTicketStatusUpdatedCliente($venta, $request->ticket_estatus));
-                        $emailsEnviados[] = $clienteEmail;
-                        Log::info('Email enviado al cliente: ' . $clienteEmail);
-                    } catch (\Exception $e) {
-                        Log::error('Error enviando email al cliente: ' . $e->getMessage());
-                    }
-                }
-
-                Log::info('Resumen envío emails ticket: ' . count($emailsEnviados) . ' enviados', $emailsEnviados);
-            }
-
-            $newTicketStatus = $request->ticket_estatus;
-            $newVentaStatus = $venta->fresh()->estatus;
-
+            });
+        } catch (\Exception $e) {
+            Log::error('Error general en updateTicketEstatus: ' . $e->getMessage());
             return response()->json([
-                'success' => true,
-                'message' => 'Estatus del ticket actualizado correctamente.',
-                'new_ticket_status' => $newTicketStatus,
-                'new_venta_status' => $newVentaStatus,
-                'ticket_status_class' => $this->getTicketStatusClass($newTicketStatus),
-                'venta_status_class' => $this->getVentaStatusClass($newVentaStatus)
-            ]);
-        });
-    } catch (\Exception $e) {
-        Log::error('Error general en updateTicketEstatus: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Error al actualizar el estatus: ' . $e->getMessage()
-        ], 500);
+                'success' => false,
+                'message' => 'Error al actualizar el estatus: ' . $e->getMessage()
+            ], 500);
+        }
     }
-}
     /**
      * Actualizar el estatus de la venta
      */
