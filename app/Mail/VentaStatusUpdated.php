@@ -22,8 +22,10 @@ class VentaStatusUpdated extends Mailable
 
     public function build()
     {
+        // $message está disponible automáticamente en los templates Blade
+        // para usar $message->embed() para imágenes incrustadas (CID)
         return $this->subject('Actualización: Estatus de Compra #' . $this->venta->id)
-                    ->view('emails.ventas.venta_status') // ✅ CORRECTO: usa view()
+                    ->view('emails.ventas.venta_status')
                     ->with([
                         'venta' => $this->venta,
                         'ventaEstatus' => $this->ventaEstatus,

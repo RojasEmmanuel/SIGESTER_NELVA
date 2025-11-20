@@ -22,6 +22,8 @@ class VentaTicketStatusUpdatedCliente extends Mailable
 
     public function build()
     {
+        // $message está disponible automáticamente en los templates Blade
+        // para usar $message->embed() para imágenes incrustadas (CID)
         return $this->subject('Actualización: Ticket de Enganche #' . $this->venta->id)
                     ->view('emails.ventas.ticket_status_cliente')
                     ->with([

@@ -20,7 +20,7 @@
                 <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
                     <tr>
                         <td align="center" class="mobile-padding" style="padding: 0 20px;">
-                            <img src="/public/images/LogoNegativo.png" alt="Nelva Bienes Raíces" width="180" style="display:block; max-width: 180px; height: auto; margin-bottom: 10px;">
+                            <img src="{{ $message->embed(public_path('images/LogoNegativo.png')) }}" alt="Nelva Bienes Raíces" width="180" style="display:block; max-width: 180px; height: auto; margin-bottom: 10px;">
                             <p style="margin: 0; font-size: 14px; color: #e2e8f0; font-style: italic;">
                                 Tu patrimonio, nuestra prioridad
                             </p>
