@@ -439,7 +439,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 showCustomNotification('¡Apartado Registrado!', 'El apartado se ha registrado correctamente.', 'success');
             } catch (error) {
                 console.error('❌ Error al registrar el apartado:', error);
-                showCustomNotification('Error al Registrar Apartado', error.message || 'Error inesperado al registrar el apartado', 'error');
+                // Notificación de error eliminada intencionalmente
+            // El usuario solo verá que sigue en el formulario y el botón vuelve a estar habilitado
+                //showCustomNotification('Error al Registrar Apartado', error.message || 'Error inesperado al registrar el apartado', 'error');
             } finally {
                 const submitBtn = reservationForm.querySelector('button[type="submit"]');
                 if (submitBtn) {

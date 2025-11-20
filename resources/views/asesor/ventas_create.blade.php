@@ -24,6 +24,58 @@
 
 @push('styles')
 <link href="{{ asset('css/ventaForm.css') }}" rel="stylesheet">
+
+<style>
+    /* ========================================
+    RADIOS: TIPO DE VENTA (Contado / Crédito)
+    ======================================== */
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        padding-left: 0;
+    }
+
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+        margin-top: 0;
+        margin-right: 10px;
+        border: 2px solid #d1d3e2;
+        border-radius: 50%;
+        cursor: pointer;
+        appearance: none;
+        position: relative;
+        transition: all 0.2s ease;
+    }
+
+    .form-check-input:checked {
+        background-color: #4e73df;
+        border-color: #4e73df;
+    }
+
+    .form-check-input:checked::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 6px;
+        height: 6px;
+        background: white;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .form-check-label {
+        font-weight: 500;
+        color: #2c3e50;
+        cursor: pointer;
+        user-select: none;
+        font-size: 0.95rem;
+    }
+</style>
+
 @endpush
 
 @section('content')
@@ -76,6 +128,25 @@
 
         <form action="{{ route('ventas.store') }}" method="POST" enctype="multipart/form-data" id="venta-form">
             @csrf
+            <input type="hidden" name="tipo_pago" value="contado" id="tipo_pago_hidden">
+
+            <!-- Tipo de Pago -->
+            <div class="card" id="card-tipo-pago">
+                <div class="card-header" data-target="card-tipo-pago-body">
+                    <h3><i class="fas fa-money-check-alt"></i> Tipo de Pago</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="card-body" id="card-tipo-pago-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tipo_pago" id="pago-contado" value="contado" checked>
+                        <label class="form-check-label" for="pago-contado">Contado (pago total inmediato)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tipo_pago" id="pago-credito" value="credito">
+                        <label class="form-check-label" for="pago-credito">Crédito (enganche + pagos)</label>
+                    </div>
+                </div>
+            </div>
 
             <!-- Información de la Venta -->
             <div class="card" id="card-venta">
@@ -369,22 +440,22 @@
                 </div>
             </div>
 
-            <!-- Crédito (Opcional) -->
-            <div class="card optional" id="card-credito">
+            <!-- Crédito (Opcional - solo en Crédito) -->
+            <div class="card optional" id="card-credito" style="display: none;">
                 <div class="card-header" data-target="card-credito-body">
-                    <h3><i class="fas fa-credit-card"></i> Crédito (Opcional)</h3>
+                    <h3><i class="fas fa-credit-card"></i> Detalles del Crédito</h3>
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="card-body" id="card-credito-body">
                     <div class="form-group">
-                        <label for="credito_fecha_inicio">Fecha de Inicio</label>
+                        <label for="credito_fecha_inicio">Fecha de Inicio <span class="required">*</span></label>
                         <input type="date" name="credito[fecha_inicio]" id="credito_fecha_inicio" class="form-control" value="">
                         @error('credito.fecha_inicio')
                             <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="credito_plazo_financiamiento">Plazo de Financiamiento (meses)</label>
+                        <label for="credito_plazo_financiamiento">Plazo de Financiamiento (meses) <span class="required">*</span></label>
                         <select name="credito[plazo_financiamiento]" id="credito_plazo_financiamiento" class="form-control">
                             <option value="">Seleccione un plazo</option>
                             <option value="12 meses">12 meses</option>
@@ -405,7 +476,7 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="credito_modalidad_pago">Modalidad de Pago</label>
+                        <label for="credito_modalidad_pago">Modalidad de Pago <span class="required">*</span></label>
                         <select name="credito[modalidad_pago]" id="credito_modalidad_pago" class="form-control">
                             <option value="">Seleccione una modalidad</option>
                             <option value="mensual">Mensual</option>
@@ -419,7 +490,7 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="credito_formas_pago">Formas de Pago</label>
+                        <label for="credito_formas_pago">Formas de Pago <span class="required">*</span></label>
                         <select name="credito[formas_pago]" id="credito_formas_pago" class="form-control">
                             <option value="">Seleccione una forma de pago</option>
                             <option value="efectivo">Efectivo</option>
@@ -433,7 +504,7 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="credito_dia_pago">Día de Pago</label>
+                        <label for="credito_dia_pago">Día de Pago <span class="required">*</span></label>
                         <input type="number" name="credito[dia_pago]" id="credito_dia_pago" class="form-control" value="" min="1" max="31">
                         @error('credito.dia_pago')
                             <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
@@ -462,6 +533,95 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // === TOGGLE PAGO CONTADO / CRÉDITO ===
+            const pagoContado = document.getElementById('pago-contado');
+            const pagoCredito = document.getElementById('pago-credito');
+            const tipoPagoHidden = document.getElementById('tipo_pago_hidden');
+            const engancheInput = document.getElementById('enganche');
+            const totalInput = document.getElementById('total');
+            const cardCredito = document.getElementById('card-credito');
+            const financialSummary = document.getElementById('financial-summary');
+            const creditoFields = document.querySelectorAll('#card-credito input, #card-credito select, #card-credito textarea');
+
+            function togglePago() {
+                const isCredito = pagoCredito.checked;
+                tipoPagoHidden.value = isCredito ? 'credito' : 'contado';
+                cardCredito.style.display = isCredito ? 'block' : 'none';
+
+                if (!isCredito) {
+                    // CONTADO: enganche = total y readonly
+                    engancheInput.value = totalInput.value || 0;
+                    engancheInput.setAttribute('readonly', 'readonly');
+                    creditoFields.forEach(f => {
+                        f.disabled = true;
+                        f.removeAttribute('required');
+                    });
+                } else {
+                    // CRÉDITO: enganche editable
+                    engancheInput.removeAttribute('readonly');
+                    creditoFields.forEach(f => {
+                        f.disabled = false;
+                        if (f.hasAttribute('data-required')) {
+                            f.setAttribute('required', 'required');
+                        }
+                    });
+                }
+                updateSummary();
+                updateProgress();
+            }
+
+            function updateSummary() {
+                const total = parseFloat(totalInput.value) || 0;
+                const enganche = parseFloat(engancheInput.value) || 0;
+                const saldo = total - enganche;
+
+                if (total > 0 || enganche > 0) {
+                    financialSummary.style.display = 'grid';
+                    document.getElementById('enganche-display').textContent = formatCurrency(enganche);
+                    document.getElementById('total-display').textContent = formatCurrency(total);
+                    document.getElementById('saldo-display').textContent = formatCurrency(saldo);
+                } else {
+                    financialSummary.style.display = 'none';
+                }
+            }
+
+            function formatCurrency(amount) {
+                return new Intl.NumberFormat('es-MX', {
+                    style: 'currency',
+                    currency: 'MXN'
+                }).format(amount);
+            }
+
+            // Marcar campos requeridos del crédito
+            document.querySelectorAll('#card-credito [required]').forEach(f => f.setAttribute('data-required', 'true'));
+
+            // Eventos de pago
+            pagoContado.addEventListener('change', togglePago);
+            pagoCredito.addEventListener('change', togglePago);
+            totalInput.addEventListener('input', () => {
+                if (pagoContado.checked) engancheInput.value = totalInput.value;
+                updateSummary();
+                updateProgress();
+            });
+            engancheInput.addEventListener('input', updateSummary);
+
+            // === PLAZO FINANCIAMIENTO PERSONALIZADO ===
+            const plazoSelect = document.getElementById('credito_plazo_financiamiento');
+            const customPlazoGroup = document.getElementById('custom_plazo_group');
+            const customPlazoInput = document.getElementById('credito_otro_plazo');
+
+            plazoSelect.addEventListener('change', function() {
+                if (this.value === 'otro') {
+                    customPlazoGroup.style.display = 'block';
+                    customPlazoInput.setAttribute('required', 'required');
+                } else {
+                    customPlazoGroup.style.display = 'none';
+                    customPlazoInput.removeAttribute('required');
+                    customPlazoInput.value = '';
+                }
+                updateProgress();
+            });
+
             // Toggle card sections
             const cardHeaders = document.querySelectorAll('.card-header');
             cardHeaders.forEach(header => {
@@ -481,38 +641,6 @@
                     }
                 });
             });
-
-            // Financial calculations
-            const engancheInput = document.getElementById('enganche');
-            const totalInput = document.getElementById('total');
-            const financialSummary = document.getElementById('financial-summary');
-            
-            function updateFinancialSummary() {
-                const enganche = parseFloat(engancheInput.value) || 0;
-                const total = parseFloat(totalInput.value) || 0;
-                const saldo = total - enganche;
-                
-                if (enganche > 0 || total > 0) {
-                    financialSummary.style.display = 'grid';
-                    document.getElementById('enganche-display').textContent = formatCurrency(enganche);
-                    document.getElementById('total-display').textContent = formatCurrency(total);
-                    document.getElementById('saldo-display').textContent = formatCurrency(saldo);
-                } else {
-                    financialSummary.style.display = 'none';
-                }
-                
-                updateProgress();
-            }
-            
-            function formatCurrency(amount) {
-                return new Intl.NumberFormat('es-MX', {
-                    style: 'currency',
-                    currency: 'MXN'
-                }).format(amount);
-            }
-            
-            engancheInput.addEventListener('input', updateFinancialSummary);
-            totalInput.addEventListener('input', updateFinancialSummary);
 
             // Form validation
             const form = document.getElementById('venta-form');
@@ -622,26 +750,9 @@
                 updateProgress();
             });
 
-            // Handle custom plazo financiamiento
-            const plazoSelect = document.getElementById('credito_plazo_financiamiento');
-            const customPlazoGroup = document.getElementById('custom_plazo_group');
-            const customPlazoInput = document.getElementById('credito_otro_plazo');
-
-            plazoSelect.addEventListener('change', function() {
-                if (this.value === 'otro') {
-                    customPlazoGroup.style.display = 'block';
-                    customPlazoInput.setAttribute('required', 'required');
-                } else {
-                    customPlazoGroup.style.display = 'none';
-                    customPlazoInput.removeAttribute('required');
-                    customPlazoInput.value = '';
-                }
-                updateProgress();
-            });
-
             // Progress tracking
             function updateProgress() {
-                const requiredFields = form.querySelectorAll('[required]');
+                const requiredFields = form.querySelectorAll('[required]:not([disabled])');
                 let completedFields = 0;
                 
                 requiredFields.forEach(field => {
@@ -703,6 +814,7 @@
                 }
             });
             
+            togglePago();
             updateProgress();
         });
     </script>

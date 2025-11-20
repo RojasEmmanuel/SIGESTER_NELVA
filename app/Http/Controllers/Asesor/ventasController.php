@@ -113,11 +113,12 @@ class ventasController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $tipoPago = $request->input('tipo_pago', 'contado');
+
+        $rules = [
             'id_apartado' => 'required|exists:apartados,id_apartado',
             'ticket_path' => 'required|file|mimes:pdf,jpg,png|max:5120',
-            'enganche' => 'required|numeric|min:0',
-            'total' => 'required|numeric|min:0',
+            'total' => 'required|numeric|min:0.01',
             'cliente.nombres' => 'required|string|max:255',
             'cliente.apellidos' => 'required|string|max:255',
             'cliente.edad' => 'required|integer|min:18',
@@ -138,16 +139,37 @@ class ventasController extends Controller
             'beneficiario.telefono' => 'nullable|string|max:20',
             'beneficiario.ine_frente' => 'nullable|file|mimes:jpg,png|max:5120',
             'beneficiario.ine_reverso' => 'nullable|file|mimes:jpg,png|max:5120',
-            'credito.fecha_inicio' => 'nullable|date',
-            'credito.observaciones' => 'nullable|string',
-            'credito.plazo_financiamiento' => 'nullable|in:12 meses,24 meses,36 meses,48 meses,otro',
-            'credito.otro_plazo' => 'required_if:credito.plazo_financiamiento,otro|nullable|integer|min:1',
-            'credito.modalidad_pago' => 'nullable|in:mensual,bimestral,trimestral,semestral,anual',
-            'credito.formas_pago' => 'nullable|in:efectivo,transferencia,cheque,tarjeta credito/debito,otro',
-            'credito.dia_pago' => 'nullable|integer|min:1|max:31',
-        ]);
+        ];
 
-        return DB::transaction(function () use ($request, $validated) {
+        // === CRÉDITO: solo si es crédito ===
+        if ($tipoPago === 'credito') {
+            $rules += [
+                'enganche' => 'required|numeric|min:0.01|lt:total',
+                'credito.fecha_inicio' => 'required|date',
+                'credito.plazo_financiamiento' => 'required|in:12 meses,24 meses,36 meses,48 meses,otro',
+                'credito.otro_plazo' => 'required_if:credito.plazo_financiamiento,otro|nullable|integer|min:1',
+                'credito.modalidad_pago' => 'required|in:mensual,bimestral,trimestral,semestral,anual',
+                'credito.formas_pago' => 'required|in:efectivo,transferencia,cheque,tarjeta credito/debito,otro',
+                'credito.dia_pago' => 'required|integer|min:1|max:31',
+                'credito.observaciones' => 'nullable|string',
+            ];
+        } else {
+            $rules['enganche'] = 'required|numeric|same:total';
+            // Crédito: todos nullable (como en storeDirect())
+            $rules += [
+                'credito.fecha_inicio' => 'nullable|date',
+                'credito.observaciones' => 'nullable|string',
+                'credito.plazo_financiamiento' => 'nullable|in:12 meses,24 meses,36 meses,48 meses,otro',
+                'credito.otro_plazo' => 'nullable|integer|min:1',
+                'credito.modalidad_pago' => 'nullable|in:mensual,bimestral,trimestral,semestral,anual',
+                'credito.formas_pago' => 'nullable|in:efectivo,transferencia,cheque,tarjeta credito/debito,otro',
+                'credito.dia_pago' => 'nullable|integer|min:1|max:31',
+            ];
+        }
+
+        $validated = $request->validate($rules);
+
+        return DB::transaction(function () use ($request, $validated, $tipoPago) {
             $apartado = Apartado::with('lotesApartados.lote')->findOrFail($validated['id_apartado']);
 
             // Verificar que el apartado esté en curso y pertenezca al usuario autenticado
@@ -195,7 +217,7 @@ class ventasController extends Controller
                 'estado_civil' => $validated['cliente']['estado_civil'],
                 'lugar_origen' => $validated['cliente']['lugar_origen'],
                 'ocupacion' => $validated['cliente']['ocupacion'],
-                'clave_elector' => $validated['cliente']['clave_elector'],
+                'clave_elector' => $validated['cliente']['clave_elector'] ?? null,
                 'ine_frente' => $ineFrentePath,
                 'ine_reverso' => $ineReversoPath,
                 'id_venta' => $venta->id_venta,
@@ -219,7 +241,7 @@ class ventasController extends Controller
                 $beneficiarioData = [
                     'nombres' => $validated['beneficiario']['nombres'],
                     'apellidos' => $validated['beneficiario']['apellidos'],
-                    'telefono' => $validated['beneficiario']['telefono'],
+                    'telefono' => $validated['beneficiario']['telefono'] ?? null,
                     'id_venta' => $venta->id_venta,
                     'id_cliente' => $cliente->id_cliente,
                 ];
@@ -235,18 +257,23 @@ class ventasController extends Controller
                 BeneficiarioClienteVenta::create($beneficiarioData);
             }
 
-            if (!empty($validated['credito']['fecha_inicio'])) {
-                $plazoFinanciamiento = $validated['credito']['plazo_financiamiento'];
-                $otroPlazo = $plazoFinanciamiento === 'otro' ? $validated['credito']['otro_plazo'] : null;
+            // === Crédito (solo si es crédito) ===
+            if ($tipoPago === 'credito' && !empty($validated['credito']['fecha_inicio'])) {
+                $plazo = $validated['credito']['plazo_financiamiento'];
+                $otroPlazo = ($plazo === 'otro') ? $validated['credito']['otro_plazo'] : null;
+
+                if (in_array($plazo, ['12 meses', '24 meses', '36 meses', '48 meses'])) {
+                    $otroPlazo = (int) str_replace(' meses', '', $plazo);
+                }
 
                 Credito::create([
                     'fecha_inicio' => $validated['credito']['fecha_inicio'],
-                    'observaciones' => $validated['credito']['observaciones'],
-                    'plazo_financiamiento' => $plazoFinanciamiento,
+                    'observaciones' => $validated['credito']['observaciones'] ?? null,
+                    'plazo_financiamiento' => $plazo,
                     'otro_plazo' => $otroPlazo,
                     'modalidad_pago' => $validated['credito']['modalidad_pago'],
                     'formas_pago' => $validated['credito']['formas_pago'],
-                    'dia_pago' => $validated['credito']['dia_pago'],
+                    'dia_pago' => (string) $validated['credito']['dia_pago'],
                     'id_venta' => $venta->id_venta,
                 ]);
             }
