@@ -562,13 +562,15 @@
                     creditoFields.forEach(f => {
                         f.disabled = true;
                         f.removeAttribute('required');
+                        f.classList.remove('is-invalid', 'is-valid');
                     });
                 } else {
                     // CRÉDITO: enganche editable
                     engancheInput.removeAttribute('readonly');
                     creditoFields.forEach(f => {
                         f.disabled = false;
-                        if (f.hasAttribute('data-required')) {
+                        // Solo hacer required si el campo no está deshabilitado por el select de plazo
+                        if (!f.parentElement.closest('#custom_plazo_group') || customPlazoInput.style.display !== 'none') {
                             f.setAttribute('required', 'required');
                         }
                     });
@@ -621,10 +623,13 @@
                 if (this.value === 'otro') {
                     customPlazoGroup.style.display = 'block';
                     customPlazoInput.setAttribute('required', 'required');
+                    customPlazoInput.disabled = false;
                 } else {
                     customPlazoGroup.style.display = 'none';
                     customPlazoInput.removeAttribute('required');
                     customPlazoInput.value = '';
+                    customPlazoInput.disabled = true;
+                    customPlazoInput.classList.remove('is-invalid', 'is-valid');
                 }
                 updateProgress();
             });
@@ -670,8 +675,14 @@
                 const isRequired = field.hasAttribute('required');
                 const pattern = field.getAttribute('pattern');
                 const type = field.getAttribute('type');
+                const isDisabled = field.disabled;
                 
                 field.classList.remove('is-invalid', 'is-valid');
+                
+                // Si el campo está deshabilitado, no lo validamos
+                if (isDisabled) {
+                    return true;
+                }
                 
                 if (isRequired && (value === '' || (type === 'file' && !field.files.length))) {
                     field.classList.add('is-invalid');
@@ -809,6 +820,15 @@
                         isValid = false;
                     }
                 });
+                
+                // Validación adicional: si es crédito, verificar que los campos de crédito tengan valor
+                if (pagoCredito.checked) {
+                    creditoFields.forEach(f => {
+                        if (!f.disabled && !validateField(f)) {
+                            isValid = false;
+                        }
+                    });
+                }
                 
                 if (isValid) {
                     this.submit();
