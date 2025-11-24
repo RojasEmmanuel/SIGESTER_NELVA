@@ -180,7 +180,7 @@
                         </div>
                     </div>
                     
-                    <a href="/inversiones-mazunte" class="destination-btn">Conoce más</a>
+                    <a href="/mazunte" class="destination-btn">Conoce más</a>
                 </div>
             </div>
             
@@ -214,7 +214,7 @@
                         </div>
                     </div>
                     
-                    <a href="/inversiones/tonameca" class="destination-btn">Conoce más</a>
+                    <a href="/tonameca" class="destination-btn">Conoce más</a>
                 </div>
             </div>
             
@@ -248,7 +248,7 @@
                         </div>
                     </div>
                     
-                    <a href="/inversiones/salina-cruz" class="destination-btn">Conoce más</a>
+                    <a href="/salinaCruz" class="destination-btn">Conoce más</a>
                 </div>
             </div>
         </div>
