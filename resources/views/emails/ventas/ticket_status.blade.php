@@ -26,7 +26,7 @@
                 <tr>
                     <td>
                         <p style="margin: 0 0 12px; font-size: 16px; color: #2d3748; font-weight: 500;">
-                            Hola <strong style="color: #1a365d;">{{ $asesor->nombre }} {{ $asesor->apellidos }}</strong>,
+                            Hola <strong style="color: #1a365d;">{{ $asesor->nombre }} {{ $asesor->apellidos }}</strong>
                         </p>
                         <p style="margin: 0; font-size: 14px; color: #718096; line-height: 1.6;">
                             Se ha actualizado el estado del ticket de enganche de una venta asignada a tu portafolio.
