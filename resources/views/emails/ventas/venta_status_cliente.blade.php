@@ -26,7 +26,7 @@
                 <tr>
                     <td>
                         <p style="margin: 0 0 12px; font-size: 16px; color: #2d3748; font-weight: 500;">
-                            Estimado(a) <strong style="color: #1a365d;">{{ $cliente->nombres }} {{ $cliente->apellidos }}</strong>,
+                            Estimado(a) <strong style="color: #1a365d;">{{ $cliente->nombres }} {{ $cliente->apellidos }}</strong>
                         </p>
                         <p style="margin: 0; font-size: 14px; color: #718096; line-height: 1.6;">
                             Le informamos sobre el estado actual de su compra. Agradecemos su confianza en nuestros servicios.
