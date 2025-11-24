@@ -379,13 +379,8 @@
                     }
                     
                     // Formatear fechas en formato simple dd/mm/yyyy
-                    $fechaInicioFormateada = \Carbon\Carbon::parse($promo['fecha_inicio'])->format('d/m/Y');
-                    
-                    if ($promo['fecha_fin'] !== 'Indefinida') {
-                        $fechaFinFormateada = \Carbon\Carbon::parse($promo['fecha_fin'])->format('d/m/Y');
-                    } else {
-                        $fechaFinFormateada = 'Indefinida';
-                    }
+                    $fechaInicioFormateada = $promo['fecha_inicio']; // Ya está en d/m/Y
+                    $fechaFinFormateada   = $promo['fecha_fin'];
                 @endphp
                 
                 <div class="oceanica-promo-card">
