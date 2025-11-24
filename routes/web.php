@@ -21,6 +21,18 @@ use App\Http\Controllers\Ingeniero\LoteController;
 use App\Http\Controllers\Ingeniero\MapasController;
 use App\Http\Controllers\Auth\PasswordResetController;
 
+// ===============================================
+// RUTAS PÚBLICAS PARA EL MAPA INTERACTIVO (CLIENTES)
+// ===============================================
+
+Route::get('/geojson/{nombre}.geojson', [FraccionamientoController::class, 'getGeoJsonConEstatus'])
+    ->name('geojson.publico');
+Route::get('/fraccionamiento/{id}/lotes', [FraccionamientoController::class, 'getLotes'])
+    ->name('fraccionamiento.lotes.publico');
+Route::get('/fraccionamiento/{id}/zonas', [FraccionamientoController::class, 'getZonas'])
+    ->name('fraccionamiento.zonas.publico');
+
+
 // Rutas de autenticación
 Route::get('/', [InicioClientController::class, 'index'])->name('inicio');
 
@@ -215,10 +227,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/mapas-fraccionamientos', [MapasController::class, 'index'])
             ->name('mapa-fraccionamientos');
 
-        Route::get('/fraccionamiento/{id}/geojson-data', [App\Http\Controllers\Ingeniero\MapasController::class, 'getGeoJSONData'])
+        Route::get('/fraccionamiento/{id}/geojson-data', [MapasController::class, 'getGeoJSONData'])
          ->name('ing.fraccionamiento.geojson-data');
 
-        Route::post('/fraccionamiento/save-geojson', [App\Http\Controllers\Ingeniero\MapasController::class, 'saveGeoJSON'])
+        Route::post('/fraccionamiento/save-geojson', [MapasController::class, 'saveGeoJSON'])
             ->name('ing.fraccionamiento.save-geojson');
     });
 });

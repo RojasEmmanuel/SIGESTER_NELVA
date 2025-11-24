@@ -641,7 +641,7 @@
 
 <!-- Scripts en el orden correcto -->
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-<script src="{{ asset('js/map.js') }}"></script>
+<script src="{{ asset('js/map_externo.js') }}"></script>
 
 <script>
     // JavaScript específico para la vista cliente
