@@ -1374,3 +1374,53 @@ p {
     overflow: visible;
     display: block;
 }
+
+/* Estilos para las animaciones personalizadas */
+.stats-section,
+.projects-section,
+.destinations-section,
+.compact-steps,
+.nelva-promos-premium {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.stats-section.animate-in,
+.projects-section.animate-in,
+.destinations-section.animate-in,
+.compact-steps.animate-in,
+.nelva-promos-premium.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Animaciones para tarjetas individuales con delays escalonados */
+.stat-card,
+.project-card,
+.destination-card,
+.step-card,
+.promo-card {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.stats-grid.animate-in .stat-card:nth-child(1) { transition-delay: 0.1s; }
+.stats-grid.animate-in .stat-card:nth-child(2) { transition-delay: 0.2s; }
+.stats-grid.animate-in .stat-card:nth-child(3) { transition-delay: 0.3s; }
+.stats-grid.animate-in .stat-card:nth-child(4) { transition-delay: 0.4s; }
+
+.projects-grid.animate-in .project-card { transition-delay: 0.1s; }
+.destinations-grid.animate-in .destination-card { transition-delay: 0.1s; }
+.steps-container.animate-in .step-card { transition-delay: 0.1s; }
+.promos-grid.animate-in .promo-card { transition-delay: 0.1s; }
+
+.stats-grid.animate-in .stat-card,
+.projects-grid.animate-in .project-card,
+.destinations-grid.animate-in .destination-card,
+.steps-container.animate-in .step-card,
+.promos-grid.animate-in .promo-card {
+    opacity: 1;
+    transform: translateY(0);
+}

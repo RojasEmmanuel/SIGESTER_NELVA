@@ -1,6 +1,8 @@
 <!-- Incrustar el navbar -->
 <?= view('templates/navbar', ['title' => 'Nelva Bienes Raíces']) ?>
 <link href="{{ asset('css/pagina/inicio.css') }}" rel="stylesheet">
+<!-- Agregar AOS CSS -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
 <section class="parallax-section">
     <div class="parallax-bg">
@@ -11,20 +13,20 @@
                 allowfullscreen></iframe>
     </div>
     <div class="parallax-overlay"></div>
-    <div class="parallax-content">
+    <div class="parallax-content" data-aos="fade-up" data-aos-duration="1000">
         <h1>TODO LO QUE NECESITAS PARA <span class="highlight">TUS PROYECTOS</span> EN UN SOLO LUGAR</h1>
-        <p>Ya sea que busques invertir en terrenos cerca de los destinos turísticos más hermosos de Oaxaca, servicios profesionales de topografía o renta de equipo de maquinaria especializada, estamos aquí para ayudarte.</p>
-        <a href="/asesores" class="btn">Contactar con un asesor</a>
+        <p data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">Ya sea que busques invertir en terrenos cerca de los destinos turísticos más hermosos de Oaxaca, servicios profesionales de topografía o renta de equipo de maquinaria especializada, estamos aquí para ayudarte.</p>
+        <a href="/asesores" class="btn" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">Contactar con un asesor</a>
     </div>
 </section>
 
-<section class="stats-section">
+<section class="stats-section" data-aos="fade-up" data-aos-duration="800">
     <div class="container">
-        <h2 class="section-title">Nuestros Logros</h2>
+        <h2 class="section-title" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">Nuestros Logros</h2>
         
         <div class="stats-grid">
             <!-- Tarjeta 1 -->
-            <div class="stat-card">
+            <div class="stat-card" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="200">
                 <div class="stat-front">
                     <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
                     <div class="stat-number">6+</div>
@@ -38,7 +40,7 @@
             </div>
 
             <!-- Tarjeta 2 -->
-            <div class="stat-card">
+            <div class="stat-card" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="300">
                 <div class="stat-front">
                     <div class="stat-icon"><i class="fas fa-users"></i></div>
                     <div class="stat-number">1000+</div>
@@ -52,7 +54,7 @@
             </div>
 
             <!-- Tarjeta 3 -->
-            <div class="stat-card">
+            <div class="stat-card" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="400">
                 <div class="stat-front">
                     <div class="stat-icon"><i class="fas fa-map-marked-alt"></i></div>
                     <div class="stat-number">20+</div>
@@ -66,7 +68,7 @@
             </div>
 
             <!-- Tarjeta 4 -->
-            <div class="stat-card">
+            <div class="stat-card" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="500">
                 <div class="stat-front">
                     <div class="stat-icon"><i class="fas fa-star"></i></div>
                     <div class="stat-number">100+</div>
@@ -83,25 +85,24 @@
 </section>
 
 <!-- Sección de Proyectos - Versión Dinámica -->
-<section class="projects-section">
+<section class="projects-section" data-aos="fade-up" data-aos-duration="800">
     <div class="projects-container">
-        <div class="section-header">
+        <div class="section-header" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
             <h2>Nuestros Fraccionamientos</h2>
             <p>Descubre nuestros desarrollos estratégicamente ubicados en las zonas más atractivas de Oaxaca</p>
         </div>
         
         <!-- Pestañas de zonas -->
-        <div class="zone-tabs">
+        <div class="zone-tabs" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
             <div class="zone-tab active" data-zone="costa">Costa</div>
             <div class="zone-tab" data-zone="istmo">Istmo</div>
         </div>
-        
         
         <!-- Contenido de la Costa -->
         <div class="zone-content active" id="costa-zone">
             <div class="projects-grid">
                 @foreach($fraccionamientos['costa'] ?? [] as $fraccionamiento)
-                    <div class="project-card">
+                    <div class="project-card" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="{{ $loop->index * 100 + 300 }}">
                         <div class="project-logo-container">
                             <img src="{{ asset('storage/' . $fraccionamiento->path_imagen) }}" alt="{{ $fraccionamiento->nombre }}" class="project-logo">
                         </div>
@@ -121,7 +122,7 @@
         <div class="zone-content" id="istmo-zone">
             <div class="projects-grid">
                 @foreach($fraccionamientos['istmo'] ?? [] as $fraccionamiento)
-                    <div class="project-card">
+                    <div class="project-card" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="{{ $loop->index * 100 + 300 }}">
                         <div class="project-logo-container">
                             <img src="{{ asset('storage/' . $fraccionamiento->path_imagen) }}" alt="{{ $fraccionamiento->nombre }}" class="project-logo">
                         </div>
@@ -136,22 +137,20 @@
                 @endforeach
             </div>
         </div>
-
-
     </div>
 </section>
 
 <!-- Sección de Destinos Turísticos Compacta -->
-<section class="destinations-section">
+<section class="destinations-section" data-aos="fade-up" data-aos-duration="800">
     <div class="destinations-container">
-        <div class="section-header">
+        <div class="section-header" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
             <h2>Destinos Turísticos Exclusivos</h2>
             <p>Descubre los lugares más emblemáticos de Oaxaca donde tenemos desarrollos estratégicos para tu inversión</p>
         </div>
         
         <div class="destinations-grid">
             <!-- Mazunte -->
-            <div class="destination-card">
+            <div class="destination-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
                 <div class="destination-image">
                     <img src="{{ asset('/images/inicio/mazunte.png') }}" alt="Mazunte">
                 </div>
@@ -160,19 +159,19 @@
                     <p>Pueblo Mágico conocido por sus playas vírgenes, ambiente bohemio y espectaculares atardeceres frente al Pacífico.</p>
                     
                     <div class="destination-highlights">
-                        <div class="highlight-item">
+                        <div class="highlight-item" data-aos="fade-right" data-aos-duration="600" data-aos-delay="300">
                             <div class="highlight-icon">
                                 <i class="fas fa-umbrella-beach"></i>
                             </div>
                             <span>Playas vírgenes</span>
                         </div>
-                        <div class="highlight-item">
+                        <div class="highlight-item" data-aos="fade-right" data-aos-duration="600" data-aos-delay="400">
                             <div class="highlight-icon">
                                 <i class="fas fa-sun"></i>
                             </div>
                             <span>Atardeceres únicos</span>
                         </div>
-                        <div class="highlight-item">
+                        <div class="highlight-item" data-aos="fade-right" data-aos-duration="600" data-aos-delay="500">
                             <div class="highlight-icon">
                                 <i class="fas fa-tree"></i>
                             </div>
@@ -180,12 +179,12 @@
                         </div>
                     </div>
                     
-                    <a href="/mazunte" class="destination-btn">Conoce más</a>
+                    <a href="/mazunte" class="destination-btn" data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">Conoce más</a>
                 </div>
             </div>
             
             <!-- Santa María Tonameca -->
-            <div class="destination-card">
+            <div class="destination-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
                 <div class="destination-image">
                     <img src="{{ asset('/images/inicio/tonameca.png') }}" alt="Santa María Tonameca">
                 </div>
@@ -194,19 +193,19 @@
                     <p>Combinación perfecta entre la tranquilidad de un pueblo auténtico y la cercanía a playas paradisíacas.</p>
                     
                     <div class="destination-highlights">
-                        <div class="highlight-item">
+                        <div class="highlight-item" data-aos="fade-right" data-aos-duration="600" data-aos-delay="400">
                             <div class="highlight-icon">
                                 <i class="fas fa-mountain"></i>
                             </div>
                             <span>Entorno natural</span>
                         </div>
-                        <div class="highlight-item">
+                        <div class="highlight-item" data-aos="fade-right" data-aos-duration="600" data-aos-delay="500">
                             <div class="highlight-icon">
                                 <i class="fas fa-water"></i>
                             </div>
                             <span>Ríos y manglares</span>
                         </div>
-                        <div class="highlight-item">
+                        <div class="highlight-item" data-aos="fade-right" data-aos-duration="600" data-aos-delay="600">
                             <div class="highlight-icon">
                                 <i class="fas fa-map-marked-alt"></i>
                             </div>
@@ -214,12 +213,12 @@
                         </div>
                     </div>
                     
-                    <a href="/tonameca" class="destination-btn">Conoce más</a>
+                    <a href="/tonameca" class="destination-btn" data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">Conoce más</a>
                 </div>
             </div>
             
             <!-- Salina Cruz -->
-            <div class="destination-card">
+            <div class="destination-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
                 <div class="destination-image">
                     <img src="{{ asset('/images/inicio/salinas.png') }}" alt="Salina Cruz">
                 </div>
@@ -228,19 +227,19 @@
                     <p>Zona clave del Corredor Interoceánico con gran potencial de desarrollo económico y crecimiento urbano.</p>
                     
                     <div class="destination-highlights">
-                        <div class="highlight-item">
+                        <div class="highlight-item" data-aos="fade-right" data-aos-duration="600" data-aos-delay="500">
                             <div class="highlight-icon">
                                 <i class="fas fa-anchor"></i>
                             </div>
                             <span>Puerto estratégico</span>
                         </div>
-                        <div class="highlight-item">
+                        <div class="highlight-item" data-aos="fade-right" data-aos-duration="600" data-aos-delay="600">
                             <div class="highlight-icon">
                                 <i class="fas fa-chart-line"></i>
                             </div>
                             <span>Zona en desarrollo</span>
                         </div>
-                        <div class="highlight-item">
+                        <div class="highlight-item" data-aos="fade-right" data-aos-duration="600" data-aos-delay="700">
                             <div class="highlight-icon">
                                 <i class="fas fa-leaf"></i>
                             </div>
@@ -248,7 +247,7 @@
                         </div>
                     </div>
                     
-                    <a href="/salinaCruz" class="destination-btn">Conoce más</a>
+                    <a href="/salinaCruz" class="destination-btn" data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">Conoce más</a>
                 </div>
             </div>
         </div>
@@ -256,16 +255,16 @@
 </section>
 
 <!-- Sección de Pasos Compacta -->
-<section class="compact-steps">
+<section class="compact-steps" data-aos="fade-up" data-aos-duration="800">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
             <h2>Tu camino hacia el lote perfecto</h2>
             <p>Un proceso simple y transparente en solo 5 pasos</p>
         </div>
         
         <div class="steps-container">
             <!-- Paso 1 -->
-            <div class="step-card">
+            <div class="step-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">
                 <div class="step-number">1</div>
                 <div class="step-icon">
                     <i class="fas fa-calendar-alt"></i>
@@ -276,7 +275,7 @@
             </div>
             
             <!-- Paso 2 -->
-            <div class="step-card">
+            <div class="step-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
                 <div class="step-number">2</div>
                 <div class="step-icon">
                     <i class="fas fa-search"></i>
@@ -287,7 +286,7 @@
             </div>
             
             <!-- Paso 3 -->
-            <div class="step-card">
+            <div class="step-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
                 <div class="step-number">3</div>
                 <div class="step-icon">
                     <i class="fas fa-hand-holding-usd"></i>
@@ -298,7 +297,7 @@
             </div>
             
             <!-- Paso 4 -->
-            <div class="step-card">
+            <div class="step-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="500">
                 <div class="step-number">4</div>
                 <div class="step-icon">
                     <i class="fas fa-key"></i>
@@ -309,7 +308,7 @@
             </div>
             
             <!-- Paso 5 -->
-            <div class="step-card">
+            <div class="step-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">
                 <div class="step-number">5</div>
                 <div class="step-icon">
                     <i class="fas fa-check-circle"></i>
@@ -321,11 +320,10 @@
     </div>
 </section>
 
-
 <!-- Sección de Promociones Dinámicas -->
-<section class="nelva-promos-premium">
+<section class="nelva-promos-premium" data-aos="fade-up" data-aos-duration="800">
     <div class="container">
-        <div class="promos-header">
+        <div class="promos-header" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
             <div class="promos-badge">
                 <i class="fas fa-fire"></i> OFERTAS ESPECIALES
             </div>
@@ -355,7 +353,7 @@
                 $primerFracc = $fraccionamientos->first();
             @endphp
 
-            <article class="promo-card {{ $esVertical ? 'vertical' : 'horizontal' }}">
+            <article class="promo-card {{ $esVertical ? 'vertical' : 'horizontal' }}" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="{{ $loop->index * 100 + 200 }}">
                 <div class="promo-image">
                     <img src="{{ asset('storage/' . $promocion->imagen_path) }}" 
                          alt="{{ $promocion->titulo }}" 
@@ -415,13 +413,13 @@
 
                     <!-- BOTÓN CONDICIONAL -->
                     @if($esMultiple)
-                        <a href="/asesores" class="promo-cta multiple">
+                        <a href="/asesores" class="promo-cta multiple" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
                             <span>Contacta un asesor</span>
                             <i class="fas fa-headset"></i>
                         </a>
                     @else
                         <a href="{{ route('pagina.fraccionamiento.show', $primerFracc->id_fraccionamiento) }}" 
-                           class="promo-cta">
+                           class="promo-cta" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
                             <span>Ver Fraccionamiento</span>
                             <i class="fas fa-arrow-right"></i>
                         </a>
@@ -431,7 +429,7 @@
             @endforeach
         </div>
         @else
-        <div class="promos-empty">
+        <div class="promos-empty" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
             <div class="empty-icon">
                 <i class="fas fa-gift"></i>
             </div>
@@ -446,9 +444,20 @@
 <!-- Incrustar el footer -->
 <?= view('templates/footer') ?>
 
+<!-- Script de AOS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    // Script para manejar las pestañas de zonas
+    // Inicializar AOS
     document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 100,
+            delay: 0
+        });
+
+        // Script para manejar las pestañas de zonas
         const zoneTabs = document.querySelectorAll('.zone-tab');
         
         zoneTabs.forEach(tab => {
@@ -471,41 +480,37 @@
         });
     });
 
-    
-</script>
+    function toggleDescription(button) {
+        const description = button.closest('.promo-description');
+        const textElement = description.querySelector('.description-text');
+        const fullText = textElement.getAttribute('data-full');
+        const isExpanded = description.classList.contains('expanded');
 
-<script>
-function toggleDescription(button) {
-    const description = button.closest('.promo-description');
-    const textElement = description.querySelector('.description-text');
-    const fullText = textElement.getAttribute('data-full');
-    const isExpanded = description.classList.contains('expanded');
+        if (isExpanded) {
+            // Colapsar: mostrar solo 150 caracteres
+            const truncated = fullText.length > 150 
+                ? fullText.substring(0, 150) + '...' 
+                : fullText;
+            textElement.textContent = truncated;
+            description.classList.remove('expanded');
+            button.classList.remove('expanded');
 
-    if (isExpanded) {
-        // Colapsar: mostrar solo 150 caracteres
-        const truncated = fullText.length > 150 
-            ? fullText.substring(0, 150) + '...' 
-            : fullText;
-        textElement.textContent = truncated;
-        description.classList.remove('expanded');
-        button.classList.remove('expanded');
+            // Actualizar textos e iconos
+            button.querySelector('.read-more-text').style.display = 'inline';
+            button.querySelector('.read-less-text').style.display = 'none';
+            button.querySelector('.read-more-icon').style.display = 'inline';
+            button.querySelector('.read-less-icon').style.display = 'none';
+        } else {
+            // Expandir: mostrar texto completo
+            textElement.textContent = fullText;
+            description.classList.add('expanded');
+            button.classList.add('expanded');
 
-        // Actualizar textos e iconos
-        button.querySelector('.read-more-text').style.display = 'inline';
-        button.querySelector('.read-less-text').style.display = 'none';
-        button.querySelector('.read-more-icon').style.display = 'inline';
-        button.querySelector('.read-less-icon').style.display = 'none';
-    } else {
-        // Expandir: mostrar texto completo
-        textElement.textContent = fullText;
-        description.classList.add('expanded');
-        button.classList.add('expanded');
-
-        // Actualizar textos e iconos
-        button.querySelector('.read-more-text').style.display = 'none';
-        button.querySelector('.read-less-text').style.display = 'inline';
-        button.querySelector('.read-more-icon').style.display = 'none';
-        button.querySelector('.read-less-icon').style.display = 'inline';
+            // Actualizar textos e iconos
+            button.querySelector('.read-more-text').style.display = 'none';
+            button.querySelector('.read-less-text').style.display = 'inline';
+            button.querySelector('.read-more-icon').style.display = 'none';
+            button.querySelector('.read-less-icon').style.display = 'inline';
+        }
     }
-}
 </script>
