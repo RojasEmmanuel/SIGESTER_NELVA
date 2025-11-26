@@ -35,10 +35,11 @@ Route::get('/fraccionamiento/{id}/zonas', [FraccionamientoController::class, 'ge
 
 // Rutas de autenticación
 Route::get('/', [InicioClientController::class, 'index'])->name('inicio');
-
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+//rutas generales para resetear contraseña
 Route::prefix('password')->name('password.')->group(function () {
     Route::get('/reset', [PasswordResetController::class, 'showRequestForm'])
         ->name('request');
@@ -56,7 +57,7 @@ Route::prefix('password')->name('password.')->group(function () {
         ->name('update');
 });
 
-
+// rutas publicas para el sitio web comercial
 Route::get('/nosotros', [InicioClientController::class, 'Nosotros'])->name('nosotros');
 Route::get('/contacto', [InicioClientController::class, 'Contacto'])->name('contacto');
 Route::get('/mas', [InicioClientController::class, 'Mas'])->name('mas');
@@ -70,24 +71,16 @@ Route::get('/tonameca', [InicioClientController::class, 'tonameca'])->name('tona
 
 
 // Rutas para página cliente
-Route::get('/fraccionamiento/{id}', [fraccClientController::class, 'show'])
-    ->name('pagina.fraccionamiento.show');
+Route::get('/fraccionamiento/{id}', [fraccClientController::class, 'show'])->name('pagina.fraccionamiento.show');
+Route::get('/fraccionamiento/{id}/lote/{numero}', [fraccClientController::class, 'getLoteInfo'])->name('pagina.fraccionamiento.lote.info');
+Route::get('/fraccionamiento/{idFraccionamiento}/descargar-archivo/{idArchivo}', [fraccClientController::class, 'downloadArchivo'])->name('pagina.fraccionamiento.download-archivo');
+Route::get('/fraccionamiento/{id}/lote/{numero}', [fraccClientController::class, 'getLoteDetails'])->name('pagina.fraccionamiento.lote.ajax');  
 
-Route::get('/fraccionamiento/{id}/lote/{numero}', [fraccClientController::class, 'getLoteInfo'])
-    ->name('pagina.fraccionamiento.lote.info');
-
-Route::get('/fraccionamiento/{idFraccionamiento}/descargar-archivo/{idArchivo}', [fraccClientController::class, 'downloadArchivo'])
-    ->name('pagina.fraccionamiento.download-archivo');
-// ← NUEVA RUTA: Exacta para el JS (parámetros {id} y {numero})
-Route::get('/fraccionamiento/{id}/lote/{numero}', [fraccClientController::class, 'getLoteDetails'])
-    ->name('pagina.fraccionamiento.lote.ajax');  // Nombre único para evitar conflicto
-
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Rutas protegidas por el middleware 'auth'
 Route::middleware('auth')->group(function () {
    
- 
+    //todas las que tienen prefijo asesor se pueden ser usadas por el tipo de usuario asesor el tipo de usuario administrador
     Route::get('/asesor/inicio', [InicioController::class, 'index'])->name('asesor.dashboard');
     // Rutas de fraccionamiento
     Route::get('/asesor/fraccionamiento/{id}', [FraccionamientoController::class, 'show'])->name('asesor.fraccionamiento.show');
@@ -125,10 +118,7 @@ Route::middleware('auth')->group(function () {
     });
 
 
-
-
-
-
+    //Estas rutas son exclusivas para el tipo de usuario administrador
    Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/inicio', [inicioAdminController::class, 'index'])->name('index');
@@ -200,6 +190,7 @@ Route::middleware('auth')->group(function () {
     });
 
 
+    // Rutas para el tipo de usuario ingeniero (este usuario no debe acceder al panel de asesor ni al del admin )
     Route::prefix('ing')->group(function () {
         Route::get('/inicio', [IngInicioController::class, 'index'])->name('ingeniero.inicio');
     });

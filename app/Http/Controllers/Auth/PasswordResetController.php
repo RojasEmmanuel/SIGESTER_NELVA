@@ -96,52 +96,51 @@ class PasswordResetController extends Controller
     }
 
     public function reset(Request $request, $token = null)
-{
-    Log::info('TOKEN RECIBIDO EN RESET:', ['token' => $token]);
+    {
+        Log::info('TOKEN RECIBIDO EN RESET:', ['token' => $token]);
 
-    $request->validate([
-        'code'                 => 'required|string',
-        'password'             => 'required|min:8|confirmed',
-        'password_confirmation'=> 'required',
-    ]);
+        $request->validate([
+            'code'                 => 'required|string',
+            'password'             => 'required|min:8|confirmed',
+            'password_confirmation'=> 'required',
+        ]);
 
-    if (!$token) {
-        return back()->withErrors(['code' => 'Token no proporcionado.']);
+        if (!$token) {
+            return back()->withErrors(['code' => 'Token no proporcionado.']);
+        }
+
+        $resetRecord = DB::table('password_reset_tokens')
+            ->where('token', $token)
+            ->where('expires_at', '>', now())
+            ->first();
+
+        Log::info('RESET RECORD ENCONTRADO', [
+            'encontrado' => $resetRecord ? true : false,
+            'email'      => $resetRecord->email ?? 'N/A',
+            'code_db'    => $resetRecord->code ?? null,
+        ]);
+
+        if (!$resetRecord) {
+            return back()->withErrors(['code' => 'El enlace es inválido o ha expirado.']);
+        }
+
+        $codigoLimpio = preg_replace('/\D/', '', $request->code);
+
+        if (strlen($codigoLimpio) !== 6 || $codigoLimpio !== str_pad($resetRecord->code, 6, '0', STR_PAD_LEFT)) {
+            return back()->withErrors(['code' => 'Código de verificación incorrecto.']);
+        }
+
+        $user = Usuario::where('email', $resetRecord->email)->firstOrFail();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        DB::table('password_reset_tokens')
+            ->where('email', $resetRecord->email)
+            ->delete();
+
+        RateLimiter::clear('reset_attempts:' . $request->ip());
+
+        return redirect()->route('login')
+            ->with('success', '¡Contraseña cambiada con éxito! Ya puedes iniciar sesión.');
     }
-
-    $resetRecord = DB::table('password_reset_tokens')
-        ->where('token', $token)
-        ->where('expires_at', '>', now())
-        ->first();
-
-    Log::info('RESET RECORD ENCONTRADO', [
-        'encontrado' => $resetRecord ? true : false,
-        'email'      => $resetRecord->email ?? 'N/A',
-        'code_db'    => $resetRecord->code ?? null,
-    ]);
-
-    if (!$resetRecord) {
-        return back()->withErrors(['code' => 'El enlace es inválido o ha expirado.']);
-    }
-
-    $codigoLimpio = preg_replace('/\D/', '', $request->code);
-
-    // ← AQUÍ ESTÁ LA CLAVE: ambos como string de 6 dígitos
-    if (strlen($codigoLimpio) !== 6 || $codigoLimpio !== str_pad($resetRecord->code, 6, '0', STR_PAD_LEFT)) {
-        return back()->withErrors(['code' => 'Código de verificación incorrecto.']);
-    }
-
-    $user = Usuario::where('email', $resetRecord->email)->firstOrFail();
-    $user->password = Hash::make($request->password);
-    $user->save();
-
-    DB::table('password_reset_tokens')
-        ->where('email', $resetRecord->email)
-        ->delete();
-
-    RateLimiter::clear('reset_attempts:' . $request->ip());
-
-    return redirect()->route('login')
-        ->with('success', '¡Contraseña cambiada con éxito! Ya puedes iniciar sesión.');
-}
 }

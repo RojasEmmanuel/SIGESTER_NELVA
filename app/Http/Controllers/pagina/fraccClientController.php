@@ -344,20 +344,16 @@ public function show($id)
     public function downloadArchivo($idFraccionamiento, $idArchivo)
     {
         try {
-            // 1. Buscar el archivo en la BD
             $archivo = ArchivosFraccionamiento::where('id_fraccionamiento', $idFraccionamiento)
                         ->where('id_archivo', $idArchivo)
                         ->firstOrFail();
 
-            // 2. Ruta real en disco
             $ruta = storage_path('app/public/' . $archivo->archivo_path);
 
-            // 3. Validar que exista
             if (!file_exists($ruta)) {
                 abort(404, 'Archivo no encontrado.');
             }
 
-            // 4. NOMBRE BONITO + .pdf (forzado)
             $nombreDescarga = $archivo->nombre_archivo; // Ej: "Reglamento del Fraccionamiento"
             $nombreDescarga = preg_replace('/\.pdf$/i', '', $nombreDescarga); // Quita .pdf si ya existe
             $nombreDescarga = $nombreDescarga . '.pdf'; // Añade .pdf al final
