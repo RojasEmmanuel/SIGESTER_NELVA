@@ -496,7 +496,7 @@
                     </div>
                 @endif
 
-                <form id="profilePageForm" action="{{ route('asesor.perfil.update') }}" method="POST" enctype="multipart/form-data">
+                <form id="profilePageForm" action="@if($usuario->tipo_usuario == 4){{ route('ing.perfil.update') }}@else{{ route('asesor.perfil.update') }}@endif" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <div class="profile-layout">
@@ -566,6 +566,7 @@
                             </div>
 
                             <!-- Información profesional -->
+                            @if($usuario->tipo_usuario != 4)
                             <div class="profile-section">
                                 <h3 class="profile-section-title">Información Profesional</h3>
                                 <div class="profile-form-grid">
@@ -584,10 +585,14 @@
                                     </div>
                                 </div>
                             </div>
+                            @else
+                            <!-- Para Ingeniero: Solo mostrar mensaje de seguridad -->
+                           
+                            @endif
 
                             <!-- Acciones -->
                             <div class="profile-actions">
-                                <a href="{{ route('asesor.perfil.index') }}" class="profile-btn profile-btn-outline">
+                                <a href="@if($usuario->tipo_usuario == 4){{ route('ing.perfil.index') }}@else{{ route('asesor.perfil.index') }}@endif" class="profile-btn profile-btn-outline">
                                    Cancelar
                                 </a>
                                 <button type="submit" class="profile-btn profile-btn-primary">

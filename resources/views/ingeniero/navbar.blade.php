@@ -23,7 +23,7 @@
                     <i class="fas fa-home"></i> Panel
                 </a>
                 <a href="{{url('ing/mapas-fraccionamientos')}}" class="{{Request::is('ing/mapa-fraccionamientos') ? 'active':''}}"> <i class="fas fa-map"></i>Mapas</a>
-                <a href="{{ route('asesor.perfil.index') }}" class="{{ Request::routeIs('asesor.perfil*') ? 'active' : '' }}">
+                <a href="{{ route('ing.perfil.index') }}" class="{{ Request::routeIs('ing.perfil*') ? 'active' : '' }}">
                     <i class="fas fa-user"></i> Perfil
                 </a>
                 <a href="#" id="logout-btn-desktop" class="logout-link">
@@ -62,7 +62,7 @@
                         <i class="fas fa-map"></i> <span>Mapas</span>
                     </a>
                     
-                    <a href="{{ route('asesor.perfil.index') }}" class="nav-item {{ Request::routeIs('asesor.perfil*') ? 'active' : '' }}">
+                    <a href="{{ route('ing.perfil.index') }}" class="nav-item {{ Request::routeIs('ing.perfil*') ? 'active' : '' }}">
                         <i class="fas fa-user"></i> <span>Perfil</span>
                     </a>
                 </div>

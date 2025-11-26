@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\AdminPromocionController;
 use App\Http\Controllers\Ingeniero\IngInicioController;
 use App\Http\Controllers\Ingeniero\LoteController;
 use App\Http\Controllers\Ingeniero\MapasController;
+use App\Http\Controllers\Ingeniero\PerfilControllerInge;
 use App\Http\Controllers\Auth\PasswordResetController;
 
 // ===============================================
@@ -119,7 +120,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/ventas/directa/crear', [ventasController::class, 'createDirect'])->name('ventas.directa.crear');
         Route::post('/ventas/directa', [ventasController::class, 'storeDirect'])->name('ventas.direct.store');
 
-        // Cobranza (¿la usa el asesor también? Sí, según tu código original)
+        // Cobranza 
         Route::prefix('cobranza')->name('cobranza.')->group(function () {
             Route::get('/ventas', [CobranzaVentaController::class, 'index'])->name('ventas.index');
             Route::get('/ventas/{id_venta}', [CobranzaVentaController::class, 'show'])->name('ventas.show');
@@ -204,6 +205,10 @@ Route::middleware('auth')->group(function () {
 
         // Dashboard del ingeniero
         Route::get('/inicio', [IngInicioController::class, 'index'])->name('inicio');
+
+        // Perfil del ingeniero
+        Route::get('/perfil', [PerfilControllerInge::class, 'index'])->name('perfil.index');
+        Route::post('/perfil', [PerfilControllerInge::class, 'update'])->name('perfil.update');
 
         // Selección de fraccionamiento para editar mapas
         Route::get('/mapas-fraccionamientos', [MapasController::class, 'index'])
