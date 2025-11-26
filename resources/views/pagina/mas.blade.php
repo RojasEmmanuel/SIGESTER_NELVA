@@ -1,29 +1,29 @@
 <?= view('templates/navbar', ['title' => 'Más - Nelva Bienes Raíces']) ?>
 <link href="{{ asset('css/pagina/mas.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Agregar AOS CSS -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
 <div class="news-section">
     <div class="news-container">
-        <div class="section-header">
+        <div class="section-header" data-aos="fade-up">
             <h2 class="section-title">Noticias y Eventos</h2>
             <p class="section-subtitle">Descubre nuestras últimas actividades, proyectos y compromisos con la comunidad</p>
         </div>
         
         <div class="news-grid">
-            <!-- Noticia 1 (visible inicialmente) -->
-       
-            <!-- Noticia 2 (visible inicialmente) -->
-            <div class="news-card">
+            <!-- Noticia 1 - Expansión Agua Marina -->
+            <div class="news-card" data-aos="fade-up" data-aos-delay="100">
                 <div class="news-carousel">
                     <div class="carousel-slides">
                         <div class="carousel-slide">
                             <img src="/images/facebook/noticiaAguamarina1.jpg" alt="Nueva oficina">
                         </div>
                         <div class="carousel-slide">
-                            <img src="/images/facebook/noticiaAguamarina2.jpg"" alt="Equipo de trabajo">
+                            <img src="/images/facebook/noticiaAguamarina2.jpg" alt="Equipo de trabajo">
                         </div>
                         <div class="carousel-slide">
-                            <img src="images/facebook/noticiaAguamarina3.jpg"" alt="Equipo de trabajo">
+                            <img src="/images/facebook/noticiaAguamarina3.jpg" alt="Equipo de trabajo">
                         </div>
                     </div>
                     <button class="carousel-btn carousel-prev">❮</button>
@@ -51,8 +51,8 @@
                 </div>
             </div>
 
-            <!-- Noticia 3 (visible inicialmente) -->
-            <div class="news-card">
+            <!-- Noticia 2 - Torneo de Basketball -->
+            <div class="news-card" data-aos="fade-up" data-aos-delay="200">
                 <div class="news-carousel">
                     <div class="carousel-slides">
                         <div class="carousel-slide">
@@ -89,11 +89,10 @@
                         </div>
                     </div>
                 </div>
-
-                
             </div>
             
-            <div class="news-card">
+            <!-- Noticia 3 - Día del Niño -->
+            <div class="news-card" data-aos="fade-up" data-aos-delay="300">
                 <div class="news-carousel">
                     <div class="carousel-slides">
                         <div class="carousel-slide">
@@ -132,15 +131,15 @@
                 </div>
             </div>
 
-            <!-- Noticia 4 (oculta inicialmente) 
-            <div class="news-card hidden-news">
-                
+            <!-- Noticias ocultas (si las tienes) -->
+            <!--
+            <div class="news-card hidden-news" data-aos="fade-up" data-aos-delay="400">
+                ...
             </div>
             -->
-            <!-- Puedes agregar más noticias ocultas aquí si las tienes -->
         </div>
         
-        <div class="load-more-container">
+        <div class="load-more-container" data-aos="fade-up" data-aos-delay="400">
             <button class="load-more-btn" id="loadMoreBtn">Ver más noticias</button>
         </div>
     </div>
@@ -148,40 +147,51 @@
 
 <div class="social-container">
     <section class="social-section">
-        <div class="social-header">
+        <div class="social-header" data-aos="fade-up">
             <h1 class="social-title2">Conéctate con Nelva Bienes Raíces</h1>
             <p class="social-subtitle">Síguenos en nuestras redes sociales para conocer las mejores propiedades y promociones exclusivas</p>
         </div>
         
         <div class="social-grid">
-            <div class="social-card" onclick="window.open('https://www.facebook.com/profile.php?id=100063637222584', '_blank')">
+            <div class="social-card" 
+                 onclick="window.open('https://www.facebook.com/profile.php?id=100063637222584', '_blank')"
+                 data-aos="zoom-in" data-aos-delay="100">
                 <i class="fab fa-facebook-f social-icon facebook"></i>
                 <h3 class="social-name">Facebook</h3>
                 <p class="social-username">@NelvaBienesRaices</p>
                 <a class="social-link2">Seguir</a>
             </div>
             
-            <div class="social-card" onclick="window.open('https://www.instagram.com/nelvabienesraices/', '_blank')">
+            <div class="social-card" 
+                 onclick="window.open('https://www.instagram.com/nelvabienesraices/', '_blank')"
+                 data-aos="zoom-in" data-aos-delay="200">
                 <i class="fab fa-instagram social-icon instagram"></i>
                 <h3 class="social-name">Instagram</h3>
                 <p class="social-username">@NelvaBienesRaices</p>
                 <a class="social-link2">Seguir</a>
             </div>
             
-            <div class="social-card" onclick="window.open('https://www.tiktok.com/@nelvabienesraices.mx?is_from_webapp=1&sender_device=pc', '_blank')">
+            <div class="social-card" 
+                 onclick="window.open('https://www.tiktok.com/@nelvabienesraices.mx?is_from_webapp=1&sender_device=pc', '_blank')"
+                 data-aos="zoom-in" data-aos-delay="300">
                 <i class="fab fa-tiktok social-icon tiktok"></i>
                 <h3 class="social-name">TikTok</h3>
                 <p class="social-username">@nelvabienesraices.mx</p>
                 <a class="social-link2">Seguir</a>
             </div>
-            <div class="social-card" onclick="window.open('https://www.youtube.com/@NELVABIENESRAICES', '_blank')">
+            
+            <div class="social-card" 
+                 onclick="window.open('https://www.youtube.com/@NELVABIENESRAICES', '_blank')"
+                 data-aos="zoom-in" data-aos-delay="400">
                 <i class="fab fa-youtube social-icon youtube"></i>
                 <h3 class="social-name">YouTube</h3>
                 <p class="social-username">Nelva Bienes Raíces</p>
                 <a class="social-link2">Suscribirse</a>
             </div>
             
-            <div class="social-card" onclick="window.open('https://wa.me/9581199171', '_blank')">
+            <div class="social-card" 
+                 onclick="window.open('https://wa.me/9581199171', '_blank')"
+                 data-aos="zoom-in" data-aos-delay="500">
                 <i class="fab fa-whatsapp social-icon whatsapp"></i>
                 <h3 class="social-name">WhatsApp</h3>
                 <p class="social-username">+52 123 456 7890</p>
@@ -191,73 +201,93 @@
     </section>
 </div>
 
+<!-- Script de AOS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    // Inicializar todos los carruseles
-    document.querySelectorAll('.news-carousel').forEach(carousel => {
-        const slides = carousel.querySelector('.carousel-slides');
-        const slideItems = carousel.querySelectorAll('.carousel-slide');
-        const prevBtn = carousel.querySelector('.carousel-prev');
-        const nextBtn = carousel.querySelector('.carousel-next');
-        const dots = carousel.querySelectorAll('.carousel-dot');
+    // Inicializar AOS
+    document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 50,
+            delay: 0
+        });
         
-        let currentIndex = 0;
-        const totalSlides = slideItems.length;
-        
-        // Actualizar posición del carrusel
-        function updateCarousel() {
-            slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+        // Refresh después de que todo cargue
+        window.addEventListener('load', function() {
+            AOS.refresh();
+        });
+
+        // Inicializar todos los carruseles
+        document.querySelectorAll('.news-carousel').forEach(carousel => {
+            const slides = carousel.querySelector('.carousel-slides');
+            const slideItems = carousel.querySelectorAll('.carousel-slide');
+            const prevBtn = carousel.querySelector('.carousel-prev');
+            const nextBtn = carousel.querySelector('.carousel-next');
+            const dots = carousel.querySelectorAll('.carousel-dot');
             
-            // Actualizar dots
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentIndex);
-            });
-        }
-        
-        // Evento para botón anterior
-        prevBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex > 0) ? currentIndex - 1 : totalSlides - 1;
-            updateCarousel();
-        });
-        
-        // Evento para botón siguiente
-        nextBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex < totalSlides - 1) ? currentIndex + 1 : 0;
-            updateCarousel();
-        });
-        
-        // Eventos para dots
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                currentIndex = index;
+            let currentIndex = 0;
+            const totalSlides = slideItems.length;
+            
+            // Actualizar posición del carrusel
+            function updateCarousel() {
+                slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                // Actualizar dots
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentIndex);
+                });
+            }
+            
+            // Evento para botón anterior
+            prevBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex > 0) ? currentIndex - 1 : totalSlides - 1;
                 updateCarousel();
             });
-        });
-        
-        // Auto-avance cada 5 segundos
-        let interval = setInterval(() => {
-            currentIndex = (currentIndex < totalSlides - 1) ? currentIndex + 1 : 0;
-            updateCarousel();
-        }, 5000);
-        
-        // Pausar auto-avance al interactuar
-        carousel.addEventListener('mouseenter', () => clearInterval(interval));
-        carousel.addEventListener('mouseleave', () => {
-            interval = setInterval(() => {
+            
+            // Evento para botón siguiente
+            nextBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex < totalSlides - 1) ? currentIndex + 1 : 0;
+                updateCarousel();
+            });
+            
+            // Eventos para dots
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    currentIndex = index;
+                    updateCarousel();
+                });
+            });
+            
+            // Auto-avance cada 5 segundos
+            let interval = setInterval(() => {
                 currentIndex = (currentIndex < totalSlides - 1) ? currentIndex + 1 : 0;
                 updateCarousel();
             }, 5000);
-        });
-    });
-    
-    // Función para mostrar más noticias
-    document.getElementById('loadMoreBtn').addEventListener('click', function() {
-        // Mostrar todas las noticias ocultas
-        document.querySelectorAll('.hidden-news').forEach(news => {
-            news.classList.remove('hidden-news');
+            
+            // Pausar auto-avance al interactuar
+            carousel.addEventListener('mouseenter', () => clearInterval(interval));
+            carousel.addEventListener('mouseleave', () => {
+                interval = setInterval(() => {
+                    currentIndex = (currentIndex < totalSlides - 1) ? currentIndex + 1 : 0;
+                    updateCarousel();
+                }, 5000);
+            });
         });
         
-        // Ocultar el botón después de hacer clic
-        this.style.display = 'none';
+        // Función para mostrar más noticias
+        document.getElementById('loadMoreBtn').addEventListener('click', function() {
+            // Mostrar todas las noticias ocultas
+            document.querySelectorAll('.hidden-news').forEach(news => {
+                news.classList.remove('hidden-news');
+                // Refresh AOS para las nuevas noticias
+                AOS.refresh();
+            });
+            
+            // Ocultar el botón después de hacer clic
+            this.style.display = 'none';
+        });
     });
 </script>
 

@@ -1,67 +1,68 @@
 <?= view('templates/navbar', ['title' => 'Servicios - Nelva Bienes Raíces']) ?>
 <link rel="stylesheet" href="{{ asset('css/pagina/servicios.css') }}">
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+<!-- Agregar AOS CSS -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
 <!-- Hero Section -->
 <section class="nbr-hero">
-    <div class="nbr-hero-content">
+    <div class="nbr-hero-content" data-aos="fade-up" data-aos-duration="1000">
         <h1>Soluciones inmobiliarias integrales en Oaxaca</h1>
-        <p>Nos especializamos en la venta de lotes con alta plusvalía, servicios de topografía, renta de maquinaria y desarrollo de construcción, con enfoque de calidad y cuidado del medio ambiente.</p>
-        <a href="#nbr-servicios" class="nbr-btn">Nuestros Servicios</a>
+        <p data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">Nos especializamos en la venta de lotes con alta plusvalía, servicios de topografía, renta de maquinaria y desarrollo de construcción, con enfoque de calidad y cuidado del medio ambiente.</p>
+        <a href="#nbr-servicios" class="nbr-btn" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">Nuestros Servicios</a>
     </div>
 </section>
 
 <!-- Services Section -->
 <section class="nbr-section" id="nbr-servicios">
-    <div class="nbr-section-title">
+    <div class="nbr-section-title" data-aos="fade-up">
         <h2>Nuestros Servicios</h2>
-        <p>Ofrecemos soluciones integrales para tus proyectos inmobiliarios y de construcción en los principales destinos turísticos de Oaxaca.</p>
+        <p data-aos="fade-up" data-aos-delay="100">Ofrecemos soluciones integrales para tus proyectos inmobiliarios y de construcción en los principales destinos turísticos de Oaxaca.</p>
     </div>
     
     <div class="nbr-services-container">
         <!-- Service 1 - Venta de Terrenos -->
-        <div class="nbr-service-card">
+        <div class="nbr-service-card" data-aos="fade-up" data-aos-delay="200">
             <div class="nbr-service-img">
                 <img src="{{ asset('images/servicios/ventaTerrenos.png') }}" alt="Venta de Terrenos">
-                <span class="nbr-service-badge">Más popular</span>
+                <span class="nbr-service-badge" data-aos="zoom-in" data-aos-delay="300">Más popular</span>
             </div>
             <div class="nbr-service-content">
                 <h3 class="nbr-service-title">Venta de Terrenos en Zonas Privilegiadas</h3>
                 
                 <div class="nbr-service-features">
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="300">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-umbrella-beach"></i>
                         </div>
                         <span class="nbr-feature-text">Acceso directo a playas vírgenes</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="400">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-binoculars"></i>
                         </div>
                         <span class="nbr-feature-text">Vistas panorámicas al océano</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="500">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-swimming-pool"></i>
                         </div>
                         <span class="nbr-feature-text">Zonas para deportes acuáticos</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="600">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-fish"></i>
                         </div>
                         <span class="nbr-feature-text">Excelentes áreas de pesca</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="700">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-archway"></i>
                         </div>
                         <span class="nbr-feature-text">Cercanía a sitios arqueológicos</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="800">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-ruler-combined"></i>
                         </div>
@@ -69,7 +70,7 @@
                     </div>
                 </div>
                 
-                <div class="nbr-service-contact">
+                <div class="nbr-service-contact" data-aos="fade-up" data-aos-delay="900">
                     <h4 class="nbr-contact-title">Contacto directo:</h4>
                     <div class="nbr-contact-item">
                         <i class="fas fa-phone nbr-contact-icon"></i>
@@ -85,63 +86,63 @@
                     </div>
                 </div>
 
-                <a href="{{ url('/asesores') }}" class="nbr-service-btn">Contactar a un asesor</a>
+                <a href="{{ url('/asesores') }}" class="nbr-service-btn" data-aos="zoom-in" data-aos-delay="1000">Contactar a un asesor</a>
             </div>
         </div>
         
         <!-- Service 2 - Topografía -->
-        <div class="nbr-service-card">
+        <div class="nbr-service-card" data-aos="fade-up" data-aos-delay="300">
             <div class="nbr-service-img">
                 <img src="{{ asset('images/servicios/topografia.png') }}" alt="Levantamiento Topográfico">
-                <span class="nbr-service-badge">Servicio profesional</span>
+                <span class="nbr-service-badge" data-aos="zoom-in" data-aos-delay="400">Servicio profesional</span>
             </div>
             <div class="nbr-service-content">
                 <h3 class="nbr-service-title">Levantamientos Topográficos de Precisión</h3>
                 
                 <div class="nbr-service-features">
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="400">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-map-marked-alt"></i>
                         </div>
                         <span class="nbr-feature-text">Estudio detallado del terreno</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="500">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-mountain"></i>
                         </div>
                         <span class="nbr-feature-text">Medición precisa de desniveles y altimetría</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="600">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-globe-americas"></i>
                         </div>
                         <span class="nbr-feature-text">Análisis de las características geográficas</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="700">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-file-alt"></i>
                         </div>
                         <span class="nbr-feature-text">Informe técnico sobre el perfil del terreno</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="800">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-leaf"></i>
                         </div>
                         <span class="nbr-feature-text">Detección de áreas verdes y vegetación relevante</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="900">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-water"></i>
                         </div>
                         <span class="nbr-feature-text">Estudio de drenaje y cuerpos de agua cercanos</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="1000">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-file-alt"></i>
                         </div>
                         <span class="nbr-feature-text">Evaluación de la proximidad a zonas naturales y reservas</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="1100">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-map-marked-alt"></i>
                         </div>
@@ -149,7 +150,7 @@
                     </div>
                 </div>
                 
-                <div class="nbr-service-contact">
+                <div class="nbr-service-contact" data-aos="fade-up" data-aos-delay="1200">
                     <h4 class="nbr-contact-title">Contacto para topografía:</h4>
                     <div class="nbr-contact-item">
                         <i class="fas fa-phone nbr-contact-icon"></i>
@@ -165,49 +166,48 @@
                     </div>
                 </div>
                 
-                <button type="button" class="nbr-service-btn nbr-modal-btn" data-modal-target="nbr-modal-topografia">Cotizar servicio</button>
+                <button type="button" class="nbr-service-btn nbr-modal-btn" data-modal-target="nbr-modal-topografia" data-aos="zoom-in" data-aos-delay="1300">Cotizar servicio</button>
             </div>
         </div>
         
         <!-- Service 3 - Maquinaria -->
-        <div class="nbr-service-card">
+        <div class="nbr-service-card" data-aos="fade-up" data-aos-delay="400">
             <div class="nbr-service-img">
                 <img src="{{ asset('images/servicios/renta.png') }}" alt="Renta de Maquinaria">
-                <span class="nbr-service-badge">Equipo disponible</span>
+                <span class="nbr-service-badge" data-aos="zoom-in" data-aos-delay="500">Equipo disponible</span>
             </div>
             <div class="nbr-service-content">
                 <h3 class="nbr-service-title">Renta de Maquinaria para Construcción</h3>
-                <p style="margin-bottom: 20px; color: var(--nbr-light-text);">Flota moderna de maquinaria pesada con operadores certificados y mantenimiento preventivo incluido.</p>
+                <p style="margin-bottom: 20px; color: var(--nbr-light-text);" data-aos="fade-up" data-aos-delay="500">Flota moderna de maquinaria pesada con operadores certificados y mantenimiento preventivo incluido.</p>
                 
                 <div class="nbr-service-features">
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="500">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-truck-monster"></i>
                         </div>
                         <span class="nbr-feature-text">Maquinaria pesada</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="600">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-truck-monster"></i>
                         </div>
                         <span class="nbr-feature-text">Equipos de construcción</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="700">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-truck-monster"></i>
                         </div>
                         <span class="nbr-feature-text">Tecnología avanzada para medición</span>
                     </div>
-                    <div class="nbr-feature-item">
+                    <div class="nbr-feature-item" data-aos="fade-right" data-aos-delay="800">
                         <div class="nbr-feature-icon">
                             <i class="fas fa-truck-monster"></i>
                         </div>
                         <span class="nbr-feature-text">Soporte integral</span>
                     </div>
-                    
                 </div>
                 
-                <div class="nbr-service-contact">
+                <div class="nbr-service-contact" data-aos="fade-up" data-aos-delay="900">
                     <h4 class="nbr-contact-title">Disponibilidad:</h4>
                     <div class="nbr-contact-item">
                         <i class="fas fa-phone nbr-contact-icon"></i>
@@ -223,7 +223,7 @@
                     </div>
                 </div>
                 
-                <button type="button" class="nbr-service-btn nbr-modal-btn" data-modal-target="nbr-modal-maquinaria">Consultar disponibilidad</button>
+                <button type="button" class="nbr-service-btn nbr-modal-btn" data-modal-target="nbr-modal-maquinaria" data-aos="zoom-in" data-aos-delay="1000">Consultar disponibilidad</button>
             </div>
         </div>
     </div>
@@ -231,22 +231,22 @@
 
 <!-- Modal Topografía -->
 <div id="nbr-modal-topografia" class="nbr-modal">
-    <div class="nbr-modal-content">
+    <div class="nbr-modal-content" data-aos="zoom-in" data-aos-duration="500">
         <span class="nbr-close-modal">&times;</span>
         <div class="nbr-modal-header">
             <h2>Servicio Profesional de Topografía</h2>
-       </div>
+        </div>
         <div class="nbr-modal-body">
             <div class="nbr-modal-text">
-                <p>El servicio de levantamiento topográfico para proporcionar mediciones precisas y detalladas de terrenos. Este proceso es clave para identificar los límites, las características físicas y las dimensiones exactas de una propiedad, siendo una herramienta fundamental para proyectos de construcción, desarrollo inmobiliario, trámites legales y más.</p>
+                <p data-aos="fade-up" data-aos-delay="100">El servicio de levantamiento topográfico para proporcionar mediciones precisas y detalladas de terrenos. Este proceso es clave para identificar los límites, las características físicas y las dimensiones exactas de una propiedad, siendo una herramienta fundamental para proyectos de construcción, desarrollo inmobiliario, trámites legales y más.</p>
                
-                <p><strong>Tipos de levantamientos:</strong></p>
+                <p data-aos="fade-up" data-aos-delay="200"><strong>Tipos de levantamientos:</strong></p>
                 <ul>
-                    <li>Topografía de lote</li>
-                    <li>Nivelación de terreno</li>
-                    <li>Plano de construcción</li>
-                    <li>Estudios de pendiente</li>
-                    <li>Delimitación de predios</li>
+                    <li data-aos="fade-right" data-aos-delay="300">Topografía de lote</li>
+                    <li data-aos="fade-right" data-aos-delay="400">Nivelación de terreno</li>
+                    <li data-aos="fade-right" data-aos-delay="500">Plano de construcción</li>
+                    <li data-aos="fade-right" data-aos-delay="600">Estudios de pendiente</li>
+                    <li data-aos="fade-right" data-aos-delay="700">Delimitación de predios</li>
                 </ul>
             </div>
             <div class="nbr-modal-gallery">
@@ -264,7 +264,6 @@
                             </a>
                             <div class="nbr-carousel-caption">Trabajo de campo preciso</div>
                         </div>
-                       
                     </div>
                     <div class="nbr-carousel-controls">
                         <button class="nbr-carousel-control prev" onclick="nbrMoveSlide('nbr-topografia-carousel', -1)">&#10094;</button>
@@ -277,32 +276,28 @@
                     </div>
                 </div>
             </div>
-            
         </div>
-        
     </div>
-   
 </div>
 
 <!-- Modal Maquinaria -->
 <div id="nbr-modal-maquinaria" class="nbr-modal">
-    <div class="nbr-modal-content">
+    <div class="nbr-modal-content" data-aos="zoom-in" data-aos-duration="500">
         <span class="nbr-close-modal">&times;</span>
         <div class="nbr-modal-header">
             <h2>Renta de Maquinaria para Construcción</h2>
         </div>
         <div class="nbr-modal-body">
             <div class="nbr-modal-text">
-                <p>Ofrecemos renta de equipo de construcción de alta calidad, como excavadoras, compactadoras y herramientas especializadas, ideales para proyectos de cualquier escala. Todos nuestros equipos están en excelentes condiciones, garantizando eficiencia y seguridad. Al alquilar con nosotros, obtienes maquinaria de última tecnología sin los costos de mantenimiento y almacenamiento.</p>
+                <p data-aos="fade-up" data-aos-delay="100">Ofrecemos renta de equipo de construcción de alta calidad, como excavadoras, compactadoras y herramientas especializadas, ideales para proyectos de cualquier escala. Todos nuestros equipos están en excelentes condiciones, garantizando eficiencia y seguridad. Al alquilar con nosotros, obtienes maquinaria de última tecnología sin los costos de mantenimiento y almacenamiento.</p>
                 
-                <p><strong>Nuestro inventario incluye:</strong></p>
+                <p data-aos="fade-up" data-aos-delay="200"><strong>Nuestro inventario incluye:</strong></p>
                 <ul>
-                    <li>Retroexcavadoras CAT 320</li>
-                    <li>Excavadoras hidráulicas</li>
-                    <li>Vibrocompactadores</li>
-                    <li>Camiones de volteo 14m³</li>
+                    <li data-aos="fade-right" data-aos-delay="300">Retroexcavadoras CAT 320</li>
+                    <li data-aos="fade-right" data-aos-delay="400">Excavadoras hidráulicas</li>
+                    <li data-aos="fade-right" data-aos-delay="500">Vibrocompactadores</li>
+                    <li data-aos="fade-right" data-aos-delay="600">Camiones de volteo 14m³</li>
                 </ul>
-                
             </div>
             <div class="nbr-modal-gallery">
                 <div class="nbr-carousel" id="nbr-maquinaria-carousel">
@@ -345,34 +340,48 @@
                 </div>
             </div>
         </div>
-        
     </div>
 </div>
 
-
+<!-- Script de AOS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
 <script>
-    // Cerrar todos los modales al cargar la página
-    document.querySelectorAll('.nbr-modal').forEach(modal => {
-        modal.style.display = 'none';
-    });
-
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetElement = document.querySelector(this.getAttribute('href'));
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 80,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-
-    // Modal functionality
+    // Inicializar AOS
     document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 50,
+            delay: 0
+        });
+        
+        // Refresh después de que todo cargue
+        window.addEventListener('load', function() {
+            AOS.refresh();
+        });
+
+        // Cerrar todos los modales al cargar la página
+        document.querySelectorAll('.nbr-modal').forEach(modal => {
+            modal.style.display = 'none';
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetElement = document.querySelector(this.getAttribute('href'));
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Modal functionality
         // Configurar lightbox si está disponible - versión más robusta
         if (window.lightbox) {
             try {
@@ -397,6 +406,8 @@
                 if (modal && modal.nodeType === Node.ELEMENT_NODE) {
                     modal.style.display = 'block';
                     document.body.style.overflow = 'hidden';
+                    // Refresh AOS para animaciones dentro del modal
+                    AOS.refresh();
                     // Reset carousel si existe
                     const carouselId = modal.id + '-carousel';
                     const carousel = document.getElementById(carouselId);
