@@ -9,9 +9,22 @@
     <link rel="icon" href="{{ asset('/images/favicon.ico') }}" type="image/x-icon">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @stack('styles')
+    
 </head>
 <body>
-    <!-- Navbar Desktop -->
+
+    @php
+        $pendientesCount = \Cache::remember('admin_pendientes_count', now()->addMinutes(3), fn() =>
+            \App\Models\Apartado::where('tipoApartado', 'deposito')
+                ->whereHas('deposito', fn($q) => $q->where('ticket_estatus', 'solicitud'))
+                ->count()
+        );
+
+        $historialCount = \Cache::remember('admin_historial_ticket_count', now()->addMinutes(3), fn() =>
+            \App\Models\Venta::where('ticket_estatus', 'solicitud')->count()
+        );
+    @endphp
+        <!-- Navbar Desktop -->
     <nav class="navbar-desktop">
         <div class="navbar-desktop-container">
             <div class="logo">
@@ -39,11 +52,20 @@
                 <a href="{{ url('admin/usuarios') }}" class="{{ Request::is('admin/usuarios*') ? 'active' : '' }}">
                     <i class="fas fa-users"></i> Usuarios
                 </a>
+                <!-- Pendientes -->
                 <a href="{{ url('admin/apartados-pendientes') }}" class="{{ Request::is('admin/apartados-pendientes*') ? 'active' : '' }}">
                     <i class="fas fa-clock"></i> Pendientes
+                    @if($pendientesCount ?? 0 > 0)
+                        <span class="badge-counter">{{ $pendientesCount }}</span>
+                    @endif
                 </a>
+
+                <!-- Historial -->
                 <a href="{{ url('admin/ventas') }}" class="{{ Request::is('admin/ventas*') ? 'active' : '' }}">
                     <i class="fas fa-history"></i> Historial
+                    @if($historialCount ?? 0 > 0)
+                        <span class="badge-counter">{{ $historialCount }}</span>
+                    @endif
                 </a>
 
                 <!-- Salir -->
@@ -100,11 +122,28 @@
                     <a href="{{ url('admin/usuarios') }}" class="nav-item {{ Request::is('admin/usuarios*') ? 'active' : '' }}">
                         <i class="fas fa-users"></i> <span>Usuarios</span>
                     </a>
-                    <a href="{{ url('admin/apartados-pendientes') }}" class="nav-item {{ Request::is('admin/apartados-pendientes*') ? 'active' : '' }}">
-                        <i class="fas fa-clock"></i> <span>Pendientes</span>
+                    <!-- Pendientes - Móvil -->
+                    <a href="{{ url('admin/apartados-pendientes') }}" 
+                    class="nav-item {{ Request::is('admin/apartados-pendientes*') ? 'active' : '' }}">
+                        <i class="fas fa-clock"></i> 
+                        <span>Pendientes</span>
+                        @if(($pendientesCount ?? 0) > 0)
+                            <span class="badge-counter">
+                                {{ $pendientesCount }}
+                            </span>
+                        @endif
                     </a>
-                    <a href="{{ url('admin/ventas') }}" class="nav-item {{ Request::is('admin/ventas*') ? 'active' : '' }}">
-                        <i class="fas fa-history"></i> <span>Historial</span>
+
+                    <!-- Historial - Móvil -->
+                    <a href="{{ url('admin/ventas') }}" 
+                    class="nav-item {{ Request::is('admin/ventas*') ? 'active' : '' }}">
+                        <i class="fas fa-history"></i> 
+                        <span>Historial</span>
+                        @if(($historialCount ?? 0) > 0)
+                            <span class="badge-counter" >
+                                {{ $historialCount }}
+                            </span>
+                        @endif
                     </a>
                 </div>
 
