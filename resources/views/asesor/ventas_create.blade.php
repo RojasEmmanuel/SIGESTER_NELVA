@@ -528,7 +528,7 @@
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Crear Venta
+                    <i class="fas fa-save"></i> Registrar
                 </button>
                 <a href="{{ route('ventas.index') }}" class="btn btn-secondary">
                     <i class="fas fa-times"></i> Cancelar

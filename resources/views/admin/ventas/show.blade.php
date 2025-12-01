@@ -17,7 +17,7 @@
                 </div>
                 <a href="{{ route('admin.ventas.index') }}" class="btn-back">
                     <i class="fas fa-arrow-left"></i>
-                    <span>Volver a Ventas</span>
+                    <span>Volver</span>
                 </a>
             </div>
         </div>
@@ -64,7 +64,7 @@
                                     <td>{{ $venta->fechaSolicitud->format('d/m/Y') }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Vendedor:</th>
+                                    <th>Asesor:</th>
                                     <td>{{ $venta->apartado->usuario->nombre }} {{ $venta->apartado->usuario->apellidos }}</td>
                                 </tr>
                                 <tr>

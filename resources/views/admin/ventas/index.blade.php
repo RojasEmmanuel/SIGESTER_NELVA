@@ -13,7 +13,7 @@
             <h1 class="ventas-title">Gestión de Ventas</h1>
             <a href="{{ route('admin.ventas.index', ['ticket_estatus' => 'solicitud']) }}" 
                class="btn btn-warning">
-                <i class="fas fa-receipt"></i> Validar Tickets Pendientes
+                <i class="fas fa-receipt"></i> Validar Comprobantes
             </a>
         </div>
 
@@ -81,7 +81,7 @@
                     
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-filter"></i> Aplicar Filtros
+                            <i class="fas fa-filter"></i> Filtrar
                         </button>
                         @if($request->hasAny(['estatus', 'ticket_estatus']))
                             <a href="{{ route('admin.ventas.index') }}" class="btn btn-outline">

@@ -90,8 +90,8 @@
 }
 
 .detail-card-header {
-    background: var(--primary);
-    color: var(--white);
+    background: var(--white);
+    color: var(--primary);
     padding: 1.5rem;
     display: flex;
     justify-content: space-between;

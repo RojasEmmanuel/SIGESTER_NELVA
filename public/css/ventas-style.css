@@ -48,7 +48,7 @@
 
 /* Contenedor principal */
 .ventas-container {
-    max-width: 1400px;
+    max-width: 1300px;
     margin: 0 auto;
     padding: 2rem 1rem;
 }
@@ -58,8 +58,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
     flex-wrap: wrap;
     gap: 1rem;
 }

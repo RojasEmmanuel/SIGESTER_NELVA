@@ -183,8 +183,7 @@
 <div class="container">
     <div class="page-header">
         <h1 class="page-title">
-            <i class="fas fa-home"></i>
-            <span>Venta Directa</span>
+            <span>Nueva venta</span>
         </h1>
         <a href="javascript:history.back()" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Volver
@@ -521,7 +520,7 @@
 
         <div class="form-actions" style="margin-top: 30px; text-align: center;">
             <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Crear Venta Directa
+                <i class="fas fa-save"></i> Registrar
             </button>
             <a href="{{ route('ventas.index') }}" class="btn btn-secondary">
                 <i class="fas fa-times"></i> Cancelar

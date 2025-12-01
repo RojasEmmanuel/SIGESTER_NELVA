@@ -35,7 +35,7 @@
             <h1 class="page-title">
                 Mis Apartados
             </h1>
-            <p class="page-subtitle">Gestiona tus apartados activos, vencidos y vendidos</p>
+            <p class="page-subtitle">Consulta tus apartados activos, vencidos y vendidos</p>
         </div>
         <div class="header-stats">
             <span class="stat-item">Total: {{ $totalApartados }}</span>

@@ -47,6 +47,8 @@ body {
     max-width: 100%;
     padding: 0.75rem;
     margin: 0 auto;
+    padding-top: none;
+    margin: none;
 }
 
 /* Page Header mobile */
@@ -55,9 +57,8 @@ body {
     flex-direction: column;
     gap: 1rem;
     margin-bottom: 1rem;
-    margin-top: 1rem;
     padding: 1rem 0;
-
+    padding:none;
 }
 
 .page-title {

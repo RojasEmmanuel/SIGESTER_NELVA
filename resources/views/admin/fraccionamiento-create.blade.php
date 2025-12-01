@@ -17,7 +17,7 @@
 <div class="container mt-5">
     <div class="page-header mb-4">
         <h1 class="mb-3">
-            <i class="fas fa-map-marked-alt"></i> Registrar Nuevo Fraccionamiento
+            Nuevo Fraccionamiento
         </h1>
         <p class="header-subtitle">Completa los datos básicos y adicionales. Después podrás agregar amenidades, galería y archivos.</p>
     </div>
@@ -49,7 +49,7 @@
         <!-- ==================== PASO 1: TU FORMULARIO ORIGINAL (100% INTACTO) ==================== -->
         <div id="paso1" class="step active">
             <!-- Información Básica -->
-            <div class="section-header mb-4">
+            <div class="section-header mb-4" style="background: #fff;">
                 <h3 class="section-title">
                     <i class="fas fa-home"></i> Información Básica
                 </h3>
@@ -57,7 +57,7 @@
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="nombre" class="form-label">Nombre del Fraccionamiento *</label>
+                    <label for="nombre" class="form-label">Nombre *</label>
                     <input type="text" id="nombre" name="nombre" class="form-control" value="{{ old('nombre') }}" required>
                     @error('nombre') <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
@@ -101,7 +101,7 @@
                         <div class="file-upload-container">
                             <input type="file" id="path_imagen" name="path_imagen" 
                                    class="file-input" accept="image/jpeg,image/png,image/jpg,image/gif" 
-                                   onchange="previewImage(this)">
+                                   onchange="previewImage(this) ">
                             <label for="path_imagen" class="file-upload-label">
                                 <i class="fas fa-folder-open"></i> Seleccionar Archivo
                             </label>
@@ -112,7 +112,7 @@
             </div>
 
             <!-- Información Adicional -->
-            <div class="section-header mb-4 mt-5">
+            <div class="section-header mb-4 mt-5" style="background: #fff; margin-top: 40px; margin-bottom: 10px;">
                 <h3 class="section-title">
                     <i class="fas fa-info-circle"></i> Información Adicional
                 </h3>
@@ -207,7 +207,7 @@
 
             <!-- ==================== PASO 3: ZONAS DINÁMICAS CON COLOR ==================== -->
             <div id="paso3" class="step form-section">
-                <div class="section-header mb-4">
+                <div class="section-header mb-4" style="background: #fff">
                     <h3 class="section-title">
                         Zonas del Fraccionamiento
                     </h3>
@@ -216,7 +216,7 @@
 
                 <div id="contenedorZonas" class="mb-4">
                     <!-- Primera zona (ya con color) -->
-                    <div class="zona-row card border-primary mb-3 position-relative">
+                    <div class="zona-row card border-primary mb-3 position-relative" style="background: #fff">
                         <div class="card-body">
                             <div class="form-grid">
                                 <div class="form-group">
@@ -261,14 +261,14 @@
                 </div>
 
                 <div class="text-center mb-4">
-                    <button type="button" class="btn btn-success" onclick="agregarZona()" style="margin-top: 20px">
+                    <button type="button" class="btn alert-success" onclick="agregarZona()" style="margin-top: 20px">
                         <i class="fas fa-plus"></i> Agregar otra zona
                     </button>
                 </div>
 
                 <div class="form-actions text-center">
                     <button type="submit" class="btn btn-primary btn-lg px-5">
-                        <i class="fas fa-save"></i> Guardar Fraccionamiento y Zonas
+                        <i class="fas fa-save"></i> Registrar
                     </button>
                     <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="volverPaso2()">
                         <i class="fas fa-arrow-left"></i> Volver
@@ -315,7 +315,7 @@
         const colorAleatorio = coloresBonitos[Math.floor(Math.random() * coloresBonitos.length)];
 
         const html = `
-            <div class="zona-row card border-primary mb-3">
+            <div class="zona-row card border-primary mb-3" style="background: #fff">
                 <div class="card-body">
                     <div class="form-grid">
                         <div class="form-group">
