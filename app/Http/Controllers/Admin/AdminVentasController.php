@@ -146,6 +146,8 @@ class AdminVentasController extends Controller
 
                 if ($request->ticket_estatus === 'aceptado') {
                     $updateData['estatus'] = 'pagos';
+                } elseif ($request->ticket_estatus === 'rechazado') {
+                    $updateData['estatus'] = 'cancelado';
                 }
 
                 $venta->update($updateData);
@@ -157,6 +159,9 @@ class AdminVentasController extends Controller
                             $loteApartado->lote->update(['estatus' => 'vendido']);
                         }
                     }
+                } elseif ($request->ticket_estatus === 'rechazado') {
+                    $this->handleCancelacion($venta);
+                    $venta->apartado->update(['estatus' => 'vencido']);
                 }
 
                 // === NOTIFICACIÓN POR EMAIL CON LOGGING ===

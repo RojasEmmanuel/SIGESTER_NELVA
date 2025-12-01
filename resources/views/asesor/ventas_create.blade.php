@@ -162,11 +162,11 @@
                             <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="form-group">
+                    <div id="enganche-container" class="form-group">
                         <label for="enganche">Enganche <span class="required">*</span></label>
                         <input type="number" name="enganche" id="enganche" class="form-control" value="" step="0.01" min="0" required>
                         @error('enganche')
-                            <div class="invalid-feedback d-block"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                            <div class="invalid-feedback d-block">Error: {{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-group">
@@ -550,33 +550,32 @@
             const creditoFields = document.querySelectorAll('#card-credito input, #card-credito select, #card-credito textarea');
 
             function togglePago() {
-                const isCredito = pagoCredito.checked;
-                tipoPagoHidden.value = isCredito ? 'credito' : 'contado';
-                cardCredito.style.display = isCredito ? 'block' : 'none';
+            const isCredito = pagoCredito.checked;
+            const engancheContainer = document.getElementById('enganche-container');
+            const engancheInput = document.getElementById('enganche');
 
-                if (!isCredito) {
-                    // CONTADO: enganche = total y readonly
-                    engancheInput.value = totalInput.value || 0;
-                    engancheInput.setAttribute('readonly', 'readonly');
-                    creditoFields.forEach(f => {
-                        f.disabled = true;
-                        f.removeAttribute('required');
-                        f.classList.remove('is-invalid', 'is-valid');
-                    });
-                } else {
-                    // CRÉDITO: enganche editable
-                    engancheInput.removeAttribute('readonly');
-                    creditoFields.forEach(f => {
-                        f.disabled = false;
-                        // Solo hacer required si el campo no está deshabilitado por el select de plazo
-                        if (!f.parentElement.closest('#custom_plazo_group') || customPlazoInput.style.display !== 'none') {
-                            f.setAttribute('required', 'required');
-                        }
-                    });
-                }
-                updateSummary();
-                updateProgress();
+            // Actualiza el campo oculto
+            tipoPagoHidden.value = isCredito ? 'credito' : 'contado';
+
+            // Mostrar/Ocultar tarjeta de crédito
+            cardCredito.style.display = isCredito ? 'block' : 'none';
+
+            if (!isCredito) {
+                // === MODO CONTADO ===
+                engancheContainer.style.display = 'none';  // Aquí está la magia
+                engancheInput.value = totalInput.value || 0;
+                engancheInput.setAttribute('readonly', 'readonly');
+            } else {
+                // === MODO CRÉDITO ===
+                engancheContainer.style.display = 'block'; // Vuelve a aparecer
+                engancheInput.removeAttribute('readonly');
+                // Opcional: si quieres que quede vacío al cambiar a crédito
+                // engancheInput.value = '';
             }
+
+            updateSummary();
+            updateProgress();
+        }
 
             function updateSummary() {
                 const total = parseFloat(totalInput.value) || 0;
@@ -842,6 +841,14 @@
             
             togglePago();
             updateProgress();
+        });
+        totalInput.addEventListener('input', () => {
+        if (pagoContado.checked) {
+            engancheInput.value = totalInput.value || 0;
+            updateSummary();
+        }
+        updateSummary();
+        updateProgress();
         });
     </script>
 </body>
