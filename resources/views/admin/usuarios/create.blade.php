@@ -15,14 +15,13 @@
     <div class="page-header">
         <div class="header-content">
             <div class="header-title">
-                <i class="fas fa-user-plus"></i>
-                <h1>Registrar Nuevo Usuario</h1>
+                <h1>Nuevo Usuario</h1>
             </div>
             <p class="header-subtitle">Complete la información para crear una nueva cuenta de usuario en el sistema</p>
         </div>
         <div class="page-actions">
             <a href="{{ route('admin.usuarios.index') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-1"></i> Volver a la lista
+                <i class="fas fa-arrow-left me-1"></i> Volver
             </a>
         </div>
     </div>
@@ -46,7 +45,7 @@
     
     <div class="card glass">
         <div class="card-header">
-            <h5><i class="fas fa-user-circle me-2"></i>Información del Usuario</h5>
+            <h5><i class="fas fa-user-circle me-2"></i>Información general</h5>
         </div>
         <div class="card-body">
             <form action="{{ route('admin.usuarios.store') }}" method="POST" id="userForm">
@@ -54,11 +53,11 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="nombre" class="form-label">Nombre Completo <span class="text-danger">*</span></label>
+                        <label for="nombre" class="form-label">Nombre<span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                             <input type="text" name="nombre" id="nombre" class="form-control" 
-                                   value="{{ old('nombre') }}" placeholder="Ingrese el nombre completo" required>
+                                   value="{{ old('nombre') }}" placeholder="Nombre completo" required>
                         </div>
                     </div>
                     
@@ -67,7 +66,7 @@
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-phone"></i></span>
                             <input type="text" name="telefono" id="telefono" class="form-control" 
-                                   value="{{ old('telefono') }}" placeholder="Ingrese el número telefónico" required>
+                                   value="{{ old('telefono') }}" placeholder="Número telefónico" required>
                         </div>
                     </div>
                     
@@ -81,11 +80,11 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="usuario_nombre" class="form-label">Nombre de Usuario <span class="text-danger">*</span></label>
+                        <label for="usuario_nombre" class="form-label">Usuario <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-at"></i></span>
                             <input type="text" name="usuario_nombre" id="usuario_nombre" class="form-control" 
-                                   value="{{ old('usuario_nombre') }}" placeholder="Ingrese nombre de usuario" required>
+                                   value="{{ old('usuario_nombre') }}" placeholder="Nombre de usuario" required>
                         </div>
                     </div>
                     
@@ -123,7 +122,7 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="tipo_usuario" class="form-label">Tipo de Usuario <span class="text-danger">*</span></label>
+                        <label for="tipo_usuario" class="form-label">Tipo<span class="text-danger">*</span></label>
                         <select name="tipo_usuario" id="tipo_usuario" class="form-select" required onchange="toggleAsesorFields()">
                             @foreach ($tipos as $tipo)
                                 <option value="{{ $tipo->id_tipo }}" {{ old('tipo_usuario') == $tipo->id_tipo ? 'selected' : '' }}>
@@ -174,7 +173,7 @@
                         <i class="fas fa-undo me-1"></i> Limpiar
                     </button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i> Registrar Usuario
+                        <i class="fas fa-save me-1"></i> Registrar
                     </button>
                 </div>
             </form>

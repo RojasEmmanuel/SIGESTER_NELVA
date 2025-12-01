@@ -29,17 +29,14 @@
 @section('content')
 <div class="container">
     <!-- Encabezado de página -->
-    <div class="page-header" style="display:flex; justify-content: space-between; margin-bottom: 10px">
-        
-        
-        <div class="headerLeft">
+    <div class="page-header">
+                <div class="headerLeft">
             <h1 class="page-title">
                 Detalles del Apartado
             </h1>
-            <p class="page-subtitle">Información completa del apartado y sus detalles</p>
         </div>
         <a href="{{ route('asesor.apartados.index') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Volver al Listado
+            <i class="fas fa-arrow-left"></i> Volver
         </a>
     </div>
 

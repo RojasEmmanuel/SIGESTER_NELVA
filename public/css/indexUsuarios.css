@@ -42,55 +42,54 @@ body{
 
 /* Contenedor principal */
 .usuarios-container {
-    max-width: 1400px;
+    max-width: 1300px;
     margin: 0 auto;
     padding: 30px 20px;
 }
 
 /* Header Corporativo Mejorado */
 .usu-corporate-header {
-    background: var(--usu-white);
-    border-radius: var(--usu-radius-lg);
-    padding: 25px 30px;
-    margin-bottom: 25px;
-    box-shadow: var(--usu-shadow);
-    border: 1px solid var(--usu-gray-light);
-    border-left: 4px solid var(--usu-primary);
+  background: var(--usu-white);
+  border-radius: var(--usu-radius-lg);
+  padding: 25px 30px;
+  margin-bottom: 25px;
+  box-shadow: var(--usu-shadow);
+  border: 1px solid var(--usu-gray-light);
 }
 
 .usu-header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .usu-header-text {
-    flex: 1;
-    min-width: 300px;
+  flex: 1;
+  min-width: 300px;
 }
 
 .usu-header-title {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 8px;
 }
 
 .usu-header-title h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--usu-primary);
-    margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: rgb(51,51,51);
+  margin: 0;
 }
 
 .usu-header-title i {
-    font-size: 1.8rem;
-    color: var(--usu-primary);
-    background: var(--usu-accent);
-    padding: 12px;
-    border-radius: 10px;
+  font-size: 1.8rem;
+  color: rgb(51,51,51);
+  background: var(--usu-accent);
+  padding: 12px;
+  border-radius: 10px;
 }
 
 .usu-header-subtitle {

@@ -54,8 +54,10 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
     padding: 1rem 0;
+
 }
 
 .page-title {
@@ -277,8 +279,8 @@ form {
 }
 
 .card-header {
-    background: var(--primary-color);
-    color: var(--bg-white);
+    background: var(--bg-white);
+    color: var(--primary-dark);
     padding: 1rem;
     border-bottom: 1px solid var(--border-light);
     cursor: pointer;
@@ -446,7 +448,7 @@ textarea.form-control {
 }
 
 .card.optional .card-header {
-    background: var(--warning-color);
+    background: var(--bg-white);
 }
 
 /* Financial Inputs */
@@ -530,17 +532,13 @@ textarea.form-control {
     }
     
     .container {
-        max-width: 1200px;
+        max-width: 1300px;
         padding: 1.5rem;
     }
 
-    .page-header {
-        margin-bottom: 2rem;
-        padding: 1.5rem 0;
-    }
-
+    
     .page-title {
-        font-size: 1.75rem;
+        font-size: 1.8rem;
     }
 
     .page-title i {

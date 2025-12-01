@@ -12,8 +12,7 @@
             <div class="apartados-pendientes-header">
                 <div class="apartados-pendientes-header-content">
                     <h1 class="apartados-pendientes-title">
-                        <span class="material-icons apartados-pendientes-title-icon">pending_actions</span>
-                        Apartados con Depósito Pendientes
+                        Apartados Pendientes
                     </h1>
                     <div class="apartados-pendientes-stats">
                         <div class="apartados-pendientes-stat-card">

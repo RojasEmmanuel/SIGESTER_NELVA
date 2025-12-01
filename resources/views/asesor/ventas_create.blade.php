@@ -81,13 +81,12 @@
 @section('content')
 <body>
     <div class="container">
-        <div class="page-header">
+        <div class="page-header" style="margin-top:none;">
             <h1 class="page-title">
-                <i class="fas fa-plus-circle"></i>
-                <span>Crear Nueva Venta</span>
+                <span>Nueva venta</span>
             </h1>
             <a href="{{ route('ventas.index') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Volver al listado
+                <i class="fas fa-arrow-left"></i> Volver
             </a>
         </div>
 

@@ -85,11 +85,10 @@
     <div class="container">
         <div class="page-header">
             <h1 class="page-title">
-                <i class="fas fa-file-contract"></i>
                 <span>Detalle de Venta</span>
             </h1>
             <a href="{{ route('ventas.index') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Volver al Listado
+                <i class="fas fa-arrow-left"></i> Volver
             </a>
         </div>
 
@@ -114,8 +113,7 @@
                 <!-- Información General -->
                 <div class="section">
                     <div class="section-header">
-                        <i class="fas fa-chart-bar"></i>
-                        <h3 class="section-title">Resumen de la Venta</h3>
+                        <h3 class="section-title">Resumen de la venta</h3>
                     </div>
                     <div class="details-grid">
                         <div class="detail-item financial-highlight">
@@ -194,8 +192,7 @@
                 <!-- Información del Cliente -->
                 <div class="section">
                     <div class="section-header">
-                        <i class="fas fa-user-tie"></i>
-                        <h3 class="section-title">Datos del Cliente</h3>
+                        <h3 class="section-title">Datos del cliente</h3>
                     </div>
                     <div class="details-grid">
                         <div class="detail-item">
@@ -263,8 +260,7 @@
                 @if ($venta->beneficiario)
                 <div class="section">
                     <div class="section-header">
-                        <i class="fas fa-user-friends"></i>
-                        <h3 class="section-title">Beneficiario Designado</h3>
+                        <h3 class="section-title">Beneficiario designado</h3>
                     </div>
                     <div class="details-grid">
                         <div class="detail-item">
@@ -311,7 +307,6 @@
                 @if ($venta->credito)
                 <div class="section">
                     <div class="section-header">
-                        <i class="fas fa-file-signature"></i>
                         <h3 class="section-title">Términos del Crédito</h3>
                     </div>
                     <div class="details-grid">

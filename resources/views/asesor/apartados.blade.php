@@ -33,7 +33,6 @@
     <div class="page-header">
         <div class="header-main">
             <h1 class="page-title">
-                <i class="bi bi-journal-text"></i>
                 Mis Apartados
             </h1>
             <p class="page-subtitle">Gestiona tus apartados activos, vencidos y vendidos</p>

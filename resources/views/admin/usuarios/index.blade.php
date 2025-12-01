@@ -17,14 +17,13 @@
         <div class="usu-header-content">
             <div class="usu-header-text">
                 <div class="usu-header-title">
-                    <i class="fas fa-users-cog"></i>
                     <h1>Gestión de Usuarios</h1>
                 </div>
                 <p class="usu-header-subtitle">Administre y supervise las cuentas de usuario del sistema</p>
             </div>
             <div class="usu-header-actions">
                 <a href="{{ route('admin.usuarios.create') }}" class="usu-btn-corporate">
-                    <i class="fas fa-user-plus"></i> Nuevo Usuario
+                    <i class="fas fa-user-plus"></i> Nuevo
                 </a>
             </div>
         </div>
@@ -42,7 +41,7 @@
     <div class="usu-filters-panel">
         <div class="usu-filters-grid">
             <div class="usu-filter-group">
-                <label class="usu-filter-label">Buscar Usuario</label>
+                <label class="usu-filter-label">Buscar</label>
                 <div class="usu-search-container">
                     <i class="fas fa-search usu-search-icon"></i>
                     <input type="text" class="usu-filter-input usu-search-input" 
@@ -52,7 +51,7 @@
             </div>
             
             <div class="usu-filter-group">
-                <label class="usu-filter-label">Tipo de Usuario</label>
+                <label class="usu-filter-label">Tipo</label>
                 <select class="usu-filter-input" id="tipo-filter">
                     <option value="">Todos los tipos</option>
                     @foreach (\App\Models\TipoUsuario::all() as $tipo)
@@ -85,7 +84,7 @@
                 <i class="fas fa-eraser"></i> Limpiar
             </button>
             <button type="button" id="apply-filters" class="usu-btn-corporate">
-                <i class="fas fa-filter"></i> Aplicar Filtros
+                <i class="fas fa-filter"></i> Filtrar
             </button>
         </div>
     </div>
@@ -96,9 +95,9 @@
         <div class="usu-panel-stats">
             <div class="usu-panel-title">
                 <i class="fas fa-list"></i>
-                <span>Usuarios Registrados</span>
+                <span>Registros</span>
             </div>
-            <span class="usu-stats-badge" id="user-count">{{ $usuarios->total() }} usuarios</span>
+            <span class="usu-stats-badge" id="user-count">{{ $usuarios->total() }}</span>
         </div>
     </div>
     
@@ -115,7 +114,7 @@
                         Email <span class="sort-icon fas fa-sort"></span>
                     </th>
                     <th class="sortable" data-sort="tipo">
-                        Tipo de Usuario <span class="sort-icon fas fa-sort"></span>
+                        Tipo <span class="sort-icon fas fa-sort"></span>
                     </th>
                     <th class="sortable" data-sort="estatus">
                         Estado <span class="sort-icon fas fa-sort"></span>

@@ -40,8 +40,8 @@
                 <i class="fas fa-history"></i>
                 <span>Historial de Ventas</span>
             </h1>
-            <a href="{{ route('ventas.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus-circle"></i> Crear Nueva Venta
+            <a href="{{ route('ventas.create') }}" class="btn btn-primary" style="height: 50px; font-size: 15px;">
+                <i class="fas fa-plus-circle"></i>Nueva Venta
             </a>
         </div>
 

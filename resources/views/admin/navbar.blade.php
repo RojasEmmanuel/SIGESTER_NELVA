@@ -15,7 +15,7 @@
 
     @php
         $pendientesCount = \Cache::remember('admin_pendientes_count', now()->addMinutes(3), fn() =>
-            \App\Models\Apartado::where('tipoApartado', 'deposito')
+            \App\Models\Apartado::where('tipoApartado', 'deposito')->where('estatus', 'en curso')
                 ->whereHas('deposito', fn($q) => $q->where('ticket_estatus', 'solicitud'))
                 ->count()
         );

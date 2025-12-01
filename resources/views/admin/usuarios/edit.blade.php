@@ -181,7 +181,6 @@
         font-weight: 500;
         color: var(--text-color);
         font-size: 0.9rem;
-        text-transform: uppercase;
         letter-spacing: 0.5px;
     }
 
@@ -516,7 +515,6 @@
     <div class="page-header">
         <div class="header-content">
             <div class="header-title">
-                <i class="fas fa-user-edit"></i>
                 <h1>Actualizar Usuario</h1>
                 <span class="user-status {{ $usuario->estatus ? 'status-active' : 'status-inactive' }}">
                     <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
@@ -527,7 +525,7 @@
         </div>
         <div class="page-actions">
             <a href="{{ route('admin.usuarios.index') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-1"></i> Volver a la lista
+                <i class="fas fa-arrow-left me-1"></i> Volver
             </a>
         </div>
     </div>
@@ -564,7 +562,7 @@
     
     <div class="card glass">
         <div class="card-header">
-            <h5><i class="fas fa-user-circle me-2"></i>Información del Usuario</h5>
+            <h5><i class="fas fa-user-circle me-2"></i>Información general</h5>
         </div>
         <div class="card-body">
             <form action="{{ route('admin.usuarios.update', $usuario->id_usuario) }}" method="POST" id="userForm">
@@ -573,7 +571,7 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="nombre" class="form-label">Nombre Completo <span class="text-danger">*</span></label>
+                        <label for="nombre" class="form-label">Nombre<span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                             <input type="text" name="nombre" id="nombre" class="form-control" 
@@ -600,7 +598,7 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="usuario_nombre" class="form-label">Nombre de Usuario <span class="text-danger">*</span></label>
+                        <label for="usuario_nombre" class="form-label">Usuario <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-at"></i></span>
                             <input type="text" name="usuario_nombre" id="usuario_nombre" class="form-control" 
@@ -642,7 +640,7 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="tipo_usuario" class="form-label">Tipo de Usuario <span class="text-danger">*</span></label>
+                        <label for="tipo_usuario" class="form-label">Tipo<span class="text-danger">*</span></label>
                         <select name="tipo_usuario" id="tipo_usuario" class="form-select" required onchange="toggleAsesorFields()">
                             @foreach ($tipos as $tipo)
                                 <option value="{{ $tipo->id_tipo }}" {{ old('tipo_usuario', $usuario->tipo_usuario) == $tipo->id_tipo ? 'selected' : '' }}>
@@ -695,7 +693,7 @@
                         <i class="fas fa-times me-1"></i> Cancelar
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i> Actualizar Usuario
+                        <i class="fas fa-save me-1"></i> Actualizar
                     </button>
                 </div>
             </form>
