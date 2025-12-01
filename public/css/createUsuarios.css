@@ -29,7 +29,7 @@
 
 body {
     color: var(--text-color);
-    background: linear-gradient(135deg, var(--light-gray) 0%, #f0f4f8 100%);
+    background: #F8FAFC;
     min-height: 100vh;
     line-height: 1.5;
     margin-bottom: none;
@@ -70,10 +70,7 @@ body {
     color: var(--text-color);
     font-weight: 700;
     margin: 0;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: rgb(71,71,71);
 }
 
 .header-title i {
@@ -468,4 +465,10 @@ body {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+
+.btn-success:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
 }

@@ -37,10 +37,9 @@
 
         <div class="page-header">
             <h1 class="page-title">
-                <i class="fas fa-history"></i>
                 <span>Historial de Ventas</span>
             </h1>
-            <a href="{{ route('ventas.create') }}" class="btn btn-primary" style="height: 50px; font-size: 15px;">
+            <a href="{{ route('ventas.create') }}" class="btn btn-success" style="height: 40px; font-size: 15px;">
                 <i class="fas fa-plus-circle"></i>Nueva Venta
             </a>
         </div>

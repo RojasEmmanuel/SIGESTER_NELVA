@@ -67,6 +67,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    color: rgb(71,71,71);
 }
 
 .page-title i {
@@ -811,4 +812,14 @@ body {
     .page-title {
         font-size: 1.3rem;
     }
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: var(--white);
+}
+
+.btn-success:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
 }

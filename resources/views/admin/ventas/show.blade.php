@@ -24,9 +24,7 @@
 
         <div class="detail-card">
             <div class="detail-card-header">
-                <h5>
-                    <i class="fas fa-file-invoice"></i> Venta #{{ $venta->id_venta }}
-                </h5>
+               
                 <div>
                     @if($venta->ticket_estatus === 'solicitud')
                         <a href="{{ route('admin.ventas.ticket', $venta->id_venta) }}" 

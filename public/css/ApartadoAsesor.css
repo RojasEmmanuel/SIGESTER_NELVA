@@ -56,6 +56,7 @@ body {
     align-items: center;
     gap: 0.75rem;
     flex-wrap: wrap;
+    color: rgb(71,71,71)
 }
 
 .page-subtitle {

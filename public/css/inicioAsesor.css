@@ -46,18 +46,18 @@ body {
 }
 
 .page-title {
-    font-size: 1.5rem;
+    font-size: 1.9rem;
     margin-bottom: 1.25rem;
     color: var(--text-color);
     font-weight: 700;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    color: rgb(71,71,71)
 }
 
 .page-title i {
-    color: var(--primary-color);
-    font-size: 1.3rem;
+    font-size: 1.8rem;
 }
 
 /* Stats Cards - BASE PARA MÓVIL */

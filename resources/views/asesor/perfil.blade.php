@@ -45,7 +45,7 @@
     }
 
     .profile-page-container {
-        max-width: 1000px;
+        max-width: 1300px;
         margin: 0 auto;
         padding: 0 1.5rem;
     }
@@ -63,8 +63,7 @@
         padding: 2.5rem 2rem 1.5rem;
         text-align: center;
         border-bottom: 1px solid var(--profile-border);
-        background: linear-gradient(135deg, var(--profile-primary) 0%, var(--profile-secondary) 100%);
-        color: white;
+        background: white;
     }
 
     .profile-page-title {
@@ -469,6 +468,13 @@
             height: 100px;
         }
     }
+
+    .profile-page-title i {
+        margin-right: 4px;
+        font-size: 40px;
+        color: #4A90E2; /* color opcional */
+    }
+
 </style>
 @endpush
 
@@ -477,9 +483,12 @@
     <div class="profile-page-container">
         <div class="profile-page-card">
             <div class="profile-page-header">
-                <h2 class="profile-page-title">Mi Perfil</h2>
-                <p class="profile-page-lead">Actualiza tu información personal</p>
+                <h1 class="profile-page-title">
+                    <i class="fas fa-user-circle"></i> Mi Perfil
+                </h1>
+                <p class="profile-page-lead">Gestiona y actualiza tu información personal</p>
             </div>
+
 
             <div class="profile-page-body-content">
                 @if(session('success'))

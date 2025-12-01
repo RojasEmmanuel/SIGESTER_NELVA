@@ -22,7 +22,7 @@
                 <p class="usu-header-subtitle">Administre y supervise las cuentas de usuario del sistema</p>
             </div>
             <div class="usu-header-actions">
-                <a href="{{ route('admin.usuarios.create') }}" class="usu-btn-corporate">
+                <a href="{{ route('admin.usuarios.create') }}" class="usu-btn-corporate btn-success" style="background-color: #28A745">
                     <i class="fas fa-user-plus"></i> Nuevo
                 </a>
             </div>
