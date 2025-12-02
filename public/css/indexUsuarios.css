@@ -42,19 +42,15 @@ body{
 
 /* Contenedor principal */
 .usuarios-container {
-    max-width: 1300px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 30px 20px;
 }
 
 /* Header Corporativo Mejorado */
 .usu-corporate-header {
-  background: var(--usu-white);
   border-radius: var(--usu-radius-lg);
-  padding: 25px 30px;
-  margin-bottom: 25px;
-  box-shadow: var(--usu-shadow);
-  border: 1px solid var(--usu-gray-light);
+  padding: 15px 10px;
 }
 
 .usu-header-content {
@@ -74,7 +70,7 @@ body{
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .usu-header-title h1 {
@@ -115,10 +111,10 @@ body{
     border: none;
     border-radius: var(--usu-radius);
     color: var(--usu-white);
-    font-weight: 500;
+    font-weight: 400;
     cursor: pointer;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     transition: all 0.3s ease;
 }
 
@@ -196,7 +192,6 @@ body{
     padding: 20px;
     margin-bottom: 25px;
     box-shadow: var(--usu-shadow);
-    border: 1px solid var(--usu-gray-light);
 }
 
 .usu-filters-grid {
@@ -262,13 +257,12 @@ body{
     background: var(--usu-white);
     border-radius: var(--usu-radius-lg);
     box-shadow: var(--usu-shadow);
-    border: 1px solid var(--usu-gray-light);
     overflow: hidden;
     margin-bottom: 30px;
 }
 
 .usu-panel-header {
-    padding: 20px 25px;
+    padding: 13px 18px;
     border-bottom: 1px solid var(--usu-gray-light);
     background: var(--usu-light);
     display: flex;
@@ -319,7 +313,7 @@ body{
 }
 
 .usu-corporate-table thead th {
-    padding: 16px 20px;
+    padding: 6px 9px;
     text-align: left;
     font-weight: 600;
     color: var(--usu-dark);
@@ -348,7 +342,7 @@ body{
 }
 
 .usu-corporate-table tbody td {
-    padding: 16px 20px;
+    padding: 6px 10px;
     vertical-align: middle;
 }
 
@@ -425,8 +419,7 @@ body{
 }
 
 .usu-badge-primary {
-    background: var(--usu-primary);
-    color: var(--usu-white);
+  color: var(--usu-primary-dark);
 }
 
 .usu-badge-secondary {
@@ -435,13 +428,14 @@ body{
 }
 
 .usu-badge-success {
-    background: var(--usu-bdSuccess);
-    color: var(--usu-success);
+  background-color: var(--usu-success);
+
+  color: var(--usu-white);
 }
 
 .usu-badge-danger {
-    background: var(--usu-bdDanger);
-    color: var(--usu-danger);
+  background: var(--usu-danger);
+  color: white;
 }
 
 /* Indicadores de Estado */
@@ -454,11 +448,11 @@ body{
 }
 
 .usu-status-active {
-    background: var(--usu-success);
+    background: #fff;
 }
 
 .usu-status-inactive {
-    background: var(--usu-danger);
+    background: #fff;
 }
 
 /* Acciones Corporativas */
@@ -604,7 +598,7 @@ body{
     border-radius: var(--usu-radius-lg);
     box-shadow: var(--usu-shadow-lg);
     width: 100%;
-    max-width: 450px;
+    max-width: 350px;
     animation: usu-modalSlideIn 0.3s ease;
 }
 
@@ -620,9 +614,8 @@ body{
 }
 
 .usu-modal-header-corporate {
-    padding: 20px 25px;
+    padding: 15px 20px;
     border-bottom: 1px solid var(--usu-gray-light);
-    background: var(--usu-light);
     border-radius: var(--usu-radius-lg) var(--usu-radius-lg) 0 0;
     display: flex;
     justify-content: space-between;
@@ -630,7 +623,7 @@ body{
 }
 
 .usu-modal-header-corporate h5 {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--usu-dark);
     margin: 0;
@@ -676,7 +669,7 @@ body{
 }
 
 .usu-modal-message-corporate {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--usu-dark);
     margin-bottom: 10px;
@@ -689,7 +682,7 @@ body{
 }
 
 .usu-modal-footer-corporate {
-    padding: 20px 25px;
+    padding: 15px 20px;
     border-top: 1px solid var(--usu-gray-light);
     display: flex;
     gap: 12px;
@@ -697,14 +690,14 @@ body{
 }
 
 .usu-modal-btn-corporate {
-    padding: 10px 20px;
+    padding: 7px 15px;
     border: none;
     border-radius: var(--usu-radius);
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 0.95rem;
-    min-width: 100px;
+    font-size: 0.8rem;
+    min-width: 80px;
 }
 
 .usu-btn-cancel-corporate {

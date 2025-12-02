@@ -66,7 +66,6 @@ body {
 }
 
 .header-title h1 {
-    font-size: 1.75rem;
     color: var(--text-color);
     font-weight: 700;
     margin: 0;
@@ -100,10 +99,7 @@ body {
     margin-bottom: none;   
 }
 
-.card:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
-}
+
 
 .card-header {
     display: flex;
@@ -111,7 +107,6 @@ body {
     align-items: center;
     padding: 1.5rem;
     border-bottom: 1px solid var(--medium-gray);
-    background: var(--light-gray);
     position: relative;
 }
 
@@ -137,7 +132,7 @@ body {
 
 .card-header i {
     color: var(--primary-color);
-}
+}   
 
 .card-body {
     padding: 2rem;
@@ -187,7 +182,6 @@ body {
 .form-control:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(30, 71, 138, 0.1);
     transform: translateY(-1px);
 }
 
@@ -256,13 +250,13 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background: var(--primary-color);
     color: var(--white);
     box-shadow: 0 2px 4px rgba(30, 71, 138, 0.2);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+    background: var(--secondary-color);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
@@ -369,12 +363,12 @@ body {
 /* Asesor Fields Card */
 #asesor-fields {
     margin-top: 1.5rem;
-    border: 2px dashed var(--medium-gray);
-    background: var(--accent-color);
+    border: 2px dashed var(--dark-gray);
+    background: white
 }
 
 #asesor-fields .card-header {
-    background: linear-gradient(135deg, var(--accent-color) 0%, #bae6fd 100%);
+    background: white;
 }
 
 /* Animations */
@@ -471,4 +465,40 @@ body {
 .btn-success:hover {
     background-color: #059669;
     transform: translateY(-2px);
+}
+
+.input-group-text{
+    background: var(--white);
+}
+
+.input-group .form-control {
+    background: var(--white);
+}
+.input-group:focus-within .input-group-text {
+    background: var(--white);
+}
+.input-group-text i {
+    color: var(--primary-color);
+}
+.input-group:focus-within .input-group-text i {
+    color: var(--primary-color);
+}
+.input-group .form-control:focus {
+    background: var(--white);
+}
+.input-group .form-control::placeholder {
+    color: var(--dark-gray);
+}
+
+.user-status{
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.user-status.status-active{
+    color: var(--success-color);
+}
+.user-status.status-inactive{
+    color: var(--danger-color);
 }

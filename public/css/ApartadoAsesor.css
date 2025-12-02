@@ -29,7 +29,7 @@ body {
 }
 
 .container {
-    max-width: 1300px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
 }
@@ -231,13 +231,6 @@ body {
     gap: 0.3rem;
 }
 
-.header-badges {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    gap: 0.5rem;
-}
 
 .type-badge {
     padding: 0.3rem 0.6rem;
@@ -247,6 +240,8 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     white-space: nowrap;
+    width: 100px;
+    text-align: center;
 }
 
 .type-badge.palabra {
@@ -271,6 +266,8 @@ body {
     align-items: center;
     gap: 0.3rem;
     white-space: nowrap;
+    width: 100px;
+    text-align: center;
 }
 
 .status-badge.activo {
@@ -689,6 +686,8 @@ body {
     .ticket-file strong {
         min-width: 120px;
     }
+
+    
 }
 
 /* Desktop y pantallas grandes */
@@ -841,6 +840,8 @@ body {
         width: 100%;
         justify-content: center;
     }
+
+
 }
 
 /* Mejoras de accesibilidad */

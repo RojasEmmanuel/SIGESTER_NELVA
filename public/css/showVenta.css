@@ -51,9 +51,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 0;
-    margin-top: none;
-    padding-top: none;
+    padding: 0.5rem 0;
 
 }
 
@@ -115,7 +113,7 @@ body {
 .sale-header {
     background: var(--bg-white);
     color: var(--primary-color);
-    padding: 2rem;
+    padding: 1rem;
     border-bottom: 1px solid var(--border-light);
     display: flex;
     gap: 1rem;
@@ -168,7 +166,7 @@ body {
     background: var(--bg-white);
     border-radius: var(--rounded-lg);
     border: 1px solid var(--border-light);
-    padding: 1.5rem;
+    padding: 1rem;
     transition: var(--transition);
     position: relative;
 }
@@ -193,8 +191,8 @@ body {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--border-light);
 }
 

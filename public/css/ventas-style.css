@@ -48,7 +48,7 @@
 
 /* Contenedor principal */
 .ventas-container {
-    max-width: 1300px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 2rem 1rem;
 }
@@ -64,7 +64,7 @@
 }
 
 .ventas-title {
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text);
     margin: 0 0 0.5rem 0;
     display: flex;
@@ -1572,7 +1572,7 @@
 .header-title h1 {
     margin: 0;
     color: var(--text);
-    font-size: 1.75rem;
+    font-size: 1rem;
 }
 
 .header-title p {

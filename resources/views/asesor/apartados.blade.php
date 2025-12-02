@@ -178,7 +178,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="header-badges">
                             <span class="type-badge {{ $apartado->tipoApartado }}">
                                 {{ $apartado->tipoApartado == 'palabra' ? 'Palabra' : 'Depósito' }}
                             </span>
@@ -186,7 +185,6 @@
                                 <i class="bi bi-{{ $estadoDisplay === 'Vencido' ? 'x-circle' : ($estadoDisplay === 'Vendido' ? 'check-circle-fill' : 'check-circle') }}"></i>
                                 {{ $estadoDisplay }}
                             </span>
-                        </div>
                     </div>
 
                     <!-- Contenido horizontal -->

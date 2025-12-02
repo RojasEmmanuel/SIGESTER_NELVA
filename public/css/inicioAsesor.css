@@ -40,14 +40,14 @@ body {
 
 /* Main Content */
 .container {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 1.25rem 1rem;
+    padding: 1rem 1rem;
 }
 
 .page-title {
-    font-size: 1.9rem;
-    margin-bottom: 1.25rem;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
     color: var(--text-color);
     font-weight: 700;
     display: flex;
@@ -65,7 +65,7 @@ body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.8rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .stat-card {
@@ -84,7 +84,7 @@ body {
 }
 
 .stat-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
 
@@ -112,7 +112,6 @@ body {
 .stat-card-description {
     font-size: 0.7rem;
     color: var(--text-light);
-    margin-bottom: 0.8rem;
 }
 
 .total {
@@ -238,12 +237,12 @@ body {
 }
 
 .costa-badge {
-    background: linear-gradient(135deg, #87CEEB, #1E90FF);
+    background: #1E90FF;
     color: white;
 }
 
 .istmo-badge {
-    background: linear-gradient(135deg, #32CD32, #228B22);
+    background: #228B22;
     color: white;
 }
 
@@ -264,7 +263,7 @@ body {
 }
 
 .fraccionamiento-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-5px);
     box-shadow: var(--shadow-md);
 }
 
@@ -275,7 +274,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1.5rem;
+    padding: 1rem;
     position: relative;
 }
 
@@ -286,7 +285,7 @@ body {
 }
 
 .fraccionamiento-content {
-    padding: 1rem;
+    padding: 0.8rem;
 }
 
 .fraccionamiento-header {
@@ -296,8 +295,8 @@ body {
 }
 
 .fraccionamiento-logo {
-    width: 48px;
-    height: 48px;
+    width: 38px;
+    height: 38px;
     border-radius: var(--rounded-sm);
     object-fit: cover;
     margin-right: 0.8rem;
@@ -352,9 +351,9 @@ body {
 .stat-item {
     display: flex;
     flex-direction: column;
-    padding: 0.6rem;
+    padding: 0.3rem;
     border-radius: var(--rounded-sm);
-    font-size: 0.9rem;
+    font-size: 0.5rem;
 }
 
 .available-stat {
@@ -371,8 +370,8 @@ body {
 
 .stat-number {
     font-weight: 700;
-    margin-bottom: 0.2rem;
-    font-size: 1.1rem;
+    margin-bottom: 0.1rem;
+    font-size: 1rem;
 }
 
 .stat-label {
@@ -403,7 +402,7 @@ body {
     border-radius: var(--rounded-sm);
     border: none;
     font-weight: 500;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
@@ -422,7 +421,7 @@ body {
 }
 
 .btn i {
-    font-size: 0.8rem;
+    font-size: 0.5rem;
 }
 
 .btn-primary.ver-detalles,
@@ -431,10 +430,10 @@ body {
     color: #fff;
     border: none;
     border-radius: 24px;
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 500;
     box-shadow: 0 2px 12px rgba(30, 71, 138, 0.1);
-    padding: 0.7rem 1.6rem;
+    padding: 0.5rem 1rem;
     transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
     display: inline-flex;
     align-items: center;
@@ -611,10 +610,14 @@ body {
     }
 
     .stat-card {
-        padding: 2rem;
+        padding: 1rem 1rem;
         min-height: 180px;
     }
 
+    .stat-card-description{
+        padding-bottom: none;
+        margin-bottom: none;
+    }
     .stat-card-value {
         font-size: 2rem;
     }
@@ -700,7 +703,7 @@ body {
     color: #3b82f6;
     text-decoration: none;
     border-radius: 8px;
-    font-weight: 600;
+    font-weight: 500;
     transition: all 0.3s ease;
     border: none;
     cursor: pointer;
