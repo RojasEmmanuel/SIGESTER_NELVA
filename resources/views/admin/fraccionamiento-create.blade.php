@@ -237,14 +237,17 @@
                                 <div class="form-group">
                                     <label class="form-label">Color de la zona *</label>
                                     <div class="d-flex align-items-center gap-3">
-                                        <input type="color" name="zonas[0][color]" 
-                                            class="form-control form-control-color" 
-                                            value="#4361ee" style="width: 70px; height: 45px;" required>
-                                        <input type="text" class="form-control" 
+                                        <input type="color" 
+                                            name="zonas[0][color]" 
+                                            class="form-control form-control-color color-picker" 
+                                            value="#4361ee" 
+                                            style="width: 70px; height: 45px;" 
+                                            required>
+                                        <input type="text" 
+                                            class="form-control color-hex-input" 
                                             style="max-width: 120px;" 
                                             value="#4361ee" 
-                                            readonly 
-                                            id="colorText0">
+                                            readonly>
                                     </div>
                                     <small class="text-muted">Se usará en mapas y leyendas</small>
                                 </div>
@@ -283,10 +286,10 @@
 
 
 <script>
-    // ===== VARIABLES GLOBALES (solo declaradas una vez) =====
-    let indiceZona = 1;  // Cambié el nombre para evitar conflictos
+    // ===== VARIABLES GLOBALES =====
+    let indiceZona = 1;
 
-    // ===== FUNCIONES DE NAVEGACIÓN ENTRE PASOS =====
+    // ===== NAVEGACIÓN ENTRE PASOS =====
     function irAZonas() {
         cambiarPaso('paso2');
     }
@@ -309,7 +312,7 @@
         }
     }
 
-    // ===== FUNCIÓN PARA AGREGAR ZONAS (con color picker sincronizado) =====
+    // ===== AGREGAR ZONA DINÁMICA (CORREGIDA) =====
     function agregarZona() {
         const coloresBonitos = ['#4361ee', '#3f37c9', '#4895ef', '#4cc9f0', '#7209b7', '#f72585', '#06d6a0', '#118ab2', '#ffd60a', '#ff6b6b'];
         const colorAleatorio = coloresBonitos[Math.floor(Math.random() * coloresBonitos.length)];
@@ -331,25 +334,24 @@
                             </div>
                         </div>
 
-                       
-
                         <div class="form-group">
                             <label class="form-label">Color de la zona *</label>
                             <div class="d-flex align-items-center gap-3">
-                                <input type="color" name="zonas[${indiceZona}][color]" 
-                                    class="form-control form-control-color" 
-                                    value="#4361ee" style="width: 70px; height: 45px;" required>
-                                <input type="text" class="form-control" 
-                                    style="max-width: 120px;" 
-                                    value="#4361ee" 
-                                    readonly 
-                                    id="colorText0">
+                                <input type="color" 
+                                       name="zonas[${indiceZona}][color]" 
+                                       class="form-control form-control-color color-picker" 
+                                       value="${colorAleatorio}" 
+                                       style="width: 70px; height: 45px;" 
+                                       required>
+                                <input type="text" 
+                                       class="form-control color-hex-input" 
+                                       style="max-width: 120px;" 
+                                       value="${colorAleatorio}" 
+                                       readonly>
                             </div>
                             <small class="text-muted">Se usará en mapas y leyendas</small>
                         </div>
 
-
-                        
                         <div class="form-group d-flex align-items-end">
                             <button type="button" class="btn btn-danger" onclick="this.closest('.zona-row').remove()">
                                 <i class="fas fa-trash"></i>
@@ -362,7 +364,8 @@
         document.getElementById('contenedorZonas').insertAdjacentHTML('beforeend', html);
         indiceZona++;
     }
-    // ===== VISTA PREVIA DE IMAGEN (tu función original) =====
+
+    // ===== VISTA PREVIA DE IMAGEN =====
     function previewImage(input) {
         const preview = document.getElementById('imagePreview');
         const fileLabel = document.querySelector('.file-upload-label');
@@ -377,25 +380,25 @@
         }
     }
 
-    // ===== SINCRONIZAR COLOR PICKER → INPUT DE TEXTO (al cargar la página) =====
+    // ===== SINCRONIZAR COLOR PICKER → CAMPO HEX (FUNCIONA EN TODOS: estáticos y dinámicos) =====
     document.addEventListener('DOMContentLoaded', function () {
-        // Sincronizar todos los color pickers (tanto los iniciales como los agregados dinámicamente)
+        // Usamos delegación de eventos (funciona incluso con elementos agregados después)
         document.addEventListener('input', function (e) {
             if (e.target && e.target.classList.contains('color-picker')) {
-                const textoColor = e.target.closest('.form-group').querySelector('input[type="text"]');
-                if (textoColor) {
-                    textoColor.value = e.target.value;
+                const hexInput = e.target.closest('.form-group').querySelector('.color-hex-input');
+                if (hexInput) {
+                    hexInput.value = e.target.value;
                 }
             }
         });
 
-        // Sincronizar también el primer color picker que ya está en el HTML
-        const primerPicker = document.querySelector('#paso3 .color-picker');
-        if (primerPicker) {
-            const primerTexto = primerPicker.closest('.form-group').querySelector('input[type="text"]');
-            primerTexto.value = primerPicker.value;
-            primerPicker.addEventListener('input', () => primerTexto.value = primerPicker.value);
-        }
+        // Sincronizar también los que ya existen al cargar la página (por si acaso)
+        document.querySelectorAll('.color-picker').forEach(picker => {
+            const hexInput = picker.closest('.form-group').querySelector('.color-hex-input');
+            if (hexInput) {
+                hexInput.value = picker.value;
+            }
+        });
     });
 </script>
 
