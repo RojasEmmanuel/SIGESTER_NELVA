@@ -176,9 +176,9 @@
 }
 
 .apartados-pendientes-table {
-    width: 100%;
     border-collapse: collapse;
     background: var(--apartados-pendientes-surface);
+    max-width: 1200px;
 }
 
 .apartados-pendientes-table-header {
@@ -186,7 +186,7 @@
 }
 
 .apartados-pendientes-th {
-    padding: 1rem 1.5rem;
+    padding: 1rem 1rem;
     text-align: left;
     font-weight: 600;
     color: var(--apartados-pendientes-on-primary);

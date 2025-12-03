@@ -25,7 +25,7 @@ class AdminApartadoController extends Controller
             'deposito'
         ])
         ->where('tipoApartado', 'deposito')
-        ->where('estatus', '==', 'en curso')
+        ->where('estatus', 'en curso')
         ->whereHas('deposito', function ($query) {
             $query->where('ticket_estatus', 'solicitud');
         })

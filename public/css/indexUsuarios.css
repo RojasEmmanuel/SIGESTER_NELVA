@@ -581,7 +581,6 @@ body{
 
 .usu-modal-corporate.usu-show {
     display: flex;
-    animation: usu-modalFadeIn 0.3s ease;
 }
 
 @keyframes usu-modalFadeIn {

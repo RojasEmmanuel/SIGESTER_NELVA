@@ -40,7 +40,6 @@ body {
     color: var(--text-color);
     background-color: var(--light-gray);
     min-height: 100vh;
-    padding-bottom: 80px;
     line-height: 1.5;
 }
 

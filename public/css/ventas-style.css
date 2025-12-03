@@ -606,9 +606,8 @@
 }
 
 .ticket-card-header {
-    background: var(--primary);
-    color: var(--white);
-    padding: 1.5rem;
+    color: var(--primary);
+    padding: 1rem;
 }
 
 .ticket-card-header h5 {
@@ -620,7 +619,7 @@
 }
 
 .ticket-card-body {
-    padding: 2rem;
+    padding: 1rem;
 }
 
 .ticket-grid {
@@ -630,7 +629,6 @@
 }
 
 .ticket-info-card, .ticket-actions-card {
-    background: var(--bg-light);
     border-radius: var(--radius);
     padding: 1.5rem;
 }
@@ -744,7 +742,7 @@
     border-radius: var(--radius);
     box-shadow: var(--shadow-hover);
     width: 100%;
-    max-width: 500px;
+    max-width: 200px;
     max-height: 90vh;
     overflow-y: auto;
     animation: ventasModalSlideIn 0.3s ease;
@@ -1113,10 +1111,10 @@
 
 /* ===== MODAL DE CONFIRMACIÓN MEJORADO ===== */
 .modern-modal {
-    max-width: 500px;
+    max-width: 400px;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
 }
 
 .modern-modal-header {
@@ -1129,9 +1127,8 @@
 }
 
 .modern-modal-icon {
-    width: 60px;
-    height: 60px;
-    background: rgba(255,255,255,0.2);
+    width: 20px;
+    background: #1e478a;
     border-radius: 16px;
     display: flex;
     align-items: center;
@@ -1142,7 +1139,7 @@
 }
 
 .modern-modal-icon i {
-    font-size: 1.5rem;
+    font-size: 1rem;
 }
 
 .modern-modal-title {
@@ -1514,7 +1511,6 @@
 
 /* Efectos de profundidad */
 .ventas-modal-overlay {
-    backdrop-filter: blur(8px);
     background: rgba(0, 0, 0, 0.5);
 }
 
@@ -1540,7 +1536,7 @@
 
 /* Header mejorado */
 .ticket-header {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;    
 }
 
 .header-actions {
@@ -1719,9 +1715,6 @@
     transition: all 0.3s ease;
 }
 
-.ticket-image-wrapper:hover {
-    border-color: var(--primary);
-}
 
 .ticket-image {
     width: 100%;
@@ -1736,7 +1729,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.85);
+    background: rgba(0,0,0,0.2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1766,8 +1759,8 @@
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.95);
+    padding: 0.5rem;
+    background: rgb(255, 255, 255);
     border: none;
     border-radius: 8px;
     color: var(--text);
@@ -1779,7 +1772,7 @@
 
 .action-btn:hover {
     background: var(--white);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     color: var(--primary);
 }
@@ -1798,7 +1791,6 @@
 
 .action-btn:hover .action-icon {
     background: var(--primary-light);
-    transform: scale(1.1);
 }
 
 .ticket-hint {
@@ -1934,8 +1926,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(135deg, #1e478a 0%, #3d86df 100%);
-    color: white;
+    color: var(--primary);
+    background:white;
 }
 
 .zoom-header-content {
@@ -1947,7 +1939,6 @@
 .zoom-header-icon {
     width: 50px;
     height: 50px;
-    background: rgba(255,255,255,0.2);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -1976,7 +1967,6 @@
 }
 
 .zoom-info {
-    background: rgba(255,255,255,0.2);
     padding: 0.5rem 1rem;
     border-radius: 20px;
     font-weight: 600;
@@ -1989,9 +1979,8 @@
 }
 
 .zoom-buttons .btn {
-    border: 1px solid rgba(255,255,255,0.3);
-    background: rgba(255,255,255,0.1);
-    color: white;
+    border: 1px solid rgba(0,0,0,0.5);
+    color: var(--primary);
 }
 
 .zoom-buttons .btn:hover {

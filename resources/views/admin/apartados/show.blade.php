@@ -23,7 +23,7 @@
                 <div class="apartado-header-actions">
                     <a href="{{ route('admin.apartados-pendientes.index') }}" class="apartado-btn apartado-btn-outlined">
                         <span class="material-icons apartado-btn-icon">arrow_back</span>
-                        Volver a la lista
+                        Volver
                     </a>
                 </div>
             </div>

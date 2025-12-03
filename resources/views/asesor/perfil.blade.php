@@ -479,7 +479,7 @@
         <div class="profile-page-card">
             <div class="profile-page-header">
                 <h1 class="profile-page-title">
-                    <i class="fas fa-user-circle"></i> Mi Perfil
+                    <i class="fas fa-user-circle"></i> Actualizar mi perfil
                 </h1>
                 <p class="profile-page-lead">Gestiona y actualiza tu información personal</p>
             </div>
@@ -526,7 +526,7 @@
                                 
                                 <!-- Botón personalizado para seleccionar archivo -->
                                 <button type="button" class="profile-file-btn" id="profileFileButton">
-                                    <i class="fas fa-folder-open"></i>Seleccionar Archivo
+                                    <i class="fas fa-folder-open"></i>Seleccionar
                                 </button>
                                 <input type="file" id="profilePageImageUpload" name="foto" accept="image/*" class="profile-file-input">
                                 <div class="profile-file-name" id="profileFileName"></div>
@@ -572,7 +572,7 @@
                             <!-- Información profesional -->
                             @if($usuario->tipo_usuario != 4)
                             <div class="profile-section">
-                                <h3 class="profile-section-title">Información Profesional</h3>
+                                <h3 class="profile-section-title">Información Adicional</h3>
                                 <div class="profile-form-grid">
                                     <div class="profile-field-group">
                                         <label for="profilePageZona" class="profile-field-label">Zona asignada</label>
@@ -600,7 +600,7 @@
                                    Cancelar
                                 </a>
                                 <button type="submit" class="profile-btn profile-btn-primary">
-                                    Guardar Cambios
+                                    Guardar
                                 </button>
                             </div>
                         </div>

@@ -13,7 +13,7 @@
             <div class="header-actions" style="justify-content: space-between;">
                 
                 <div class="header-title">
-                    <h1>Validación de Ticket</h1>
+                    <h1 style="font-size: 1.8rem;">Validación de Ticket</h1>
                     <p>Revisión y aprobación de comprobante de pago</p>
                 </div>
 
@@ -140,7 +140,6 @@
                                                     <div class="action-icon">
                                                         <i class="fas fa-search-plus"></i>
                                                     </div>
-                                                    <span>Zoom</span>
                                                 </button>
                                                 <a href="{{ asset('storage/' . $venta->ticket_path) }}" 
                                                 target="_blank" 
@@ -148,7 +147,6 @@
                                                     <div class="action-icon">
                                                         <i class="fas fa-expand-arrows-alt"></i>
                                                     </div>
-                                                    <span>Abrir</span>
                                                 </a>
                                                 <a href="{{ asset('storage/' . $venta->ticket_path) }}" 
                                                 download 
@@ -156,7 +154,6 @@
                                                     <div class="action-icon">
                                                         <i class="fas fa-download"></i>
                                                     </div>
-                                                    <span>Descargar</span>
                                                 </a>
                                             </div>
                                         </div>
@@ -323,7 +320,7 @@
                     <button type="button" class="btn btn-sm btn-outline" id="zoomResetBtn" title="Reset Zoom">
                         <i class="fas fa-sync-alt"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-primary" id="closeZoom">
+                    <button type="button" class="btn btn-sm btn-outline" id="closeZoom">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>

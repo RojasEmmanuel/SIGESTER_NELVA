@@ -39,7 +39,6 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 1.25rem 1rem;
-    padding-bottom: 100px;
 }
 
 /* Header Section */
@@ -71,8 +70,8 @@ body {
 }
 
 .header-title i {
-    color: var(--primary-color);
-    font-size: 1.5rem;
+    color: rgb(71,71,71);
+    font-size: 1.3rem;
 }
 
 .development-status {
@@ -214,7 +213,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem 1.5rem;
+    padding: 0.5rem 0.55rem;
     border-bottom: 1px solid var(--medium-gray);
     background: var(--light-gray);
 }
@@ -238,7 +237,7 @@ body {
     align-items: center;
     gap: 0.5rem;
     font-size: 0.8rem;
-    color: var(--text-light);
+    color: var(--primary-color);
 }
 
 .indicator-dot {
@@ -296,7 +295,7 @@ body {
     padding: 0.75rem;
     border: 1px solid var(--medium-gray);
     border-radius: var(--rounded-sm);
-    font-size: 1rem;
+    font-size: 0.9rem;
     transition: var(--transition);
 }
 
@@ -337,8 +336,8 @@ textarea.form-control {
 
 .image-preview {
     width: 100%;
-    max-width: 300px;
-    height: 200px;
+    max-width: 250px;
+    height: 150px;
     border: 2px dashed var(--medium-gray);
     border-radius: var(--rounded-sm);
     display: flex;
@@ -349,7 +348,7 @@ textarea.form-control {
 }
 
 .image-preview.dark-bg {
-    background: #1e478a; /* Azul oscuro para el logo */
+    background: #103064; /* Azul oscuro para el logo */
 }
 
 .image-preview img {
@@ -410,7 +409,7 @@ textarea.form-control {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
+    padding: 0.55rem 1.5rem;
     border: none;
     border-radius: var(--rounded-sm);
     font-weight: 500;
@@ -419,6 +418,8 @@ textarea.form-control {
     text-decoration: none;
     font-size: 0.9rem;
     justify-content: center;
+    max-width: 180px;
+    max-height: 45px;
 }
 
 .btn-primary {
@@ -536,7 +537,7 @@ textarea.form-control {
 .amenity-card {
     background: var(--light-gray);
     border-radius: var(--rounded-sm);
-    padding: 1.25rem;
+    padding: 0.75rem;
     border-left: 4px solid var(--primary-color);
     transition: var(--transition);
 }
@@ -547,7 +548,7 @@ textarea.form-control {
 }
 
 .amenity-card.servicio {
-    border-left-color: var(--success-color);
+    border-left-color: var(--warning-color);
 }
 
 .amenity-card.característica {
@@ -562,7 +563,7 @@ textarea.form-control {
 }
 
 .amenity-name {
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-color);
     margin: 0;
@@ -575,7 +576,6 @@ textarea.form-control {
     color: var(--text-light);
     border-radius: 12px;
     font-weight: 500;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
@@ -585,7 +585,6 @@ textarea.form-control {
     margin-bottom: 1rem;
     line-height: 1.5;
     padding: 0.5rem;
-    background: rgba(255, 255, 255, 0.5);
     border-radius: var(--rounded-sm);
 }
 
@@ -817,7 +816,7 @@ textarea.form-control {
     border-radius: var(--rounded);
     box-shadow: var(--shadow-lg);
     width: 90%;
-    max-width: 400px; /* Más pequeño que antes */
+    max-width: 300px; /* Más pequeño que antes */
     overflow: hidden;
 }
 
@@ -825,9 +824,7 @@ textarea.form-control {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem; /* Menos padding */
     border-bottom: 1px solid var(--medium-gray);
-    background: var(--light-gray);
 }
 
 .modal-header h3 {
@@ -854,7 +851,6 @@ textarea.form-control {
 }
 
 .modal-body {
-    padding: 1.5rem; /* Menos padding */
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -1922,30 +1918,17 @@ textarea.form-control {
     background: var(--white);
     border-radius: var(--rounded);
     box-shadow: var(--shadow-lg);
-    width: 90%;
-    max-width: 500px;
+    width: 100%;
+    max-width: 350px;
     overflow: hidden;
-    animation: slideUp 0.3s ease;
 }
 
-@keyframes slideUp {
-    from { 
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to { 
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem 1.5rem;
     border-bottom: 1px solid var(--medium-gray);
-    background: var(--light-gray);
 }
 
 .modal-header h3 {
@@ -1964,10 +1947,8 @@ textarea.form-control {
     font-size: 1.5rem;
     cursor: pointer;
     color: var(--text-light);
-    padding: 0.25rem;
     border-radius: 4px;
     transition: var(--transition);
-    width: 32px;
     height: 32px;
     display: flex;
     align-items: center;
@@ -1976,12 +1957,8 @@ textarea.form-control {
 
 .modal-header .close:hover {
     color: var(--text-color);
-    background: var(--medium-gray);
 }
 
-.modal-body {
-    padding: 1.5rem;
-}
 
 .modal-body p {
     margin-bottom: 1rem;
@@ -2020,7 +1997,6 @@ textarea.form-control {
     display: flex;
     gap: 0.75rem;
     justify-content: flex-end;
-    padding: 1.25rem 1.5rem;
     border-top: 1px solid var(--medium-gray);
 }
 

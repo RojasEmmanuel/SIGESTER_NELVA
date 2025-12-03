@@ -78,7 +78,7 @@
                     <div class="form-section">
                         <div class="section-header">
                             <h3 class="section-title">
-                                <i class="fas fa-home"></i>
+                                <i class="fas fa-home" style="color:#1e478a;"></i>
                                 Información del Fraccionamiento
                             </h3>
                             <div class="section-indicator">
@@ -162,7 +162,7 @@
                     <div class="form-section">
                         <div class="section-header">
                             <h3 class="section-title">
-                                <i class="fas fa-info-circle"></i>
+                                <i class="fas fa-info-circle" style="color:#1e478a;"></i>
                                 Información Adicional
                             </h3>
                             <div class="section-indicator">
@@ -241,7 +241,7 @@
                     <div class="form-section">
                         <div class="section-header">
                             <h3 class="section-title">
-                                <i class="fas fa-map-marker-alt"></i>
+                                <i class="fas fa-map-marker-alt" style="color:#1e478a;"></i>
                                 Zonas del Fraccionamiento
                             </h3>
                             <div class="section-indicator">
@@ -276,7 +276,7 @@
                     <div class="stats-section">
                         <div class="section-header">
                             <h3 class="section-title">
-                                <i class="fas fa-chart-bar"></i>
+                                <i class="fas fa-chart-bar" style="color:#1e478a;"></i>
                                 Resumen de Lotes
                             </h3>
                             <div class="section-indicator">
@@ -343,7 +343,7 @@
                 <div class="form-section">
                     <div class="section-header">
                         <h3 class="section-title">
-                            <i class="fas fa-bolt"></i>
+                            <i class="fas fa-bolt" style="color:#1e478a;"></i>
                             Gestionar Amenidades
                         </h3>
                         <div class="section-indicator">
@@ -354,7 +354,7 @@
                     
                     <!-- Add Amenity Form -->
                     <div class="add-form-container">
-                        <h4 class="form-subtitle">Agregar Nueva Amenidad</h4>
+                        <h4 class="form-subtitle">Nueva Amenidad</h4>
                         <form action="{{ route('admin.fraccionamiento.add-amenidad', $datosFraccionamiento['id']) }}" method="POST" class="form-grid compact">
                             @csrf
 
@@ -388,7 +388,7 @@
                             <div class="form-group2">
                                 <button type="submit" class="btn btn-primary btn-sm">
                                     <i class="fas fa-plus"></i>
-                                    Agregar Amenidad
+                                    Agregar
                                 </button>
                             </div>
 
@@ -414,7 +414,6 @@
                                 <div class="amenity-actions">
                                     <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteModal('amenidad', {{ $amenidad['id'] }}, '{{ $amenidad['nombre'] }}')">
                                         <i class="fas fa-trash"></i>
-                                        Eliminar
                                     </button>
                                 </div>
                             </div>
@@ -436,7 +435,7 @@
                 <div class="form-section">
                     <div class="section-header">
                         <h3 class="section-title">
-                            <i class="fas fa-images"></i>
+                            <i class="fas fa-images" style="color:#1e478a;"></i>
                             Gestionar Galería
                         </h3>
                         <div class="section-indicator">
@@ -446,7 +445,7 @@
                     </div>
                     
                     <div class="add-form-container">
-                        <h4 class="form-subtitle">Agregar Nueva Foto</h4>
+                        <h4 class="form-subtitle">Nueva Foto</h4>
                         <form action="{{ route('admin.fraccionamiento.add-foto', $datosFraccionamiento['id']) }}" method="POST" enctype="multipart/form-data" class="form-grid compact">
                             @csrf
                             <div class="form-group">
@@ -483,7 +482,7 @@
                             <div class="form-group2">
                                 <button type="submit" class="btn btn-primary btn-sm">
                                     <i class="fas fa-plus"></i>
-                                    Agregar Foto
+                                    Agregar
                                 </button>
                             </div>
 
@@ -533,7 +532,7 @@
                 <div class="form-section">
                     <div class="section-header">
                         <h3 class="section-title">
-                            <i class="fas fa-gift"></i>
+                            <i class="fas fa-gift" style="color:#1e478a;"></i>
                             Gestionar Promociones
                         </h3>
                         <div class="section-indicator">
@@ -545,7 +544,8 @@
                     <!-- Botón para abrir modal de creación -->
                     <div class="add-form-container">
                         <button type="button" class="btn btn-primary btn-sm" onclick="openCreateModal()">
-                            <i class="fas fa-plus"></i> Agregar Promoción
+                            <i class="fas fa-plus"></i> 
+                            Nueva
                         </button>
                     </div>
 
@@ -621,7 +621,7 @@
                 <div class="form-section">
                     <div class="section-header">
                         <h3 class="section-title">
-                            <i class="fas fa-file-download"></i>
+                            <i class="fas fa-file-download" style="color:#1e478a;"></i>
                             Gestionar Archivos
                         </h3>
                         <div class="section-indicator">
@@ -631,7 +631,7 @@
                     </div>
                     
                     <div class="add-form-container">
-                        <h4 class="form-subtitle">Agregar Nuevo Archivo</h4>
+                        <h4 class="form-subtitle">Nuevo Archivo</h4>
                         <form action="{{ route('admin.fraccionamiento.add-archivo', $datosFraccionamiento['id']) }}"
                               method="POST"
                               enctype="multipart/form-data"
@@ -685,7 +685,7 @@
                             <div class="form-group full-width">
                                 <button type="submit" class="btn btn-primary btn-sm">
                                     <i class="fas fa-plus"></i>
-                                    Agregar Archivo
+                                    Agregar
                                 </button>
                             </div>
 
@@ -709,11 +709,9 @@
                                 <div class="file-actions">
                                     <a href="{{ route('admin.fraccionamiento.download-archivo', [$datosFraccionamiento['id'], $archivo['id']]) }}" class="btn btn-primary btn-sm" target="_blank">
                                         <i class="fas fa-download"></i>
-                                        Descargar
                                     </a>
                                     <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteModal('archivo', {{ $archivo['id'] }}, '{{ $archivo['nombre_archivo'] ?? 'Sin título' }}')">
                                         <i class="fas fa-trash"></i>
-                                        Eliminar
                                     </button>
                                 </div>
                             </div>
@@ -735,7 +733,7 @@
                 <div class="form-section">
                     <div class="section-header">
                         <h3 class="section-title">
-                            <i class="fas fa-map-pin"></i>
+                            <i class="fas fa-map-pin" style="color:#1e478a;"></i>
                             Asignar Lotes a Zonas
                         </h3>
                         <div class="section-indicator">
@@ -755,7 +753,7 @@
                             <div class="form-group">
                                 <label class="form-label">Seleccionar Zona *</label>
                                 <select name="id_zona" class="form-control" required>
-                                    <option value="">-- Elegir zona --</option>
+                                    <option value=""> Elegir zona </option>
                                     @foreach($zonas as $zona)
                                         <option value="{{ $zona['id'] }}">
                                             {{ $zona['nombre'] }} (${{ number_format($zona['precio_m2'], 2) }}/m²)
@@ -804,7 +802,7 @@
 
                             <div class="form-group full-width">
                                 <button type="submit" class="btn btn-primary btn-lg" style="width: auto;">
-                                    <i class="fas fa-link"></i> Asignar Lotes
+                                    <i class="fas fa-link"></i> Asignar
                                 </button>
                             </div>
                         </form>
