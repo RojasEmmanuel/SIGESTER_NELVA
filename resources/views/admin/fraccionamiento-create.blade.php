@@ -16,7 +16,7 @@
 @section('content')
 <div class="container mt-5">
     <div class="page-header mb-4">
-        <h1 class="mb-3">
+        <h1 class="mb-4">
             Nuevo Fraccionamiento
         </h1>
         <p class="header-subtitle">Completa los datos básicos y adicionales. Después podrás agregar amenidades, galería y archivos.</p>
@@ -49,7 +49,7 @@
         <!-- ==================== PASO 1: TU FORMULARIO ORIGINAL (100% INTACTO) ==================== -->
         <div id="paso1" class="step active">
             <!-- Información Básica -->
-            <div class="section-header mb-4" style="background: #fff;">
+            <div class="section-header " style="background: #fff;">
                 <h3 class="section-title">
                     <i class="fas fa-home"></i> Información Básica
                 </h3>

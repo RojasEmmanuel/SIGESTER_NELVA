@@ -57,7 +57,7 @@ body {
 }
 
 .header-title h1 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     color: var(--text-color);
     font-weight: 700;
     margin: 0;
@@ -87,7 +87,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem 1.5rem;
+    padding: 1rem 1rem;
     border-bottom: 1px solid var(--medium-gray);
     background: var(--light-gray);
 }

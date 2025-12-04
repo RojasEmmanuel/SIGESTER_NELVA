@@ -92,7 +92,7 @@
                 <!-- Botón Registrar Fraccionamiento -->
                 <a href="{{ route('admin.fraccionamiento.create') }}" class="btn btn-vender">
                     <i class="fas fa-plus-circle"></i>
-                    <span>Nuevo Fraccionamiento</span>
+                    <span>Nuevo</span>
                 </a>
             </div>
             
