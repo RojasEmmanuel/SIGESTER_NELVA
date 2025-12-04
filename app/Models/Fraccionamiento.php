@@ -16,11 +16,13 @@ class Fraccionamiento extends Model
         'ubicacion',
         'path_imagen',
         'estatus',
-        'zona'
+        'zona',
+        'tiene_geojson',        // ← nuevo
     ];
 
     protected $casts = [
         'estatus' => 'boolean',
+        'tiene_geojson'=>'boolean'
     ];
 
     public function lotes()

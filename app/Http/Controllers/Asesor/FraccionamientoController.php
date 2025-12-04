@@ -44,6 +44,7 @@ class FraccionamientoController extends Controller
                 'ubicacion' => $fraccionamiento->ubicacion,
                 'path_imagen' => $fraccionamiento->path_imagen,
                 'estatus' => $fraccionamiento->estatus,
+                'tiene_geojson'=> $fraccionamiento->tiene_geojson
             ];
 
             if ($infoFraccionamiento) {

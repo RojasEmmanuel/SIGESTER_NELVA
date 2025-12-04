@@ -43,6 +43,7 @@ public function show($id)
             'ubicacion' => $fraccionamiento->ubicacion,
             'path_imagen' => $fraccionamiento->path_imagen,
             'estatus' => $fraccionamiento->estatus,
+            'tiene_geojson'=>$fraccionamiento->tiene_geojson,
             'hero_image' => $heroImagePath, // Nueva propiedad para la imagen del hero
         ];
 
@@ -368,6 +369,7 @@ public function show($id)
             return redirect()->back()->with('error', 'No se pudo descargar el archivo.');
         }
     }
+
 }
 
     

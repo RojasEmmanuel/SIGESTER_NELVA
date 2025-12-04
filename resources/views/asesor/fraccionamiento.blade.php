@@ -101,77 +101,178 @@
             </button>
         </div>
 
-        <!-- Development Plan mapaa-->
+        
+        <!-- Development Plan - VERSIÓN FINAL CORREGIDA -->
         <div class="development-plan">
             <h3 class="info-title">
                 <i class="fas fa-map"></i>
-                <span>Plano Interactivo</span>
+                <span>Plano del Fraccionamiento</span>
             </h3>
-            
+
             <div class="plan-container" id="planContainer">
                 <button class="fullscreen-btn" id="fullscreenBtn">
-                    <i class="fas fa-expand"></i> Pantalla Completa
+                    Pantalla Completa
                 </button>
-                <div id="mapPlano" style="width: 100%; height: 600px; border-radius: 12px;"></div>
-            </div>
 
-            <!-- Controles del Mapa -->
-            <div class="map-controls-overlay">
-                <div class="control-panel-map">
-                    <div class="control-section">
-                        <div class="control-title"><i class="fas fa-layer-group"></i> Estilo del Mapa</div>
-                        <div class="style-buttons">
-                            <button class="style-btn active" data-style="satellite-streets">
-                                <i class="fas fa-satellite"></i> Satélite
-                            </button>
-                            <button class="style-btn" data-style="streets">
-                                <i class="fas fa-road"></i> Calles
-                            </button>
-                            <button class="style-btn" data-style="light">
-                                <i class="fas fa-map"></i> Claro
-                            </button>
-                           
-                            
+                @if($datosFraccionamiento['tiene_geojson'] == true)
+                    <!-- MAPA INTERACTIVO -->
+                    <div id="mapPlano" style="width: 100%; height: 650px; border-radius: 12px;"></div>
+
+                    <!-- Controles del mapa -->
+                    <div class="map-controls-overlay">
+                        <div class="control-panel-map">
+                            <div class="control-section">
+                                <div class="control-title">Estilo del Mapa</div>
+                                <div class="style-buttons">
+                                    <button class="style-btn active" data-style="satellite-streets">Satélite</button>
+                                    <button class="style-btn" data-style="streets">Calles</button>
+                                    <button class="style-btn" data-style="light">Claro</button>
+                                </div>
+                            </div>
+                            <div class="control-section">
+                                <div class="control-title">Filtros</div>
+                                <div class="filter-buttons">
+                                    <button class="filter-btn active" data-filter="all">
+                                        <div class="color-indicator" style="background: conic-gradient(#16a34a 0% 33%, #dc2626 33% 66%, #ea580c 66% 100%);"></div>
+                                        Todos
+                                    </button>
+                                    <button class="filter-btn" data-filter="disponible"><div class="color-indicator disponible-indicator"></div> Disponibles</button>
+                                    <button class="filter-btn" data-filter="vendido"><div class="color-indicator vendido-indicator"></div> Vendidos</button>
+                                    <button class="filter-btn" data-filter="apartado-palabra-deposito"><div class="color-indicator palabra-deposito-indicator"></div> Apartado</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-panel-map hidden" id="infoPanelMap">
+                            <div class="info-header">
+                                <div class="info-title">Información del Lote</div>
+                                <button class="info-close" id="infoCloseMap">×</button>
+                            </div>
+                            <div class="lote-info-content" id="loteInfoContent"></div>
                         </div>
                     </div>
-                    
-                    <div class="control-section">
-                        <div class="control-title"><i class="fas fa-filter"></i> Filtros</div>
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" data-filter="all">
-                                <div class="color-indicator" style="background: conic-gradient(#16a34a 0% 33%, #dc2626 33% 66%, #ea580c 66% 100%);"></div>
-                                Todos los lotes
-                            </button>
-                            <button class="filter-btn" data-filter="disponible">
-                                <div class="color-indicator disponible-indicator"></div>
-                                Disponibles
-                            </button>
-                            <button class="filter-btn" data-filter="vendido">
-                                <div class="color-indicator vendido-indicator"></div>
-                                Vendidos
-                            </button>
-                            <button class="filter-btn" data-filter="apartado-palabra-deposito">
-                                <div class="color-indicator palabra-deposito-indicator"></div>
-                                Apartado Palabra/Depósito
-                            </button>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Panel de información del lote -->
-                <div class="info-panel-map hidden" id="infoPanelMap">
-                    <div class="info-header">
-                        <div class="info-title">Información del Lote</div>
-                        <button class="info-close" id="infoCloseMap">
-                            <i class="fas fa-times"></i>
-                        </button>
+                    @push('scripts')
+                        <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+                        <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+                        <script src="{{ asset('js/map.js') }}?v={{ time() }}"></script>
+                    @endpush
+
+                @else
+                    <!-- PDF COMO IMAGEN - CON ZOOM Y CENTRADO PERFECTO -->
+                    @php
+                        $pdfPlano = $archivos->firstWhere(fn($a) => 
+                            $a['nombre_archivo'] && stripos($a['nombre_archivo'], 'plano') !== false
+                        );
+                    @endphp
+
+                    <div id="mapPlano" style="width: 100%; height: 650px; background: #0f172a; border-radius: 12px; position: relative; overflow: hidden;">
+                        @if($pdfPlano)
+                            <div id="pdfViewer" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative;">
+                                <img id="planoPdfImg" 
+                                    src="" 
+                                    alt="Plano del fraccionamiento"
+                                    style="max-width:95%; max-height:95%; object-fit:contain; border-radius:10px; box-shadow:0 15px 40px rgba(0,0,0,0.6); transition: transform 0.3s ease;"
+                                    onload="this.style.opacity = 1;">
+
+                                <!-- Botón descarga -->
+                                <a href="{{ route('asesor.fraccionamiento.download-archivo', ['idFraccionamiento' => $datosFraccionamiento['id'], 'idArchivo' => $pdfPlano['id']]) }}" 
+                                download class="btn btn-primary" 
+                                style="position:absolute; top:20px; right:20px; z-index:10; padding:12px 28px; font-size:16px;">
+                                    Descargar Plano PDF
+                                </a>
+                            </div>
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const img = document.getElementById('planoPdfImg');
+                                    const container = document.getElementById('pdfViewer');
+                                    let scale = 1;
+
+                                    // Cargar PDF y convertir página 1 a imagen
+                                    const url = '{{ route('asesor.fraccionamiento.download-archivo', [
+                                        'idFraccionamiento' => $datosFraccionamiento['id'],
+                                        'idArchivo' => $pdfPlano['id']
+                                    ]) }}';
+
+                                    pdfjsLib.getDocument(url).promise
+                                        .then(pdf => pdf.getPage(1))
+                                        .then(page => {
+                                            // Ajuste automático según orientación
+                                            const viewport = page.getViewport({ scale: 1 });
+                                            const canvas = document.createElement('canvas');
+                                            const context = canvas.getContext('2d');
+                                            const outputScale = window.devicePixelRatio || 1;
+
+                                            // Detectar si el PDF está en landscape
+                                            const isLandscape = viewport.width > viewport.height;
+
+                                            let finalScale = isLandscape ? 3.2 : 2.8;
+                                            if (window.innerWidth < 768) finalScale *= 0.7;
+
+                                            const scaledViewport = page.getViewport({ scale: finalScale });
+
+                                            canvas.width = Math.floor(scaledViewport.width * outputScale);
+                                            canvas.height = Math.floor(scaledViewport.height * outputScale);
+                                            canvas.style.width = Math.floor(scaledViewport.width) + "px";
+                                            canvas.style.height = Math.floor(scaledViewport.height) + "px";
+
+                                            const renderContext = {
+                                                canvasContext: context,
+                                                viewport: scaledViewport,
+                                                transform: outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null
+                                            };
+
+                                            return page.render(renderContext).promise.then(() => canvas);
+                                        })
+                                        .then(canvas => {
+                                            img.src = canvas.toDataURL('image/jpeg', 0.95);
+                                        })
+                                        .catch(err => {
+                                            console.error('Error cargando PDF:', err);
+                                            container.innerHTML = `
+                                                <div style="text-align:center; color:#e2e8f0; padding:40px;">
+                                                    <i class="fas fa-file-pdf" style="font-size:80px; opacity:0.4;"></i>
+                                                    <p style="margin-top:20px;">Error al cargar el plano</p>
+                                                    <a href="${url}" download class="btn btn-outline mt-3">Descargar PDF</a>
+                                                </div>`;
+                                        });
+
+                                    // ZOOM CON RUEDA 100% FUNCIONAL
+                                    container.addEventListener('wheel', function(e) {
+                                        e.preventDefault();
+                                        if (e.deltaY < 0) {
+                                            scale = Math.min(scale + 0.2, 6);
+                                        } else {
+                                            scale = Math.max(scale - 0.2, 0.6);
+                                        }
+                                        img.style.transform = `scale(${scale})`;
+                                    });
+
+                                    // Bonus: doble clic para zoom
+                                    img.addEventListener('dblclick', () => {
+                                        scale = scale > 1.5 ? 1 : 2.5;
+                                        img.style.transform = `scale(${scale})`;
+                                    });
+                                });
+                            </script>
+                        @else
+                            <div style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#94a3b8;">
+                                <i class="fas fa-map-marked-alt" style="font-size:90px; opacity:0.3; margin-bottom:24px;"></i>
+                                <h3>Plano no disponible</h3>
+                                <p>Aún no se ha cargado el plano interactivo ni el PDF.</p>
+                            </div>
+                        @endif
                     </div>
-                    <div class="lote-info-content" id="loteInfoContent">
-                        <!-- La información del lote se cargará aquí dinámicamente -->
-                    </div>
-                </div>
+
+                    <!-- Ocultar controles si es PDF -->
+                    <style>
+                        #fullscreenBtn, .map-controls-overlay { display: none !important; }
+                    </style>
+                @endif
             </div>
         </div>
+
 
         <!-- Development Info -->
         <div class="development-info">
@@ -692,40 +793,25 @@
         </div>
     </div>
 
-
+    
     @include('app_config')
 
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-    <script src="{{ asset('js/modals.js') }}"></script>
-    <script src="/js/map.js"></script>
-    <script src="{{ asset('js/map.js') }}"></script>
-    <script src="/js/modals.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
-        // Efectos hover mejorados para tarjetas
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+
+    <script src="{{ asset('js/modals.js') }}"></script>
+
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const galleryCards = document.querySelectorAll('.gallery-card');
-            const fileCards = document.querySelectorAll('.file-card');
-
-            // Efecto para tarjetas de galería
-            galleryCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-8px)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
+            document.querySelectorAll('.gallery-card').forEach(card => {
+                card.addEventListener('mouseenter', () => card.style.transform = 'translateY(-8px)');
+                card.addEventListener('mouseleave', () => card.style.transform = 'translateY(0)');
             });
-
-            // Efecto para tarjetas de archivos
-            fileCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
+            document.querySelectorAll('.file-card').forEach(card => {
+                card.addEventListener('mouseenter', () => card.style.transform = 'translateY(-5px)');
+                card.addEventListener('mouseleave', () => card.style.transform = 'translateY(0)');
             });
         });
     </script>

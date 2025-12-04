@@ -10,13 +10,12 @@ use Illuminate\Support\Facades\File;
 
 class MapasController extends Controller
 {
-
     /**
      * Vista principal con selector de fraccionamientos
      */
     public function index()
     {
-        $fraccionamientos = Fraccionamiento::select('id_fraccionamiento', 'nombre')
+        $fraccionamientos = Fraccionamiento::select('id_fraccionamiento', 'nombre', 'tiene_geojson')
             ->where('estatus', true)
             ->orderBy('nombre', 'asc')
             ->get();
@@ -25,112 +24,93 @@ class MapasController extends Controller
     }
 
     /**
-     * Devuelve el GeoJSON + datos básicos del fraccionamiento seleccionado
+     * Ruta: GET /ing/fraccionamiento/{id}/geojson-data
+     * Usado por el editor del ingeniero y también por la vista pública
      */
-    public function geojsonData($id_fraccionamiento)
-    {
-        $frac = Fraccionamiento::findOrFail($id_fraccionamiento);
-
-        // Normalizar nombre del archivo: sin acentos, espacios → _, minúsculas
-        $nombreNormalizado = Str::ascii($frac->nombre);           // Quita acentos
-        $nombreNormalizado = strtolower($nombreNormalizado);
-        $nombreNormalizado = preg_replace('/[^a-z0-9]+/', '_', $nombreNormalizado); // letras, números y _
-        $nombreNormalizado = trim($nombreNormalizado, '_');
-
-        $rutaArchivo = public_path("geojson/{$nombreNormalizado}.geojson");
-
-        if (!file_exists($rutaArchivo)) {
-            return response()->json([
-                'success' => false,
-                'message' => "Archivo no encontrado: geojson/{$nombreNormalizado}.geojson"
-            ], 404);
-        }
-
-        $geojson = json_decode(file_get_contents($rutaArchivo), true);
-
-        return response()->json([
-            'success' => true,
-            'fraccionamiento' => [
-                'id'   => $frac->id_fraccionamiento,
-                'nombre' => $frac->nombre,
-            ],
-            'geojson' => $geojson
-        ]);
-    }
-
     public function getGeoJSONData($id)
     {
-        $frac = \App\Models\Fraccionamiento::findOrFail($id);
-        $nombre = $frac->nombre;
-        
-        // Intentar con guiones bajos (nuevo formato)
-        $slugUnderscore = Str::slug($nombre, '_');
-        $pathUnderscore = public_path("geojson/{$slugUnderscore}.geojson");
-        
-        // Intentar con guiones medios (formato anterior)
-        $slugDash = Str::slug($nombre);
-        $pathDash = public_path("geojson/{$slugDash}.geojson");
+        $frac = Fraccionamiento::findOrFail($id);
 
-        $path = null;
-        $archivo = null;
-
-        if (File::exists($pathUnderscore)) {
-            $path = $pathUnderscore;
-            $archivo = "{$slugUnderscore}.geojson";
-        } elseif (File::exists($pathDash)) {
-            $path = $pathDash;
-            $archivo = "{$slugDash}.geojson";
-        }
-
-        if ($path && File::exists($path)) {
-            $geojson = json_decode(File::get($path), true);
+        // Si el campo dice que NO tiene GeoJSON → respuesta inmediata
+        if (!$frac->tiene_geojson) {
             return response()->json([
                 'success' => true,
                 'fraccionamiento' => [
                     'id' => $frac->id_fraccionamiento,
-                    'nombre' => $nombre
+                    'nombre' => $frac->nombre,
                 ],
-                'geojson' => $geojson,
-                'archivo' => $archivo
+                'geojson' => null
             ]);
         }
 
-        // No existe → devolvemos null para que abra el modal
+        // Si dice que SÍ tiene → buscamos el archivo con el formato actual
+        $slug = Str::slug($frac->nombre, '_');
+        $filename = strtolower($slug) . '.geojson';
+        $filepath = public_path("geojson/{$filename}");
+
+        if (File::exists($filepath)) {
+            $geojson = json_decode(File::get($filepath), true);
+
+            return response()->json([
+                'success' => true,
+                'fraccionamiento' => [
+                    'id' => $frac->id_fraccionamiento,
+                    'nombre' => $frac->nombre,
+                ],
+                'geojson' => $geojson,
+                'archivo' => $filename
+            ]);
+        }
+
+        // Inconsistencia: el campo dice true pero el archivo no existe → corregimos
+        $frac->tiene_geojson = false;
+        $frac->save();
+
         return response()->json([
             'success' => true,
             'fraccionamiento' => [
                 'id' => $frac->id_fraccionamiento,
-                'nombre' => $nombre
+                'nombre' => $frac->nombre,
             ],
             'geojson' => null
         ]);
     }
 
+    /**
+     * Ruta: POST /ing/fraccionamiento/save-geojson
+     * Guardar desde el editor del ingeniero
+     */
     public function saveGeoJSON(Request $request)
     {
         $request->validate([
-            'geojson' => 'required',
-            'nombre'  => 'required|string'
+            'id_fraccionamiento' => 'required|exists:fraccionamientos,id_fraccionamiento',
+            'geojson'            => 'required|json',
         ]);
 
-        // Convertir nombre a minúsculas y reemplazar espacios por guiones bajos
-        $nombreSlug = Str::slug($request->nombre, '_'); // El segundo parámetro define el separador
-        $nombreSlug = strtolower($nombreSlug); // Asegurar que esté en minúsculas
-        
+        $frac = Fraccionamiento::findOrFail($request->id_fraccionamiento);
+
+        $slug = Str::slug($frac->nombre, '_');
+        $filename = strtolower($slug) . '.geojson';
         $path = public_path('geojson');
 
         if (!File::exists($path)) {
             File::makeDirectory($path, 0755, true);
         }
 
-        $archivo = "{$nombreSlug}.geojson";
-        File::put($path . '/' . $archivo, json_encode($request->geojson, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        File::put($path . '/' . $filename, json_encode($request->geojson, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+        // MARCAMOS QUE SÍ TIENE GEOJSON
+        $frac->tiene_geojson = true;
+        $frac->save();
 
         return response()->json([
             'success' => true,
-            'archivo' => $archivo,
-            'message' => 'GeoJSON guardado correctamente'
+            'message' => 'Plano interactivo guardado correctamente',
+            'archivo' => $filename
         ]);
     }
 
+    // Puedes eliminar estos métodos si ya no los usas:
+    // public function geojsonData()  → formato antiguo, ya no se llama
+    // public function saveGeoJSON() sin id → versión vieja
 }

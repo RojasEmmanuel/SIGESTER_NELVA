@@ -1,7 +1,5 @@
 <?= view('templates/navbar', ['title' => $datosFraccionamiento['nombre'] . ' - Nelva Bienes Raíces']) ?>
 
-<!-- Agregar CSS de Mapbox -->
-<link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
 
 <link href="{{ asset('css/pagina/fraccionamiento.css') }}" rel="stylesheet">
 <!-- Configuración global para los scripts -->
@@ -297,7 +295,8 @@
 </section>
 @endif
 
-<!-- Development Plan con Mapa -->
+
+<!-- Development Plan con Mapa - VERSIÓN FINAL 100% COMPATIBLE CON TU SISTEMA -->
 <section class="section development-plan">
     <div class="container">
         <h2 class="section-title">Plano Interactivo del Fraccionamiento</h2>
@@ -306,75 +305,145 @@
         </p>
 
         <div class="plan-container" id="planContainer">
-            <button class="fullscreen-btn" id="fullscreenBtn">
-                <i class="fas fa-expand"></i> Pantalla Completa
-            </button>
-            
-            <div class="map-controls-overlay">
-                <div class="control-panel-map">
-                    <div class="control-section">
-                        <div class="control-title"><i class="fas fa-layer-group"></i> Estilo del Mapa</div>
-                        <div class="style-buttons">
-                            <button class="style-btn active" data-style="satellite-streets">
-                                <i class="fas fa-satellite"></i> Satélite
-                            </button>
-                            <button class="style-btn" data-style="streets">
-                                <i class="fas fa-road"></i> Calles
-                            </button>
-                            <button class="style-btn" data-style="light">
-                                <i class="fas fa-map"></i> Claro
-                            </button>
-                            <button class="style-btn" data-style="dark">
-                                <i class="fas fa-moon"></i> Oscuro
-                            </button>
+            <button class="fullscreen-btn" id="fullscreenBtn">Pantalla Completa</button>
+
+            <?php if($datosFraccionamiento['tiene_geojson'] == true): ?>
+
+                <!-- MAPA INTERACTIVO - CARGADO DIRECTAMENTE SIN BLADE PUSH -->
+                <div id="mapPlano" style="width: 100%; height: 650px; border-radius: 12px;"></div>
+
+                <!-- Controles del mapa -->
+                <div class="map-controls-overlay">
+                    <div class="control-panel-map">
+                        <div class="control-section">
+                            <div class="control-title">Estilo del Mapa</div>
+                            <div class="style-buttons">
+                                <button class="style-btn active" data-style="satellite-streets">Satélite</button>
+                                <button class="style-btn" data-style="streets">Calles</button>
+                                <button class="style-btn" data-style="light">Claro</button>
+                                <button class="style-btn" data-style="dark">Oscuro</button>
+                            </div>
+                        </div>
+                        <div class="control-section">
+                            <div class="control-title">Filtros</div>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" data-filter="all">
+                                    <div class="color-indicator" style="background: conic-gradient(#16a34a 0% 33%, #dc2626 33% 66%, #ea580c 66% 100%);"></div>
+                                    Todos
+                                </button>
+                                <button class="filter-btn" data-filter="disponible"><div class="color-indicator disponible-indicator"></div> Disponibles</button>
+                                <button class="filter-btn" data-filter="vendido"><div class="color-indicator vendido-indicator"></div> Vendidos</button>
+                                <button class="filter-btn" data-filter="apartado-palabra-deposito"><div class="color-indicator palabra-deposito-indicator"></div> Apartados</button>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="control-section">
-                        <div class="control-title"><i class="fas fa-filter"></i> Filtros</div>
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" data-filter="all">
-                                <div class="color-indicator" style="background: conic-gradient(#16a34a 0% 33%, #dc2626 33% 66%, #ea580c 66% 100%);"></div>
-                                Todos los lotes
-                            </button>
-                            <button class="filter-btn" data-filter="disponible">
-                                <div class="color-indicator disponible-indicator"></div>
-                                Disponibles
-                            </button>
-                            <button class="filter-btn" data-filter="vendido">
-                                <div class="color-indicator vendido-indicator"></div>
-                                Vendidos
-                            </button>
-                            <button class="filter-btn" data-filter="apartado-palabra-deposito">
-                                <div class="color-indicator palabra-deposito-indicator"></div>
-                                Apartados
+
+                    <div class="info-panel-map hidden" id="infoPanelMap">
+                        <div class="info-header">
+                            <div class="info-title">Información del Lote</div>
+                            <button class="info-close" id="infoCloseMap">×</button>
+                        </div>
+                        <div class="lote-info-content" id="loteInfoContent"></div>
+                        <div class="lote-actions">
+                            <button class="btn btn-primary" onclick="document.getElementById('lotNumber').value = document.querySelector('#loteInfoContent')?.dataset?.lotNumber || ''; document.getElementById('openCalculationModal')?.click();">
+                                Consultar Este Lote
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="info-panel-map hidden" id="infoPanelMap">
-                    <div class="info-header">
-                        <div class="info-title">Información del Lote</div>
-                        <button class="info-close" id="infoCloseMap">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="lote-info-content" id="loteInfoContent">
-                        <!-- La información del lote se cargará aquí dinámicamente por map.js -->
-                    </div>
-                    <div class="lote-actions">
-                        <button class="btn btn-outline" onclick="window.openCalculationForLote(document.getElementById('loteInfoContent').dataset?.lotNumber || '')">
-                            <i class="fas fa-calculator"></i> Calcular Costo
-                        </button>
-                    </div>
-                </div>
-            </div>
+                <!-- CARGAR MAPBOX Y JS DIRECTAMENTE (sin depender de Blade) -->
+                <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+                <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+                <script src="{{ asset('js/map_externo.js') }}?v={{ time() }}"></script>
 
-            <div id="mapPlano" style="width: 100%; height: 600px; border-radius: 12px;"></div>
+            <?php else: ?>
+
+                <!-- PDF FALLBACK -->
+                <?php
+                    $pdfPlano = collect($archivos)->first(function($a) {
+                        return $a['nombre_archivo'] && stripos($a['nombre_archivo'], 'plano') !== false;
+                    });
+                ?>
+
+                <div id="mapPlano" style="width: 100%; height: 650px; background: #0f172a; border-radius: 12px; position: relative; overflow: hidden;">
+                    <?php if($pdfPlano): ?>
+                        <div id="pdfViewer" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative;">
+                            <img id="planoPdfImg" src="" alt="Plano del fraccionamiento"
+                                 style="max-width:95%; max-height:95%; object-fit:contain; border-radius:12px; box-shadow:0 20px 50px rgba(0,0,0,0.7); transition: transform 0.3s ease; opacity:0;"
+                                 onload="this.style.opacity=1">
+
+                            <a href="{{ route('pagina.fraccionamiento.download-archivo', [
+                                'idFraccionamiento' => $datosFraccionamiento['id'],
+                                'idArchivo' => $pdfPlano['id']
+                            ]) }}" 
+                               download class="btn btn-primary"
+                               style="position:absolute; top:20px; right:20px; z-index:10; padding:14px 32px;">
+                                Descargar Plano PDF
+                            </a>
+                        </div>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const img = document.getElementById('planoPdfImg');
+                                const container = document.getElementById('pdfViewer');
+                                let scale = 1;
+                                const url = '{{ route('pagina.fraccionamiento.download-archivo', [
+                                    'idFraccionamiento' => $datosFraccionamiento['id'],
+                                    'idArchivo' => $pdfPlano['id']
+                                ]) }}';
+
+                                if (typeof pdfjsLib === 'undefined') return;
+
+                                pdfjsLib.getDocument(url).promise
+                                    .then(pdf => pdf.getPage(1))
+                                    .then(page => {
+                                        const viewport = page.getViewport({ scale: 1 });
+                                        const isLandscape = viewport.width > viewport.height;
+                                        const baseScale = window.innerWidth < 768 ? 1.8 : (isLandscape ? 3.3 : 2.9);
+                                        const finalScale = baseScale * (window.innerWidth < 768 ? 0.75 : 1);
+                                        const scaledViewport = page.getViewport({ scale: finalScale });
+                                        const canvas = document.createElement('canvas');
+                                        const ctx = canvas.getContext('2d');
+                                        const outputScale = window.devicePixelRatio || 1;
+
+                                        canvas.width = Math.floor(scaledViewport.width * outputScale);
+                                        canvas.height = Math.floor(scaledViewport.height * outputScale);
+
+                                        page.render({
+                                            canvasContext: ctx,
+                                            viewport: scaledViewport,
+                                            transform: outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null
+                                        }).promise.then(() => {
+                                            img.src = canvas.toDataURL();
+                                        });
+                                    })
+                                    .catch(() => console.error('Error PDF'));
+
+                                // Zoom con rueda y doble clic
+                                container.addEventListener('wheel', e => { e.preventDefault(); scale += e.deltaY * -0.002; scale = Math.min(Math.max(.6, scale), 7); img.style.transform = `scale(${scale})`; });
+                                img.addEventListener('dblclick', () => { scale = scale > 1.5 ? 1 : 2.8; img.style.transform = `scale(${scale})`; });
+                            });
+                        </script>
+                    <?php else: ?>
+                        <div style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#94a3b8;">
+                            <i class="fas fa-map-marked-alt" style="font-size:100px; opacity:0.3; margin-bottom:30px;"></i>
+                            <h3>Plano no disponible</h3>
+                            <p>Aún no se ha cargado el plano interactivo ni el PDF.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Ocultar controles si es PDF -->
+                <style>
+                    #fullscreenBtn, .map-controls-overlay { display: none !important; }
+                </style>
+
+            <?php endif; ?>
         </div>
     </div>
 </section>
+
 
 <!-- Gallery Section Mejorada -->
 <section class="section gallery-section" id="gallery">
@@ -639,9 +708,11 @@
 
 <?= view('templates/footer') ?>
 
-<!-- Scripts en el orden correcto -->
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-<script src="{{ asset('js/map_externo.js') }}"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+</script>
 
 <script>
     // JavaScript específico para la vista cliente
@@ -979,3 +1050,4 @@
         });
     }
 </script>
+
