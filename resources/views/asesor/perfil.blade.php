@@ -31,7 +31,7 @@
         --profile-text-light: #64748b;
         --profile-border: #e2e8f0;
         --profile-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-        --profile-radius: 16px;
+        --profile-radius: 6px;
         --profile-transition: all 0.25s ease;
     }
 
@@ -174,6 +174,7 @@
         font-size: 1rem;
         cursor: pointer;
         transition: var(--profile-transition);
+        font-weight: 500;
     }
 
     .profile-photo-change-btn:hover {
@@ -275,7 +276,7 @@
     .profile-section {
         background: var(--profile-card-bg);
         border-radius: var(--profile-radius);
-        padding: 2rem;
+        padding: 1rem;
         border: 1px solid var(--profile-border);
         box-shadow: var(--profile-shadow);
     }
@@ -284,9 +285,8 @@
         font-weight: 600;
         color: var(--profile-primary);
         font-size: 1.2rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         padding-bottom: 0.75rem;
-        border-bottom: 2px solid var(--profile-accent);
     }
 
     /* Formulario */
@@ -360,9 +360,7 @@
         display: flex;
         justify-content: flex-end;
         gap: 1rem;
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid var(--profile-border);
+        padding-top: 1rem;
     }
 
     .profile-btn {
@@ -394,7 +392,8 @@
     .profile-btn-outline {
         background-color: transparent;
         color: var(--profile-primary);
-        border-color: var(--profile-primary);
+        border-color: #E2E8F0;
+        font-weight: 500;
     }
 
     .profile-btn-outline:hover {

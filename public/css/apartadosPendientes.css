@@ -22,7 +22,7 @@
     --apartados-pendientes-shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --apartados-pendientes-radius-sm: 4px;
     --apartados-pendientes-radius: 8px;
-    --apartados-pendientes-radius-lg: 12px;
+    --apartados-pendientes-radius-lg: 8px;
     --apartados-pendientes-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -93,6 +93,8 @@
 .apartados-pendientes-stat-content {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    gap: 0.25rem;
 }
 
 .apartados-pendientes-stat-number {
@@ -182,16 +184,16 @@
 }
 
 .apartados-pendientes-table-header {
-    background: var(--apartados-pendientes-primary);
+    border-bottom: 2px solid var(--apartados-pendientes-primary);
+    background: var(--apartados-pendientes-background);
 }
 
 .apartados-pendientes-th {
     padding: 1rem 1rem;
     text-align: left;
-    font-weight: 600;
-    color: var(--apartados-pendientes-on-primary);
+    font-weight: 500;
+    color: var(--apartados-pendientes-primary);
     font-size: 0.875rem;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -437,4 +439,8 @@
 
 .apartados-pendientes-tr:nth-child(odd) {
     animation-delay: 0.1s;
+}
+
+.apartados-pendientes-subtitle{
+    margin-top: 20px;
 }

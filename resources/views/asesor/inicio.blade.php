@@ -30,7 +30,6 @@
     <div class="container"> 
         <div class="page-header">
             <h1 class="page-title">
-                <i class="fas fa-map-marked-alt"></i>
                 <span>Bienvenido, {{ $usuario->nombre }}</span>
             </h1>
             <a href="{{ route('ventas.directa.crear') }}" class="btn-vender">
@@ -39,56 +38,66 @@
             </a>
         </div>
         
-        <!-- Stats Overview -->
-        <div class="stats-container">
-            <div class="stat-card total">
-                <h3 class="stat-card-title">
-                    <i class="fas fa-city"></i>
-                    <span>Total Fraccionamientos</span>
-                </h3>
-                <p class="stat-card-value">{{ $totalFraccionamientos }}</p>
-                <p class="stat-card-description">Activos</p>
-                <div class="progress-container">
-                    <div class="progress-bar" style="width: 100%"></div>
+        <!-- Stats Overview - Compactas con gráfico circular (FUNCIONANDO) -->
+        <div class="stats-container-compact">
+            <!-- Total Fraccionamientos -->
+            <div class="stat-card-compact total">
+                
+                <div class="stat-content">
+                    <div class="stat-value">{{ $totalFraccionamientos }}</div>
+                    <div class="stat-label">Fraccionamientos</div>
+                </div>
+                <div class="circular-progress" data-percent="100">
+                    <span class="progress-value">100%</span>
                 </div>
             </div>
-            <div class="stat-card available">
-                <h3 class="stat-card-title">
-                    <i class="fas fa-check-double"></i>
-                    <span>Lotes Vendidos</span>
-                </h3>
-                <p class="stat-card-value">{{ $lotesVendidos }}</p>
-                <p class="stat-card-description">Finalizados</p>
-                <div class="progress-container">
-                    <div class="progress-bar progress-available" 
-                         style="width: {{ $totalLotes > 0 ? ($lotesVendidos / $totalLotes * 100) : 0 }}%"></div>
+
+            <!-- Lotes Vendidos -->
+            <div class="stat-card-compact sold">
+                
+                <div class="stat-content">
+                    <div class="stat-value">{{ $lotesVendidos }}</div>
+                    <div class="stat-label">Vendidos</div>
+                </div>
+                <div class="circular-progress" 
+                    data-percent="{{ $totalLotes > 0 ? round(($lotesVendidos / $totalLotes) * 100, 1) : 0 }}">
+                    <span class="progress-value">
+                        {{ $totalLotes > 0 ? round(($lotesVendidos / $totalLotes) * 100, 1) : 0 }}%
+                    </span>
                 </div>
             </div>
-            <div class="stat-card reserved">
-                <h3 class="stat-card-title">
-                    <i class="fas fa-clock"></i>
-                    <span>Lotes Apartados</span>
-                </h3>
-                <p class="stat-card-value">{{ $lotesApartados }}</p>
-                <p class="stat-card-description">En proceso</p>
-                <div class="progress-container">
-                    <div class="progress-bar progress-reserved" 
-                         style="width: {{ $totalLotes > 0 ? ($lotesApartados / $totalLotes * 100) : 0 }}%"></div>
+
+            <!-- Lotes Apartados -->
+            <div class="stat-card-compact reserved">
+                
+                <div class="stat-content">
+                    <div class="stat-value">{{ $lotesApartados }}</div>
+                    <div class="stat-label">Apartados</div>
+                </div>
+                <div class="circular-progress" 
+                    data-percent="{{ $totalLotes > 0 ? round(($lotesApartados / $totalLotes) * 100, 1) : 0 }}">
+                    <span class="progress-value">
+                        {{ $totalLotes > 0 ? round(($lotesApartados / $totalLotes) * 100, 1) : 0 }}%
+                    </span>
                 </div>
             </div>
-            <div class="stat-card sold">
-                <h3 class="stat-card-title">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Lotes disponibles</span>
-                </h3>
-                <p class="stat-card-value">{{ $lotesDisponibles }}</p>
-                <p class="stat-card-description">para venta</p>
-                <div class="progress-container">
-                    <div class="progress-bar progress-sold" 
-                         style="width: {{ $totalLotes > 0 ? ($lotesDisponibles / $totalLotes * 100) : 0 }}%"></div>
+
+            <!-- Lotes Disponibles -->
+            <div class="stat-card-compact available">
+                
+                <div class="stat-content">
+                    <div class="stat-value">{{ $lotesDisponibles }}</div>
+                    <div class="stat-label">Disponibles</div>
+                </div>
+                <div class="circular-progress" 
+                    data-percent="{{ $totalLotes > 0 ? round(($lotesDisponibles / $totalLotes) * 100, 1) : 0 }}">
+                    <span class="progress-value">
+                        {{ $totalLotes > 0 ? round(($lotesDisponibles / $totalLotes) * 100, 1) : 0 }}%
+                    </span>
                 </div>
             </div>
         </div>
+
 
         <!-- Fraccionamientos List -->
         <div class="section-header">
@@ -197,6 +206,16 @@
             });
         });
     });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.circular-progress').forEach(el => {
+        const percent = el.getAttribute('data-percent') || 0;
+        el.style.setProperty('--percent', 0);
+        setTimeout(() => el.style.setProperty('--percent', percent), 100);
+    });
+});
 </script>
 @endpush
 @endsection

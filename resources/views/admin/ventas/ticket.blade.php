@@ -19,7 +19,7 @@
 
                 <a href="{{ route('admin.ventas.index') }}" class="btn-back">
                     <i class="fas fa-arrow-left"></i>
-                    <span>Volver a Ventas</span>
+                    <span>Volver</span>
                 </a>
             </div>
             

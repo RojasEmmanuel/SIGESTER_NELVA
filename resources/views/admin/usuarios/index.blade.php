@@ -361,7 +361,7 @@
             <p class="usu-modal-details-corporate" id="modalDetails"></p>
         </div>
         <div class="usu-modal-footer-corporate">
-            <button type="button" class="usu-modal-btn-corporate usu-btn-cancel-corporate" id="modalCancelButton">
+            <button type="button" class="usu-btn-corporate usu-btn-outline" id="modalCancelButton">
                 <i class="fas fa-times"></i> Cancelar
             </button>
             <button type="button" class="usu-modal-btn-corporate" id="confirmActionButton">

@@ -18,7 +18,6 @@
     --usu-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     --usu-radius: 6px;
     --usu-radius-lg: 8px;
-
     --usu-bdDanger: #fccfcf;
     --usu-bdSuccess:#b7fbd0;
 }
@@ -126,13 +125,14 @@ body{
 
 .usu-btn-corporate.usu-btn-outline {
     background: transparent;
-    border: 1px solid var(--usu-primary);
+    border: 1px solid #E2E8F0;
     color: var(--usu-primary);
 }
 
 .usu-btn-corporate.usu-btn-outline:hover {
-    background: var(--usu-primary);
-    color: var(--usu-white);
+    background: #E1F3FD;
+    color: var(--usu-primary);
+    border: 1px solid var(--usu-primary);
 }
 
 /* Alertas Corporativas */
@@ -264,7 +264,6 @@ body{
 .usu-panel-header {
     padding: 13px 18px;
     border-bottom: 1px solid var(--usu-gray-light);
-    background: var(--usu-light);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -308,9 +307,6 @@ body{
     font-size: 0.95rem;
 }
 
-.usu-corporate-table thead {
-    background: var(--usu-light);
-}
 
 .usu-corporate-table thead th {
     padding: 6px 9px;

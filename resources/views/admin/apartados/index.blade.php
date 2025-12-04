@@ -11,18 +11,14 @@
             <!-- Header -->
             <div class="apartados-pendientes-header">
                 <div class="apartados-pendientes-header-content">
-                    <h1 class="apartados-pendientes-title">
-                        Apartados Pendientes
-                    </h1>
-                    <div class="apartados-pendientes-stats">
-                        <div class="apartados-pendientes-stat-card">
-                            <span class="material-icons apartados-pendientes-stat-icon">inventory_2</span>
-                            <div class="apartados-pendientes-stat-content">
-                                <span class="apartados-pendientes-stat-number">{{ $totalSolicitudes }}</span>
-                                <span class="apartados-pendientes-stat-label">Total de solicitudes</span>
-                            </div>
+                    <div class="apartados-pendientes-header-top">
+                        <div class="apartados-pendientes-header-text">
+                            <h1 class="apartados-pendientes-title">Apartados Pendientes</h1>
+                            <p class="apartados-pendientes-subtitle">Gestiona y valida todos los apartados pendientes. Revisa los comprobantes de pago y confirma las solicitudes de reserva.</p>
                         </div>
+                        
                     </div>
+                    
                 </div>
             </div>
 
@@ -149,7 +145,6 @@
                                             <td class="apartados-pendientes-td">
                                                 <a href="{{ route('admin.apartados-pendientes.show', $apartado->id_apartado) }}"
                                                    class="apartados-pendientes-btn apartados-pendientes-btn-primary">
-                                                    <span class="material-icons apartados-pendientes-btn-icon">visibility</span>
                                                     Ver 
                                                 </a>
                                             </td>

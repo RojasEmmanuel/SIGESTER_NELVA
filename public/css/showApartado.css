@@ -20,7 +20,7 @@
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08);
-    --rounded: 12px;
+    --rounded: 8px;
     --rounded-sm: 8px;
     --transition: all 0.25s ease;
 }
@@ -48,12 +48,15 @@ body {
 
 /* ========== ENCABEZADO DE PÁGINA ========== */
 .page-header {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    
 }
 
 .page-title {
     font-size: 1.875rem;
-    color: var(--primary-color);
+    color: rgb(71,71,71);
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -65,8 +68,6 @@ body {
 .page-title i {
     font-size: 1.5rem;
 }
-
-
 
 .page-subtitle {
     color: var(--text-light);
@@ -869,13 +870,14 @@ button:focus-visible,
 .btn-secondary {
     background: white;
     color: var(--primary-color);
-    border: 1px solid var(--primary-color);
+    border: 1px solid #E2E8F0;
     box-shadow: var(--shadow-sm);
+    font-weight: 500;
 }
 
 .btn-secondary:hover {
-    background: var(--primary-color);
-    color: white;
+    background: #E1F3FD;
+    color: var(--primary-color);
     border-color: var(--primary-color);
     transform: translateY(-1px);
     box-shadow: var(--shadow-md);

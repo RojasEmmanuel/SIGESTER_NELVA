@@ -29,8 +29,8 @@
 @section('content')
 <div class="container">
     <!-- Encabezado de página -->
-    <div class="page-header">
-                <div class="headerLeft">
+    <div class="page-header" >
+        <div class="headerLeft">
             <h1 class="page-title">
                 Detalles del Apartado
             </h1>

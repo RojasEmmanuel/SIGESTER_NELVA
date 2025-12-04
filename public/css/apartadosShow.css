@@ -48,7 +48,7 @@
 .apartado-main-title {
     font-size: 1.8rem;
     font-weight: 700;
-    color: var(--apartado-primary);
+    color: rgb(71,71,71);
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
@@ -102,13 +102,14 @@
 
 .apartado-btn-outlined {
     background: transparent;
-    color: var(--apartado-primary);
-    border: 2px solid var(--apartado-primary);
+    color: rgb(120,120,120);
+    border: 1px solid #E2E8F0;
 }
 
 .apartado-btn-outlined:hover {
-    background: var(--apartado-primary);
-    color: var(--apartado-on-primary);
+    background: #E1F3FD;
+    color: var(--apartado-primary);
+    border: 1px solid var(--apartado-primary);
     box-shadow: var(--apartado-shadow-2);
 }
 
@@ -236,7 +237,6 @@
     flex-direction: column;
     gap: 0.5rem;
     padding: 1rem;
-    background: var(--apartado-background);
     border-radius: var(--apartado-radius);
     border-left: 4px solid var(--apartado-primary);
 }
@@ -249,7 +249,6 @@
     font-weight: 600;
     color: var(--apartado-on-surface);
     opacity: 0.7;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
