@@ -32,7 +32,7 @@ body {
 
 /* === LAYOUT MEJORADO === */
 .lotes-container { 
-    max-width: 1400px; 
+    max-width: 1200px; 
     margin: 0 auto; 
     padding: 24px; 
 }
@@ -41,19 +41,16 @@ body {
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
-    margin-bottom: 24px; 
+    margin-bottom: 10px; 
     flex-wrap: wrap; 
     gap: 16px; 
-    background: var(--backdrop);
     backdrop-filter: blur(20px);
-    padding: 20px;
+    padding: 10px;
     border-radius: var(--radius);
-    border: 1px solid rgba(255,255,255,0.9);
-    box-shadow: var(--shadow);
 }
 
 .lotes-title { 
-    font-size: 1.85rem; 
+    font-size: 1.8rem; 
     font-weight: 700; 
     color: var(--primary-dark); 
     display: flex; 
@@ -152,16 +149,16 @@ body {
 }
 
 .lotes-table th { 
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
-    color: white; 
+    background: white; 
+    color: var(--primary-dark); 
     padding: 16px; 
     text-align: left; 
     font-weight: 600; 
-    text-transform: uppercase; 
     font-size: 0.75rem; 
     letter-spacing: 0.5px; 
     position: relative;
-    border-bottom: 2px solid rgba(255,255,255,0.2);
+    border-bottom: 2px solid var(--border);
+    box-shadow: none;
 }
 
 .lotes-table th.sortable { 
@@ -171,7 +168,9 @@ body {
 }
 
 .lotes-table th.sortable:hover { 
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    background: var(--light);
+    box-shadow: none;
+    transform: translateY(-1px);
 }
 
 .lotes-table td { 
@@ -254,7 +253,6 @@ body {
     border-radius: 20px; 
     font-size: 0.75rem; 
     font-weight: 700; 
-    text-transform: uppercase; 
     letter-spacing: 0.3px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     border: 1px solid rgba(255,255,255,0.3);
@@ -320,13 +318,13 @@ body {
 .btn-outline { 
     background: transparent; 
     color: var(--primary); 
-    border: 2px solid var(--primary); 
+    border: 2px solid var(--border); 
     backdrop-filter: blur(10px);
 }
 
 .btn-outline:hover { 
     background: var(--primary); 
-    color: white;
+    color: var(--primary);
     transform: translateY(-2px);
 }
 
@@ -388,28 +386,11 @@ body {
     background: rgba(0,0,0,0.5); 
     justify-content: center; 
     align-items: center; 
-    z-index: 1000; 
+    z-index: 990; 
     backdrop-filter: blur(8px);
-    animation: modalFadeIn 0.3s ease;
-}
-
-@keyframes modalFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
 }
 
 
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: scale(0.9) translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
 
 /* === TOAST MEJORADO === */
 .toast { 
@@ -476,7 +457,7 @@ body {
     left: 0; 
     width: 100%; 
     height: 100%; 
-    background: rgba(0,0,0,0.5); 
+    background: rgba(0,0,0,0.2); 
     justify-content: center; 
     align-items: center; 
     z-index: 1000; 
@@ -491,7 +472,6 @@ body {
     max-height: 90vh; 
     overflow: hidden; 
     border: 1px solid var(--border);
-    animation: modalSlideIn 0.3s ease;
 }
 
 @keyframes modalSlideIn {
@@ -521,18 +501,18 @@ body {
 }
 
 .modal-header { 
-    padding: 20px 24px; 
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
-    color: white; 
+    padding: 10px 14px; 
+    color: #15325e;
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
     border-radius: 12px 12px 0 0;
+    border-bottom: 2px solid var(--border);
 }
 
 .modal-header h3 { 
     margin: 0; 
-    font-size: 1.3rem; 
+    font-size: 1.4rem; 
     font-weight: 600;
     display: flex; 
     align-items: center; 
@@ -544,10 +524,9 @@ body {
 }
 
 .close-btn { 
-    background: rgba(255,255,255,0.2); 
     border: none; 
-    color: white; 
-    font-size: 20px; 
+    color: #15325e; 
+    font-size: 30px; 
     cursor: pointer; 
     width: 32px; 
     height: 32px; 
@@ -564,7 +543,7 @@ body {
 }
 
 .modal-body { 
-    padding: 24px; 
+    padding: 14px; 
     background: white;
 }
 
@@ -690,8 +669,7 @@ input:focus, select:focus {
 
 /* === MODAL WARNING COHERENTE === */
 .modal-header.warning { 
-    background: linear-gradient(135deg, var(--warning), #e0a800); 
-    color: #856404; 
+    color: #dc3545; 
 }
 
 .modal-header.warning .close-btn {

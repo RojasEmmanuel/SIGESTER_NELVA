@@ -6,8 +6,8 @@
         <div class="modal-body">
             <p id="confirmMessage"></p>
         </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" id="btnCancel">Cancelar</button>
+        <div class="modal-footer" style="backgroun:white;">
+            <button class="btn btn-outline" id="btnCancel">Cancelar</button>
             <button class="btn btn-danger" id="btnConfirm">Eliminar</button>
         </div>
     </div>

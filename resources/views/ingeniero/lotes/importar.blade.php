@@ -1,7 +1,7 @@
 <div class="modal" id="modalImportarLotes">
     <div class="modal-content modal-lg">
         <div class="modal-header">
-            <h3><span class="material-icons">upload_file</span> Importar Lotes desde CSV</h3>
+            <h3>Importar Lotes desde CSV</h3>
             <button class="close-btn" onclick="closeModal('modalImportarLotes')">×</button>
         </div>
 
@@ -102,11 +102,11 @@
 
             <!-- FOOTER -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('modalImportarLotes')">
+                <button type="button" class="btn btn-outline" onclick="closeModal('modalImportarLotes')">
                     Cancelar
                 </button>
                 <button type="submit" 
-                        class="btn btn-success ripple d-inline-flex align-items-center gap-2" 
+                        class="btn btn-primary ripple d-inline-flex align-items-center gap-2" 
                         id="btnImportarCsv">
                     <span class="material-icons" id="btnIcon">upload</span>
                     <span id="btnText">Importar CSV</span>

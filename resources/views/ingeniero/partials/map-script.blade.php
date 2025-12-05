@@ -13,7 +13,7 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoicm9qYXNkZXYiLCJhIjoiY21leDF4N2JtMTI0NTJrcHlsd
 // ===========================================
 const style = document.createElement('style');
 style.textContent = `
-    .modern-lote-popup {max-width:300px!important;font-family:'Roboto',sans-serif;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.2);border:none;overflow:hidden}
+    .modern-lote-popup {max-width:250px!important;font-family:'Roboto',sans-serif;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.2);border:none;overflow:hidden}
     .popup-card {background:white;border-radius:2px;overflow:hidden}
     .popup-header {padding:14px 14px 10px;background:linear-gradient(135deg,#185cdd 0%,#4facfe 50%,#90ceff 100%);color:white;position:relative}
     .lote-number {font-size:18px;font-weight:700;letter-spacing:-0.5px}
@@ -63,7 +63,7 @@ window.initializeMap = function() {
     if (map) map.remove();
     map = new mapboxgl.Map({
         container: 'mapPlano',
-        style: 'mapbox://styles/mapbox/streets-v12', // Estilo más claro para mejor contraste
+        style: 'mapbox://styles/mapbox/satellite-streets-v12',
         center: [-96.778, 15.7345],
         zoom: 18,
         pitch: 0,

@@ -9,28 +9,32 @@
         <div class="col-12">
             <div class="card shadow-lg">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Mapa de Fraccionamientos</h4>
+                    <h4 class="mb-0">Creación de mapas interactivos</h4>
+                    <div class="card-header-subtitle">
+                        <span>Carga un archivo CSV con coordenadas en sistema decimal para generar el archivo GeoJSON del plano interactivo</span>
+                    </div>
+                    
                 </div>
 
                 <div class="card-body p-0">
                     <div class="p-4 bg-light border-bottom">
-                        <div class="row align-items-end">
-                            <div class="col-md-6">
-                                <label for="fraccionamientoSelect" class="form-label fw-bold">Selecciona un fraccionamiento</label>
+                        <div class="row align-items-end" style="display: flex; justify-content: space-between">
+                            <div class="col-md-6" style="margin-left: 13px">
+                                <label for="fraccionamientoSelect" class="form-label fw-bold" style="font-size: 1.1rem; color:#1557b0;">Selecciona un fraccionamiento</label>
                                 <select id="fraccionamientoSelect" class="form-select form-select-lg">
-                                    <option value=""> Elige un fraccionamiento </option>
+                                    <option value=""> Elige </option>
                                     @foreach($fraccionamientos as $f)
                                         <option value="{{ $f->id_fraccionamiento }}">{{ $f->nombre }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <div class="text-muted small"><strong id="lotesCount">0</strong> lotes cargados</div>
+                                <div class="text-muted small" style="font-size: 1.1rem; color:#1557b0;">lotes cargados: <strong id="lotesCount">0</strong> </div>
                             </div>
                         </div>
                     </div>
 
-                    <div id="mapContainer" style="position: relative; height: 75vh;">
+                    <div id="mapContainer" style="position: relative; height: 70vh;">
                         <div id="mapPlano" style="width: 100%; height: 100%;"></div>
                         <div id="loadingOverlay" class="position-absolute top-50 start-50 translate-middle text-center bg-white p-4 rounded shadow" style="z-index: 10; display: none;">
                             <div class="spinner-border text-primary" role="status"></div>
@@ -111,7 +115,6 @@
 <style>
     /* ===================== TUS ESTILOS ORIGINALES (LÍNEA POR LÍNEA, SIN COMPRIMIR) ===================== */
     body {
-        font-family: 'Roboto', sans-serif;
         background: #f8fafc;
         color: #3c4043;
     }
@@ -124,15 +127,13 @@
     }
 
     .card-header {
-        background: #1e478a !important;
-        padding: 24px !important;
+        padding: 15px !important;
         border-bottom: none;
         margin-bottom: 20px;
-        color: white !important;
     }
     .card-header h4 {
-        font-size: 1.5rem;
-        font-weight: 500;
+        font-size: 1.8rem;
+        font-weight: 600;
         letter-spacing: 0.0125em;
         margin: 0;
         display: flex;
@@ -143,17 +144,22 @@
         font-size: 28px;
     }
 
+    .card-header-subtitle{
+        margin-top: 13px;
+    }
+
     #fraccionamientoSelect {
-        height: 56px;
+        height: 45px;
         border-radius: 8px;
         border: 1px solid #dadce0;
         background: white;
         padding: 10px;
-        font-size: 1rem;
+        font-size: 0.9rem;
         font-weight: 500;
         color: #3c4043;
         box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
         transition: all 0.2s ease;
+        margin-left: 20px;
     }
     #fraccionamientoSelect:focus {
         border-color: #1a73e8;
@@ -162,22 +168,17 @@
     }
 
     #lotesCount {
-        font-size: 2rem;
+        font-size: 1.5rem;
         font-weight: 700;
         color: #1a73e8;
-        background: #e8f0fe;
-        padding: 8px 20px;
-        border-radius: 32px;
         display: inline-block;
-        min-width: 120px;
         text-align: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     #mapContainer {
-        height: 78vh;
+        height: 75vh;
         margin: 24px;
-        border-radius: 16px;
+        border-radius: 13px;
         overflow: hidden;
         position: relative;
     }
@@ -231,7 +232,6 @@
         display: none;
         align-items: center;
         justify-content: center;
-        font-family: 'Roboto', sans-serif;
     }
     .custom-modal.show {
         display: flex;
@@ -239,8 +239,8 @@
     .custom-modal-backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(0,0,0,0.5);
-        backdrop-filter: blur(5px);
+        background: rgba(0,0,0,0.2);
+        backdrop-filter: blur(3px);
     }
     .custom-modal-content {
         position: relative;
@@ -260,22 +260,25 @@
         to   { opacity: 1; transform: translateY(0); }
     }
     .custom-modal-header {
-        background: #1e478a;
-        color: white;
-        padding: 24px;
+        background: white;
+        color: #1557b0;
+        padding: 10px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+         border-bottom: 2px solid #dadce0;
     }
     .custom-modal-header h5 {
         margin: 0;
         font-size: 1.5rem;
-        font-weight: 500;
+        font-weight: 600;
+        margin-left: 20px;
+       
     }
     .custom-modal-close {
         background: none;
         border: none;
-        color: white;
+        color: #1557b0;
         font-size: 36px;
         cursor: pointer;
         width: 48px; height:48px;
@@ -284,7 +287,7 @@
         align-items: center;
         justify-content: center;
     }
-    .custom-modal-close:hover { background: rgba(255,255,255,0.2); }
+    .custom-modal-close:hover { background: rgba(0,255,255,0.2); }
 
     .custom-modal-body { padding: 32px; max-height: 60vh; overflow-y: auto; }
     .custom-alert {
@@ -526,7 +529,7 @@
             setTimeout(() => {
                 previewMap = new mapboxgl.Map({
                     container: 'previewMap',
-                    style: 'mapbox://styles/mapbox/streets-v12',
+                    style: 'mapbox://styles/mapbox/satellite-streets-v12',
                     center: features[0].geometry.coordinates[0][0],
                     zoom: 17
                 });
