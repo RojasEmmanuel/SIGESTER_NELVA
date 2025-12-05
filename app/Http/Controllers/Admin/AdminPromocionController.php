@@ -77,8 +77,7 @@ class AdminPromocionController extends Controller
             ->with('active_tab', 'promociones');
     }
 
-    // === ELIMINAR PROMOCIÓN ===
-    public function destroy(Request $request, Promocion $promocion)
+    public function destroy(Promocion $promocion)
     {
         if ($promocion->imagen_path) {
             Storage::disk('public')->delete($promocion->imagen_path);
@@ -86,12 +85,19 @@ class AdminPromocionController extends Controller
 
         $promocion->delete();
 
-        // Redirigir al fraccionamiento desde donde se eliminó
-        $fraccionamientoId = $request->input('current_fraccionamiento');
+        // Volvemos al último fraccionamiento que el usuario estaba viendo
+        $fraccionamientoId = session('current_fraccionamiento_id');
 
+        if ($fraccionamientoId) {
+            return redirect()
+                ->route('admin.fraccionamiento.show', $fraccionamientoId)
+                ->with('success', 'Promoción eliminada correctamente.')
+                ->with('active_tab', 'promociones');
+        }
+
+        // Si por alguna razón no hay sesión, vamos a un lugar seguro
         return redirect()
-            ->route('admin.fraccionamiento.show', $fraccionamientoId)
-            ->with('success', 'Promoción eliminada exitosamente.')
-            ->with('active_tab', 'promociones');
+            ->route('admin.index')
+            ->with('info', 'Promoción eliminada.');
     }
 }

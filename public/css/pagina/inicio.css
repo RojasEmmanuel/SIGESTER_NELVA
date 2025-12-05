@@ -958,7 +958,6 @@ p {
 
 .nelva-promos-premium {
     padding: 90px 0;
-    background: linear-gradient(135deg, #f8fdfc 0%, #f0f7ff 100%);
     position: relative;
     overflow: hidden;
 }
@@ -967,7 +966,6 @@ p {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,30 L100,100 L0,100 Z" fill="%23e3f2fd" opacity="0.3"/></svg>') no-repeat;
     background-size: cover;
     z-index: 0;
 }
@@ -1006,7 +1004,7 @@ p {
 }
 
 .promos-header h2 {
-    font-size: 2.8rem;
+    font-size: 2rem;
     color: #02304a;
     margin: 0 0 12px;
     font-weight: 800;
@@ -1423,4 +1421,237 @@ p {
 .promos-grid.animate-in .promo-card {
     opacity: 1;
     transform: translateY(0);
+}
+
+
+/* ========================================
+   ANIMACIONES OPTIMIZADAS - RÁPIDAS Y VISIBLES
+   ======================================== */
+
+/* Animación para las secciones principales */
+.stats-section,
+.projects-section,
+.destinations-section,
+.compact-steps,
+.nelva-promos-premium {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.stats-section.animate-in,
+.projects-section.animate-in,
+.destinations-section.animate-in,
+.compact-steps.animate-in,
+.nelva-promos-premium.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Animaciones escalonadas para tarjetas - MÁS RÁPIDAS */
+.stat-card,
+.project-card,
+.destination-card,
+.step-card,
+.promo-card {
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.3s ease, 
+                transform 0.3s ease,
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+}
+
+/* Delay reducido para animaciones escalonadas */
+.stats-grid.animate-in .stat-card:nth-child(1) { transition-delay: 0.05s; }
+.stats-grid.animate-in .stat-card:nth-child(2) { transition-delay: 0.1s; }
+.stats-grid.animate-in .stat-card:nth-child(3) { transition-delay: 0.15s; }
+.stats-grid.animate-in .stat-card:nth-child(4) { transition-delay: 0.2s; }
+
+/* Animación para proyectos con delay mínimo */
+.projects-grid.animate-in .project-card { 
+    transition-delay: calc(0.05s * var(--card-index, 1)); 
+}
+
+/* Animación para destinos */
+.destinations-grid.animate-in .destination-card { 
+    transition-delay: calc(0.05s * var(--card-index, 1)); 
+}
+
+/* Animación para pasos */
+.steps-container.animate-in .step-card { 
+    transition-delay: calc(0.05s * var(--card-index, 1)); 
+}
+
+/* Animación para promociones */
+.promos-grid.animate-in .promo-card { 
+    transition-delay: calc(0.05s * var(--card-index, 1)); 
+}
+
+/* Estado final animado - MÁS RÁPIDO */
+.stats-grid.animate-in .stat-card,
+.projects-grid.animate-in .project-card,
+.destinations-grid.animate-in .destination-card,
+.steps-container.animate-in .step-card,
+.promos-grid.animate-in .promo-card {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Optimización de animaciones hover - MÁS RÁPIDAS */
+.stat-card:hover,
+.project-card:hover,
+.destination-card:hover,
+.step-card:hover,
+.promo-card:hover {
+    transition-duration: 0.25s;
+}
+
+/* Animación específica para cards de estadísticas - MÁS RÁPIDA */
+.stat-card:hover .stat-front {
+    transition-duration: 0.25s;
+}
+
+.stat-card:hover .stat-back {
+    transition-duration: 0.25s;
+}
+
+/* Animación para imágenes de destino - MÁS RÁPIDA */
+.destination-card:hover .destination-image img {
+    transition-duration: 0.4s;
+}
+
+/* Animación para logos de proyectos - MÁS RÁPIDA */
+.project-card:hover .project-logo-container {
+    transition-duration: 0.25s;
+}
+
+/* Animación para overlay de proyectos - MÁS RÁPIDA */
+.project-card:hover .project-overlay {
+    transition-duration: 0.25s;
+}
+
+/* Animación para botones - MÁS RÁPIDA */
+.btn:hover,
+.destination-btn:hover,
+.project-btn:hover,
+.promo-cta:hover,
+.action-btn:hover {
+    transition-duration: 0.2s;
+}
+
+/* Optimización de animaciones de entrada parallax - MÁS RÁPIDAS */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Aplicar animaciones rápidas a contenido parallax */
+.parallax-content h1 {
+    animation: fadeInDown 0.6s ease;
+}
+
+.parallax-content p {
+    animation: fadeInUp 0.6s ease 0.1s;
+}
+
+/* Animación para pestañas - MÁS RÁPIDA */
+.zone-tab {
+    transition: all 0.2s ease;
+}
+
+/* Animación para cambio de contenido - MÁS RÁPIDA */
+.zone-content {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Animación para badge de promociones - MÁS RÁPIDA */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
+.promos-badge {
+    animation: pulse 1.5s infinite;
+}
+
+/* Animación para countdown - MÁS RÁPIDA */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.countdown-badge {
+    animation: bounce 1.2s infinite;
+}
+
+/* Animación para acciones de promoción - MÁS RÁPIDAS */
+.promo-actions {
+    transition: all 0.2s ease;
+}
+
+/* Optimización para dispositivos móviles - ANIMACIONES MÁS LENTAS EN MÓVIL */
+@media (max-width: 768px) {
+    .stats-section,
+    .projects-section,
+    .destinations-section,
+    .compact-steps,
+    .nelva-promos-premium {
+        transition-duration: 0.5s;
+    }
+    
+    .stat-card,
+    .project-card,
+    .destination-card,
+    .step-card,
+    .promo-card {
+        transition-duration: 0.4s;
+    }
+    
+    /* Reducir delays en móvil */
+    .stats-grid.animate-in .stat-card:nth-child(n) { 
+        transition-delay: 0.1s; 
+    }
+    
+    .parallax-content h1 {
+        animation-duration: 0.8s;
+    }
+    
+    .parallax-content p {
+        animation-duration: 0.8s;
+    }
+}
+
+/* Desactivar animaciones para usuarios que prefieren reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }

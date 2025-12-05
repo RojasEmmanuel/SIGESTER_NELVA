@@ -273,7 +273,7 @@
                     <button type="submit" class="btn btn-primary btn-lg px-5">
                         <i class="fas fa-save"></i> Registrar
                     </button>
-                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="volverPaso2()">
+                    <button type="button" class="btn btn-outline btn-lg px-4" onclick="volverPaso2()">
                         <i class="fas fa-arrow-left"></i> Volver
                     </button>
                 </div>

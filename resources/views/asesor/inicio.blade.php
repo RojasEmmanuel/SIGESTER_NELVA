@@ -30,7 +30,7 @@
     <div class="container"> 
         <div class="page-header">
             <h1 class="page-title">
-                <span>Bienvenido, {{ $usuario->nombre }}</span>
+                <span>Hola, {{ $usuario->nombre }}</span>
             </h1>
             <a href="{{ route('ventas.directa.crear') }}" class="btn-vender">
                 <i class="fas fa-handshake"></i>

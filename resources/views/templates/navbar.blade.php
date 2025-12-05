@@ -389,7 +389,7 @@
             </div>
             <div class="address">
                 <i class="fas fa-map-marker-alt"></i>
-                <span>Calle Matamoros, Esquina Abasolo, Frente a Cfe, 70900 San Pedro Pochutla, Oax.</span>
+                <span>Calle Matamoros, Esquina Abasolo, Frente a CFE, 70900 San Pedro Pochutla, Oax.</span>
             </div>
         </div>
     </div>
