@@ -176,20 +176,7 @@
                     <p class="info-item-description">Lotes listos para ser adquiridos</p>
                 </div>
                 
-                <div class="info-item-modern fade-in-up">
-                    <div class="info-item-header">
-                        <div class="info-item-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <h3 class="info-item-title">Estatus del Proyecto</h3>
-                    </div>
-                    <div class="info-item-value">
-                        <span class="status-badge-modern {{ $datosFraccionamiento['estatus'] ? 'status-active-modern' : 'status-inactive-modern' }}">
-                            {{ $datosFraccionamiento['estatus'] ? 'Activo' : 'Inactivo' }}
-                        </span>
-                    </div>
-                    <p class="info-item-description">Estado actual del desarrollo</p>
-                </div>
+                
             </div>
         </div>
     </div>
@@ -200,7 +187,6 @@
 <div class="zonas-section-compact">
     <div class="section-header-compact">
         <h2 class="section-title-compact">Zonas del Fraccionamiento</h2>
-        <div class="section-divider-compact"></div>
     </div>
     
     <div class="zonas-container-compact">
@@ -271,7 +257,7 @@
                             @case('Áreas Comunes')
                                 <i class="fas fa-tree"></i>
                                 @break
-                            @case('Servicios Básicos')
+                            @case('Servicio')
                                 <i class="fas fa-tools"></i>
                                 @break
                             @default

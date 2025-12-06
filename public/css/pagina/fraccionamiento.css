@@ -555,35 +555,35 @@ body {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 25px;
-    padding: 60px;
+    padding: 30px;
     box-shadow: var(--shadow-lg);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .amenidades-header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 .amenidades-icon {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
     background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 10px;
+    margin: 0 auto 5px;
     color: var(--primary);
-    font-size: 2.8rem;
+    font-size: 2.2rem;
     box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
     animation: float 3s ease-in-out infinite;
 }
 
 .amenidades-title {
     color: var(--primary);
-    font-size: 2.2rem;
-    margin-bottom: 20px;
+    font-size: 2rem;
+    margin-bottom: 10px;
     position: relative;
     font-weight: 700;
 }
@@ -600,8 +600,8 @@ body {
 
 .amenidades-subtitle {
     color: var(--gray);
-    font-size: 1.1rem;
-    max-width: 700px;
+    font-size: 0.9rem;
+    max-width: 500px;
     margin: 0 auto;
     line-height: 1.6;
 }
@@ -609,7 +609,7 @@ body {
 .amenidades-grid-modern {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 30px;
+    gap: 10px;
 }
 
 .amenidad-item-modern {
@@ -1643,9 +1643,9 @@ body {
     }
 
     .amenidades-icon {
-        width: 80px;
-        height: 80px;
-        font-size: 2.2rem;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
     }
 
     .amenidad-item-modern {
@@ -1710,7 +1710,7 @@ body {
 
     .info-item-icon {
         margin-right: 0;
-        margin-bottom: 15px;
+        margin-bottom: 5px;
     }
 
     .amenidad-item-modern {
@@ -1720,8 +1720,10 @@ body {
 
     .amenidad-icon-modern {
         margin-right: 0;
-        margin-bottom: 20px;
+        margin-bottom: 0px;
     }
+
+    
 
     .map-controls-overlay {
         position: relative;
@@ -1804,12 +1806,48 @@ body {
 
 @media (max-width: 480px) {
     .hero h1 {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
     }
     
+    .hero-location{
+        font-size: 1rem;
+    }
+
+    .hero p{
+        font-size: 0.8rem;
+
+    }
+
+    .info-general-title{
+        font-size: 1.3rem;
+    }   
+
+    .amenidades-subtitle{
+        font-size: 1rem;
+    }
     .hero .price {
         font-size: 1.8rem;
         padding: 8px 16px;
+    }
+
+
+
+    
+    .amenidades-title{
+        font-size: 1.4rem;
+    }
+
+    .amenidad-icon-modern{
+        height: 40px;
+        width: 40px;
+        font-size: 1.1rem;
+        
+    }
+
+    
+
+    .amenidad-content .amenidad-title{
+        font-size: 1rem;
     }
     
     .stat-item {
@@ -1827,7 +1865,36 @@ body {
     .gallery-item {
         height: 250px;
     }
+
+
+   .info-grid-modern{
+        gap: 10px;
+   }
+
+   .info-item-modern{
+    padding: 10px;
+   }
+
+   
+
+   .zona-card-compact{
+    padding: 15px;
+   }
+    .info-item-title{
+        font-size: 1.2rem;
+        
+    }
+    .info-item-value{
+        font-size: 1.2rem;
+        text-align: center;
+    }
+    .info-item-description{
+        font-size: 0.8rem;
+        text-align: center;
+    }
     
+
+   
     .modal-content-fraccionamiento {
         padding: 20px 15px;
         width: 95%;
@@ -1845,7 +1912,7 @@ body {
     top: 50%;
     right: 20px;
     transform: translateY(-50%);
-    z-index: 10;
+    z-index: 990;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -3099,7 +3166,7 @@ body {
     }
     
     .price-display-compact {
-        padding: 18px 12px;
+        padding: 10px 7px;
     }
     
     .price-amount {
@@ -3119,6 +3186,8 @@ body {
     .price-amount {
         font-size: 1.4rem;
     }
+
+    
 }
 
 /* Estados de accesibilidad */
@@ -3652,4 +3721,54 @@ body {
         opacity: 1;
         transform: scale(1);
     }
+}
+
+
+.quick-stats {
+    display: grid;
+    gap: 1rem;
+}
+
+/* En móvil y tablet pequeño: siempre 2×2 (los 4 visibles de una) */
+@media (max-width: 767px) {
+    .quick-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 0.5rem 0;
+    }
+
+    .stat-item {
+        padding: 1rem 0.5rem;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+    .stat-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .stat-number { font-size: 1.9rem; font-weight: 800; }
+    .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.8px; }
+}
+
+/* Desde tablet grande y escritorio: 1 fila horizontal */
+@media (min-width: 768px) {
+    .quick-stats {
+        grid-template-columns: repeat(4, 1fr);   /* 4 en una fila */
+        gap: 1.5rem;
+    }
+
+    .stat-item {
+        padding: 1.5rem 1rem;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        text-align: center;
+    }
+
+    .stat-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .stat-number { font-size: 2.5rem; font-weight: 700; }
+    .stat-label { font-size: 0.95rem; }
 }
