@@ -214,7 +214,7 @@ class ApartadoController extends Controller
 
         // Validar datos recibidos
         $request->validate([
-            'ticket_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // Máx. 5MB
+            'ticket_file' => 'required|file|mimes:pdf,jpg,jpeg,png',
             'ticket_estatus' => 'required|in:solicitud',
             'observaciones' => 'nullable|string|max:500',
         ], [

@@ -37,7 +37,7 @@ class PerfilController extends Controller
             'telefono'        => 'nullable|string|max:20',
             'email'           => 'required|email|max:255|unique:usuarios,email,' . $usuario->id_usuario . ',id_usuario',
             'path_facebook'   => 'nullable|url|max:255',
-            'foto'            => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
+            'foto'            => 'nullable|image|mimes:jpg,png,jpeg,gif',
         ]);
 
         // Actualizar datos de Usuario

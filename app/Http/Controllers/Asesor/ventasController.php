@@ -117,7 +117,7 @@ class ventasController extends Controller
 
         $rules = [
             'id_apartado' => 'required|exists:apartados,id_apartado',
-            'ticket_path' => 'required|file|mimes:pdf,jpg,png|max:5120',
+            'ticket_path' => 'required|file|mimes:pdf,jpg,png',
             'total' => 'required|numeric|min:0.01',
             'cliente.nombres' => 'required|string|max:255',
             'cliente.apellidos' => 'required|string|max:255',
@@ -126,8 +126,8 @@ class ventasController extends Controller
             'cliente.lugar_origen' => 'required|string|max:255',
             'cliente.ocupacion' => 'required|string|max:255',
             'cliente.clave_elector' => 'nullable|string|regex:/^[A-Z0-9]{18}$/',
-            'cliente.ine_frente' => 'required|file|mimes:jpg,png|max:5120',
-            'cliente.ine_reverso' => 'required|file|mimes:jpg,png|max:5120',
+            'cliente.ine_frente' => 'required|file|mimes:jpg,png',
+            'cliente.ine_reverso' => 'required|file|mimes:jpg,png',
             'contacto.telefono' => 'required|string|max:20',
             'contacto.email' => 'required|email|max:255',
             'direccion.nacionalidad' => 'required|string|max:255',
@@ -137,8 +137,8 @@ class ventasController extends Controller
             'beneficiario.nombres' => 'nullable|string|max:255',
             'beneficiario.apellidos' => 'nullable|string|max:255',
             'beneficiario.telefono' => 'nullable|string|max:20',
-            'beneficiario.ine_frente' => 'nullable|file|mimes:jpg,png|max:5120',
-            'beneficiario.ine_reverso' => 'nullable|file|mimes:jpg,png|max:5120',
+            'beneficiario.ine_frente' => 'nullable|file|mimes:jpg,png',
+            'beneficiario.ine_reverso' => 'nullable|file|mimes:jpg,png',
         ];
 
         // === CRÉDITO: solo si es crédito ===
@@ -287,7 +287,7 @@ class ventasController extends Controller
     public function updateTicket(Request $request, $id_venta)
     {
         $validated = $request->validate([
-            'new_ticket_path' => 'required|file|mimes:pdf,jpg,png|max:5120',
+            'new_ticket_path' => 'required|file|mimes:pdf,jpg,png',
         ]);
 
         return DB::transaction(function () use ($request, $id_venta, $validated) {
@@ -382,7 +382,7 @@ class ventasController extends Controller
        $rules = [
             'lotes' => 'required|array|min:1',
             'lotes.*' => 'exists:lotes,id_lote',
-            'ticket_path' => 'required|file|mimes:pdf,jpg,png|max:5120',
+            'ticket_path' => 'required|file|mimes:pdf,jpg,png',
             'total' => 'required|numeric|min:0.01',
             'cliente.nombres' => 'required|string|max:255',
             'cliente.apellidos' => 'required|string|max:255',
@@ -391,8 +391,8 @@ class ventasController extends Controller
             'cliente.lugar_origen' => 'required|string|max:255',
             'cliente.ocupacion' => 'required|string|max:255',
             'cliente.clave_elector' => 'nullable|string|regex:/^[A-Z0-9]{18}$/',
-            'cliente.ine_frente' => 'required|file|mimes:jpg,png|max:5120',
-            'cliente.ine_reverso' => 'required|file|mimes:jpg,png|max:5120',
+            'cliente.ine_frente' => 'required|file|mimes:jpg,png',
+            'cliente.ine_reverso' => 'required|file|mimes:jpg,png',
             'contacto.telefono' => 'required|string|max:20',
             'contacto.email' => 'required|email|max:255',
             'direccion.nacionalidad' => 'required|string|max:255',
@@ -402,8 +402,8 @@ class ventasController extends Controller
             'beneficiario.nombres' => 'nullable|string|max:255',
             'beneficiario.apellidos' => 'nullable|string|max:255',
             'beneficiario.telefono' => 'nullable|string|max:20',
-            'beneficiario.ine_frente' => 'nullable|file|mimes:jpg,png|max:5120',
-            'beneficiario.ine_reverso' => 'nullable|file|mimes:jpg,png|max:5120',
+            'beneficiario.ine_frente' => 'nullable|file|mimes:jpg,png',
+            'beneficiario.ine_reverso' => 'nullable|file|mimes:jpg,png',
         ];
 
         // === CRÉDITO: solo si es crédito ===

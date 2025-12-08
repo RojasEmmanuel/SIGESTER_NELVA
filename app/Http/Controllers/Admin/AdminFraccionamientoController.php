@@ -45,7 +45,7 @@ class AdminFraccionamientoController extends Controller
                 'ubicacion' => 'required|string|max:255',
                 'estatus' => 'required|boolean',
                 'zona' => 'required|in:costa,istmo',
-                'path_imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'path_imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif',
                 
                 // Campos para InfoFraccionamiento
                 'descripcion' => 'nullable|string',
@@ -259,7 +259,7 @@ class AdminFraccionamientoController extends Controller
                 'ubicacion' => 'required|string|max:255',
                 'estatus' => 'required|boolean',
                 'zona' => 'required|in:costa,istmo',
-                'path_imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'path_imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif',
             ]);
 
             if ($request->hasFile('path_imagen') && $request->file('path_imagen')->isValid()) {
@@ -364,7 +364,7 @@ class AdminFraccionamientoController extends Controller
 
             $data = $request->validate([
                 'nombre' => 'nullable|string|max:255',
-                'fotografia_path' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'fotografia_path' => 'required|image|mimes:jpeg,png,jpg,gif',
             ]);
 
             $path = $request->file('fotografia_path')->store('galeria', 'public');
@@ -413,7 +413,7 @@ class AdminFraccionamientoController extends Controller
         try {
             $data = $request->validate([
                 'nombre_archivo' => 'nullable|string|max:255',
-                'archivo_path' => 'required|file|mimes:pdf|max:5120',
+                'archivo_path' => 'required|file|mimes:pdf',
             ]);
 
             $path = $request->file('archivo_path')->store('archivos', 'public');
