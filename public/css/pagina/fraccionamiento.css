@@ -3730,45 +3730,51 @@ body {
 }
 
 /* En móvil y tablet pequeño: siempre 2×2 (los 4 visibles de una) */
-@media (max-width: 767px) {
-    .quick-stats {
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        padding: 0.5rem 0;
-    }
-
-    .stat-item {
-        padding: 1rem 0.5rem;
-        border-radius: 12px;
-        background: #fff;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        font-size: 0.9rem;
-    }
-
-    .stat-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-    .stat-number { font-size: 1.9rem; font-weight: 800; }
-    .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.8px; }
+/* MÓVIL (Default - Mobile First) */
+.quick-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2×2 para móvil */
+  gap: 12px;
+  padding: 0.5rem 0;
 }
 
-/* Desde tablet grande y escritorio: 1 fila horizontal */
+.stat-item {
+  padding: 1rem 0.5rem;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.stat-icon { 
+  font-size: 2rem; 
+  margin-bottom: 0.5rem; 
+}
+.stat-number { 
+  font-size: 1.9rem; 
+  font-weight: 800; 
+}
+.stat-label { 
+  font-size: 0.75rem; 
+  text-transform: uppercase; 
+  letter-spacing: 0.8px; 
+}
+
+/* TABLET (768px en adelante) */
 @media (min-width: 768px) {
-    .quick-stats {
-        grid-template-columns: repeat(4, 1fr);   /* 4 en una fila */
-        gap: 1.5rem;
-    }
-
-    .stat-item {
-        padding: 1.5rem 1rem;
-        border-radius: 12px;
-        background: #fff;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        text-align: center;
-    }
-
-    .stat-icon { font-size: 2.5rem; margin-bottom: 1rem; }
-    .stat-number { font-size: 2.5rem; font-weight: 700; }
-    .stat-label { font-size: 0.95rem; }
+  .quick-stats {
+    grid-template-columns: repeat(4, 1fr); /* 4 en fila */
+    gap: 1.5rem;
+  }
+  
+  .stat-item {
+    padding: 1.5rem 1rem;
+  }
+  
+  .stat-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .stat-number { font-size: 2.5rem; }
+  .stat-label { font-size: 0.95rem; }
 }
