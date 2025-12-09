@@ -239,7 +239,7 @@
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-map-marker-alt contact-icon"></i>
-                        <div class="contact-text">Adolfo Lopez Mateos 16, Loma Larga, 70900 San Pedro Pochutla, Oax.</div>
+                        <div class="contact-text">Calle Matamoros, Esquina Abasolo, Frente a CFE, 70900 San Pedro Pochutla, Oax.</div>
                     </div>
                 </div>
             </div>
@@ -247,7 +247,7 @@
             <div class="footer-section">
                 <div class="map-container">
 
-                    <iframe class="map-frame"  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3840.0962516054083!2d-96.47265642221858!3d15.746046645921181!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85b8d524d1c0c813%3A0x28e1b7915d888ef8!2sNELVA%20Bienes%20Ra%C3%ADces!5e0!3m2!1ses!2smx!4v1754065107116!5m2!1ses!2smx" allowfullscreen="" loading="lazy"></iframe>
+                    <iframe class="map-frame"  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d417.46676100758384!2d-96.46799853583771!3d15.745939307495133!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85b8d524d1c0c813%3A0x28e1b7915d888ef8!2sNELVA%20Bienes%20Ra%C3%ADces!5e0!3m2!1ses-419!2smx!4v1765300521200!5m2!1ses-419!2smx" allowfullscreen="" loading="lazy"></iframe>
                    
                 </div>
             </div>
