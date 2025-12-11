@@ -166,30 +166,38 @@
                         );
                     @endphp
 
-                    <div id="mapPlano" style="width: 100%; height: 650px; background: #0f172a; border-radius: 12px; position: relative; overflow: hidden;">
+                    <div id="mapPlano" style="width: 100%; height: 650px; background: #fff; border-radius: 12px; position: relative; overflow: hidden;">
                         @if($pdfPlano)
                             <div id="pdfViewer" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative;">
                                 <img id="planoPdfImg" 
                                     src="" 
                                     alt="Plano del fraccionamiento"
-                                    style="max-width:95%; max-height:95%; object-fit:contain; border-radius:10px; box-shadow:0 15px 40px rgba(0,0,0,0.6); transition: transform 0.3s ease;"
+                                    style="max-width:95%; max-height:95%; object-fit:contain; transition: transform 0.3s ease;"
                                     onload="this.style.opacity = 1;">
 
                                 <!-- Botón descarga -->
                                 <a href="{{ route('asesor.fraccionamiento.download-archivo', ['idFraccionamiento' => $datosFraccionamiento['id'], 'idArchivo' => $pdfPlano['id']]) }}" 
                                 download class="btn btn-primary" 
-                                style="position:absolute; top:20px; right:20px; z-index:10; padding:12px 28px; font-size:16px;">
-                                    Descargar Plano PDF
+                                style="position:absolute; top:20px; right:20px; z-index:10; padding:12px 28px; font-size:16px; text-decoration:none;">
+                                    Descargar Plano
                                 </a>
                             </div>
 
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
-                                    const img = document.getElementById('planoPdfImg');
                                     const container = document.getElementById('pdfViewer');
-                                    let scale = 1;
+                                    const img = document.getElementById('planoPdfImg');
+                                    if (!container || !img) return;
 
-                                    // Cargar PDF y convertir página 1 a imagen
+                                    let scale = 1;
+                                    let isDragging = false;
+                                    let startX = 0, startY = 0;
+                                    let translateX = 0, translateY = 0;
+                                    const minScale = 0.6;
+                                    const maxScale = 6;
+                                    const zoomSpeed = 0.0050;
+
+                                    // URL del PDF
                                     const url = '{{ route('asesor.fraccionamiento.download-archivo', [
                                         'idFraccionamiento' => $datosFraccionamiento['id'],
                                         'idArchivo' => $pdfPlano['id']
@@ -198,24 +206,22 @@
                                     pdfjsLib.getDocument(url).promise
                                         .then(pdf => pdf.getPage(1))
                                         .then(page => {
-                                            // Ajuste automático según orientación
                                             const viewport = page.getViewport({ scale: 1 });
                                             const canvas = document.createElement('canvas');
                                             const context = canvas.getContext('2d');
-                                            const outputScale = window.devicePixelRatio || 1;
+                                            const outputScale = window.devicePixelRatio || 1; // ← AQUÍ ESTABA EL ERROR
 
-                                            // Detectar si el PDF está en landscape
+                                            // Ajuste automático según orientación y pantalla
                                             const isLandscape = viewport.width > viewport.height;
+                                            let baseScale = isLandscape ? 3.2 : 2.8;
+                                            if (window.innerWidth < 768) baseScale *= 0.75;
 
-                                            let finalScale = isLandscape ? 3.2 : 2.8;
-                                            if (window.innerWidth < 768) finalScale *= 0.7;
-
-                                            const scaledViewport = page.getViewport({ scale: finalScale });
+                                            const scaledViewport = page.getViewport({ scale: baseScale });
 
                                             canvas.width = Math.floor(scaledViewport.width * outputScale);
                                             canvas.height = Math.floor(scaledViewport.height * outputScale);
-                                            canvas.style.width = Math.floor(scaledViewport.width) + "px";
-                                            canvas.style.height = Math.floor(scaledViewport.height) + "px";
+                                            canvas.style.width = Math.floor(scaledViewport.width) + 'px';
+                                            canvas.style.height = Math.floor(scaledViewport.height) + 'px';
 
                                             const renderContext = {
                                                 canvasContext: context,
@@ -223,37 +229,136 @@
                                                 transform: outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null
                                             };
 
-                                            return page.render(renderContext).promise.then(() => canvas);
+                                            return page.render(renderContext).promise.then(() => canvas.toDataURL('image/jpeg', 0.95));
                                         })
-                                        .then(canvas => {
-                                            img.src = canvas.toDataURL('image/jpeg', 0.95);
+                                        .then(dataUrl => {
+                                            img.src = dataUrl;
+                                            img.style.opacity = 1;
+                                            enableZoomAndPan(); // Activamos interacción solo cuando ya cargó
                                         })
                                         .catch(err => {
                                             console.error('Error cargando PDF:', err);
                                             container.innerHTML = `
-                                                <div style="text-align:center; color:#e2e8f0; padding:40px;">
+                                                <div style="text-align:center; color:#94a3b8; padding:60px;">
                                                     <i class="fas fa-file-pdf" style="font-size:80px; opacity:0.4;"></i>
-                                                    <p style="margin-top:20px;">Error al cargar el plano</p>
-                                                    <a href="${url}" download class="btn btn-outline mt-3">Descargar PDF</a>
+                                                    <p style="margin-top:20px; font-size:1.1rem;">Error al cargar el plano PDF</p>
+                                                    <a href="${url}" download class="btn btn-primary mt-3">
+                                                        <i class="fas fa-download"></i> Descargar PDF
+                                                    </a>
                                                 </div>`;
                                         });
 
-                                    // ZOOM CON RUEDA 100% FUNCIONAL
-                                    container.addEventListener('wheel', function(e) {
-                                        e.preventDefault();
-                                        if (e.deltaY < 0) {
-                                            scale = Math.min(scale + 0.2, 6);
-                                        } else {
-                                            scale = Math.max(scale - 0.2, 0.6);
-                                        }
-                                        img.style.transform = `scale(${scale})`;
-                                    });
+                                    // ========================================
+                                    // ZOOM + PAN SUPER SUAVE (PC y MÓVIL)
+                                    // ========================================
+                                    function enableZoomAndPan() {
+                                        const wrapper = document.createElement('div');
+                                        wrapper.className = 'pdf-transform-wrapper';
+                                        img.parentNode.insertBefore(wrapper, img);
+                                        wrapper.appendChild(img);
 
-                                    // Bonus: doble clic para zoom
-                                    img.addEventListener('dblclick', () => {
-                                        scale = scale > 1.5 ? 1 : 2.5;
-                                        img.style.transform = `scale(${scale})`;
-                                    });
+                                        // Estilos base
+                                        Object.assign(wrapper.style, {
+                                            width: '100%',
+                                            height: '100%',
+                                            overflow: 'hidden',
+                                            cursor: 'grab',
+                                            userSelect: 'none',
+                                            touchAction: 'none'
+                                        });
+
+                                        Object.assign(img.style, {
+                                            transition: 'transform 0.25s ease-out',
+                                            transformOrigin: 'center center',
+                                            maxWidth: 'none',
+                                            pointerEvents: 'none'
+                                        });
+
+                                        const update = () => {
+                                            img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                                            wrapper.style.cursor = scale > 1 ? 'grab' : 'default';
+                                        };
+
+                                        // Zoom con rueda (PC)
+                                        container.addEventListener('wheel', e => {
+                                            e.preventDefault();
+                                            const delta = e.deltaY > 0 ? -1 : 1;
+                                            const rect = container.getBoundingClientRect();
+                                            const x = e.clientX - rect.left;
+                                            const y = e.clientY - rect.top;
+
+                                            const zoomFactor = 1 + delta * zoomSpeed * Math.abs(e.deltaY);
+                                            const newScale = Math.max(minScale, Math.min(maxScale, scale * zoomFactor));
+
+                                            translateX = x - (x - translateX) * (newScale / scale);
+                                            translateY = y - (y - translateY) * (newScale / scale);
+                                            scale = newScale;
+                                            update();
+                                        }, { passive: false });
+
+                                        // Arrastre con ratón / touchpad
+                                        const startDrag = e => {
+                                            if (e.button && e.button !== 0) return;
+                                            isDragging = true;
+                                            startX = e.clientX - translateX;
+                                            startY = e.clientY - translateY;
+                                            wrapper.style.cursor = 'grabbing';
+                                            container.setPointerCapture(e.pointerId);
+                                        };
+
+                                        container.addEventListener('pointerdown', startDrag);
+                                        container.addEventListener('pointermove', e => {
+                                            if (!isDragging) return;
+                                            translateX = e.clientX - startX;
+                                            translateY = e.clientY - startY;
+                                            update();
+                                        });
+                                        container.addEventListener('pointerup', () => {
+                                            isDragging = false;
+                                            wrapper.style.cursor = scale > 1 ? 'grab' : 'default';
+                                        });
+
+                                        // Doble clic = zoom rápido
+                                        img.addEventListener('dblclick', e => {
+                                            const rect = container.getBoundingClientRect();
+                                            const x = e.clientX - rect.left;
+                                            const y = e.clientY - rect.top;
+
+                                            if (scale > 1.5) {
+                                                scale = 1; translateX = 0; translateY = 0;
+                                            } else {
+                                                scale = 3;
+                                                translateX = x - x * 0.3;
+                                                translateY = y - y * 0.3;
+                                            }
+                                            update();
+                                        });
+
+                                        // Pinch to zoom en móvil
+                                        let lastDist = 0;
+                                        container.addEventListener('touchstart', e => {
+                                            if (e.touches.length === 2) {
+                                                const t1 = e.touches[0], t2 = e.touches[1];
+                                                lastDist = Math.hypot(t1.pageX - t2.pageX, t1.pageY - t2.pageY);
+                                            }
+                                        }, { passive: true });
+
+                                        container.addEventListener('touchmove', e => {
+                                            if (e.touches.length === 2) {
+                                                e.preventDefault();
+                                                const t1 = e.touches[0], t2 = e.touches[1];
+                                                const dist = Math.hypot(t1.pageX - t2.pageX, t1.pageY - t2.pageY);
+                                                if (lastDist > 0) {
+                                                    const ratio = dist / lastDist;
+                                                    scale = Math.max(minScale, Math.min(maxScale, scale * ratio));
+                                                    update();
+                                                }
+                                                lastDist = dist;
+                                            }
+                                        }, { passive: false });
+
+                                        update(); // primera vez
+                                    }
                                 });
                             </script>
                         @else
