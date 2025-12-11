@@ -195,7 +195,7 @@
                                     let translateX = 0, translateY = 0;
                                     const minScale = 0.6;
                                     const maxScale = 6;
-                                    const zoomSpeed = 0.0050;
+                                    const zoomSpeed = 0.0005;
 
                                     // URL del PDF
                                     const url = '{{ route('asesor.fraccionamiento.download-archivo', [
