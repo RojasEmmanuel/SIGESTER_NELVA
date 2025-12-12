@@ -1,25 +1,192 @@
 <!-- Incrustar el navbar -->
 <?= view('templates/navbar', ['title' => 'Nelva Bienes Raíces']) ?>
 <link href="{{ asset('css/pagina/inicio.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="/css/pagina/inicio.css">
 <!-- Agregar AOS CSS -->
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-<section class="parallax-section">
-    <div class="parallax-bg">
-        <iframe width="100%" height="100%" 
-                src="https://www.youtube.com/embed/JyQgWZVuCAw?autoplay=1&mute=1&loop=1&controls=0&playlist=JyQgWZVuCAw" 
-                frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen></iframe>
+<!-- Hero Section Moderna con Curvas -->
+<section class="modern-hero">
+    <!-- Fondo geométrico -->
+    <div class="hero-geometric-bg">
+        <!-- Gradiente animado -->
+        <div class="geometric-gradient"></div>
+        
+        <!-- Patrón de cuadrícula -->
+        <div class="grid-pattern"></div>
+        
+        <!-- Formas abstractas grandes -->
+        <div class="abstract-shape shape-circle-large"></div>
+        <div class="abstract-shape shape-diamond"></div>
+        <div class="abstract-shape shape-triangle"></div>
+        
+        <!-- Líneas conectadas -->
+        <div class="connecting-lines">
+            <div class="line line-1"></div>
+            <div class="line line-2"></div>
+            <div class="line line-3"></div>
+        </div>
+        
+        <!-- Partículas flotantes -->
+        <div class="floating-dots">
+            <div class="dot dot-1"></div>
+            <div class="dot dot-2"></div>
+            <div class="dot dot-3"></div>
+            <div class="dot dot-4"></div>
+            <div class="dot dot-5"></div>
+            <div class="dot dot-6"></div>
+        </div>
+        
+        <!-- Formas de onda en la parte inferior -->
+        <div class="wave-shapes">
+            <div class="wave wave-1"></div>
+            <div class="wave wave-2"></div>
+            <div class="wave wave-3"></div>
+        </div>
+        
+        <!-- Forma interactiva morfable -->
     </div>
-    <div class="parallax-overlay"></div>
-    <div class="parallax-content" data-aos="fade-up" data-aos-duration="1000">
-        <h1>TODO LO QUE NECESITAS PARA <span class="highlight">TUS PROYECTOS</span> EN UN SOLO LUGAR</h1>
-        <p data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">Ya sea que busques invertir en terrenos cerca de los destinos turísticos más hermosos de Oaxaca, servicios profesionales de topografía o renta de equipo de maquinaria especializada, estamos aquí para ayudarte.</p>
-        <a href="/asesores" class="btn" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">Contactar con un asesor</a>
+    
+   
+    
+    <div class="hero-container">
+        <div class="hero-content-wrapper">
+            <!-- Texto principal -->
+            <div class="hero-text-content" data-aos="fade-up" data-aos-duration="800">
+                <div class="hero-badge" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+                    <span class="badge-dot"></span>
+                    <span>DESARROLLOS INMOBILIARIOS</span>
+                </div>
+                
+                <h1 data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                    TODO LO QUE NECESITAS PARA 
+                    <span class="highlight-gradient">TUS PROYECTOS</span> 
+                    EN UN SOLO LUGAR
+                </h1>
+                
+                <p class="hero-subtitle" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+                    Ya sea que busques invertir en terrenos cerca de los destinos turísticos más hermosos de Oaxaca, servicios profesionales de topografía o renta de equipo de maquinaria especializada, estamos aquí para ayudarte.
+                </p>
+                
+                <div class="hero-cta" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
+                    <a href="/asesores" class="hero-btn">
+                        <span class="btn-text">Contactar un asesor</span>
+                        <span class="btn-icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                    </a>
+                    
+                    <div class="trust-badges">
+                        <div class="trust-badge">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>6+ años de experiencia</span>
+                        </div>
+                        <div class="trust-badge">
+                            <i class="fas fa-star"></i>
+                            <span>+1000 clientes satisfechos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Galería de imágenes con carousel -->
+            <div class="hero-image-container" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
+                <div class="image-frame">
+                    <!-- Carousel principal -->
+                    <div class="project-carousel">
+                        <!-- Slide 1 -->
+                        <div class="carousel-slide active" data-slide="1">
+                            <img src="/images/Nosotros/portada.png" alt="Nosotros">
+                            <div class="carousel-overlay">
+                                <div class="project-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Costa de Oaxaca</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Slide 2 -->
+                        <div class="carousel-slide" data-slide="2">
+                            <img src="/images/servicios/parallax.png" alt="Real Ventanilla">
+                            <div class="carousel-overlay">
+                                <div class="project-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Oaxaca</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                       
+
+                        <div class="carousel-slide" data-slide="3">
+                            <img src="/images/atractivos/puntacometa1.png" alt="Oceanica Plus">
+                            <div class="carousel-overlay">
+                                <div class="project-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Mazunte, Oaxaca</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="carousel-slide" data-slide="4">
+                            <img src="/images/atractivos/ventanilla2.png" alt="Oceanica Plus">
+                            <div class="carousel-overlay">
+                                <div class="project-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Ventanilla, Oaxaca</span>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="carousel-slide" data-slide="5">
+                            <img src="/images/atractivos/mazunte4.png" alt="Oceanica Plus">
+                            <div class="carousel-overlay">
+                                <div class="project-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Mazunte, Oaxaca</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Controles del carousel -->
+                        <div class="carousel-controls">
+                            <button class="carousel-btn prev-btn">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="carousel-btn next-btn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Indicadores -->
+                    <div class="carousel-indicators">
+                        <div class="indicator active" data-slide="1"></div>
+                        <div class="indicator" data-slide="2"></div>
+                        <div class="indicator" data-slide="3"></div>
+                        <div class="indicator" data-slide="4"></div>
+                        <div class="indicator" data-slide="5"></div>
+                    </div>
+                    
+                    
+                    
+                    <!-- Elementos decorativos flotantes -->
+                    <div class="floating-elements">
+                        <div class="floating-element element-1">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <div class="floating-element element-2">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="floating-element element-3">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
-
 <section class="stats-section" data-aos="fade-up" data-aos-duration="800">
     <div class="container">
         <h2 class="section-title" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">Nuestros Logros</h2>
@@ -450,10 +617,10 @@
     // Inicializar AOS
     document.addEventListener('DOMContentLoaded', function() {
         AOS.init({
-            duration: 800,
+            duration: 50,
             easing: 'ease-in-out',
             once: true,
-            offset: 100,
+            offset: 30,
             delay: 0
         });
 
@@ -513,4 +680,119 @@
             button.querySelector('.read-less-icon').style.display = 'inline';
         }
     }
+   
 </script>
+
+ <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Inicializar AOS
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true,
+                offset: 100
+            });
+
+            // Carousel functionality
+            const slides = document.querySelectorAll('.carousel-slide');
+            const indicators = document.querySelectorAll('.indicator');
+            const miniatures = document.querySelectorAll('.miniature');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            let currentSlide = 1;
+            let autoSlideInterval;
+
+            // Función para mostrar slide
+            function showSlide(index) {
+                // Remover clase active de todos los slides
+                slides.forEach(slide => slide.classList.remove('active'));
+                indicators.forEach(indicator => indicator.classList.remove('active'));
+                miniatures.forEach(miniature => miniature.classList.remove('active'));
+                
+                // Asegurar que el índice esté dentro del rango
+                if (index >= slides.length) currentSlide = 0;
+                if (index < 0) currentSlide = slides.length - 1;
+                
+                // Agregar clase active al slide actual
+                slides[currentSlide].classList.add('active');
+                indicators[currentSlide].classList.add('active');
+                miniatures[currentSlide].classList.add('active');
+            }
+
+            // Función para siguiente slide
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }
+
+            // Función para slide anterior
+            function prevSlide() {
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                showSlide(currentSlide);
+            }
+
+            // Event listeners para botones
+            if (nextBtn) {
+                nextBtn.addEventListener('click', nextSlide);
+            }
+            
+            if (prevBtn) {
+                prevBtn.addEventListener('click', prevSlide);
+            }
+
+            // Event listeners para indicadores
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    currentSlide = index;
+                    showSlide(currentSlide);
+                    resetAutoSlide();
+                });
+            });
+
+            // Event listeners para miniaturas
+            miniatures.forEach((miniature, index) => {
+                miniature.addEventListener('click', () => {
+                    currentSlide = index;
+                    showSlide(currentSlide);
+                    resetAutoSlide();
+                });
+            });
+
+            // Auto slide cada 5 segundos
+            function startAutoSlide() {
+                autoSlideInterval = setInterval(nextSlide, 5000);
+            }
+
+            function resetAutoSlide() {
+                clearInterval(autoSlideInterval);
+                startAutoSlide();
+            }
+
+            // Iniciar auto slide
+            startAutoSlide();
+
+            // Pausar auto slide al hacer hover sobre el carousel
+            const carousel = document.querySelector('.project-carousel');
+            if (carousel) {
+                carousel.addEventListener('mouseenter', () => {
+                    clearInterval(autoSlideInterval);
+                });
+                
+                carousel.addEventListener('mouseleave', () => {
+                    startAutoSlide();
+                });
+            }
+
+            // Navegación con teclado
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                    resetAutoSlide();
+                } else if (e.key === 'ArrowRight') {
+                    nextSlide();
+                    resetAutoSlide();
+                }
+            });
+        });
+    </script>

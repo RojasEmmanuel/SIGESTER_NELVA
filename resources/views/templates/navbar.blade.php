@@ -180,17 +180,18 @@
         
         .nav-links a:hover:after {
             width: 100%;
+             background: linear-gradient(to right, #3a7bd5, #00d2ff);
         }
         
         /* ESTILOS NUEVOS: Indicador de página activa */
         .nav-links a.active {
-            color: #022F4A;
+            color: #3a7bd5;
             font-weight: 600;
         }
         
         .nav-links a.active:after {
             width: 100%;
-            background: #022F4A;
+            background: linear-gradient(to right, #3a7bd5, #00d2ff);
         }
         
         /* Menú hamburguesa para móviles */
@@ -398,7 +399,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <img src="/images/logo.png" alt="NELVA Logo">
+                <img src="/images/Logo.png" alt="NELVA Logo">
             </div>
             
             <div class="hamburger" id="hamburger">

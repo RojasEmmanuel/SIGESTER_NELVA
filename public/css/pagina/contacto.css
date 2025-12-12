@@ -8,11 +8,14 @@
             --text-light: #7f8c8d;
         }
         
-        
+        * {
+            font-family: "Roboto", sans-serif;
+        }
         
         body {
             color: var(--text);
             line-height: 1.6;
+            
         }
         
         /* Hero Section with Parallax */

@@ -8,7 +8,9 @@
         --text: #4a4a4a;
         --overlay: rgba(38, 70, 83, 0.85);
     }
-    
+    * {
+        font-family: "Roboto", sans-serif;
+    }
     /* Reset básico */
     body.nelva-atractivos * {
         margin: 0;

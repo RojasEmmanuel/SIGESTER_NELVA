@@ -2,6 +2,9 @@
     <style>
         /* Estilos para el contenido de la página Nosotros */
         
+        * {
+            font-family: "Roboto", sans-serif;
+        }
         /* Hero Section */
         .hero {
             background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../images/Nosotros/portada.png');
@@ -294,10 +297,7 @@
         }
 
         /* Elementos con animación inicial */
-        .hero {
-            opacity: 0;
-            animation: fadeInUp 1s ease-out 0.2s forwards;
-        }
+        
 
         .hero-content h1 {
             animation: slideInDown 1s ease-out 0.5s both;

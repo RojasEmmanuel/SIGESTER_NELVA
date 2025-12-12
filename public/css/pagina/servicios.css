@@ -29,7 +29,10 @@
     }
     
     /* Estilos base */
-    
+    * {
+        
+        font-family: "Roboto", sans-serif;
+    }
   
     a {
         text-decoration: none;
