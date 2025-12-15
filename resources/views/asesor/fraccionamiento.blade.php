@@ -168,19 +168,21 @@
 
                     <div id="mapPlano" style="width: 100%; height: 650px; background: #fff; border-radius: 12px; position: relative; overflow: hidden;">
                         @if($pdfPlano)
+                            <!-- Botón descarga -->
+                            <a href="{{ route('asesor.fraccionamiento.download-archivo', ['idFraccionamiento' => $datosFraccionamiento['id'], 'idArchivo' => $pdfPlano['id']]) }}" 
+                            download 
+                            class="btn btn-primary download-plano-btn"
+                            id="downloadPlanoBtn"
+                            style="position: absolute; top: 20px; right: 20px; z-index: 1000; padding: 12px 28px; font-size: 16px; text-decoration: none;">
+                                <i class="fas fa-download"></i> Descargar Plano
+                            </a>
+
                             <div id="pdfViewer" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative;">
                                 <img id="planoPdfImg" 
                                     src="" 
                                     alt="Plano del fraccionamiento"
                                     style="max-width:95%; max-height:95%; object-fit:contain; transition: transform 0.3s ease;"
                                     onload="this.style.opacity = 1;">
-
-                                <!-- Botón descarga -->
-                                <a href="{{ route('asesor.fraccionamiento.download-archivo', ['idFraccionamiento' => $datosFraccionamiento['id'], 'idArchivo' => $pdfPlano['id']]) }}" 
-                                download class="btn btn-primary" 
-                                style="position:absolute; top:20px; right:20px; z-index:10; padding:12px 28px; font-size:16px; text-decoration:none;">
-                                    Descargar Plano
-                                </a>
                             </div>
 
                             <script>
@@ -209,7 +211,7 @@
                                             const viewport = page.getViewport({ scale: 1 });
                                             const canvas = document.createElement('canvas');
                                             const context = canvas.getContext('2d');
-                                            const outputScale = window.devicePixelRatio || 1; // ← AQUÍ ESTABA EL ERROR
+                                            const outputScale = window.devicePixelRatio || 1;
 
                                             // Ajuste automático según orientación y pantalla
                                             const isLandscape = viewport.width > viewport.height;
@@ -234,7 +236,7 @@
                                         .then(dataUrl => {
                                             img.src = dataUrl;
                                             img.style.opacity = 1;
-                                            enableZoomAndPan(); // Activamos interacción solo cuando ya cargó
+                                            enableZoomAndPan();
                                         })
                                         .catch(err => {
                                             console.error('Error cargando PDF:', err);
@@ -248,16 +250,12 @@
                                                 </div>`;
                                         });
 
-                                    // ========================================
-                                    // ZOOM + PAN SUPER SUAVE (PC y MÓVIL)
-                                    // ========================================
                                     function enableZoomAndPan() {
                                         const wrapper = document.createElement('div');
                                         wrapper.className = 'pdf-transform-wrapper';
                                         img.parentNode.insertBefore(wrapper, img);
                                         wrapper.appendChild(img);
 
-                                        // Estilos base
                                         Object.assign(wrapper.style, {
                                             width: '100%',
                                             height: '100%',
@@ -279,7 +277,6 @@
                                             wrapper.style.cursor = scale > 1 ? 'grab' : 'default';
                                         };
 
-                                        // Zoom con rueda (PC)
                                         container.addEventListener('wheel', e => {
                                             e.preventDefault();
                                             const delta = e.deltaY > 0 ? -1 : 1;
@@ -296,7 +293,6 @@
                                             update();
                                         }, { passive: false });
 
-                                        // Arrastre con ratón / touchpad
                                         const startDrag = e => {
                                             if (e.button && e.button !== 0) return;
                                             isDragging = true;
@@ -318,7 +314,6 @@
                                             wrapper.style.cursor = scale > 1 ? 'grab' : 'default';
                                         });
 
-                                        // Doble clic = zoom rápido
                                         img.addEventListener('dblclick', e => {
                                             const rect = container.getBoundingClientRect();
                                             const x = e.clientX - rect.left;
@@ -334,7 +329,6 @@
                                             update();
                                         });
 
-                                        // Pinch to zoom en móvil
                                         let lastDist = 0;
                                         container.addEventListener('touchstart', e => {
                                             if (e.touches.length === 2) {
@@ -357,7 +351,7 @@
                                             }
                                         }, { passive: false });
 
-                                        update(); // primera vez
+                                        update();
                                     }
                                 });
                             </script>
@@ -377,7 +371,6 @@
                 @endif
             </div>
         </div>
-
 
         <!-- Development Info -->
         <div class="development-info">

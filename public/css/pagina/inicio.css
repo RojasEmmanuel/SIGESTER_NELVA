@@ -1681,7 +1681,7 @@ p {
 /* ===== HERO SECTION MODERNA ===== */
 .modern-hero {
     position: relative;
-    min-height: 75vh;
+    min-height: 80vh;
     background: linear-gradient(90deg, #02304a, #1C6DC1);    overflow: hidden;
     display: flex;
     align-items: center;
@@ -1701,7 +1701,7 @@ p {
 .hero-content-wrapper {
     display: grid;
     grid-template-columns: 2fr 1.5fr;
-    gap: 10px;
+    gap: 30px;
     align-items: center;
     position: relative;
     z-index: 3;
@@ -2245,12 +2245,12 @@ p {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(45deg, 
-        #22affc 1005%, 
-       
-        #0752AA 25%
-        
-        #043166 75%);
+   background: linear-gradient(135deg, 
+  #020617 0%, 
+  #0C1D36 25%, 
+  #1A365D 50%, 
+  #2D4B7A 75%, 
+  #020617 100%);
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
 }
