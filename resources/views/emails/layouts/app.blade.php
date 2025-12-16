@@ -67,7 +67,7 @@
                                         </p>
                                         
                                         <p style="margin: 0 0 20px; font-size: 14px; color: #e6f0ff; line-height: 1.6;">
-                                            <strong style="color: #ffffff;">📍</strong> Adolfo Lopez Mateos 16, Loma Larga, 70900 San Pedro Pochutla, Oax.
+                                            <strong style="color: #ffffff;">📍</strong> Calle Matamoros, Esquina Abasolo, Frente a CFE, 70900 San Pedro Pochutla, Oax.
                                         </p>
 
                                         <p style="margin: 0 0 15px; font-size: 16px; color: #ffffff; font-weight: bold; border-bottom: 2px solid #63b3ed; padding-bottom: 8px; display: inline-block;">

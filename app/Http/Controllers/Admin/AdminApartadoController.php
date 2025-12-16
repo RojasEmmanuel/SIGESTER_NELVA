@@ -88,61 +88,74 @@ class AdminApartadoController extends Controller
             $apartado = Apartado::where('tipoApartado', 'deposito')->findOrFail($id);
             $deposito = ApartadoDeposito::where('id_apartado', $apartado->id_apartado)->firstOrFail();
 
-            // Actualizar el depósito
+            // Actualizar el depósito (siempre se actualiza el estatus del ticket)
             $deposito->update([
                 'ticket_estatus' => $request->ticket_estatus,
                 'observaciones' => $request->observaciones ?? $deposito->observaciones,
                 'fecha_revision' => now('America/Mexico_City')
             ]);
 
-            // Si el ticket es aceptado, actualizar fechaVencimiento y estatus en apartados
+            $now = now('America/Mexico_City');
+
+            // Caso: Ticket ACEPTADO
             if ($request->ticket_estatus === 'aceptado') {
                 $apartado->update([
                     'fechaVencimiento' => Carbon::parse($request->fechaVencimiento)->toDateTimeString(),
                     'estatus' => $request->estatus
                 ]);
 
-                // Registrar en historial si el estatus cambia
+                // Registrar en historial y actualizar estatus de lotes si corresponde
                 foreach ($apartado->lotesApartados as $loteApartado) {
+                    $nuevoEstatusLote = $request->estatus === 'venta' ? 'vendido' : 'apartadoDeposito';
+
                     \App\Models\HistorialCambiosLote::create([
                         'id_lote' => $loteApartado->lote->id_lote,
                         'id_usuario' => Auth::user()->id_usuario,
                         'estatus_anterior' => $loteApartado->lote->estatus,
-                        'estatus_actual' => $request->estatus === 'venta' ? 'vendido' : 'apartadoDeposito',
+                        'estatus_actual' => $nuevoEstatusLote,
                         'observaciones' => 'Estatus actualizado por aceptación de ticket en apartado ' . $apartado->id_apartado
                     ]);
 
-                    // Actualizar estatus del lote si es necesario
-                    $lote = $loteApartado->lote;
+                    // Si se marca como venta, cambiar el lote a vendido
                     if ($request->estatus === 'venta') {
-                        $lote->estatus = 'vendido';
-                        $lote->save();
+                        $loteApartado->lote->update(['estatus' => 'vendido']);
                     }
                 }
             }
 
-            // Si el ticket es rechazado, liberar los lotes y actualizar estatus según fechaVencimiento
+            // Caso: Ticket RECHAZADO
             if ($request->ticket_estatus === 'rechazado') {
-                foreach ($apartado->lotesApartados as $loteApartado) {
-                    $lote = $loteApartado->lote;
-                    $lote->estatus = 'disponible';
-                    $lote->save();
+                $fechaVencimiento = Carbon::parse($apartado->fechaVencimiento);
 
-                    // Registrar en historial
-                    \App\Models\HistorialCambiosLote::create([
-                        'id_lote' => $lote->id_lote,
-                        'id_usuario' => Auth::user()->id_usuario,
-                        'estatus_anterior' => 'apartadoDeposito',
-                        'estatus_actual' => 'disponible',
-                        'observaciones' => 'Lote liberado por rechazo de ticket en apartado ' . $apartado->id_apartado
-                    ]);
+                // Solo liberar lotes si ya venció el apartado
+                if ($now->greaterThan($fechaVencimiento)) {
+                    foreach ($apartado->lotesApartados as $loteApartado) {
+                        $lote = $loteApartado->lote;
+
+                        \App\Models\HistorialCambiosLote::create([
+                            'id_lote' => $lote->id_lote,
+                            'id_usuario' => Auth::user()->id_usuario,
+                            'estatus_anterior' => $lote->estatus,
+                            'estatus_actual' => 'disponible',
+                            'observaciones' => 'Lote liberado por rechazo de ticket y vencimiento del apartado ' . $apartado->id_apartado
+                        ]);
+
+                        $lote->update(['estatus' => 'disponible']);
+                    }
+
+                    $apartado->estatus = 'vencido';
+                } else {
+                    // Aún vigente: mantener lotes reservados y apartado activo
+                    $apartado->estatus = 'en curso'; // Puedes cambiarlo por otro estatus más descriptivo si lo prefieres (ej. 'pendiente_deposito')
                 }
 
-                // Actualizar estatus del apartado según la fecha de vencimiento
-                $now = now('America/Mexico_City');
-                $fechaVencimiento = Carbon::parse($apartado->fechaVencimiento);
-                $apartado->estatus = $fechaVencimiento->isFuture() ? 'en curso' : 'vencido';
                 $apartado->save();
+
+                // Opcional: agregar nota en observaciones del depósito para auditoría
+                $observacionExtra = ' | Ticket rechazado el ' . $now->format('d/m/Y H:i');
+                $deposito->update([
+                    'observaciones' => ($deposito->observaciones ?? '') . $observacionExtra
+                ]);
             }
 
             DB::commit();
@@ -151,8 +164,8 @@ class AdminApartadoController extends Controller
                 'id_apartado' => $apartado->id_apartado,
                 'ticket_estatus' => $request->ticket_estatus,
                 'observaciones' => $request->observaciones,
-                'fechaVencimiento' => $request->fechaVencimiento,
-                'estatus' => $apartado->estatus
+                'fechaVencimiento' => $request->fechaVencimiento ?? $apartado->fechaVencimiento,
+                'estatus_apartado' => $apartado->estatus
             ]);
 
             return redirect()->route('admin.apartados-pendientes.index')
@@ -160,7 +173,7 @@ class AdminApartadoController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al actualizar estatus del ticket:', ['error' => $e->getMessage()]);
+            Log::error('Error al actualizar estatus del ticket:', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return redirect()->back()
                 ->with('error', 'Error al actualizar el estatus del ticket: ' . $e->getMessage());
         }

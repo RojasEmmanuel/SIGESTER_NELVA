@@ -719,7 +719,7 @@
                 <div class="form-group">
                     <label class="form-label">Lote(s) a apartar</label>
                     <div class="lot-list" id="lotList">
-                        <div class="lot-item">
+                        <div class="lot-item" style="background: white;">
                             <input type="text" class="form-control lot-number" required placeholder="Ej. 12, 5, etc.">
                             <button type="button" class="remove-lot">
                                 <i class="fas fa-times"></i>
@@ -842,7 +842,7 @@
                             <div class="lot-detail-item">
                                 <div class="lot-detail-label">Estatus</div>
                                 <div class="lot-detail-value" id="lotStatus">
-                                    <span class="status-badge" id="statusBadge">-</span>
+                                    <span class="status-badge" id="statusBadge" style="color: white; padding: 4px">-</span>
                                 </div>
                             </div>
                             <div class="lot-detail-item">
