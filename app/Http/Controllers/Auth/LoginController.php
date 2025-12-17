@@ -27,6 +27,13 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
+    
+    /**
+ * Maneja la solicitud de autenticación.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @return \Illuminate\Http\RedirectResponse
+ */
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -34,7 +41,8 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = Usuario::where('usuario_nombre', $credentials['usuario_nombre'])->first();
+        // Búsqueda case-sensitive: distingue mayúsculas y minúsculas
+        $user = Usuario::whereRaw('BINARY usuario_nombre = ?', [$credentials['usuario_nombre']])->first();
 
         if (!$user) {
             return back()->withErrors([
@@ -47,6 +55,7 @@ class LoginController extends Controller
         if (Hash::check($credentials['password'], $user->password)) {
             $passwordValid = true;
         } elseif ($credentials['password'] === $user->password) {
+            // Caso de contraseña antigua sin hash: se hashea al iniciar sesión
             $passwordValid = true;
             $user->password = Hash::make($credentials['password']);
             $user->save();
@@ -69,7 +78,7 @@ class LoginController extends Controller
 
         $request->session()->flash('success', '¡Bienvenido! Has iniciado sesión correctamente.');
 
-        // Redirigir según el tipo de usuario y enviar el tipo de usuario a la vista
+        // Redirigir según el tipo de usuario
         switch ($user->tipo_usuario) {
             case 1:
                 return redirect()->route('admin.index')->with('tipo_usuario', $user->tipo_usuario);
@@ -83,6 +92,7 @@ class LoginController extends Controller
                 return redirect('/dashboard')->with('tipo_usuario', $user->tipo_usuario);
         }
     }
+
     /**
      * Cierra la sesión del usuario autenticado.
      *
