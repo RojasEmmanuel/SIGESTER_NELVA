@@ -16,7 +16,7 @@ class MapasController extends Controller
     public function index()
     {
         $fraccionamientos = Fraccionamiento::select('id_fraccionamiento', 'nombre', 'tiene_geojson')
-            ->where('estatus', true)
+            ->where('tiene_geojson', false)
             ->orderBy('nombre', 'asc')
             ->get();
 

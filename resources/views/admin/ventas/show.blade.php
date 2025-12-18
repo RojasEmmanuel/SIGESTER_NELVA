@@ -79,7 +79,38 @@
                                     <td>
                                         {{ $venta->credito->modalidad_pago ?? 'Contado' }}
                                         @if($venta->credito->plazo_financiamiento)
-                                            ({{ $venta->credito->plazo_financiamiento }} meses)
+                                            ({{ $venta->credito->plazo_financiamiento }} meses,)
+                                        @endif
+                                        
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Forma de pago</th>
+                                    <td>
+                                        @if ($venta->credito->formas_pago)
+                                            {{ $venta->credito->formas_pago }}
+                            
+                                        @endif
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Día de pago</th>
+                                    <td>
+                                        @if ($venta->credito->dia_pago)
+                                           Los días {{ $venta->credito->dia_pago }} según la modalidad
+                            
+                                        @endif
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Monto de pago</th>
+                                    <td>
+                                        @if ($venta->credito->pagos)
+                                           ${{ number_format($venta->credito->pagos, 2) }} MXN
+                            
                                         @endif
                                     </td>
                                 </tr>

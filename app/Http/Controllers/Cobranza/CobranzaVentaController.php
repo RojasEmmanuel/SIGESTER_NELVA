@@ -23,7 +23,6 @@ class CobranzaVentaController extends Controller
             'apartado.usuario',
             'credito'
         ])
-        ->where('estatus', 'pagos')
         ->where('ticket_estatus', 'aceptado')
         ->orderBy('fechaSolicitud', 'desc')
         ->paginate(10);
@@ -46,7 +45,6 @@ class CobranzaVentaController extends Controller
             'beneficiario',
             'credito'
         ])
-        ->where('estatus', 'pagos')
         ->where('ticket_estatus', 'aceptado')
         ->findOrFail($id_venta);
 

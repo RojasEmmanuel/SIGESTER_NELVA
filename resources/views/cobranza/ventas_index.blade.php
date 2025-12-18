@@ -4,321 +4,36 @@
 @push('styles')
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-<style>
-    :root {
-        --primary: #1e478a;
-        --primary-light: #3d86df;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        --text: #334155;
-        --text-light: #64748b;
-        --border: #e2e8f0;
-        --bg-light: #f8fafc;
-        --white: #ffffff;
-        --shadow: 0 2px 8px rgba(0,0,0,0.1);
-        --shadow-hover: 0 4px 12px rgba(0,0,0,0.15);
-        --radius: 12px;
-        --radius-sm: 8px;
-    }
-
-    body {
-        font-family: 'Roboto', sans-serif;
-        background-color: var(--bg-light);
-        color: var(--text);
-        margin: 0;
-        padding: 0;
-    }
-
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 24px 16px;
-    }
-
-    .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .page-title {
-        font-size: 28px;
-        font-weight: 500;
-        color: var(--primary);
-        margin: 0;
-    }
-
-    .card {
-        background-color: var(--white);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        overflow: hidden;
-        margin-bottom: 24px;
-    }
-
-    .card-header {
-        padding: 16px 24px;
-        background-color: var(--primary);
-        color: var(--white);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .card-title {
-        font-size: 20px;
-        font-weight: 500;
-        margin: 0;
-    }
-
-    .card-content {
-        padding: 24px;
-    }
-
-    .table-responsive {
-        overflow-x: auto;
-    }
-
-    .data-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .data-table th {
-        background-color: var(--bg-light);
-        color: var(--text);
-        font-weight: 500;
-        text-align: left;
-        padding: 16px;
-        border-bottom: 2px solid var(--border);
-    }
-
-    .data-table td {
-        padding: 16px;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .data-table tr:last-child td {
-        border-bottom: none;
-    }
-
-    .data-table tr:hover {
-        background-color: rgba(30, 71, 138, 0.03);
-    }
-
-    .status-badge {
-        display: inline-block;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 500;
-        text-transform: uppercase;
-    }
-
-    .status-pagos {
-        background-color: rgba(16, 185, 129, 0.1);
-        color: var(--success);
-    }
-
-    .status-pendiente {
-        background-color: rgba(245, 158, 11, 0.1);
-        color: var(--warning);
-    }
-
-    .status-rechazado {
-        background-color: rgba(239, 68, 68, 0.1);
-        color: var(--danger);
-    }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 8px 16px;
-        border-radius: var(--radius-sm);
-        font-size: 14px;
-        font-weight: 500;
-        text-decoration: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        border: none;
-        gap: 8px;
-    }
-
-    .btn-primary {
-        background-color: var(--primary);
-        color: var(--white);
-    }
-
-    .btn-primary:hover {
-        background-color: var(--primary-light);
-        box-shadow: var(--shadow-hover);
-    }
-
-    .btn-outline {
-        background-color: transparent;
-        color: var(--primary);
-        border: 1px solid var(--primary);
-    }
-
-    .btn-outline:hover {
-        background-color: rgba(30, 71, 138, 0.05);
-    }
-
-    .btn-icon {
-        padding: 8px;
-        border-radius: 50%;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 40px 20px;
-        color: var(--text-light);
-    }
-
-    .empty-state-icon {
-        font-size: 48px;
-        color: var(--border);
-        margin-bottom: 16px;
-    }
-
-    .empty-state-text {
-        font-size: 16px;
-        margin-bottom: 24px;
-    }
-
-    .pagination-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 24px;
-    }
-
-    .pagination {
-        display: flex;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        border-radius: var(--radius-sm);
-        overflow: hidden;
-        box-shadow: var(--shadow);
-    }
-
-    .pagination li {
-        margin: 0;
-    }
-
-    .pagination li a,
-    .pagination li span {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 8px 16px;
-        background-color: var(--white);
-        color: var(--text);
-        text-decoration: none;
-        border-right: 1px solid var(--border);
-        transition: all 0.2s ease;
-    }
-
-    .pagination li:last-child a,
-    .pagination li:last-child span {
-        border-right: none;
-    }
-
-    .pagination li a:hover {
-        background-color: var(--bg-light);
-    }
-
-    .pagination li.active span {
-        background-color: var(--primary);
-        color: var(--white);
-    }
-
-    .alert {
-        padding: 12px 16px;
-        border-radius: var(--radius-sm);
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .alert-error {
-        background-color: rgba(239, 68, 68, 0.1);
-        color: var(--danger);
-        border-left: 4px solid var(--danger);
-    }
-
-    .alert-icon {
-        font-size: 20px;
-    }
-
-    .filters {
-        display: flex;
-        gap: 16px;
-        margin-bottom: 24px;
-        flex-wrap: wrap;
-    }
-
-    .filter-group {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .filter-label {
-        font-size: 14px;
-        color: var(--text-light);
-        font-weight: 500;
-    }
-
-    .filter-select {
-        padding: 10px 12px;
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        background-color: var(--white);
-        font-size: 14px;
-        color: var(--text);
-        min-width: 180px;
-    }
-
-    @media (max-width: 768px) {
-        .page-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 16px;
-        }
-
-        .filters {
-            flex-direction: column;
-        }
-
-        .filter-select {
-            min-width: 100%;
-        }
-
-        .data-table th,
-        .data-table td {
-            padding: 12px 8px;
-        }
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('css/ventasindex-cobranza.css') }}">
 @endpush
 
 @section('content')
 <body>
     <div class="container">
         <div class="page-header">
-            <h1 class="page-title">Contratos Pendientes</h1>
-            <div class="actions">
-                <button class="btn btn-outline">
-                    <span class="material-icons">file_download</span>
-                    Exportar
-                </button>
+            <div class="page-title-section">
+                <h1 class="page-title">Consultar ventas</h1>
+                <p class="page-description">
+                    Aquí encontrarás la información general de cada una de las ventas en seguimiento. 
+                    En las ventas con estatus <strong>"En Pagos"</strong> y con fecha reciente 
+                    es posible <strong>generar un contrato</strong> para formalizar el proceso.
+                </p>
+            </div>
+            
+            <div class="search-sort-container">
+                <div class="search-wrapper">
+                    <input type="text" 
+                        class="search-input" 
+                        placeholder="Buscar cliente..." 
+                        title="Buscar por nombre, ID o estatus">
+                    <span class="material-icons search-icon">search</span>
+                </div>
+                
+                <div class="sort-wrapper">
+                    <select class="sort-select">
+                        <!-- Las opciones se llenarán con JavaScript -->
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -329,31 +44,8 @@
             </div>
         @endif
 
-        <div class="filters">
-            <div class="filter-group">
-                <label class="filter-label">Filtrar por estatus</label>
-                <select class="filter-select">
-                    <option value="all">Todos los estatus</option>
-                    <option value="pagos">Pagos</option>
-                    <option value="pendiente">Pendiente</option>
-                    <option value="rechazado">Rechazado</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label class="filter-label">Ordenar por</label>
-                <select class="filter-select">
-                    <option value="fecha">Fecha de solicitud</option>
-                    <option value="cliente">Cliente</option>
-                    <option value="total">Total</option>
-                </select>
-            </div>
-        </div>
-
         <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Listado de Ventas</h2>
-                <span class="material-icons">receipt_long</span>
-            </div>
+            
             <div class="card-content">
                 <div class="table-responsive">
                     <table class="data-table">
@@ -383,8 +75,7 @@
                                     </td>
                                     <td>
                                         <a href="{{ route('cobranza.ventas.show', $venta->id_venta) }}" class="btn btn-primary">
-                                            <span class="material-icons">visibility</span>
-                                            Ver Detalles
+                                            Consultar
                                         </a>
                                     </td>
                                 </tr>
@@ -415,4 +106,228 @@
         </div>
     </div>
 </body>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Obtener elementos
+    const sortSelect = document.querySelector('.sort-select');
+    const searchInput = document.querySelector('.search-input');
+    const table = document.querySelector('.data-table');
+    const tbody = table.querySelector('tbody');
+    const emptyState = document.querySelector('.empty-state');
+    
+    // Variables para manejar datos
+    let originalData = null;
+    let filteredData = null;
+    let currentSort = 'fecha-desc';
+    let currentSearch = '';
+    
+    // Función para extraer datos de la tabla
+    function extractTableData() {
+        if (originalData) return originalData; // Ya tenemos los datos
+        
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        return rows.map(row => {
+            const cells = Array.from(row.querySelectorAll('td'));
+            return {
+                element: row.cloneNode(true), // Clonar el nodo para preservarlo
+                originalRow: row,
+                id: parseInt(cells[0].textContent),
+                cliente: cells[1].textContent.trim().toLowerCase(),
+                clienteDisplay: cells[1].textContent.trim(),
+                fecha: parseDate(cells[2].textContent),
+                fechaDisplay: cells[2].textContent.trim(),
+                enganche: parseCurrency(cells[3].textContent),
+                engancheDisplay: cells[3].textContent.trim(),
+                total: parseCurrency(cells[4].textContent),
+                totalDisplay: cells[4].textContent.trim(),
+                estatus: cells[5].querySelector('.status-badge').textContent.trim(),
+                estatusClass: cells[5].querySelector('.status-badge').className
+            };
+        });
+    }
+    
+    // Función para parsear fechas
+    function parseDate(dateStr) {
+        const parts = dateStr.split('/');
+        if (parts.length === 3) {
+            return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+        return new Date();
+    }
+    
+    // Función para parsear montos de dinero
+    function parseCurrency(currencyStr) {
+        const cleaned = currencyStr.replace(/[^0-9.-]+/g, '');
+        return parseFloat(cleaned) || 0;
+    }
+    
+    // Función para buscar en los datos
+    function searchData(data, searchTerm) {
+        if (!searchTerm.trim()) return data;
+        
+        const term = searchTerm.toLowerCase().trim();
+        return data.filter(item => {
+            return item.cliente.includes(term) || 
+                   item.id.toString().includes(term) ||
+                   item.estatus.toLowerCase().includes(term);
+        });
+    }
+    
+    // Función para ordenar los datos
+    function sortData(data, sortBy, order = 'asc') {
+        return [...data].sort((a, b) => {
+            let valA = a[sortBy];
+            let valB = b[sortBy];
+            
+            // Ordenar por tipo de dato
+            if (sortBy === 'fecha') {
+                return order === 'asc' ? valA - valB : valB - valA;
+            } else if (sortBy === 'cliente' || sortBy === 'estatus') {
+                return order === 'asc' 
+                    ? valA.localeCompare(valB)
+                    : valB.localeCompare(valA);
+            } else if (sortBy === 'id') {
+                return order === 'asc' ? valA - valB : valB - valA;
+            } else {
+                // Para montos de dinero
+                return order === 'asc' ? valA - valB : valB - valA;
+            }
+        });
+    }
+    
+    // Función para actualizar la tabla
+    function updateTable(data) {
+        // Limpiar el tbody
+        tbody.innerHTML = '';
+        
+        if (data.length === 0) {
+            // Mostrar mensaje de no resultados
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td colspan="7" class="no-results">
+                    <span class="material-icons" style="font-size: 48px; opacity: 0.5; margin-bottom: 16px;">search_off</span>
+                    <p>No se encontraron resultados para "${currentSearch}"</p>
+                    <button class="btn btn-outline" onclick="clearSearch()" style="margin-top: 16px;">
+                        <span class="material-icons">clear</span>
+                        Limpiar búsqueda
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            return;
+        }
+        
+        // Agregar las filas ordenadas
+        data.forEach(item => {
+            // Crear una nueva fila con los datos
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${item.id}</td>
+                <td>${item.clienteDisplay}</td>
+                <td>${item.fechaDisplay}</td>
+                <td>${item.engancheDisplay}</td>
+                <td>${item.totalDisplay}</td>
+                <td><span class="${item.estatusClass}">${item.estatus}</span></td>
+                <td>
+                    <a href="${item.element.querySelector('a').href}" class="btn btn-primary">
+                        Consultar
+                    </a>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+        
+        // Actualizar contador de resultados
+        updateResultsCounter(data.length);
+    }
+    
+    // Función para actualizar el contador de resultados
+    function updateResultsCounter(count) {
+        // Eliminar contador anterior si existe
+        const existingCounter = document.querySelector('.results-counter');
+        if (existingCounter) {
+            existingCounter.remove();
+        }
+        
+        // Crear nuevo contador
+        const counter = document.createElement('div');
+        counter.className = 'results-counter';
+        counter.textContent = `Mostrando ${count} de ${originalData.length} resultados`;
+        
+        // Insertar después de la tabla
+        table.parentNode.insertBefore(counter, table.nextSibling);
+    }
+    
+    // Función para aplicar filtros y ordenamiento
+    function applyFiltersAndSort() {
+        // Aplicar búsqueda
+        filteredData = searchData(originalData, currentSearch);
+        
+        // Aplicar ordenamiento
+        const [sortBy, order] = currentSort.split('-');
+        const sortedData = sortData(filteredData, sortBy, order);
+        
+        // Actualizar tabla
+        updateTable(sortedData);
+    }
+    
+    // Configurar evento del selector de ordenamiento
+    sortSelect.addEventListener('change', function() {
+        currentSort = this.value;
+        applyFiltersAndSort();
+        
+        // Agregar clase para mostrar orden actual
+        this.classList.add('sort-' + currentSort.split('-')[1]);
+    });
+    
+    // Configurar evento del buscador
+    searchInput.addEventListener('input', function() {
+        currentSearch = this.value;
+        
+        // Debounce para evitar demasiadas actualizaciones
+        clearTimeout(searchInput.timeout);
+        searchInput.timeout = setTimeout(() => {
+            applyFiltersAndSort();
+        }, 300); // 300ms de delay
+    });
+    
+    // Configurar evento de tecla Enter en el buscador
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            applyFiltersAndSort();
+        }
+    });
+    
+    // Función global para limpiar búsqueda
+    window.clearSearch = function() {
+        searchInput.value = '';
+        currentSearch = '';
+        applyFiltersAndSort();
+        searchInput.focus();
+    };
+    
+    // Inicializar datos
+    originalData = extractTableData();
+    
+    // Configurar opciones del select
+    const selectOptions = `
+        <option value="fecha-desc">Fecha: Más reciente</option>
+        <option value="fecha-asc">Fecha: Más antigua</option>
+        <option value="cliente-asc">Cliente: A-Z</option>
+        <option value="cliente-desc">Cliente: Z-A</option>
+        <option value="total-desc">Total: Mayor a menor</option>
+        <option value="total-asc">Total: Menor a mayor</option>
+        <option value="enganche-desc">Enganche: Mayor a menor</option>
+        <option value="enganche-asc">Enganche: Menor a mayor</option>
+    `;
+    
+    sortSelect.innerHTML = selectOptions;
+    sortSelect.value = 'fecha-desc';
+    
+    // Aplicar filtros iniciales
+    applyFiltersAndSort();
+});
+</script>
+
 @endsection

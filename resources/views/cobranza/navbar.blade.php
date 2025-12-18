@@ -29,7 +29,7 @@
                     <i class="fas fa-history"></i> Ventas
                 </a>
                 <a href="{{ url('cobranza/ventas') }}" class="{{ Request::is('cobranza/ventas*') ? 'active' : '' }}">
-                    <i class="fas fa-file-contract"></i> Contratos Pendientes
+                    <i class="fas fa-file-contract"></i> Contratos
                 </a>
                 <a href="{{ route('asesor.perfil.index') }}" class="{{ Request::routeIs('asesor.perfil*') ? 'active' : '' }}">
                     <i class="fas fa-user"></i> Perfil
@@ -80,7 +80,7 @@
                         <i class="fas fa-history"></i> <span>Ventas</span>
                     </a>
                     <a href="{{ url('cobranza/ventas') }}" class="nav-item {{ Request::is('cobranza/ventas*') ? 'active' : '' }}">
-                        <i class="fas fa-file-contract"></i> <span>Contratos Pendientes</span>
+                        <i class="fas fa-file-contract"></i> <span>Contratos</span>
                     </a>
                 </div>
 

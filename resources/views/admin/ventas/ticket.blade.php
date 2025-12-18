@@ -71,6 +71,15 @@
                                         {{ $venta->fechaSolicitud->format('d/m/Y') }}
                                     </div>
                                 </div>
+
+                                <div class="info-item">
+                                    <label>Enganche:</label>
+                                    <div class="info-value">
+                                        <i class="fas fa-dollar-sign"></i>
+                                        ${{ number_format($venta->enganche, 2) }}
+                                    </div>
+                                </div>
+
                                 <div class="info-item">
                                     <label>Total Venta:</label>
                                     <div class="info-value">
@@ -78,6 +87,10 @@
                                         ${{ number_format($venta->total, 2) }}
                                     </div>
                                 </div>
+
+                                
+
+
                                 <div class="info-item">
                                     <label>Estatus Venta:</label>
                                     <div class="info-value">
