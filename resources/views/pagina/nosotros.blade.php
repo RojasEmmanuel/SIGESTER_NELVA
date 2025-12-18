@@ -1212,29 +1212,6 @@
                         </a>
                     </div>
                 </div>
-
-
-                <div class="team-member" data-member="zaira">
-                    <div class="member-image">
-                        <img src="images/Nosotros/zaira.png" alt="Aranza Yunuen Mecinas Guevara">
-                    </div>
-                    <div class="member-info">
-                        <h4>Zaira Ramírez Olivera</h4>
-                        <p class="position">Ventas</p>
-                        <p class="member-summary">Profesional con experiencia en ventas, administración operativa y atención al cliente, desarrollada en empresas...</p>
-                        <a href="#" class="view-profile-btn">Ver perfil completo</a>
-                    </div>
-                    <div class="social-buttons">
-                        <a href="https://www.facebook.com/profile.php?id=61579643023779" target="_blank" class="social-button facebook-btn">
-                            <i class="fab fa-facebook-f"></i>
-                            Facebook
-                        </a>
-                        <a href="https://wa.me/5219581362522?text=Hola%2C%20me%20interesa%20conocer%20m%C3%A1s%20sobre%20los%20terrenos%20disponibles." target="_blank" class="social-button whatsapp-btn">
-                            <i class="fab fa-whatsapp"></i>
-                            WhatsApp
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -1527,35 +1504,6 @@ const teamMembers = {
             "Asistente 4° Congreso Anual de Inversionistas Merida 2024"
         ],
     },
-
-    zaira: {
-        name: "Zaira Ramírez Olivera",
-        position: "Ventas",
-        image: "images/Nosotros/zaira.png",
-        summary: "Profesional con experiencia en ventas, administración operativa y atención al cliente, desarrollada en empresas reconocidas del sector automotriz y de servicios. Destaca por su capacidad para gestionar procesos administrativos, coordinar operaciones y brindar una atención eficiente y orientada a resultados. Con trayectoria en áreas comerciales y operativas, aporta organización, responsabilidad y un enfoque sólido al cumplimiento de metas y la satisfacción del cliente.",
-        education: [
-            "Ingeniera en Mecánica Industrial "
-        ],
-        experience: [
-            "Puesto: Ventas",
-            "Responsable administrativo Empresa Italika",
-            "Responsable Fast Line",
-            "Personal operativo en Mercedes Benz"
-        ],
-        skills: [
-            "Control de documentos, manejo de procesos internos, reportes y organización operativa",
-            "Experiencia en coordinación de actividades, flujo de trabajo y soporte operativo",
-            "Capacidad para responder con eficacia a situaciones operativas y administrativas",
-            "Colaboración constante con áreas comerciales y administrativas para alcanzar objetivos comunes",
-            "Manejo preciso de tareas, cumplimiento de procesos y enfoque en resultados"
-        ],
-        educationAdditional: [
-            "Experiencia en procesos productivos, mejora continua y análisis técnico",
-            "Concientización en seguridad de la información ",
-            "Cursos: atención al cliente básico, normatividad y seguridad, Autocad, SolidWorks, CNC,seguridad industrial."
-        ],
-    }
-
 };
 
 // Función para abrir el modal con animaciones - CORREGIDA

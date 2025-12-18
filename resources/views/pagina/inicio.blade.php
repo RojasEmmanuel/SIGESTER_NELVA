@@ -96,7 +96,7 @@
                     <div class="project-carousel">
                         <!-- Slide 1 -->
                         <div class="carousel-slide active" data-slide="1">
-                            <img src="/images/Nosotros/portada.png" alt="Nosotros">
+                            <img src="/images/inicio/5.jpeg" alt="Nosotros">
                             <div class="carousel-overlay">
                                 <div class="project-location">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -107,7 +107,7 @@
                         
                         <!-- Slide 2 -->
                         <div class="carousel-slide" data-slide="2">
-                            <img src="/images/servicios/parallax.png" alt="Real Ventanilla">
+                            <img src="/images/inicio/2.jpeg" alt="Real Ventanilla">
                             <div class="carousel-overlay">
                                 <div class="project-location">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -119,7 +119,7 @@
                        
 
                         <div class="carousel-slide" data-slide="3">
-                            <img src="/images/atractivos/puntacometa1.png" alt="Oceanica Plus">
+                            <img src="/images/inicio/3.jpeg" alt="Oceanica Plus">
                             <div class="carousel-overlay">
                                 <div class="project-location">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -129,7 +129,7 @@
                         </div>
 
                         <div class="carousel-slide" data-slide="4">
-                            <img src="/images/atractivos/ventanilla2.png" alt="Oceanica Plus">
+                            <img src="/images/inicio/4.jpeg" alt="Oceanica Plus">
                             <div class="carousel-overlay">
                                 <div class="project-location">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -139,7 +139,7 @@
                         </div>
 
                          <div class="carousel-slide" data-slide="5">
-                            <img src="/images/atractivos/mazunte4.png" alt="Oceanica Plus">
+                            <img src="/images/inicio/1.jpeg" alt="Oceanica Plus">
                             <div class="carousel-overlay">
                                 <div class="project-location">
                                     <i class="fas fa-map-marker-alt"></i>
