@@ -178,4 +178,52 @@ class AdminApartadoController extends Controller
                 ->with('error', 'Error al actualizar el estatus del ticket: ' . $e->getMessage());
         }
     }
+
+
+    
+    public function todosApartados()
+{
+    $apartados = Apartado::with([
+        'usuario',
+        'lotesApartados.lote.fraccionamiento',
+        'deposito'
+    ])
+    ->where('estatus', 'en curso')
+    ->orderBy('fechaApartado', 'desc')
+    ->get()
+    ->map(function($apartado) {
+        // Determinar el estado para la vista
+        $estado = 'activo';
+        if ($apartado->deposito && $apartado->deposito->ticket_estatus == 'rechazado') {
+            $estado = 'cancelado';
+        }
+        
+        // Obtener lista de IDs de lotes
+        $lotesIds = [];
+        if ($apartado->lotesApartados) {
+            $lotesIds = $apartado->lotesApartados->map(function($loteApartado) {
+                return $loteApartado->lote->id_lote ?? null;
+            })->filter()->values()->toArray();
+        }
+        
+        // Unir los IDs en una cadena separada por comas
+        $lotesLista = !empty($lotesIds) ? implode(', ', $lotesIds) : 'Sin lotes';
+        
+        return (object)[
+            'id' => $apartado->id_apartado,
+            'asesor' => $apartado->usuario->nombre ?? 'Asesor no encontrado',
+            'fecha_apartado' => $apartado->fechaApartado ? \Carbon\Carbon::parse($apartado->fechaApartado)->format('d/m/Y') : 'N/A',
+            'fecha_vencimiento' => $apartado->fechaVencimiento ? \Carbon\Carbon::parse($apartado->fechaVencimiento)->format('d/m/Y') : 'N/A',
+            'total_apartado' => $apartado->deposito->cantidad ?? 0,
+            'tipo_apartado' => $apartado->tipoApartado,
+            'lotes' => $lotesLista, // Lista de IDs de lotes
+            'lotes_array' => $lotesIds, // Array para uso interno si lo necesitas
+            'estado' => $estado,
+            'model' => $apartado // Mantener el modelo original
+        ];
+    });
+
+    return view('admin.apartados.todosApartados', compact('apartados'));
+}
+
 }

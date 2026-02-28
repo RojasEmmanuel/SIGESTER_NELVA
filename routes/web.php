@@ -175,6 +175,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/apartados-pendientes/{id}', [AdminApartadoController::class, 'show'])->name('apartados-pendientes.show');
         Route::put('/apartados-pendientes/{id}/ticket-status', [AdminApartadoController::class, 'updateTicketStatus'])
             ->name('apartados-pendientes.updateTicketStatus');
+            
+        Route::get('/apartados/todos', [AdminApartadoController::class, 'todosApartados'])->name('apartados.todos');
 
         // Ventas Admin
         Route::get('/ventas', [AdminVentasController::class, 'index'])->name('ventas.index');
