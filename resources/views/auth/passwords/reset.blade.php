@@ -14,7 +14,7 @@
         <div class="login-card">
             <div class="card-header">
                 <div class="logo-container">
-                    <img src="/images/logo2.png" alt="Logo empresa" class="company-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c0/Sistema_plastics_logo.png" alt="Logo empresa" class="company-logo">
                 </div>
                 <h1 class="login-title">Establecer Nueva Contraseña</h1>
                 <p class="login-subtitle">Ingresa el código que enviamos a tu correo</p>

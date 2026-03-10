@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión | Nelva Bienes Raíces</title>
-    <link rel="icon" type="image/png" href="https://nelvabienesraices.com/wp-content/uploads/2025/01/cropped-MARCA_OFICIAL-1_Mesa-de-trabajo-1-1-1.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" href="{{ asset('/images/favicon.ico') }}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('/css/login.css') }}">
@@ -17,7 +15,7 @@
         <div class="login-card" id="loginCard">
             <div class="card-header">
                 <div class="logo-container">
-                    <img src="/images/logoEmpresa.png" alt="Logo de la empresa" class="company-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c0/Sistema_plastics_logo.png" alt="Logo de la empresa" class="company-logo">
                 </div>
                 <h1 class="login-title">Iniciar Sesión</h1>
                 <p class="login-subtitle">Accede a tu cuenta de Gestor de Terrenos</p>

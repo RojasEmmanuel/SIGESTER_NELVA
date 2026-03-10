@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Nelva Bienes Raíces')</title>
+    <title>@yield('title', 'Sistema Terrenos')</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
     
@@ -28,7 +28,7 @@
     <nav class="navbar-desktop">
         <div class="navbar-desktop-container">
             <div class="logo">
-                <img src="/images/Logo2.png" width="200px" alt="Logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c0/Sistema_plastics_logo.png" width="140px" alt="Logo">
             </div>
             <div class="nav-links-desktop">
 
