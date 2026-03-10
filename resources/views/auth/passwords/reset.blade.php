@@ -14,7 +14,7 @@
         <div class="login-card">
             <div class="card-header">
                 <div class="logo-container">
-                    <img src="/images/logo.png" alt="Logo" class="company-logo">
+                    <img src="/images/logo2.png" alt="Logo empresa" class="company-logo">
                 </div>
                 <h1 class="login-title">Establecer Nueva Contraseña</h1>
                 <p class="login-subtitle">Ingresa el código que enviamos a tu correo</p>
@@ -84,7 +84,7 @@
                 <a href="{{ route('password.request') }}" class="back-link">
                     <i class="fas fa-redo"></i> Enviar código otra vez
                 </a>
-                <p>© 2025 Nelva Bienes Raíces. Todos los derechos reservados.</p>
+                <p>© 2025 emmadev. Todos los derechos reservados.</p>
             </div>
         </div>
     </div>

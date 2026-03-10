@@ -17,7 +17,7 @@
         <div class="login-card" id="loginCard">
             <div class="card-header">
                 <div class="logo-container">
-                    <img src="/images/logo.png" alt="Logo Nelva Bienes Raíces" class="company-logo">
+                    <img src="/images/logoEmpresa.png" alt="Logo de la empresa" class="company-logo">
                 </div>
                 <h1 class="login-title">Iniciar Sesión</h1>
                 <p class="login-subtitle">Accede a tu cuenta de Gestor de Terrenos</p>
@@ -83,7 +83,7 @@
             @endif
             
             <div class="footer">
-                <p>© 2025 Nelva Bienes Raíces. Todos los derechos reservados.</p>
+                <p>© 2025 emmadev. Todos los derechos reservados.</p>
             </div>
         </div>
     </div>

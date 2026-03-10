@@ -6,7 +6,7 @@
     <title>@yield('title', 'Nelva Bienes Raíces')</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
-    <link rel="icon" href="{{ asset('/images/favicon.ico') }}" type="image/x-icon">
+    
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @stack('styles')
     
@@ -28,7 +28,7 @@
     <nav class="navbar-desktop">
         <div class="navbar-desktop-container">
             <div class="logo">
-                <img src="/images/Logo.png" width="200px" alt="Nelva Bienes Raíces">
+                <img src="/images/Logo2.png" width="200px" alt="Logo">
             </div>
             <div class="nav-links-desktop">
 

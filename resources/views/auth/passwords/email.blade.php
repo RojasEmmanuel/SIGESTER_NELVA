@@ -15,7 +15,7 @@
         <div class="login-card" id="resetCard">
             <div class="card-header">
                 <div class="logo-container">
-                    <img src="/images/logo.png" alt="Logo" class="company-logo">
+                    <img src="/images/logo2.png" alt="Logo empresa" class="company-logo">
                 </div>
                 <h1 class="login-title">Recuperar Contraseña</h1>
                 <p class="login-subtitle">Te enviaremos un código de 6 dígitos a tu correo</p>
@@ -74,7 +74,7 @@
                 <a href="{{ route('login') }}" class="back-link">
                     <i class="fas fa-arrow-left"></i> Volver al inicio de sesión
                 </a>
-                <p>© 2025 Nelva Bienes Raíces. Todos los derechos reservados.</p>
+                <p>© 2025 emmadev. Todos los derechos reservados.</p>
             </div>
         </div>
     </div>
